@@ -4,11 +4,11 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-06 — **2ª de frontend-ecomerce**.
-- **Estado global:** 🟢 **CUMPLE** — los gates **G-1…G-5** y la seguridad
+- **Última auditoría:** 2026-10-06 — **3ª de frontend-ecomerce**.
+- **Estado global:** 🟢 **CUMPLE** — los gates **G-1…G-6** y la seguridad
   (`R-QA-6`) son **efectivos en CI**; arquitectura, naming, sesión, rendimiento,
-  UI/a11y, PWA y CD alineados. Quedan deudas acotadas (E2E `G-6`, contrato,
-  comunicación entre dominios y pasos operativos de despliegue).
+  UI/a11y, PWA, **E2E** y CD alineados. Quedan deudas acotadas (contrato,
+  componentes con lógica, comunicación entre dominios y pasos operativos).
 
 ## Evidencia ejecutada (2026-10-06)
 
@@ -16,6 +16,7 @@
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
 | Build (G-3)        | `npm run build`                | ✅ initial **481.90 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
 | Tests (G-1)        | `npm test -- --watch=false`    | ✅ **22 archivos / 110 tests**                                       |
+| E2E (G-6)          | `npm run e2e`                  | ✅ **8 flujos Playwright** (efectivo en CI)                          |
 | Cobertura (G-2)    | idem                           | ✅ 81.09 / 82.07 / 81.64 / 80.09 (umbral 80/70/80/80)                |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
@@ -76,7 +77,7 @@
 | R-U-* unit         | ✅     | Adapters, stores, servicios, guard, interceptor, directiva (110 tests) |
 | R-CP-* componentes | 🟡     | Smoke de `app`/`navbar`/`footer`; falta cubrir componentes con lógica  |
 | R-C-* contrato     | 🟡     | Adapters tolerantes probados; **sin** fixtures versionados (`G-5`)     |
-| R-E-* E2E          | ❌     | Sin suite Playwright (`G-6`)                                           |
+| R-E-* E2E          | ✅     | 8 flujos en `e2e/storefront.spec.ts`; job de CI (`G-6`)                |
 | R-FL-3 TZ          | ✅     | `src/test-setup.ts` fija `TZ`                                          |
 | R-COV-1/2/4        | ✅     | Umbral global; lógica con spec; alcance documentado                    |
 | R-QA-2/5           | ✅     | Tests sin red e independientes                                         |
@@ -87,7 +88,7 @@
 | -------------------------- | ------ | --------------------------------------------------------------------- |
 | R-GB-2/3/4/6               | ✅     | Trunk-based, tags, historial lineal en el trabajo nuevo               |
 | R-PR-1/2/4/6/7/8           | ✅     | PRs con checks verdes y merge `--rebase`; runs de `main` verificados  |
-| R-CI-1..6 / R-EN-1..4      | ✅     | `ci.yml` (5 jobs), concurrencia, cache, artifact de cobertura         |
+| R-CI-1..6 / R-EN-1..4      | ✅     | `ci.yml` (6 jobs), concurrencia, cache, artifacts                     |
 | R-CD-1/2/9                 | ✅     | `Dockerfile` + `nginx.conf`, sin secretos, smoke verificado           |
 | R-GB-1 branch protection   | 🟡     | `main` sin proteger en GitHub (ajuste operativo)                      |
 | R-GB-7 higiene de ramas    | 🟡     | Ramas heredadas `cuba`, `hansmini`, `reestructura` siguen en `origin` |
@@ -105,20 +106,19 @@
 | Gate                                                                        | Estado             |
 | --------------------------------------------------------------------------- | ------------------ |
 | G-1 Unit + componentes · G-2 Cobertura · G-3 Build · G-4 Formato · G-5 Lint | ✅ efectivos en CI |
-| G-6 E2E                                                                     | ❌ sin suite       |
+| G-6 E2E                                                                     | ✅ efectivo en CI  |
 | R-QA-6 Security gate                                                        | ✅                 |
 
-**Total: 5 ✅ + R-QA-6 ✅ · 1 ❌ (G-6).**
+**Total: 6 ✅ + R-QA-6 ✅ · 0 ❌.**
 
 ## Deudas abiertas (orden de ataque)
 
-1. **E2E (`G-6`, `R-E-*`)**: suite Playwright de los flujos críticos.
-2. **Contrato (`R-C-*`)**: fixtures de respuesta del backend versionados.
-3. **Componentes con lógica (`R-CP-*`)**: `checkout`, `product-detail`, `search-autocomplete`, formularios.
-4. **Fronteras entre dominios (`R-CX-6`)**: reducir imports cruzados (`home/wishlist → products`, `layout → …`).
-5. **Sesión**: renovación automática **en 401** (hoy la renovación ocurre al iniciar/recargar).
-6. **Operación**: `apiUrl` de producción + proyecto Dockploy (`docs/dockploy-setup.md`).
-7. **Git**: proteger `main`, cerrar ramas obsoletas; los 2 merge commits históricos no se reescriben.
+1. **Contrato (`R-C-*`)**: fixtures de respuesta del backend versionados.
+2. **Componentes con lógica (`R-CP-*`)**: `checkout`, `product-detail`, `search-autocomplete`, formularios.
+3. **Fronteras entre dominios (`R-CX-6`)**: reducir imports cruzados (`home/wishlist → products`, `layout → …`).
+4. **Sesión**: renovación automática **en 401** (hoy la renovación ocurre al iniciar/recargar).
+5. **Operación**: `apiUrl` de producción + proyecto Dockploy (`docs/dockploy-setup.md`).
+6. **Git**: proteger `main`, cerrar ramas obsoletas; los 2 merge commits históricos no se reescriben.
 
 ## Cómo re-auditar
 
@@ -128,6 +128,7 @@ npm test -- --watch=false          # G-1 / G-2
 npx prettier --check .             # G-4
 npm run lint                       # G-5
 npm audit --audit-level=high       # R-QA-6
+npm run e2e                        # G-6
 docker build -t frontend-ecomerce:test . && docker run -p 8081:80 frontend-ecomerce:test   # R-CD smoke
 ```
 

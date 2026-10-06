@@ -74,3 +74,21 @@
   fronteras entre dominios (`R-CX-6`), refresh en 401, operación Dockploy, branch
   protection e higiene de ramas.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 3 — Suite E2E (G-6) (2026-10-06)
+
+- **Alcance:** cierre de `G-6` con Playwright.
+- **Resultado:**
+  - ✅ `npm run e2e` — **8 flujos** (catálogo/filtro, detalle, carrito, guard,
+    login+checkout, wishlist, búsqueda, 404) + fixture de cero errores de consola
+    (`R-E-9`).
+  - ✅ Job **E2E (Playwright)** en CI: **6/6 jobs verdes** en `main` (`4dde21a`).
+  - 🐞 Los E2E detectaron un **bug real**: bucle infinito en el `effect` de
+    `product-detail` (`addProduct` leía y escribía el mismo signal), corregido
+    con `untracked()`.
+- **Estado global:** 🟢 **CUMPLE** — **G-1…G-6** + `R-QA-6` efectivos en CI.
+- **Deudas:** contrato (`R-C-*`), componentes con lógica (`R-CP-*`), fronteras
+  entre dominios (`R-CX-6`), refresh en 401 y operación Dockploy.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
