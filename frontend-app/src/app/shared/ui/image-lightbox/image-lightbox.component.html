@@ -1,0 +1,36 @@
+@if (isOpen()) {
+  <!-- Backdrop -->
+  <div
+    class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-300"
+    (click)="closeLightbox()"
+    role="presentation"
+  >
+    <!-- Close Button -->
+    <button
+      (click)="closeLightbox()"
+      class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors shadow-lg z-[201]"
+      aria-label="Cerrar vista ampliada"
+    >
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
+
+    <!-- Image Container -->
+    <div
+      class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+      style="animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both"
+      (click)="$event.stopPropagation()"
+      role="presentation"
+    >
+      <img
+        [src]="imageUrl()"
+        [alt]="imageAlt()"
+        class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+      />
+
+      <!-- Caption -->
+      <div class="absolute -bottom-12 left-0 right-0 text-center text-white/70 font-medium text-sm">
+        {{ imageAlt() }}
+      </div>
+    </div>
+  </div>
+}

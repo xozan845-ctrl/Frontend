@@ -1,0 +1,28 @@
+<div class="toast-container">
+  @for (msg of notificationService.messages(); track msg.id) {
+    <div
+      [class]="'toast shadow-xl transition-all duration-300 toast-' + msg.type"
+      (click)="notificationService.dismiss(msg.id)"
+      (keydown.enter)="notificationService.dismiss(msg.id)"
+      role="status"
+      aria-live="polite"
+      tabindex="0"
+    >
+      <span class="toast-icon">
+        @switch (msg.type) {
+          @case ('success') {
+            <i class="fa-solid fa-circle-check text-base shrink-0"></i>
+          }
+          @case ('error') {
+            <i class="fa-solid fa-circle-exclamation text-base shrink-0"></i>
+          }
+          @case ('info') {
+            <i class="fa-solid fa-circle-info text-base shrink-0"></i>
+          }
+        }
+      </span>
+      <span class="toast-message">{{ msg.message }}</span>
+      <button class="toast-close" (click)="notificationService.dismiss(msg.id)">&times;</button>
+    </div>
+  }
+</div>

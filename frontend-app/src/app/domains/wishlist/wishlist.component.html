@@ -1,0 +1,152 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 min-h-[70vh]">
+  <!-- Header -->
+  <div
+    class="border-b border-slate-200 dark:border-surface-700 pb-10 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
+  >
+    <div>
+      <div
+        class="inline-block bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 shadow-sm border border-red-100 dark:border-red-800"
+      >
+        <i class="fa-solid fa-heart mr-1"></i> Lista de Deseos
+      </div>
+      <h1
+        class="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading leading-none"
+      >
+        Mis<br />Favoritos
+      </h1>
+    </div>
+    @if (wishlistStore.totalItems() > 0) {
+      <div class="flex items-center gap-4">
+        <span
+          class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400"
+        >
+          {{ wishlistStore.totalItems() }}
+          {{ wishlistStore.totalItems() === 1 ? 'producto' : 'productos' }}
+        </span>
+        <button
+          (click)="clearAll()"
+          class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg"
+        >
+          Limpiar Todo
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Empty State -->
+  @if (wishlistStore.items().length === 0) {
+    <app-empty-state
+      variant="empty"
+      icon="fa-regular fa-heart"
+      title="Sin Favoritos"
+      subtitle="Aún no has guardado ningún producto. Explora nuestra tienda y agrega los que más te gusten."
+      actionLabel="Explorar Tienda"
+      actionRoute="/shop"
+    />
+  } @else {
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+      @for (product of wishlistStore.items(); track product.id) {
+        <div class="flex flex-col group">
+          <!-- Image -->
+          <div
+            class="relative pt-[100%] bg-slate-50 dark:bg-surface-800 block mb-6 overflow-hidden rounded-2xl shadow-sm border border-slate-100 dark:border-surface-700 transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2"
+          >
+            <img
+              [ngSrc]="product.imageUrl"
+              fill
+              [alt]="product.name"
+              class="object-cover mix-blend-multiply dark:mix-blend-normal p-4 group-hover:scale-105 transition-transform duration-700"
+              (error)="$any($event.target).classList.add('img-error')"
+            />
+            <div
+              class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
+              style="display: none"
+            >
+              <i class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-2xl"></i>
+            </div>
+
+            <!-- Remove from wishlist -->
+            <button
+              (click)="removeFromWishlist(product.id)"
+              class="absolute top-3 right-3 w-9 h-9 bg-white dark:bg-surface-800 rounded-full shadow-md flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:scale-110 transition-all border border-red-100 dark:border-red-800"
+              aria-label="Quitar de favoritos"
+            >
+              <i class="fa-solid fa-heart text-sm"></i>
+            </button>
+
+            <!-- Quick View -->
+            <button
+              (click)="openQuickView(product)"
+              class="absolute top-3 right-14 w-9 h-9 bg-white dark:bg-surface-800 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:scale-110 transition-all border border-slate-200 dark:border-surface-600"
+              aria-label="Vista rápida"
+            >
+              <i class="fa-regular fa-eye text-sm"></i>
+            </button>
+
+            <!-- Category badge -->
+            <span
+              class="absolute top-3 left-3 bg-white/90 dark:bg-black/90 backdrop-blur-sm text-[9px] font-bold uppercase tracking-widest text-slate-800 dark:text-white px-3 py-1.5 rounded-full shadow-sm"
+            >
+              {{ product.category }}
+            </span>
+          </div>
+
+          <!-- Info -->
+          <div class="flex flex-col grow px-2">
+            <div class="flex justify-between items-start gap-4 mb-2">
+              <a [routerLink]="['/product', product.id]" class="block min-w-0">
+                <h3
+                  class="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors line-clamp-2"
+                >
+                  {{ product.name }}
+                </h3>
+              </a>
+              <span class="text-lg font-black text-slate-900 dark:text-white shrink-0">
+                {{ '$' }}{{ product.price.toFixed(2) }}
+              </span>
+            </div>
+
+            <!-- Rating mini -->
+            <div class="mb-4">
+              <app-star-rating
+                [value]="getAvgRating(product.id)"
+                size="sm"
+                [reviewCount]="getReviewCount(product.id)"
+                [showCount]="true"
+              />
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-auto flex gap-2">
+              @if (product.stock > 0) {
+                <button
+                  (click)="addToCart(product)"
+                  class="flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-accent-600 text-white hover:bg-accent-700 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  Añadir al Carrito
+                </button>
+              } @else {
+                <div
+                  class="flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-center border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-900 text-slate-400 cursor-not-allowed"
+                >
+                  Agotado
+                </div>
+              }
+              <a
+                [routerLink]="['/product', product.id]"
+                class="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all shadow-sm"
+                aria-label="Ver detalle"
+              >
+                <i class="fa-solid fa-eye text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Quick View Modal -->
+<app-quick-view-modal [product]="quickViewProduct()" (closeModal)="quickViewProduct.set(null)" />

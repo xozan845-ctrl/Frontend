@@ -1,0 +1,13 @@
+<div class="flex items-center justify-center gap-1.5" [style.min-height]="minHeight()">
+  @for (bar of [1, 2, 3]; track bar) {
+    <div
+      class="w-1.5 rounded-full bg-accent-600 dark:bg-accent-400"
+      [class.h-4]="size() === 'sm'"
+      [class.h-8]="size() === 'md'"
+      [class.h-10]="size() === 'lg'"
+      [class.h-16]="size() === 'xl'"
+      [style.animation-delay]="(bar - 1) * 0.15 + 's'"
+      style="animation: barPulse 0.8s ease-in-out infinite"
+    ></div>
+  }
+</div>

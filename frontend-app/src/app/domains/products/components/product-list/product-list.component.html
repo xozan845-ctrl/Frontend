@@ -1,0 +1,237 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+  <!-- Editorial Header & Search -->
+  <div class="mb-20 md:mb-28">
+    <div
+      class="border-b border-slate-200 dark:border-surface-700 pb-10 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-10"
+    >
+      <div>
+        <div
+          class="inline-block bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 shadow-sm border border-accent-100 dark:border-accent-800"
+        >
+          Temporada 2026
+        </div>
+        <h1
+          class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading leading-none"
+        >
+          Tienda<br />Completa
+        </h1>
+      </div>
+
+      <!-- Smart Search Autocomplete -->
+      <div class="w-full md:w-96">
+        <app-search-autocomplete />
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex gap-4 overflow-x-auto pb-4 relative scroll-smooth">
+      <!-- Scroll fade indicator (mobile only) -->
+      <div
+        class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-r from-transparent to-white dark:to-surface-900 pointer-events-none md:hidden"
+      ></div>
+      @for (category of categories(); track category) {
+        <button
+          (click)="onCategoryChange(category)"
+          class="text-xs font-bold uppercase tracking-widest whitespace-nowrap px-6 py-3 rounded-xl transition-all duration-200 border active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+          [class.bg-accent-600]="selectedCategory() === category"
+          [class.text-white]="selectedCategory() === category"
+          [class.border-accent-600]="selectedCategory() === category"
+          [class.shadow-md]="selectedCategory() === category"
+          [class.bg-white]="selectedCategory() !== category"
+          [class.dark:bg-surface-800]="selectedCategory() !== category"
+          [class.text-slate-500]="selectedCategory() !== category"
+          [class.border-slate-200]="selectedCategory() !== category"
+          [class.dark:border-surface-700]="selectedCategory() !== category"
+          [class.hover:border-accent-600]="selectedCategory() !== category"
+          [class.dark:hover:border-accent-500]="selectedCategory() !== category"
+          [class.hover:text-accent-600]="selectedCategory() !== category"
+          [class.dark:hover:text-accent-400]="selectedCategory() !== category"
+          [class.hover:-translate-y-0.5]="selectedCategory() !== category"
+          [class.hover:shadow-sm]="selectedCategory() !== category"
+        >
+          {{ category === 'All' ? 'Todas las categorías' : category }}
+        </button>
+      }
+    </div>
+
+    <!-- Sort & Price Filter Bar -->
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-surface-800"
+    >
+      <!-- Sort -->
+      <div class="flex items-center gap-3">
+        <label
+          for="sort-select"
+          class="text-[10px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap"
+          >Ordenar por</label
+        >
+        <select
+          id="sort-select"
+          [value]="sortOption()"
+          (change)="onSortChange($event)"
+          class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-4 py-2.5 pr-8 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all cursor-pointer appearance-none"
+          style="
+            background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%2394a3b8%22><path fill-rule=%22evenodd%22 d=%22M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z%22 clip-rule=%22evenodd%22/></svg>');
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2em;
+          "
+        >
+          @for (opt of sortOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Price Range -->
+      <div class="flex items-center gap-2">
+        <span
+          class="text-[10px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap"
+          >Precio</span
+        >
+        <input
+          type="number"
+          placeholder="Min"
+          [value]="priceMin()"
+          (input)="onPriceInput('min', $event)"
+          min="0"
+          step="1"
+          class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          aria-label="Precio mínimo"
+        />
+        <span class="text-slate-300 dark:text-surface-600 text-xs">—</span>
+        <input
+          type="number"
+          placeholder="Max"
+          [value]="priceMax()"
+          (input)="onPriceInput('max', $event)"
+          min="0"
+          step="1"
+          class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          aria-label="Precio máximo"
+        />
+      </div>
+
+      <!-- Results count -->
+      <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        {{ filteredProducts().length }} producto{{ filteredProducts().length !== 1 ? 's' : '' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  @if (productStore.loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="flex flex-col gap-4 animate-pulse">
+          <app-skeleton-loader height="350px" customClass="rounded-2xl mb-4" />
+          <div class="flex justify-between px-2">
+            <app-skeleton-loader width="60%" height="28px" customClass="rounded-md" />
+            <app-skeleton-loader width="20%" height="28px" customClass="rounded-md" />
+          </div>
+          <div class="px-2">
+            <app-skeleton-loader width="100%" height="16px" customClass="rounded-md mb-2" />
+            <app-skeleton-loader width="80%" height="16px" customClass="rounded-md mb-6" />
+          </div>
+          <app-skeleton-loader width="100%" height="48px" customClass="rounded-xl mt-auto mx-2" />
+        </div>
+      }
+    </div>
+  } @else if (productStore.error()) {
+    <app-empty-state
+      variant="error"
+      icon="fa-solid fa-triangle-exclamation"
+      title="Error de Sistema"
+      [subtitle]="productStore.error() ?? 'No se pudo cargar el inventario'"
+      actionLabel="Reintentar"
+      [actionClick]="retryLoad.bind(this)"
+    />
+  } @else if (filteredProducts().length === 0) {
+    <app-empty-state
+      variant="no-results"
+      icon="fa-solid fa-magnifying-glass"
+      title="Sin Resultados"
+      subtitle="No se encontraron productos con esos filtros. Intenta con otros términos o categorías."
+      actionLabel="Limpiar Filtros"
+      [actionClick]="clearFilters.bind(this)"
+    />
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-20">
+      @for (product of paginatedProducts(); track product.id) {
+        <app-product-card
+          appScrollReveal
+          [product]="product"
+          (addToCart)="addToCart($event)"
+          (quickView)="openQuickView($event)"
+        />
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div
+        class="mt-16 pt-8 border-t border-slate-200 dark:border-surface-700 flex flex-col sm:flex-row justify-between items-center gap-4"
+      >
+        <div class="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+          <span>Página {{ currentPage() }} de {{ totalPages() }}</span>
+        </div>
+        <nav class="flex items-center gap-2" aria-label="Paginación">
+          <button
+            (click)="goToPage(currentPage() - 1)"
+            [disabled]="currentPage() === 1"
+            class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            aria-label="Página anterior"
+          >
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          @for (page of getPageNumbers(); track page) {
+            @if (page === -1) {
+              <span
+                class="w-10 h-10 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                >...</span
+              >
+            } @else {
+              <button
+                (click)="goToPage(page)"
+                class="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm transition-all"
+                [class.bg-accent-600]="currentPage() === page"
+                [class.text-white]="currentPage() === page"
+                [class.border-accent-600]="currentPage() === page"
+                [class.shadow-md]="currentPage() === page"
+                [class.bg-white]="currentPage() !== page"
+                [class.dark:bg-surface-800]="currentPage() !== page"
+                [class.text-slate-600]="currentPage() !== page"
+                [class.dark:text-slate-300]="currentPage() !== page"
+                [class.border-slate-200]="currentPage() !== page"
+                [class.dark:border-surface-600]="currentPage() !== page"
+                [class.hover:bg-accent-50]="currentPage() !== page"
+                [class.dark:hover:bg-accent-900/20]="currentPage() !== page"
+                [class.hover:border-accent-600]="currentPage() !== page"
+                [class.dark:hover:border-accent-500]="currentPage() !== page"
+                [class.hover:text-accent-600]="currentPage() !== page"
+                [class.dark:hover:text-accent-400]="currentPage() !== page"
+                [class.focus-visible:outline-hidden]="true"
+                [class.focus-visible:ring-2]="true"
+                [class.focus-visible:ring-accent-500]="true"
+                [class.focus-visible:ring-offset-2]="true"
+              >
+                {{ page }}
+              </button>
+            }
+          }
+          <button
+            (click)="goToPage(currentPage() + 1)"
+            [disabled]="currentPage() === totalPages()"
+            class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            aria-label="Página siguiente"
+          >
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </nav>
+      </div>
+    }
+  }
+</div>
+
+<!-- Quick View Modal -->
+<app-quick-view-modal [product]="quickViewProduct()" (closeModal)="quickViewProduct.set(null)" />

@@ -1,0 +1,98 @@
+<!-- Floating Support Button & Modal -->
+<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+  <!-- Popover Box -->
+  @if (isOpen()) {
+    <div
+      class="mb-4 w-80 bg-white dark:bg-surface-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-surface-700 overflow-hidden"
+      style="animation: supportPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) both"
+    >
+      <!-- Card Header -->
+      <div class="bg-gradient-to-r from-accent-600 to-accent-700 p-5 text-white">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"
+              ></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+            </span>
+            <span class="text-[10px] font-black uppercase tracking-widest text-white/90"
+              >Soporte Quantum</span
+            >
+          </div>
+          <button
+            (click)="toggle()"
+            class="text-white/80 hover:text-white transition-colors"
+            aria-label="Cerrar soporte"
+          >
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+        <h4 class="text-base font-black uppercase tracking-tight">¿En qué podemos ayudarte?</h4>
+        <p class="text-xs text-white/80 mt-1 font-medium">Asistencia inmediata para tus compras.</p>
+      </div>
+
+      <!-- Options -->
+      <div class="p-4 space-y-2.5">
+        <!-- WhatsApp -->
+        <button
+          (click)="openWhatsApp()"
+          class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all text-left group"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
+          >
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-black uppercase tracking-wider">Chat por WhatsApp</p>
+            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+              Respuesta promedio: 2 min
+            </p>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-emerald-400"></i>
+        </button>
+
+        <!-- Email -->
+        <a
+          [href]="'mailto:' + companyInfo.email + '?subject=Consulta%20' + companyInfo.name"
+          class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-surface-700/60 border border-slate-200 dark:border-surface-600 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-700 transition-all text-left group"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
+          >
+            <i class="fa-solid fa-envelope text-sm"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-black uppercase tracking-wider">Correo Electrónico</p>
+            <p class="text-[10px] text-slate-400 font-medium">{{ companyInfo.email }}</p>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+        </a>
+      </div>
+
+      <!-- Footer note -->
+      <div
+        class="px-5 py-3 bg-slate-50 dark:bg-surface-900 border-t border-slate-100 dark:border-surface-700 text-center"
+      >
+        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+          Garantía y devoluciones 30 días garantizados
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- Toggle Button -->
+  <button
+    (click)="toggle()"
+    class="w-14 h-14 rounded-full bg-accent-600 hover:bg-accent-700 text-white shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-accent-500/30 group border-2 border-white dark:border-surface-800"
+    [attr.aria-label]="isOpen() ? 'Cerrar menú de ayuda' : 'Abrir soporte y contacto directo'"
+  >
+    <i
+      class="fa-solid text-xl transition-transform duration-300"
+      [class.fa-headset]="!isOpen()"
+      [class.fa-xmark]="isOpen()"
+      [class.rotate-90]="isOpen()"
+    ></i>
+  </button>
+</div>

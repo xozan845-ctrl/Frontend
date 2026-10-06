@@ -1,0 +1,164 @@
+<div
+  class="flex flex-col h-full group bg-white dark:bg-surface-900 rounded-3xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-surface-700"
+>
+  <!-- Image Wrapper -->
+  <div
+    class="relative pt-[100%] bg-slate-50 dark:bg-surface-800 mb-6 overflow-hidden rounded-2xl shadow-sm border border-slate-100 dark:border-surface-700 transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2"
+  >
+    <a [routerLink]="['/product', product().id]" class="absolute inset-0">
+      <img
+        #productImage
+        [ngSrc]="product().imageUrl"
+        fill
+        [alt]="product().name"
+        class="object-cover transition-transform duration-500 group-hover:scale-105 mix-blend-multiply dark:mix-blend-normal p-4"
+        (error)="$any($event.target).classList.add('img-error')"
+      />
+      <div
+        class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
+        style="display: none"
+      >
+        <i class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-2xl"></i>
+      </div>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      ></div>
+    </a>
+
+    <!-- Category Badge -->
+    <span
+      data-testid="product-category"
+      class="absolute top-4 left-4 bg-white/90 dark:bg-black/90 backdrop-blur-sm text-[9px] font-bold uppercase tracking-widest text-slate-800 dark:text-white px-3 py-1.5 rounded-full shadow-sm pointer-events-none group-hover:translate-y-[-2px] transition-transform"
+    >
+      {{ product().category }}
+    </span>
+
+    <!-- Discount Badge -->
+    @if (discountPercent) {
+      <span
+        class="absolute bottom-4 left-4 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md z-10 flex items-center gap-1"
+      >
+        <i class="fa-solid fa-tag text-[8px]"></i> -{{ discountPercent }}% OFF
+      </span>
+    }
+
+    <!-- Action Buttons (visible on hover desktop, always on mobile) -->
+    <div
+      class="absolute top-3 right-3 flex flex-col gap-2 transition-all duration-300 opacity-100 md:translate-x-2 md:opacity-0 md:group-hover:translate-x-0 md:group-hover:opacity-100"
+    >
+      <!-- Wishlist -->
+      <button
+        (click)="toggleWishlist()"
+        class="w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 backdrop-blur-sm border"
+        [class.bg-red-500]="isInWishlist"
+        [class.border-red-500]="isInWishlist"
+        [class.text-white]="isInWishlist"
+        [class.bg-white]="!isInWishlist"
+        [class.dark:bg-surface-800]="!isInWishlist"
+        [class.border-slate-200]="!isInWishlist"
+        [class.dark:border-surface-600]="!isInWishlist"
+        [class.text-slate-500]="!isInWishlist"
+        [attr.aria-label]="isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+      >
+        <i
+          [class.fa-solid]="isInWishlist"
+          [class.fa-regular]="!isInWishlist"
+          class="fa-heart text-sm"
+        ></i>
+      </button>
+
+      <!-- Quick View -->
+      <button
+        (click)="quickView.emit(product())"
+        class="w-10 h-10 rounded-full bg-white dark:bg-surface-800 backdrop-blur-sm border border-slate-200 dark:border-surface-600 shadow-md flex items-center justify-center text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+        aria-label="Vista rápida"
+      >
+        <i class="fa-regular fa-eye text-sm"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex flex-col grow px-2">
+    <!-- Name + Price -->
+    <div class="flex justify-between items-start gap-4 mb-2">
+      <a [routerLink]="['/product', product().id]" class="block flex-1 min-w-0">
+        <h3
+          class="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors line-clamp-2"
+        >
+          {{ product().name }}
+        </h3>
+      </a>
+      <div class="shrink-0 text-right">
+        <span class="text-lg font-black text-slate-900 dark:text-white tracking-tighter">
+          {{ '$' }}{{ product().price.toFixed(2) }}
+        </span>
+        @if (product().originalPrice && product().originalPrice! > product().price) {
+          <span class="block text-xs text-slate-400 line-through font-medium">
+            {{ '$' }}{{ product().originalPrice!.toFixed(2) }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Star Rating mini -->
+    <div class="mb-3">
+      <app-star-rating
+        [value]="avgRating"
+        size="sm"
+        [reviewCount]="reviewCount"
+        [showCount]="true"
+      />
+    </div>
+
+    <p
+      class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-5 grow font-medium leading-relaxed"
+    >
+      {{ product().description }}
+    </p>
+
+    <!-- CTA Button -->
+    <div class="mt-auto">
+      @if (product().stock > 0) {
+        <button
+          #addBtn
+          (click)="onAddToCart(addBtn)"
+          [disabled]="isAdding()"
+          class="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center border focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+          [class.border-slate-200]="!isAdding()"
+          [class.dark:border-surface-600]="!isAdding()"
+          [class.text-slate-700]="!isAdding()"
+          [class.dark:text-slate-300]="!isAdding()"
+          [class.bg-white]="!isAdding()"
+          [class.dark:bg-surface-800]="!isAdding()"
+          [class.hover:bg-accent-600]="!isAdding()"
+          [class.hover:border-accent-600]="!isAdding()"
+          [class.hover:text-white]="!isAdding()"
+          [class.dark:hover:bg-accent-500]="!isAdding()"
+          [class.dark:hover:border-accent-500]="!isAdding()"
+          [class.dark:hover:text-white]="!isAdding()"
+          [class.shadow-sm]="!isAdding()"
+          [class.hover:shadow-md]="!isAdding()"
+          [class.hover:-translate-y-0.5]="!isAdding()"
+          [class.bg-accent-600]="isAdding()"
+          [class.dark:bg-accent-500]="isAdding()"
+          [class.text-white]="isAdding()"
+          [class.border-accent-600]="isAdding()"
+          [class.dark:border-accent-500]="isAdding()"
+        >
+          @if (!isAdding()) {
+            Añadir al Carrito
+          } @else {
+            <span class="flex items-center gap-2">Añadido <i class="fa-solid fa-check"></i></span>
+          }
+        </button>
+      } @else {
+        <div
+          class="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest text-center border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-900 text-slate-400 dark:text-surface-500 cursor-not-allowed"
+        >
+          Agotado
+        </div>
+      }
+    </div>
+  </div>
+</div>

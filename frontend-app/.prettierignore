@@ -1,0 +1,8 @@
+# Dependencias y artefactos (no se formatean)
+node_modules
+dist
+coverage
+.angular
+out-tsc
+# Lockfile generado por npm
+package-lock.json

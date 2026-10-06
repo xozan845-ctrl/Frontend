@@ -1,0 +1,75 @@
+<div
+  class="min-h-screen bg-slate-50 dark:bg-surface-900 py-24 px-4 transition-colors duration-300 flex items-center justify-center"
+>
+  <div
+    class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-[2rem] border border-slate-200 dark:border-surface-700 p-8 md:p-16 shadow-xl"
+  >
+    <div class="mb-12 border-b border-slate-200 dark:border-surface-700 pb-10">
+      <div
+        class="inline-block bg-accent-600 text-white font-bold uppercase tracking-widest text-[10px] px-4 py-2 rounded-full mb-8 shadow-md"
+      >
+        <i class="fa-solid fa-check mr-2"></i> Transacción Completada
+      </div>
+      <h1
+        class="text-5xl md:text-7xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading leading-none"
+      >
+        Orden<br />Confirmada
+      </h1>
+    </div>
+
+    <p class="text-base text-slate-500 dark:text-slate-400 font-medium mb-12 leading-relaxed">
+      Su solicitud ha sido ingresada al sistema. En breve recibirá un manifiesto detallado en su
+      correo electrónico con la información de rastreo.
+    </p>
+
+    <div class="grid grid-cols-2 gap-6 mb-16">
+      <div
+        class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
+      >
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+          >ID de Referencia</span
+        >
+        <span
+          class="text-xl font-black text-slate-900 dark:text-white font-mono bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 px-3 py-1 rounded inline-block min-w-[140px] text-center"
+          >{{ orderNumber }}</span
+        >
+      </div>
+      <div
+        class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
+      >
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+          >Estado</span
+        >
+        <span
+          class="text-xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter"
+          >Confirmada</span
+        >
+      </div>
+      <div
+        class="col-span-2 bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
+      >
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+          >ETA de Despacho</span
+        >
+        <span class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter"
+          >24 - 48 Horas Laborales</span
+        >
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        routerLink="/"
+        class="flex-1 bg-accent-600 text-white font-bold uppercase tracking-widest text-xs py-5 text-center rounded-xl shadow-lg shadow-accent-600/30 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all"
+      >
+        Retornar a Inicio
+      </a>
+      <a
+        routerLink="/shop"
+        class="flex-1 border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-900 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-widest text-xs py-5 text-center rounded-xl hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
+      >
+        Explorar Tienda
+      </a>
+    </div>
+  </div>
+</div>

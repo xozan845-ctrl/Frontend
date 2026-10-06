@@ -1,0 +1,138 @@
+<div class="relative w-full z-50" #container>
+  <!-- Search Input -->
+  <div class="relative group">
+    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <i
+        class="fa-solid fa-magnifying-glass text-slate-400 group-focus-within:text-accent-600 dark:group-focus-within:text-accent-400 transition-colors"
+      ></i>
+    </div>
+    <input
+      #searchInput
+      type="text"
+      [value]="searchTerm()"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (keydown)="onKeydown($event)"
+      class="w-full bg-white dark:bg-surface-800 border-2 border-slate-200 dark:border-surface-700 text-slate-900 dark:text-white text-sm rounded-2xl pl-11 pr-12 py-3.5 focus:outline-hidden focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-surface-500 shadow-sm"
+      placeholder="Buscar productos, categorías..."
+      autocomplete="off"
+      role="combobox"
+      [attr.aria-expanded]="isOpen()"
+      aria-controls="search-dropdown"
+      aria-haspopup="listbox"
+    />
+
+    @if (searchTerm().length > 0) {
+      <button
+        (click)="clear()"
+        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+        aria-label="Limpiar búsqueda"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    }
+  </div>
+
+  <!-- Dropdown Results -->
+  @if (
+    isOpen() &&
+    (matchedProducts().length > 0 || matchedCategories().length > 0 || searchTerm().length >= 2)
+  ) {
+    <div
+      id="search-dropdown"
+      role="listbox"
+      class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto"
+      style="animation: dropdownIn 0.15s ease both"
+    >
+      @if (matchedCategories().length > 0) {
+        <!-- Categories Section -->
+        <div class="px-4 pt-4 pb-2">
+          <p
+            class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-tag"></i> Categorías
+          </p>
+          <div class="flex flex-wrap gap-2">
+            @for (cat of matchedCategories(); track cat) {
+              <button
+                (click)="selectCategory(cat)"
+                class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-surface-700 border border-slate-200 dark:border-surface-600 text-slate-600 dark:text-slate-300 hover:bg-accent-600 hover:text-white hover:border-accent-600 transition-all"
+                role="option"
+                aria-selected="false"
+              >
+                {{ cat }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="border-t border-slate-100 dark:border-surface-700 mx-4 my-2"></div>
+      }
+
+      @if (matchedProducts().length > 0) {
+        <!-- Products Section -->
+        <div class="px-4 pb-4">
+          <p
+            class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-box"></i> Productos
+          </p>
+          <div class="flex flex-col gap-1">
+            @for (product of matchedProducts(); track product.id; let i = $index) {
+              <a
+                [routerLink]="['/product', product.id]"
+                (click)="close()"
+                role="option"
+                [attr.aria-selected]="focusedIndex() === i"
+                [class.bg-slate-50]="focusedIndex() === i"
+                [class.dark:bg-surface-700]="focusedIndex() === i"
+                class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors group cursor-pointer"
+              >
+                <div
+                  class="w-10 h-10 bg-slate-100 dark:bg-surface-900 rounded-lg overflow-hidden shrink-0 flex items-center justify-center relative"
+                >
+                  <img
+                    [src]="product.imageUrl"
+                    [alt]="product.name"
+                    class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal p-1"
+                    (error)="$any($event.target).classList.add('img-error')"
+                  />
+                  <div
+                    class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-900"
+                    style="display: none"
+                  >
+                    <i class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-xs"></i>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p
+                    class="text-sm font-bold text-slate-800 dark:text-white line-clamp-1 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors"
+                    [innerHTML]="highlightTerm(product.name)"
+                  ></p>
+                  <p
+                    class="text-[10px] font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
+                  >
+                    {{ product.category }}
+                  </p>
+                </div>
+                <span class="text-sm font-black text-slate-900 dark:text-white shrink-0">
+                  {{ '$' }}{{ product.price.toFixed(2) }}
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+      }
+
+      @if (matchedProducts().length === 0 && matchedCategories().length === 0) {
+        <div class="px-6 py-8 text-center">
+          <i
+            class="fa-solid fa-magnifying-glass text-2xl text-slate-300 dark:text-surface-600 mb-2 block"
+          ></i>
+          <p class="text-sm font-bold text-slate-500 dark:text-slate-400">
+            Sin resultados para "{{ searchTerm() }}"
+          </p>
+        </div>
+      }
+    </div>
+  }
+</div>

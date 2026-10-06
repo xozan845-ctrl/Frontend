@@ -1,0 +1,16 @@
+<div class="app-layout">
+  <app-navbar />
+
+  <main class="main-content">
+    <app-pwa-install-banner />
+    <div class="page-transition" style="animation: pageFadeIn 0.3s ease both">
+      <router-outlet />
+    </div>
+  </main>
+
+  <app-footer />
+</div>
+
+<app-cart-sidebar />
+<app-toast />
+<app-floating-support />

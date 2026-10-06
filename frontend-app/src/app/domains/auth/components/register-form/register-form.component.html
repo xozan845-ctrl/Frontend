@@ -1,0 +1,126 @@
+<div
+  class="flex justify-center items-center min-h-[70vh] p-16 bg-gradient-to-b from-white to-slate-50 dark:from-surface-900 dark:to-surface-800 transition-colors duration-300"
+>
+  <div
+    class="w-full max-w-md bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-[2rem] p-10 shadow-xl transition-colors duration-300"
+  >
+    <h2
+      class="text-4xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading mb-1 leading-none"
+    >
+      Registro
+    </h2>
+    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-10">
+      Crear nueva cuenta
+    </p>
+
+    @if (authStore.error()) {
+      <div
+        class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 p-4 mb-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest"
+      >
+        <p>{{ authStore.error() }}</p>
+        <button
+          (click)="authStore.clearError()"
+          class="text-red-500 hover:text-red-600 text-xl leading-none bg-transparent border-none cursor-pointer"
+        >
+          &times;
+        </button>
+      </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+          >Nombre Completo</label
+        >
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Juan Pérez"
+          class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all"
+          [class.border-red-400]="isFieldInvalid('name')"
+        />
+        @if (isFieldInvalid('name')) {
+          <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+            >El nombre es obligatorio</span
+          >
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="email" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+          >Correo Electrónico</label
+        >
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+          class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all"
+          [class.border-red-400]="isFieldInvalid('email')"
+        />
+        @if (isFieldInvalid('email')) {
+          <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+            >Ingresa un correo electrónico válido</span
+          >
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+          >Contraseña</label
+        >
+        <div class="relative">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all pr-12"
+            [class.border-red-400]="isFieldInvalid('password')"
+          />
+          <button
+            type="button"
+            (click)="showPassword.set(!showPassword())"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            aria-label="Mostrar/ocultar contraseña"
+          >
+            @if (showPassword()) {
+              <i class="fa-solid fa-eye-slash text-lg"></i>
+            } @else {
+              <i class="fa-solid fa-eye text-lg"></i>
+            }
+          </button>
+        </div>
+        @if (isFieldInvalid('password')) {
+          <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+            >La contraseña debe tener al menos 6 caracteres</span
+          >
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid || authStore.loading()"
+        class="w-full bg-accent-600 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-accent-600/30 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg mt-2"
+      >
+        @if (authStore.loading()) {
+          Registrando usuario...
+        } @else {
+          Registrar Cuenta
+        }
+      </button>
+    </form>
+
+    <div
+      class="mt-8 text-center text-xs font-bold text-slate-500 border-t border-slate-200 dark:border-surface-700 pt-6"
+    >
+      ¿Ya tienes una cuenta?
+      <a
+        routerLink="/login"
+        class="text-slate-900 dark:text-white hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-black"
+        >Inicia sesión aquí</a
+      >
+    </div>
+  </div>
+</div>

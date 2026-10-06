@@ -1,0 +1,49 @@
+import { Component, inject, computed, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { ProductStore } from '../products/state/product.store';
+import { CartStore } from '../cart/state/cart.store';
+import { ProductCardComponent } from '../products/components/product-card/product-card.component';
+import { SkeletonLoaderComponent } from '../../shared/ui/skeleton/skeleton-loader.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+import { SeoService } from '../../shared/services/seo.service';
+import { Product } from '../products/models/product.model';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [
+    RouterLink,
+    ProductCardComponent,
+    SkeletonLoaderComponent,
+    ScrollRevealDirective,
+    EmptyStateComponent,
+  ],
+  templateUrl: './home.component.html',
+})
+export class HomeComponent implements OnInit {
+  readonly productStore = inject(ProductStore);
+  readonly cartStore = inject(CartStore);
+  private readonly seoService = inject(SeoService);
+
+  featuredProducts = computed(() => this.productStore.products().slice(0, 4));
+
+  ngOnInit() {
+    this.seoService.setPage(
+      'Inicio',
+      'Hardware premium y tecnología sin concesiones para profesionales.',
+    );
+    if (this.productStore.products().length === 0) {
+      this.productStore.loadProducts();
+    }
+  }
+
+  onAddToCart(product: Product) {
+    this.cartStore.addItem(product);
+  }
+
+  retryLoad() {
+    this.productStore.loadProducts();
+  }
+}
+export default HomeComponent;
