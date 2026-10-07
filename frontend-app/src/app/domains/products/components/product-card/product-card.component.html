@@ -34,11 +34,11 @@
     </span>
 
     <!-- Discount Badge -->
-    @if (discountPercent) {
+    @if (discountPercent()) {
       <span
         class="absolute bottom-4 left-4 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md z-10 flex items-center gap-1"
       >
-        <i class="fa-solid fa-tag text-[8px]"></i> -{{ discountPercent }}% OFF
+        <i class="fa-solid fa-tag text-[8px]"></i> -{{ discountPercent() }}% OFF
       </span>
     }
 
@@ -50,19 +50,19 @@
       <button
         (click)="toggleWishlist()"
         class="w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 backdrop-blur-sm border"
-        [class.bg-red-500]="isInWishlist"
-        [class.border-red-500]="isInWishlist"
-        [class.text-white]="isInWishlist"
-        [class.bg-white]="!isInWishlist"
-        [class.dark:bg-surface-800]="!isInWishlist"
-        [class.border-slate-200]="!isInWishlist"
-        [class.dark:border-surface-600]="!isInWishlist"
-        [class.text-slate-500]="!isInWishlist"
-        [attr.aria-label]="isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+        [class.bg-red-500]="isInWishlist()"
+        [class.border-red-500]="isInWishlist()"
+        [class.text-white]="isInWishlist()"
+        [class.bg-white]="!isInWishlist()"
+        [class.dark:bg-surface-800]="!isInWishlist()"
+        [class.border-slate-200]="!isInWishlist()"
+        [class.dark:border-surface-600]="!isInWishlist()"
+        [class.text-slate-500]="!isInWishlist()"
+        [attr.aria-label]="isInWishlist() ? 'Quitar de favoritos' : 'Añadir a favoritos'"
       >
         <i
-          [class.fa-solid]="isInWishlist"
-          [class.fa-regular]="!isInWishlist"
+          [class.fa-solid]="isInWishlist()"
+          [class.fa-regular]="!isInWishlist()"
           class="fa-heart text-sm"
         ></i>
       </button>
@@ -104,9 +104,9 @@
     <!-- Star Rating mini -->
     <div class="mb-3">
       <app-star-rating
-        [value]="avgRating"
+        [value]="avgRating()"
         size="sm"
-        [reviewCount]="reviewCount"
+        [reviewCount]="reviewCount()"
         [showCount]="true"
       />
     </div>

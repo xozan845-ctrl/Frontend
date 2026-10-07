@@ -4,10 +4,14 @@ import {
   input,
   output,
   signal,
+  computed,
   HostListener,
   OnDestroy,
   effect,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../models/product.model';
@@ -35,7 +39,17 @@ export class QuickViewModalComponent implements OnDestroy {
 
   isAdding = signal(false);
 
+  private readonly addPulse = new Subject<void>();
+
   constructor() {
+    // Reinicia "añadido" tras 2 s sin `setTimeout` (R-PF-6).
+    this.addPulse
+      .pipe(
+        switchMap(() => timer(2000)),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.isAdding.set(false));
+
     effect(() => {
       if (this.product()) {
         document.body.style.overflow = 'hidden';
@@ -49,18 +63,17 @@ export class QuickViewModalComponent implements OnDestroy {
     document.body.style.overflow = '';
   }
 
-  get avgRating(): () => number {
-    return () => (this.product() ? this.reviewsStore.getAverageRating(this.product()!.id) : 0);
-  }
+  readonly avgRating = computed(() =>
+    this.product() ? this.reviewsStore.getAverageRating(this.product()!.id) : 0,
+  );
 
-  get reviewCount(): () => number {
-    return () =>
-      this.product() ? this.reviewsStore.getReviewsByProductId(this.product()!.id).length : 0;
-  }
+  readonly reviewCount = computed(() =>
+    this.product() ? this.reviewsStore.getReviewsByProductId(this.product()!.id).length : 0,
+  );
 
-  get isInWishlist(): () => boolean {
-    return () => (this.product() ? this.wishlistStore.isInWishlist(this.product()!.id) : false);
-  }
+  readonly isInWishlist = computed(() =>
+    this.product() ? this.wishlistStore.isInWishlist(this.product()!.id) : false,
+  );
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
@@ -79,7 +92,7 @@ export class QuickViewModalComponent implements OnDestroy {
     this.isAdding.set(true);
     this.cartStore.addItem(p);
     this.cartFlyService.fly(buttonEl, p.imageUrl);
-    setTimeout(() => this.isAdding.set(false), 2000);
+    this.addPulse.next();
   }
 
   toggleWishlist(): void {
