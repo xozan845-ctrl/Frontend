@@ -102,4 +102,22 @@ describe('AuthStore', () => {
 
     expect(store.error()).toBeNull();
   });
+
+  it('debe registrar y autenticar al usuario', async () => {
+    const store = setup();
+
+    store.register({ name: 'Nuevo', email: 'nuevo@tienda.com', password: 'secreto1' });
+
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+    expect(repo.register).toHaveBeenCalled();
+  });
+
+  it('no debe renovar cuando no hay refresh token en memoria', async () => {
+    const store = setup();
+
+    store.refreshSession();
+
+    await vi.waitFor(() => expect(store.loading()).toBe(false));
+    expect(repo.refresh).not.toHaveBeenCalled();
+  });
 });
