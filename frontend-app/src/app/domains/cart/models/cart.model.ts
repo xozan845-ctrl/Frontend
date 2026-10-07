@@ -1,4 +1,4 @@
-import { Product } from '../../products/models/product.model';
+import type { Product } from '../../products/public-api';
 
 export interface CartItem {
   product: Product;

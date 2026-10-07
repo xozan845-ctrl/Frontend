@@ -2,12 +2,11 @@ import { Component, inject, signal, OnDestroy, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { WishlistStore } from './state/wishlist.store';
-import { CartStore } from '../cart/state/cart.store';
+import { CartStore } from '../cart/public-api';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { StarRatingComponent } from '../../shared/ui/star-rating/star-rating.component';
-import { ReviewsStore } from '../products/state/reviews.store';
-import { QuickViewModalComponent } from '../products/components/quick-view-modal/quick-view-modal.component';
-import { Product } from '../products/models/product.model';
+import { Product, ReviewsStore } from '../products/public-api';
+import { QuickViewModalComponent } from '../products/public-ui';
 import { SeoService } from '../../shared/services/seo.service';
 
 @Component({

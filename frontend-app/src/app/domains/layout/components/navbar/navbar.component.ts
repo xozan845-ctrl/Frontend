@@ -1,9 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
-import { AuthStore } from '../../../auth/state/auth.store';
-import { CartStore } from '../../../cart/state/cart.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist.store';
+import { AuthStore } from '../../../auth/public-api';
+import { CartStore } from '../../../cart/public-api';
+import { WishlistStore } from '../../../wishlist/public-api';
 import { StoreConfigService } from '../../../../shared/services/store-config.service';
 
 @Component({

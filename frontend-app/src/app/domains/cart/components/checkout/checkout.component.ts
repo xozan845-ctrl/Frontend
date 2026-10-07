@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage, NgClass } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
-import { AuthStore } from '../../../auth/state/auth.store';
+import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../shared/ui/notification/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { SeoService } from '../../../../shared/services/seo.service';
