@@ -80,7 +80,7 @@ El área `test/` es el ejemplo canónico al que apuntan las demás.
 
 ## Estado actual (resumen)
 
-El repo tiene **51 archivos / 251 tests**, cobertura global 94/92/97/94, CI en
+El repo tiene **51 archivos / 254 tests**, cobertura global 94/92/95/94, CI en
 **6 jobs** (`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 8
 flujos** (Playwright) y pipeline de despliegue (Docker + nginx + CSP). La
 **estructura enterprise** (`core/ · shared/ · layout/ · features/`) está

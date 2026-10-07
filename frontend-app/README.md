@@ -28,8 +28,10 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 | :----------------- | :----------------------------------------------------------------- |
 | **Angular 22**     | Framework principal (standalone components, lazy loading, signals) |
 | **NgRx Signals**   | Gestión de estado reactiva (`@ngrx/signals`)                       |
-| **Tailwind CSS 3** | Estilos utility-first con tokens propios (`surface`, `accent`)     |
+| **Tailwind CSS 4** | Estilos utility-first con tokens propios (`surface`, `accent`)     |
 | **Vitest**         | Runner de pruebas unitarias y de componentes                       |
+| **Playwright**     | Pruebas E2E de los flujos críticos                                 |
+| **ESLint**         | Lint (incluye `templateAccessibility`)                             |
 | **Prettier**       | Formato de código (`.prettierrc`)                                  |
 | **TypeScript 6**   | Tipado estático                                                    |
 
@@ -45,8 +47,8 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 ## ⚡ Instalación y Desarrollo
 
 ```bash
-git clone https://github.com/hnslmejia-sudo/frontend-ecomerce.git
-cd frontend-ecomerce/frontend-app
+git clone https://github.com/xozan845-ctrl/Frontend.git
+cd Frontend/frontend-app
 npm install
 npm start            # http://localhost:4200
 ```
@@ -58,7 +60,7 @@ La aplicación se recarga al modificar los archivos fuente.
 La URL base y los endpoints se configuran en
 [`src/environments/environment.ts`](./src/environments/environment.ts) y
 [`environment.prod.ts`](./src/environments/environment.prod.ts) a través de
-`apiConfig` (`src/app/shared/constants/api.config.ts`). Con `apiUrl: ''` y
+`apiConfig` (`src/app/core/config/api.config.ts`). Con `apiUrl: ''` y
 `dataSource: 'api'`, la app avisa si falta la configuración; con
 `dataSource: 'mock'` usa datos de prueba.
 
@@ -69,9 +71,12 @@ La URL base y los endpoints se configuran en
 | Comando                             | Descripción                                          |
 | :---------------------------------- | :--------------------------------------------------- |
 | `npm start`                         | Servidor de desarrollo en `http://localhost:4200`    |
-| `npm run build`                     | Build de producción en `dist/frontend-app/`          |
+| `npm run build`                     | Build de producción en `dist/frontend-app/browser/`  |
 | `npm run watch`                     | Build de desarrollo con watch                        |
 | `npm test`                          | Pruebas unitarias/componentes con Vitest (`ng test`) |
+| `npm run e2e`                       | Pruebas E2E con Playwright                           |
+| `npm run lint`                      | Lint con ESLint                                      |
+| `npm run format` / `format:check`   | Formatea / verifica formato con Prettier             |
 | `npm run patch` / `minor` / `major` | Sube la versión y publica el tag semver              |
 
 ---
@@ -79,7 +84,7 @@ La URL base y los endpoints se configuran en
 ## 📁 Estructura del Proyecto
 
 > **Estructura enterprise** (`core/` · `shared/` · `layout/` · `features/`,
-> ADR-12). Migración en curso desde el feature-first previo (`domains/`).
+> ADR-12) **aplicada**.
 
 ```text
 src/
@@ -87,12 +92,11 @@ src/
 └── app/
     ├── core/                     # Infraestructura transversal · SIN UI · no depende de features
     │   ├── config/               # API config (endpoints, dataSource)
+    │   ├── constants/            # company info
     │   ├── models/               # helpers genéricos de respuesta de API
     │   └── services/             # SEO, configuración de tienda, notificaciones
     ├── shared/                   # Presentación/utilidades reutilizables (sin negocio)
-    │   ├── constants/            # company info
     │   ├── directives/           # scroll-reveal, focus-trap
-    │   ├── pipes/                # (si aplica)
     │   └── ui/                   # componentes de UI reutilizables
     ├── layout/                   # Chrome de la app
     │   ├── navbar/

@@ -5,8 +5,9 @@
 > [`rules/git/00-flujo.md`](./rules/git/00-flujo.md) (`R-GB-*`). Este guion es la
 > **lista de tareas** para dejar el despliegue acorde a esa normativa.
 >
-> **Estado:** el repo aún no tiene `Dockerfile`, `nginx.conf` ni configuración de
-> Dockploy versionada. Los pasos 0–3 son el primer PR de despliegue.
+> **Estado:** el repo ya incluye `Dockerfile` (multi-stage, `node:22-alpine` →
+> `nginx:1.27-alpine`) y `nginx.conf` versionados; los pasos restantes son la
+> configuración del proyecto/environment en Dockploy y el dominio/HTTPS.
 
 ## 0. Objetivo
 
@@ -22,7 +23,7 @@
 
 - Acceso a la UI de Dockploy del VPS y a su administrador.
 - Token/credencial de GitHub que Dockploy usará para clonar **este repo**
-  (`hnslmejia-sudo/frontend-ecomerce`).
+  (`xozan845-ctrl/Frontend`).
 - Node/npm local para construir el artefacto (`Node 22`, `npm ci`).
 
 ## 2. Proyecto Dockploy propio

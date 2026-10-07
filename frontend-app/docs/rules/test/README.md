@@ -6,7 +6,7 @@ requisito) y se mantiene: **el test valida el requisito, no la implementación**
 
 El stack de pruebas es **Vitest** con `@angular/build:unit-test` y **Angular
 TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
-(22 archivos / 110 tests) y las deudas están en
+(51 archivos / 254 tests) y las deudas están en
 [`../_meta/AUDIT.md`](../_meta/AUDIT.md).
 
 ## Archivos
