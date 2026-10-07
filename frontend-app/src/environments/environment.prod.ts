@@ -7,5 +7,7 @@ export const environment = {
   apiConfig: {
     ...DEFAULT_API_CONFIG,
     dataSource: 'api',
+    // Tienda publicada en Core Engine que consume el storefront.
+    storeId: '',
   } as ApiConfiguration,
 };

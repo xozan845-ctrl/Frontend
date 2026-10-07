@@ -104,6 +104,7 @@ export class AuthService implements AuthRepository {
       return of({
         user: mockUser,
         token: 'mock-jwt-token-xyz-123456789',
+        refreshToken: 'mock-refresh-token-xyz',
       }).pipe(delay(600));
     } else {
       return throwError(
@@ -121,6 +122,7 @@ export class AuthService implements AuthRepository {
     return of({
       user: mockUser,
       token: 'mock-jwt-token-xyz-123456789',
+      refreshToken: 'mock-refresh-token-xyz',
     }).pipe(delay(600));
   }
 }

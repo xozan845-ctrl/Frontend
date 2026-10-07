@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -6,11 +7,13 @@ import { CartStore } from '../../state/cart.store';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
+import { Product } from '../../../products/models/product.model';
 import { CheckoutComponent } from './checkout.component';
 
 describe('CheckoutComponent', () => {
+  const cartItems = signal<{ product: Product; quantity: number }[]>([]);
   const cartStore = {
-    items: () => [],
+    items: cartItems,
     totalPrice: () => 0,
     finalPrice: () => 0,
     discountAmount: () => 0,
@@ -96,35 +99,30 @@ describe('CheckoutComponent', () => {
     cartStore.totalPrice = () => 0;
   });
 
-  it('debe enmascarar la tarjeta y navegar al confirmar una orden', async () => {
+  it('debe enviar la orden con las ofertas del carrito y navegar a confirmación', async () => {
     const fixture = await setup();
     const component = fixture.componentInstance;
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    component.shippingForm.setValue({
-      fullName: 'Ana Pérez',
-      email: 'ana@tienda.com',
-      address: 'Calle Principal 123',
-      city: 'Monterrey',
-      zipCode: '64000',
-      phone: '8112345678',
-    });
-    component.paymentForm.setValue({
-      cardName: 'Ana Pérez',
-      cardNumber: '4111111111111234',
-      expiry: '12/30',
-      cvv: '123',
-    });
+    cartItems.set([
+      {
+        product: {
+          id: 'of-1',
+          name: 'Teclado',
+          description: 'SKU SKU-TEC',
+          price: 1380,
+          imageUrl: '',
+          category: 'General',
+          stock: 10,
+        },
+        quantity: 2,
+      },
+    ]);
 
     component.submitOrder();
 
-    expect(orderRepo.createOrder).toHaveBeenCalledWith(
-      expect.objectContaining({
-        payment: expect.objectContaining({
-          cardNumber: '****-****-****-1234',
-          last4: '1234',
-        }),
-      }),
-    );
+    expect(orderRepo.createOrder).toHaveBeenCalledWith({
+      items: [{ ofertaId: 'of-1', quantity: 2 }],
+    });
     expect(cartStore.clearCart).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith(['/checkout/confirmation']);
   });

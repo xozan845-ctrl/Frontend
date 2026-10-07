@@ -12,15 +12,23 @@ export function adaptOrderResponse(raw: unknown, fallbackTotal: number): OrderRe
   const r = raw as Record<string, unknown>;
   const rawData = r['data'];
   const data = rawData && typeof rawData === 'object' ? (rawData as Record<string, unknown>) : r;
+  const id = (data['id'] ?? data['_id'] ?? `ord-${Date.now()}`) as string | number;
+  const totalCents = data['total_cents'];
+  const total =
+    typeof totalCents === 'number'
+      ? totalCents / 100
+      : Number(data['total'] ?? data['amount'] ?? fallbackTotal);
 
   return {
-    id: (data['id'] ?? data['_id'] ?? `ord-${Date.now()}`) as string | number,
+    id,
     orderNumber: String(
-      data['orderNumber'] ?? data['order_number'] ?? `ORD-${Date.now().toString().slice(-6)}`,
+      data['orderNumber'] ?? data['order_number'] ?? `ORD-${String(id).slice(-6)}`,
     ),
-    status: (data['status'] as OrderResponse['status']) || 'confirmed',
-    total: Number(data['total'] ?? data['amount'] ?? fallbackTotal),
-    createdAt: String(data['createdAt'] ?? data['created_at'] ?? new Date().toISOString()),
+    status: String(data['estado'] ?? data['status'] ?? 'creada'),
+    total,
+    createdAt: String(
+      data['creado_en'] ?? data['createdAt'] ?? data['created_at'] ?? new Date().toISOString(),
+    ),
   };
 }
 
