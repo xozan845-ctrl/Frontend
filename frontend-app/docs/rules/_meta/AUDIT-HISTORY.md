@@ -123,3 +123,34 @@
   (`R-CX-6`), componentes con lógica (`R-CP-*`), focus trap en modales
   (`R-AC-3`) y warnings `NG02952`/`R-E-9`.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 5 — Cierre de las deudas de la 4ª (2026-10-07)
+
+- **Alcance:** corregir las deudas registradas en la 4ª auditoría mediante PRs
+  atómicas adicionales, todas con checks en verde y merge `--rebase`.
+- **Corregido:**
+  - `R-SO-6` — `product-card`/`quick-view-modal` pasan a presentacionales puros
+    (input/output, sin stores de dominio); los contenedores aportan los datos.
+  - `R-CX-6` — entrypoints públicos por dominio (`public-api.ts`/`public-ui.ts`);
+    **0** imports a `components/`, `state/` o `models/` de otro dominio.
+  - `R-PF-4/R-PF-6` — derivados en `computed` y temporizadores reactivos.
+  - `R-AC-3` — `focus-trap.directive` reutilizable en `quick-view-modal` y
+    `cart-sidebar`.
+  - `R-PF-2/R-E-9` — `aspect-square` + `priority` estático para LCP + preconnect;
+    E2E falla ante **error o warning** de consola; **0** `NG0295x`.
+  - `R-AR-3/R-SO-5` — stores y `checkout` dependen solo del puerto (sin fallback
+    a la clase concreta).
+  - `R-CP-*` — specs de todos los componentes con lógica (dominios y
+    `shared/ui`); PWA fuera de alcance por decisión.
+  - `R-NC-2` — retirados los `styles: []` vacíos de los componentes.
+- **Resultado:**
+  - ✅ `npm run build` — initial **477.07 kB**; SW generado.
+  - ✅ `npm test` — **50 archivos / 243 tests**; cobertura **94.94 / 91.58 / 97.46 / 94.25**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 8/8 sin warnings**.
+  - ✅ CI 6/6 jobs requeridos en verde.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** `pwa-install-banner` sin spec (fuera de alcance por decisión). No
+  quedan deudas funcionales.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
