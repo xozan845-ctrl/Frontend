@@ -16,11 +16,12 @@ import { RouterLink } from '@angular/router';
 import { Product } from '../../models/product.model';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
+import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 
 @Component({
   selector: 'app-quick-view-modal',
   standalone: true,
-  imports: [NgOptimizedImage, RouterLink, StarRatingComponent],
+  imports: [NgOptimizedImage, RouterLink, StarRatingComponent, FocusTrapDirective],
   templateUrl: './quick-view-modal.component.html',
   styleUrl: './quick-view-modal.component.css',
 })
