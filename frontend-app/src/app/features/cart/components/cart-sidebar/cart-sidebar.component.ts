@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgClass, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
@@ -8,7 +8,7 @@ import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.dir
 @Component({
   selector: 'app-cart-sidebar',
   standalone: true,
-  imports: [NgClass, NgOptimizedImage, EmptyStateComponent, FocusTrapDirective],
+  imports: [NgOptimizedImage, EmptyStateComponent, FocusTrapDirective],
   templateUrl: './cart-sidebar.component.html',
   styleUrl: './cart-sidebar.component.css',
 })
