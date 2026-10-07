@@ -121,3 +121,31 @@ export function adaptSingleProductFromBackend(response: unknown): Product {
   const item = unwrapApiSingleResponse(response);
   return adaptProductFromBackend(item);
 }
+
+/**
+ * Ofertas del storefront (Core Engine `GET /tiendas/:id` → `{ tienda, ofertas }`).
+ * El `id` de la oferta es el `oferta_id` que exige el checkout.
+ */
+export function adaptOfertaListFromBackend(response: unknown): Product[] {
+  if (!response || typeof response !== 'object') return [];
+  const ofertas = (response as Record<string, unknown>)['ofertas'];
+  if (!Array.isArray(ofertas)) return [];
+  return ofertas.map(adaptOfertaFromBackend);
+}
+
+export function adaptOfertaFromBackend(raw: unknown): Product {
+  const oferta = (raw ?? {}) as Record<string, unknown>;
+  const rawPrice = oferta['precio_venta'] ?? oferta['precio_base'] ?? 0;
+  const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(String(rawPrice)) || 0;
+  const sku = typeof oferta['sku'] === 'string' ? oferta['sku'] : '';
+
+  return {
+    id: (oferta['id'] ?? `of-${Date.now()}`) as string | number,
+    name: typeof oferta['producto_nombre'] === 'string' ? oferta['producto_nombre'] : 'Producto',
+    description: sku ? `SKU ${sku}` : '',
+    price,
+    imageUrl: DEFAULT_FALLBACK_IMAGE,
+    category: 'General',
+    stock: Number(oferta['stock'] ?? 0),
+  };
+}

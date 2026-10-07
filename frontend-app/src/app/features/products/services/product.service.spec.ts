@@ -12,6 +12,7 @@ describe('ProductService', () => {
 
   const originalApiUrl = environment.apiUrl;
   const originalDataSource = environment.apiConfig.dataSource;
+  const originalStoreId = environment.apiConfig.storeId;
 
   const build = () => {
     TestBed.configureTestingModule({
@@ -21,11 +22,15 @@ describe('ProductService', () => {
     httpMock = TestBed.inject(HttpTestingController);
   };
 
-  beforeEach(() => TestBed.resetTestingModule());
+  beforeEach(() => {
+    environment.apiConfig.storeId = '';
+    TestBed.resetTestingModule();
+  });
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
     environment.apiConfig.dataSource = originalDataSource;
+    environment.apiConfig.storeId = originalStoreId;
   });
 
   it('debe pedir los productos por GET y adaptar la respuesta', () => {
@@ -171,5 +176,28 @@ describe('ProductService', () => {
     service.getCategories().subscribe({ error: (err: Error) => (error = err) });
 
     expect(error?.message).toContain('apiUrl no configurado');
+  });
+
+  it('debe listar las ofertas de la tienda configurada (storefront)', () => {
+    environment.apiUrl = 'https://api.test';
+    environment.apiConfig.storeId = 'tienda-1';
+    build();
+    let result: Product[] = [];
+
+    service.getProducts().subscribe((products) => (result = products));
+    httpMock.expectOne('https://api.test/tiendas/tienda-1').flush({
+      tienda: { id: 'tienda-1' },
+      ofertas: [
+        {
+          id: 'of-1',
+          producto_nombre: 'Teclado',
+          precio_venta: '1380.00',
+          stock: 10,
+          sku: 'SKU-TEC',
+        },
+      ],
+    });
+
+    expect(result[0]).toMatchObject({ id: 'of-1', name: 'Teclado', price: 1380, stock: 10 });
   });
 });

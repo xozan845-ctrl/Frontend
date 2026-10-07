@@ -6,17 +6,7 @@ import { CreateOrderPayload, OrderResponse } from '../models/order.model';
 import { environment } from '../../../../environments/environment';
 
 const payload: CreateOrderPayload = {
-  items: [{ productId: 1, name: 'Teclado', price: 50, quantity: 1 }],
-  shipping: {
-    fullName: 'Ana',
-    email: 'ana@tienda.com',
-    address: 'Calle 1',
-    city: 'Ciudad',
-    zipCode: '12345',
-    phone: '5555555555',
-  },
-  payment: { cardName: 'Ana', cardNumber: '****-****-****-1234', expiry: '12/30', last4: '1234' },
-  total: 50,
+  items: [{ ofertaId: 'of-1', quantity: 1 }],
 };
 
 describe('OrderService', () => {
@@ -48,9 +38,16 @@ describe('OrderService', () => {
     const request = httpMock.expectOne('https://api.test/orders');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toBe(payload);
-    request.flush({ id: 'o-1', orderNumber: 'ORD-1', status: 'confirmed', total: 50 });
+    request.flush({
+      id: 'o-1',
+      estado: 'creada',
+      total_cents: 5000,
+      creado_en: '2026-10-07T00:00:00Z',
+    });
 
-    expect(result?.orderNumber).toBe('ORD-1');
+    expect(result?.id).toBe('o-1');
+    expect(result?.total).toBe(50);
+    expect(result?.status).toBe('creada');
   });
 
   it('debe emitir un error cuando no hay apiUrl configurada', () => {

@@ -14,26 +14,21 @@ export interface PaymentDetails {
   cvv: string;
 }
 
-export interface OrderItem {
-  productId: string | number;
-  name: string;
-  price: number;
+export interface OrderItemRequest {
+  ofertaId: string | number;
   quantity: number;
 }
 
+/** Comando de creación de orden de Core Engine (`POST /orders`). */
 export interface CreateOrderPayload {
-  items: OrderItem[];
-  shipping: ShippingAddress;
-  payment: Omit<PaymentDetails, 'cvv'> & { last4: string };
-  total: number;
-  discountAmount?: number;
-  couponCode?: string | null;
+  items: OrderItemRequest[];
+  usarCarrito?: boolean;
 }
 
 export interface OrderResponse {
   id: string | number;
   orderNumber: string;
-  status: 'confirmed' | 'pending' | 'completed';
+  status: string;
   total: number;
   createdAt: string;
 }

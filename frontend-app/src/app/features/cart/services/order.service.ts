@@ -29,10 +29,10 @@ export class OrderService implements OrderRepository {
 
     return this.http
       .post<unknown>(this.apiUrl, payload)
-      .pipe(map((response) => adaptOrderResponse(response, payload.total)));
+      .pipe(map((response) => adaptOrderResponse(response, 0)));
   }
 
-  private mockOrderSuccess(payload: CreateOrderPayload): Observable<OrderResponse> {
-    return of(generateMockOrderResponse(payload.total)).pipe(delay(800));
+  private mockOrderSuccess(_payload: CreateOrderPayload): Observable<OrderResponse> {
+    return of(generateMockOrderResponse(0)).pipe(delay(800));
   }
 }

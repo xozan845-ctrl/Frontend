@@ -41,7 +41,7 @@ describe('order.adapter', () => {
 
       expect(order.orderNumber).toBe('ORD-888');
       expect(order.total).toBeCloseTo(99.9, 2);
-      expect(order.status).toBe('confirmed');
+      expect(order.status).toBe('creada');
     });
 
     it('debe usar el total de respaldo cuando la respuesta no lo trae', () => {

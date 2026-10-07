@@ -77,27 +77,11 @@ export class CheckoutComponent implements OnDestroy {
     this.isSubmitting.set(true);
     this.notificationService.showSuccess('Procesando pago...');
 
-    const pForm = this.paymentForm.getRawValue();
-    const rawCard = pForm.cardNumber.replace(/\s+/g, '');
-    const last4 = rawCard.slice(-4) || '0000';
-
     const payload: CreateOrderPayload = {
       items: this.cartStore.items().map((item) => ({
-        productId: item.product.id,
-        name: item.product.name,
-        price: item.product.price,
+        ofertaId: String(item.product.id),
         quantity: item.quantity,
       })),
-      shipping: this.shippingForm.getRawValue(),
-      payment: {
-        cardName: pForm.cardName,
-        cardNumber: `****-****-****-${last4}`,
-        expiry: pForm.expiry,
-        last4,
-      },
-      total: this.cartStore.finalPrice(),
-      discountAmount: this.cartStore.discountAmount(),
-      couponCode: this.cartStore.appliedCoupon(),
     };
 
     this.orderService

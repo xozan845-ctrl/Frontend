@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { Product } from '../models/product.model';
 import { MOCK_PRODUCTS } from '../mocks/product.mock';
 import {
+  adaptOfertaListFromBackend,
   adaptProductListFromBackend,
   adaptSingleProductFromBackend,
 } from '../adapters/product.adapter';
@@ -18,6 +19,8 @@ import { ProductRepository } from '../repositories/product.repository';
 export class ProductService implements ProductRepository {
   private readonly http = inject(HttpClient);
   private readonly endpoint = environment.apiConfig?.endpoints?.products || '/catalog/productos';
+  private readonly storefrontEndpoint = environment.apiConfig?.endpoints?.storefront || '/tiendas';
+  private readonly storeId = environment.apiConfig?.storeId || '';
   private readonly apiUrl = `${environment.apiUrl}${this.endpoint}`;
 
   getProducts(): Observable<Product[]> {
@@ -30,6 +33,12 @@ export class ProductService implements ProductRepository {
         () =>
           new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
       );
+    }
+
+    if (this.storeId) {
+      return this.http
+        .get<unknown>(`${environment.apiUrl}${this.storefrontEndpoint}/${this.storeId}`)
+        .pipe(map((response) => adaptOfertaListFromBackend(response)));
     }
 
     return this.http
@@ -48,6 +57,12 @@ export class ProductService implements ProductRepository {
       return throwError(
         () =>
           new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
+      );
+    }
+
+    if (this.storeId) {
+      return this.getProducts().pipe(
+        map((products) => products.find((p) => String(p.id) === String(id)) ?? products[0]),
       );
     }
 

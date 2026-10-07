@@ -4,6 +4,15 @@ import { test as base, expect, type Page } from '@playwright/test';
 // que el DOM esté listo en lugar de al evento `load` completo.
 const open = (page: Page, url: string) => page.goto(url, { waitUntil: 'domcontentloaded' });
 
+// Tras el guard, el catálogo/detalle/wishlist exigen sesión: iniciar sesión.
+const login = async (page: Page) => {
+  await open(page, '/login');
+  await page.locator('#email').fill('ana@tienda.com');
+  await page.locator('#password').fill('secreto1');
+  await page.getByRole('button', { name: 'Ingresar' }).click();
+  await page.waitForURL(/\/shop/, { timeout: 30_000 });
+};
+
 // R-E-9: cero errores o warnings de consola durante el flujo. El fixture es
 // `auto`, así que aplica a todas las pruebas y falla ante cualquier warning.
 const test = base.extend<{ consoleIssues: string[] }>({
@@ -26,7 +35,7 @@ const test = base.extend<{ consoleIssues: string[] }>({
 });
 
 test('R-E-1: el catálogo carga productos y filtra por categoría', async ({ page }) => {
-  await open(page, '/shop');
+  await login(page);
 
   const cards = page.locator('app-product-card');
   // El mock del frontend tiene 6 productos: 3 Electronics, 2 Fitness, 1 Accessories.
@@ -40,7 +49,7 @@ test('R-E-1: el catálogo carga productos y filtra por categoría', async ({ pag
 });
 
 test('R-E-2: el detalle de producto muestra el producto seleccionado', async ({ page }) => {
-  await open(page, '/shop');
+  await login(page);
   const name = (await page.locator('app-product-card h3').first().innerText()).trim();
 
   await page.locator('app-product-card h3').first().click();
@@ -50,7 +59,7 @@ test('R-E-2: el detalle de producto muestra el producto seleccionado', async ({ 
 });
 
 test('R-E-3: agregar al carrito actualiza el contador del navbar', async ({ page }) => {
-  await open(page, '/shop');
+  await login(page);
 
   await page.getByRole('button', { name: 'Añadir al Carrito' }).first().click();
 
@@ -82,7 +91,7 @@ test('R-E-5: login habilita el checkout', async ({ page }) => {
 });
 
 test('R-E-6: la wishlist persiste entre recargas', async ({ page }) => {
-  await open(page, '/shop');
+  await login(page);
 
   // Navegación intra-app al detalle y alta en la wishlist.
   await page.locator('app-product-card h3').first().click();
@@ -99,7 +108,7 @@ test('R-E-6: la wishlist persiste entre recargas', async ({ page }) => {
 });
 
 test('R-E-7: la búsqueda autocompleta ofrece el producto', async ({ page }) => {
-  await open(page, '/shop');
+  await login(page);
 
   await page.getByPlaceholder('Buscar productos, categorías...').fill('keyboard');
 
