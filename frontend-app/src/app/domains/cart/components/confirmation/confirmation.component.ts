@@ -7,7 +7,6 @@ import { SeoService } from '../../../../shared/services/seo.service';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './confirmation.component.html',
-  styles: [],
 })
 export class ConfirmationComponent implements OnDestroy {
   readonly orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);

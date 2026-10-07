@@ -9,7 +9,6 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
   standalone: true,
   imports: [NgOptimizedImage, EmptyStateComponent],
   templateUrl: './cart-view.component.html',
-  styles: [],
 })
 export class CartViewComponent {
   readonly cartStore = inject(CartStore);
