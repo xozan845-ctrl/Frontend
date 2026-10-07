@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { NotificationService } from '../../../../shared/ui/notification/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
+import { SeoService } from '../../../../shared/services/seo.service';
 import { OrderService } from '../../services/order.service';
 import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
@@ -18,15 +19,24 @@ import { CreateOrderPayload } from '../../models/order.model';
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnDestroy {
   readonly cartStore = inject(CartStore);
   readonly authStore = inject(AuthStore);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
+  private readonly seoService = inject(SeoService);
   private orderService: OrderRepository =
     inject(ORDER_REPOSITORY, { optional: true }) ?? inject(OrderService);
+
+  constructor() {
+    this.seoService.setPage('Checkout', 'Finaliza tu compra en Quantum Store.');
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
+  }
 
   currentStep = signal(1);
   isSubmitting = signal(false);
