@@ -5,7 +5,6 @@ import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { Product } from '../models/product.model';
 import { PRODUCT_REPOSITORY } from '../repositories/product.repository';
-import { ProductService } from '../services/product.service';
 import { NotificationService } from '../../../shared/ui/notification/notification.service';
 import { FILTER_CATEGORIES } from '../constants/categories.constants';
 
@@ -97,7 +96,7 @@ export const ProductStore = signalStore(
   withMethods(
     (
       store,
-      productRepo = inject(PRODUCT_REPOSITORY, { optional: true }) ?? inject(ProductService),
+      productRepo = inject(PRODUCT_REPOSITORY),
       notificationService = inject(NotificationService),
     ) => ({
       loadProducts: rxMethod<void>(

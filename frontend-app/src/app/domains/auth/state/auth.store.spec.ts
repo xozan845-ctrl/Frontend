@@ -37,7 +37,7 @@ describe('AuthStore', () => {
   });
 
   it('debe iniciar sin sesión', () => {
-    const store = TestBed.inject(AuthStore);
+    const store = setup();
 
     expect(store.isAuthenticated()).toBe(false);
     expect(store.user()).toBeNull();
@@ -96,7 +96,7 @@ describe('AuthStore', () => {
   });
 
   it('debe limpiar el error', () => {
-    const store = TestBed.inject(AuthStore);
+    const store = setup();
 
     store.clearError();
 

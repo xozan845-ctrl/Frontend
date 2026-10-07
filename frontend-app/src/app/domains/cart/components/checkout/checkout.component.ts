@@ -8,7 +8,6 @@ import { AuthStore } from '../../../auth/state/auth.store';
 import { NotificationService } from '../../../../shared/ui/notification/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { SeoService } from '../../../../shared/services/seo.service';
-import { OrderService } from '../../services/order.service';
 import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
 
@@ -27,8 +26,7 @@ export class CheckoutComponent implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
   private readonly seoService = inject(SeoService);
-  private orderService: OrderRepository =
-    inject(ORDER_REPOSITORY, { optional: true }) ?? inject(OrderService);
+  private readonly orderService: OrderRepository = inject(ORDER_REPOSITORY);
 
   constructor() {
     this.seoService.setPage('Checkout', 'Finaliza tu compra en Quantum Store.');

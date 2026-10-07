@@ -1,16 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 import { Navbar } from './navbar.component';
+import { AUTH_REPOSITORY } from '../../../auth/repositories/auth.repository';
+
+const authRepoStub = {
+  login: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  register: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  refresh: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  logout: () => of(true),
+};
 
 describe('Navbar', () => {
   let component: Navbar;
   let fixture: ComponentFixture<Navbar>;
 
   beforeEach(async () => {
+    sessionStorage.clear();
     await TestBed.configureTestingModule({
       imports: [Navbar],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: AUTH_REPOSITORY, useValue: authRepoStub }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Navbar);
