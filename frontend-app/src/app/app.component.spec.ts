@@ -1,13 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 import { App } from './app.component';
+import { AUTH_REPOSITORY } from './domains/auth/repositories/auth.repository';
+
+const authRepoStub = {
+  login: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  register: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  refresh: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
+  logout: () => of(true),
+};
 
 describe('App', () => {
   beforeEach(async () => {
+    sessionStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), provideHttpClient()],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        { provide: AUTH_REPOSITORY, useValue: authRepoStub },
+      ],
     }).compileComponents();
   });
 

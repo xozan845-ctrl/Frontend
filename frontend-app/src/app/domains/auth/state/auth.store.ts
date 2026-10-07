@@ -11,7 +11,6 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { User, LoginCredentials, RegisterData } from '../models/auth.model';
-import { AuthService } from '../services/auth.service';
 import { AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { NotificationService } from '../../../shared/ui/notification/notification.service';
 
@@ -46,7 +45,7 @@ export const AuthStore = signalStore(
   withMethods(
     (
       store,
-      authService = inject(AUTH_REPOSITORY, { optional: true }) ?? inject(AuthService),
+      authService = inject(AUTH_REPOSITORY),
       notificationService = inject(NotificationService),
     ) => ({
       login: rxMethod<LoginCredentials>(
