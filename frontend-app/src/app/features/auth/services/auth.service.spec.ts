@@ -35,7 +35,7 @@ describe('AuthService', () => {
     service.login({ email: 'ana@tienda.com', password: 'secreto1' }).subscribe((r) => (result = r));
     const request = httpMock.expectOne('https://api.test/auth/login');
     expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({ email: 'ana@tienda.com', password: 'secreto1' });
+    expect(request.request.body).toEqual({ correo: 'ana@tienda.com', contrasena: 'secreto1' });
     request.flush({ token: 'jwt', user: { id: 1, name: 'Ana', email: 'ana@tienda.com' } });
 
     expect(result?.token).toBe('jwt');
@@ -50,8 +50,14 @@ describe('AuthService', () => {
     service
       .register({ email: 'nuevo@tienda.com', password: 'secreto1', name: 'Nuevo' })
       .subscribe((r) => (result = r));
-    const request = httpMock.expectOne('https://api.test/auth/register');
+    const request = httpMock.expectOne('https://api.test/auth/registro');
     expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      nombre: 'Nuevo',
+      correo: 'nuevo@tienda.com',
+      contrasena: 'secreto1',
+      rol: 'comprador',
+    });
     request.flush({ token: 'jwt', user: { id: 2, name: 'Nuevo', email: 'nuevo@tienda.com' } });
 
     expect(result?.user.name).toBe('Nuevo');

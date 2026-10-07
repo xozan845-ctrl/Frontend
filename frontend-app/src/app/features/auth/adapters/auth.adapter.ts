@@ -23,8 +23,11 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
   const id = typeof rawId === 'number' ? rawId : String(rawId);
 
   const email =
-    (typeof u['email'] === 'string' && u['email']) || fallbackEmail || 'usuario@ejemplo.com';
-  const rawName = u['name'] ?? u['fullName'] ?? u['full_name'] ?? u['username'];
+    (typeof u['email'] === 'string' && u['email']) ||
+    (typeof u['correo'] === 'string' && u['correo']) ||
+    fallbackEmail ||
+    'usuario@ejemplo.com';
+  const rawName = u['name'] ?? u['nombre'] ?? u['fullName'] ?? u['full_name'] ?? u['username'];
   const name =
     typeof rawName === 'string' && rawName ? rawName : email ? email.split('@')[0] : 'Usuario';
   const roles = u['roles'];
@@ -35,6 +38,7 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
     name,
     role:
       (typeof u['role'] === 'string' && u['role']) ||
+      (typeof u['rol'] === 'string' && u['rol']) ||
       (Array.isArray(roles) ? String(roles[0]) : '') ||
       'customer',
     avatar:
@@ -77,7 +81,13 @@ export function adaptAuthResponseFromBackend(raw: unknown, fallbackEmail = ''): 
     data['refresh_token'] ?? data['refreshToken'] ?? res['refresh_token'] ?? res['refreshToken'];
 
   // Extraer objeto usuario
-  const rawUser = data['user'] ?? data['profile'] ?? res['user'] ?? (data['id'] ? data : null);
+  const rawUser =
+    data['user'] ??
+    data['usuario'] ??
+    data['profile'] ??
+    res['user'] ??
+    res['usuario'] ??
+    (data['id'] ? data : null);
 
   const user = adaptUserFromBackend(rawUser, fallbackEmail);
 

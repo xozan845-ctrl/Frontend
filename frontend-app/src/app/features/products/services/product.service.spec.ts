@@ -34,9 +34,9 @@ describe('ProductService', () => {
     let result: Product[] = [];
 
     service.getProducts().subscribe((products) => (result = products));
-    const request = httpMock.expectOne('https://api.test/products');
+    const request = httpMock.expectOne('https://api.test/catalog/productos');
     expect(request.request.method).toBe('GET');
-    request.flush({ data: [{ id: 1, name: 'Teclado', price: 50 }] });
+    request.flush({ items: [{ id: 1, nombre: 'Teclado', precio_base: '50.00' }] });
 
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe('Teclado');
@@ -48,20 +48,25 @@ describe('ProductService', () => {
     let result: Product | undefined;
 
     service.getProductById(7).subscribe((product) => (result = product));
-    const request = httpMock.expectOne('https://api.test/products/7');
-    request.flush({ data: { id: 7, name: 'Mouse', price: 20 } });
+    const request = httpMock.expectOne('https://api.test/catalog/productos/7');
+    request.flush({ id: 7, nombre: 'Mouse', precio_base: '20.00' });
 
     expect(result?.name).toBe('Mouse');
   });
 
-  it('debe devolver las categorías del backend', () => {
+  it('debe derivar las categorías de los productos', () => {
     environment.apiUrl = 'https://api.test';
     build();
     let result: string[] = [];
 
     service.getCategories().subscribe((categories) => (result = categories));
-    const request = httpMock.expectOne('https://api.test/categories');
-    request.flush({ data: ['Audio', 'Video'] });
+    httpMock.expectOne('https://api.test/catalog/productos').flush({
+      items: [
+        { id: 1, nombre: 'A', precio_base: '1.00', categoria: 'Audio' },
+        { id: 2, nombre: 'B', precio_base: '2.00', categoria: 'Audio' },
+        { id: 3, nombre: 'C', precio_base: '3.00', categoria: 'Video' },
+      ],
+    });
 
     expect(result).toEqual(['Audio', 'Video']);
   });
@@ -127,24 +132,35 @@ describe('ProductService', () => {
     expect(error?.message).toContain('apiUrl no configurado');
   });
 
-  it('debe caer a los productos cuando el endpoint de categorías falla', () => {
+  it('debe mapear el contrato de Core Engine (nombre/precio_base/categoria)', () => {
     environment.apiUrl = 'https://api.test';
     build();
-    let result: string[] = [];
+    let result: Product[] = [];
 
-    service.getCategories().subscribe((categories) => (result = categories));
-    httpMock
-      .expectOne('https://api.test/categories')
-      .flush('boom', { status: 500, statusText: 'Server Error' });
-    httpMock.expectOne('https://api.test/products').flush({
-      data: [
-        { id: 1, name: 'A', price: 1, category: 'Audio' },
-        { id: 2, name: 'B', price: 2, category: 'Audio' },
-        { id: 3, name: 'C', price: 3, category: 'Video' },
+    service.getProducts().subscribe((products) => (result = products));
+    httpMock.expectOne('https://api.test/catalog/productos').flush({
+      items: [
+        {
+          id: 'p1',
+          sku: 'SKU-1',
+          nombre: 'Teclado',
+          descripcion: 'RGB',
+          categoria: 'Periféricos',
+          precio_base: '1000.00',
+          stock: 5,
+          estado: 'disponible',
+        },
       ],
     });
 
-    expect(result).toEqual(['Audio', 'Video']);
+    expect(result[0]).toMatchObject({
+      id: 'p1',
+      name: 'Teclado',
+      description: 'RGB',
+      category: 'Periféricos',
+      price: 1000,
+      stock: 5,
+    });
   });
 
   it('debe fallar las categorías cuando no hay apiUrl configurada', () => {
@@ -155,18 +171,5 @@ describe('ProductService', () => {
     service.getCategories().subscribe({ error: (err: Error) => (error = err) });
 
     expect(error?.message).toContain('apiUrl no configurado');
-  });
-
-  it('debe normalizar categorías que llegan como objeto', () => {
-    environment.apiUrl = 'https://api.test';
-    build();
-    let result: string[] = [];
-
-    service.getCategories().subscribe((categories) => (result = categories));
-    httpMock
-      .expectOne('https://api.test/categories')
-      .flush({ data: [{ name: 'Audio' }, { title: 'Video' }, {}] });
-
-    expect(result).toEqual(['Audio', 'Video', 'General']);
   });
 });
