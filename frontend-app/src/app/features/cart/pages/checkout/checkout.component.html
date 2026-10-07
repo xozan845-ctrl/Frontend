@@ -24,13 +24,14 @@
       <div class="divide-y divide-slate-100 dark:divide-surface-700">
         @for (item of cartStore.items(); track item.product.id) {
           <div class="flex items-center gap-4 p-5">
-            <img
-              [ngSrc]="item.product.imageUrl"
-              width="56"
-              height="56"
-              [alt]="item.product.name"
-              class="rounded-xl object-cover shrink-0"
-            />
+            <div class="relative w-14 h-14 rounded-xl overflow-hidden shrink-0">
+              <img
+                [ngSrc]="item.product.imageUrl"
+                fill
+                [alt]="item.product.name"
+                class="object-cover"
+              />
+            </div>
             <div class="grow min-w-0">
               <p class="font-bold text-slate-900 dark:text-white line-clamp-1">
                 {{ item.product.name }}

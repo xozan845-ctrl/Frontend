@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/public-api';
@@ -14,7 +14,7 @@ import { CreateOrderPayload } from '../../models/order.model';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [RouterLink, NgOptimizedImage, TrustBadgesComponent, EmptyStateComponent],
+  imports: [NgOptimizedImage, TrustBadgesComponent, EmptyStateComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
