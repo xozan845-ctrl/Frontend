@@ -40,4 +40,26 @@ describe('SeoService', () => {
     expect(meta.getTag('property="og:title"')?.content).toBe('Teclado | Quantum Store');
     expect(meta.getTag('property="og:type"')?.content).toBe('product');
   });
+
+  it('debe truncar la descripción y añadir el precio en la ficha de producto', () => {
+    service.setProductPage('Teclado', 'x'.repeat(300), 99.5);
+
+    expect(meta.getTag('name="description"')?.content).toBe(`${'x'.repeat(150)} — Desde $99.50`);
+    expect(meta.getTag('property="og:description"')?.content).toBe('x'.repeat(200));
+  });
+
+  it('debe usar los valores por defecto cuando no se pasan argumentos', () => {
+    service.updateTitle();
+    service.updateMeta();
+
+    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
+    expect(meta.getTag('name="description"')?.content).toContain('Selección editorial');
+  });
+
+  it('debe configurar una página genérica con título y descripción', () => {
+    service.setPage('Planes', 'Elige tu membresía');
+
+    expect(title.getTitle()).toBe('Planes | Quantum Store');
+    expect(meta.getTag('name="description"')?.content).toBe('Elige tu membresía');
+  });
 });
