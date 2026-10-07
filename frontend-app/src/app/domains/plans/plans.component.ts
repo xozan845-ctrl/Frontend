@@ -9,7 +9,6 @@ import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from './constants/plans.c
   standalone: true,
   imports: [CommonModule],
   templateUrl: './plans.component.html',
-  styles: [],
 })
 export default class PlansComponent implements OnDestroy {
   private readonly notificationService = inject(NotificationService);

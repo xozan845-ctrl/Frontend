@@ -9,7 +9,6 @@ import { SeoService } from '../../../../shared/services/seo.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register-form.component.html',
-  styles: [],
 })
 export class RegisterFormComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
