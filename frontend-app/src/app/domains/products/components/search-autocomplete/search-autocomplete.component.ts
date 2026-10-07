@@ -14,6 +14,12 @@ import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+/** Fragmento de texto para resaltar sin concatenar HTML (R-SE-3). */
+interface HighlightPart {
+  value: string;
+  matched: boolean;
+}
+
 @Component({
   selector: 'app-search-autocomplete',
   standalone: true,
@@ -64,6 +70,17 @@ export class SearchAutocompleteComponent implements OnDestroy {
     return pool.filter((c) => c.toLowerCase().includes(term));
   });
 
+  /**
+   * Productos con su nombre ya troceado en fragmentos resaltables.
+   * Evita `[innerHTML]`: el resaltado se interpola en la plantilla (R-SE-3).
+   */
+  highlightedProducts = computed(() =>
+    this.matchedProducts().map((product) => ({
+      product,
+      parts: this.splitHighlight(product.name),
+    })),
+  );
+
   private searchSubject = new Subject<string>();
 
   constructor() {
@@ -103,14 +120,28 @@ export class SearchAutocompleteComponent implements OnDestroy {
     this.close();
   }
 
-  highlightTerm(text: string): string {
-    const term = this.searchTerm();
-    if (!term) return text;
-    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return text.replace(
-      regex,
-      '<mark class="bg-accent-100 dark:bg-accent-900/40 text-accent-700 dark:text-accent-300 rounded-sm px-0.5">$1</mark>',
-    );
+  /** Divide el texto en fragmentos, marcando las coincidencias con el término. */
+  private splitHighlight(text: string): HighlightPart[] {
+    const term = this.searchTerm().trim();
+    if (!term) return [{ value: text, matched: false }];
+
+    const regex = new RegExp(`(${this.escapeRegExp(term)})`, 'gi');
+    const parts: HighlightPart[] = [];
+    let lastIndex = 0;
+
+    for (const match of text.matchAll(regex)) {
+      const index = match.index ?? 0;
+      if (index > lastIndex) parts.push({ value: text.slice(lastIndex, index), matched: false });
+      parts.push({ value: match[0], matched: true });
+      lastIndex = index + match[0].length;
+    }
+
+    if (lastIndex < text.length) parts.push({ value: text.slice(lastIndex), matched: false });
+    return parts.length > 0 ? parts : [{ value: text, matched: false }];
+  }
+
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   onKeydown(event: KeyboardEvent): void {

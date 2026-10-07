@@ -77,9 +77,9 @@
             <i class="fa-solid fa-box"></i> Productos
           </p>
           <div class="flex flex-col gap-1">
-            @for (product of matchedProducts(); track product.id; let i = $index) {
+            @for (item of highlightedProducts(); track item.product.id; let i = $index) {
               <a
-                [routerLink]="['/product', product.id]"
+                [routerLink]="['/product', item.product.id]"
                 (click)="close()"
                 role="option"
                 [attr.aria-selected]="focusedIndex() === i"
@@ -91,8 +91,8 @@
                   class="w-10 h-10 bg-slate-100 dark:bg-surface-900 rounded-lg overflow-hidden shrink-0 flex items-center justify-center relative"
                 >
                   <img
-                    [src]="product.imageUrl"
-                    [alt]="product.name"
+                    [src]="item.product.imageUrl"
+                    [alt]="item.product.name"
                     class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal p-1"
                     (error)="$any($event.target).classList.add('img-error')"
                   />
@@ -106,16 +106,26 @@
                 <div class="flex-1 min-w-0">
                   <p
                     class="text-sm font-bold text-slate-800 dark:text-white line-clamp-1 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors"
-                    [innerHTML]="highlightTerm(product.name)"
-                  ></p>
+                  >
+                    @for (part of item.parts; track $index) {
+                      @if (part.matched) {
+                        <mark
+                          class="bg-accent-100 dark:bg-accent-900/40 text-accent-700 dark:text-accent-300 rounded-sm px-0.5"
+                          >{{ part.value }}</mark
+                        >
+                      } @else {
+                        <span>{{ part.value }}</span>
+                      }
+                    }
+                  </p>
                   <p
                     class="text-[10px] font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
                   >
-                    {{ product.category }}
+                    {{ item.product.category }}
                   </p>
                 </div>
                 <span class="text-sm font-black text-slate-900 dark:text-white shrink-0">
-                  {{ '$' }}{{ product.price.toFixed(2) }}
+                  {{ '$' }}{{ item.product.price.toFixed(2) }}
                 </span>
               </a>
             }
