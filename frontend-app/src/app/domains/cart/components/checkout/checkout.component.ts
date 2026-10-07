@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage, NgClass } from '@angular/common';
@@ -22,6 +23,7 @@ export class CheckoutComponent {
   readonly authStore = inject(AuthStore);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
   private orderService: OrderRepository =
     inject(ORDER_REPOSITORY, { optional: true }) ?? inject(OrderService);
@@ -90,18 +92,21 @@ export class CheckoutComponent {
       couponCode: this.cartStore.appliedCoupon(),
     };
 
-    this.orderService.createOrder(payload).subscribe({
-      next: () => {
-        this.cartStore.clearCart();
-        this.isSubmitting.set(false);
-        this.router.navigate(['/checkout/confirmation']);
-      },
-      error: (err) => {
-        this.isSubmitting.set(false);
-        const msg = err.message || 'Error al procesar la orden. Intenta nuevamente.';
-        this.notificationService.showError(msg);
-      },
-    });
+    this.orderService
+      .createOrder(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.cartStore.clearCart();
+          this.isSubmitting.set(false);
+          this.router.navigate(['/checkout/confirmation']);
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          const msg = err.message || 'Error al procesar la orden. Intenta nuevamente.';
+          this.notificationService.showError(msg);
+        },
+      });
   }
 }
 export default CheckoutComponent;
