@@ -143,14 +143,14 @@
   - `R-AR-3/R-SO-5` — stores y `checkout` dependen solo del puerto (sin fallback
     a la clase concreta).
   - `R-CP-*` — specs de todos los componentes con lógica (dominios y
-    `shared/ui`); PWA fuera de alcance por decisión.
+    `shared/ui`, incluido el banner PWA).
   - `R-NC-2` — retirados los `styles: []` vacíos de los componentes.
+  - `R-AR-10` — el banner PWA retira sus listeners de `window` en `ngOnDestroy`.
 - **Resultado:**
   - ✅ `npm run build` — initial **477.07 kB**; SW generado.
   - ✅ `npm test` — **50 archivos / 243 tests**; cobertura **94.94 / 91.58 / 97.46 / 94.25**.
   - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 8/8 sin warnings**.
   - ✅ CI 6/6 jobs requeridos en verde.
 - **Estado global:** 🟢 **CUMPLE**.
-- **Deudas:** `pwa-install-banner` sin spec (fuera de alcance por decisión). No
-  quedan deudas funcionales.
+- **Deudas:** ninguna.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
