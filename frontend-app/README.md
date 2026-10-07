@@ -58,11 +58,12 @@ La aplicación se recarga al modificar los archivos fuente.
 ### Configuración del API
 
 La URL base y los endpoints se configuran en
-[`src/environments/environment.ts`](./src/environments/environment.ts) y
-[`environment.prod.ts`](./src/environments/environment.prod.ts) a través de
-`apiConfig` (`src/app/core/config/api.config.ts`). Con `apiUrl: ''` y
-`dataSource: 'api'`, la app avisa si falta la configuración; con
-`dataSource: 'mock'` usa datos de prueba.
+[`src/environments/environment.ts`](./src/environments/environment.ts) —desarrollo:
+`http://localhost:8080`— y
+[`environment.prod.ts`](./src/environments/environment.prod.ts) —producción:
+`https://api.kbcoleccion.com`— a través de `apiConfig`
+(`src/app/core/config/api.config.ts`). Con `apiUrl: ''` y `dataSource: 'api'` la
+app avisa de que falta configuración; con `dataSource: 'mock'` usa datos de prueba.
 
 ---
 

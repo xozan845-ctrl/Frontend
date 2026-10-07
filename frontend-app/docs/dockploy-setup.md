@@ -68,8 +68,8 @@ Pasos:
 ## 4. Variables y configuración
 
 - El frontend **no** lleva secretos en el bundle (`R-CD-2`): la URL del API es
-  configuración pública. Hoy `environment.prod.ts` tiene `apiUrl: ''`; debe
-  apuntar al gateway del backend Core Engine antes de desplegar.
+  configuración pública. `environment.prod.ts` apunta al gateway del backend:
+  `https://api.kbcoleccion.com`.
 - Si se necesitan URLs distintas por entorno, usar `fileReplacements` de
   `angular.json`, no valores inyectados a mano en el servidor (`R-CD-4`).
 
@@ -94,8 +94,8 @@ Pasos:
 ## 7. Errores frecuentes
 
 - **404 al refrescar rutas internas**: falta el `try_files` de SPA (§3).
-- **El frontend llama a un API vacío**: `environment.prod.ts` con `apiUrl: ''`;
-  apuntarlo al gateway antes de construir.
+- **El frontend llama a un API vacío**: `environment.prod.ts` debe tener
+  `apiUrl` configurado (`https://api.kbcoleccion.com`); con `''` la app avisa.
 - **Contenedores con nombre de otro proyecto**: verificar que el proyecto Dockploy
   es `frontend-ecomerce` y no comparte nombres con `core-engine`.
 - **Assets con cache vieja tras deploy**: `index.html` debe servirse sin cache y
