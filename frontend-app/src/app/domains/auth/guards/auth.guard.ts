@@ -10,8 +10,7 @@ export const authGuard: CanActivateFn = (_route, _state) => {
     return true;
   }
 
-  // Not authenticated, redirect to login
-  console.warn('Access denied. Redirecting to login...');
+  // Not authenticated, redirect to login without adding expected console noise.
   router.navigate(['/login']);
   return false;
 };

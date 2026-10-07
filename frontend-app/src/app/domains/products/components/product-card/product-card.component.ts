@@ -32,6 +32,7 @@ export class ProductCardComponent {
   isInWishlist = input<boolean>(false);
   avgRating = input<number>(0);
   reviewCount = input<number>(0);
+  priority = input<boolean>(false);
   addToCart = output<Product>();
   quickView = output<Product>();
   toggleWishlist = output<Product>();

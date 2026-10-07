@@ -43,6 +43,7 @@
           <img
             [ngSrc]="activeImage()"
             fill
+            priority
             [alt]="product.name"
             class="object-cover mix-blend-multiply dark:mix-blend-normal transition-transform duration-700 group-hover:scale-110 p-8"
             (error)="$any($event.target).classList.add('img-error')"

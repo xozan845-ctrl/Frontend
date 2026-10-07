@@ -3,17 +3,29 @@
 >
   <!-- Image Wrapper -->
   <div
-    class="relative pt-[100%] bg-slate-50 dark:bg-surface-800 mb-6 overflow-hidden rounded-2xl shadow-sm border border-slate-100 dark:border-surface-700 transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2"
+    class="relative aspect-square bg-slate-50 dark:bg-surface-800 mb-6 overflow-hidden rounded-2xl shadow-sm border border-slate-100 dark:border-surface-700 transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2"
   >
-    <a [routerLink]="['/product', product().id]" class="absolute inset-0">
-      <img
-        #productImage
-        [ngSrc]="product().imageUrl"
-        fill
-        [alt]="product().name"
-        class="object-cover transition-transform duration-500 group-hover:scale-105 mix-blend-multiply dark:mix-blend-normal p-4"
-        (error)="$any($event.target).classList.add('img-error')"
-      />
+    <a [routerLink]="['/product', product().id]" class="absolute inset-0 block h-full w-full">
+      @if (priority()) {
+        <img
+          #productImage
+          [ngSrc]="product().imageUrl"
+          fill
+          priority
+          [alt]="product().name"
+          class="object-cover transition-transform duration-500 group-hover:scale-105 mix-blend-multiply dark:mix-blend-normal p-4"
+          (error)="$any($event.target).classList.add('img-error')"
+        />
+      } @else {
+        <img
+          #productImage
+          [ngSrc]="product().imageUrl"
+          fill
+          [alt]="product().name"
+          class="object-cover transition-transform duration-500 group-hover:scale-105 mix-blend-multiply dark:mix-blend-normal p-4"
+          (error)="$any($event.target).classList.add('img-error')"
+        />
+      }
       <div
         class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
         style="display: none"

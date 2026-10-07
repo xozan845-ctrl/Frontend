@@ -4,20 +4,22 @@ import { test as base, expect, type Page } from '@playwright/test';
 // que el DOM esté listo en lugar de al evento `load` completo.
 const open = (page: Page, url: string) => page.goto(url, { waitUntil: 'domcontentloaded' });
 
-// R-E-9: cero errores de consola durante el flujo. El fixture es `auto`, así que
-// se aplica a todas las pruebas y falla si se registró algún error.
-const test = base.extend<{ consoleErrors: string[] }>({
-  consoleErrors: [
+// R-E-9: cero errores o warnings de consola durante el flujo. El fixture es
+// `auto`, así que aplica a todas las pruebas y falla ante cualquier warning.
+const test = base.extend<{ consoleIssues: string[] }>({
+  consoleIssues: [
     async ({ page }, use) => {
-      const errors: string[] = [];
+      const issues: string[] = [];
       page.on('console', (msg) => {
-        if (msg.type() === 'error') errors.push(msg.text());
+        if (msg.type() === 'error' || msg.type() === 'warning') {
+          issues.push(`${msg.type()}: ${msg.text()}`);
+        }
       });
-      page.on('pageerror', (err) => errors.push(err.message));
+      page.on('pageerror', (err) => issues.push(`pageerror: ${err.message}`));
 
-      await use(errors);
+      await use(issues);
 
-      expect(errors, `Errores de consola (R-E-9):\n${errors.join('\n')}`).toEqual([]);
+      expect(issues, `Problemas de consola (R-E-9):\n${issues.join('\n')}`).toEqual([]);
     },
     { auto: true },
   ],
