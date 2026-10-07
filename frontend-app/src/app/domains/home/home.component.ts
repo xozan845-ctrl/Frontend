@@ -1,15 +1,13 @@
 import { Component, inject, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ProductStore } from '../products/state/product.store';
-import { CartStore } from '../cart/state/cart.store';
-import { WishlistStore } from '../wishlist/state/wishlist.store';
-import { ReviewsStore } from '../products/state/reviews.store';
-import { ProductCardComponent } from '../products/components/product-card/product-card.component';
+import { Product, ProductStore, ReviewsStore } from '../products/public-api';
+import { ProductCardComponent } from '../products/public-ui';
+import { CartStore } from '../cart/public-api';
+import { WishlistStore } from '../wishlist/public-api';
 import { SkeletonLoaderComponent } from '../../shared/ui/skeleton/skeleton-loader.component';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 import { SeoService } from '../../shared/services/seo.service';
-import { Product } from '../products/models/product.model';
 
 @Component({
   selector: 'app-home',

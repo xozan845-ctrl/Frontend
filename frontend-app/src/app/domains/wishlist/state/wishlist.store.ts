@@ -7,7 +7,7 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
-import { Product } from '../../products/models/product.model';
+import type { Product } from '../../products/public-api';
 
 export interface WishlistState {
   items: Product[];

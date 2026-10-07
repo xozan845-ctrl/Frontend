@@ -2,8 +2,8 @@ import { Component, DestroyRef, inject, OnInit, signal, effect, computed } from 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product.store';
-import { CartStore } from '../../../cart/state/cart.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist.store';
+import { CartStore } from '../../../cart/public-api';
+import { WishlistStore } from '../../../wishlist/public-api';
 import { ReviewsStore } from '../../state/reviews.store';
 import { ProductCardComponent } from '../product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';

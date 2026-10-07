@@ -38,3 +38,10 @@ que cuelgan referencias casi todas las demás.
 
 - Estado de cumplimiento y deudas en [`../_meta/AUDIT.md`](../_meta/AUDIT.md)
   (`R-COV-3`).
+
+## API pública entre dominios
+
+Los consumidores importan contratos por `domains/<feature>/public-api.ts`;
+componentes presentacionales exportados intencionalmente usan
+`public-ui.ts` y solo se comunican por inputs/outputs. No importar archivos
+internos (`components/`, `state/`, `models/`) desde otro dominio (`R-CX-6`).
