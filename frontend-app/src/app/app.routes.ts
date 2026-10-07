@@ -1,50 +1,23 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './features/auth/guards/auth.guard';
+import { AUTH_ROUTES } from './features/auth/auth.routes';
+import { CART_ROUTES } from './features/cart/cart.routes';
+import { HOME_ROUTES } from './features/home/home.routes';
+import { PLANS_ROUTES } from './features/plans/plans.routes';
+import { PRODUCTS_ROUTES } from './features/products/products.routes';
+import { WISHLIST_ROUTES } from './features/wishlist/wishlist.routes';
 
+/**
+ * Punto de composición de rutas (`R-AR-2`, `R-AR-12`): cada feature aporta sus
+ * rutas con `loadComponent`; aquí solo se componen. Las páginas permanecen
+ * lazy (no se importan sus componentes de forma estática).
+ */
 export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./features/home/home.component'),
-  },
-  {
-    path: 'shop',
-    loadComponent: () =>
-      import('./features/products/components/product-list/product-list.component'),
-  },
-  {
-    path: 'product/:id',
-    loadComponent: () =>
-      import('./features/products/components/product-detail/product-detail.component'),
-  },
-  {
-    path: 'cart',
-    redirectTo: 'shop',
-  },
-  {
-    path: 'checkout',
-    loadComponent: () => import('./features/cart/components/checkout/checkout.component'),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'checkout/confirmation',
-    loadComponent: () => import('./features/cart/components/confirmation/confirmation.component'),
-  },
-  {
-    path: 'login',
-    loadComponent: () => import('./features/auth/components/login-form/login-form.component'),
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./features/auth/components/register-form/register-form.component'),
-  },
-  {
-    path: 'plans',
-    loadComponent: () => import('./features/plans/plans.component'),
-  },
-  {
-    path: 'wishlist',
-    loadComponent: () => import('./features/wishlist/wishlist.component'),
-  },
+  ...HOME_ROUTES,
+  ...PRODUCTS_ROUTES,
+  ...CART_ROUTES,
+  ...AUTH_ROUTES,
+  ...PLANS_ROUTES,
+  ...WISHLIST_ROUTES,
   {
     path: '**',
     loadComponent: () => import('./features/home/not-found.component'),
