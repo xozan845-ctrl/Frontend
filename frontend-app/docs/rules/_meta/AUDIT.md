@@ -4,19 +4,19 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-07 — **5ª de frontend-ecomerce** (cierre de las
-  deudas de la 4ª auditoría por PRs atómicas).
+- **Última auditoría:** 2026-10-07 — **5ª de frontend-ecomerce**, actualizada al
+  cerrar la nota del banner PWA (`R-AR-10`/`R-CP-1`).
 - **Estado global:** 🟢 **CUMPLE** — los gates **G-1…G-6** y la seguridad
   (`R-QA-6`) son efectivos en CI; `main` protegida; fronteras de dominio
   explícitas, presentacionales sin stores, cobertura de componentes y
-  cero warnings en E2E. Quedan solo detalles cosméticos.
+  cero warnings en E2E. **Sin deudas abiertas.**
 
 ## Evidencia ejecutada (2026-10-07)
 
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **477.07 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **50 archivos / 243 tests**                                       |
+| Build (G-3)        | `npm run build`                | ✅ initial **477.31 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **51 archivos / 251 tests**                                       |
 | Cobertura (G-2)    | idem                           | ✅ 94.94 / 91.58 / 97.46 / 94.25 (umbral 80/70/80/80)                |
 | E2E (G-6)          | `npm run e2e`                  | ✅ **8 flujos Playwright · 0 errores/warnings**                      |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
@@ -78,16 +78,16 @@
 
 ### Testing (`R-U`, `R-CP`, `R-E`, `R-C`, `R-RB`, `R-QA`, `G-*`)
 
-| Regla             | Estado | Evidencia                                                                                             |
-| ----------------- | ------ | ----------------------------------------------------------------------------------------------------- |
-| R-U-1..14 unit    | ✅     | Adapters, stores, servicios, guard, interceptor, directiva                                            |
-| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96                      |
-| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica (dominios + `shared/ui`); PWA fuera de alcance por decisión |
-| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter (`adapters/fixtures/*.fixture.ts`) + tests de contrato               |
-| R-E-1..14 E2E     | ✅     | 8 flujos; el fixture falla ante **error y warning** de consola (`R-E-9`)                              |
-| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                         |
-| R-RB-3 robustez   | ✅     | Los stores no propagan el error (regresión cubierta); `localStorage` tolerante                        |
-| R-QA-2/5          | ✅     | Tests sin red e independientes                                                                        |
+| Regla             | Estado | Evidencia                                                                                  |
+| ----------------- | ------ | ------------------------------------------------------------------------------------------ |
+| R-U-1..14 unit    | ✅     | Adapters, stores, servicios, guard, interceptor, directiva                                 |
+| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96           |
+| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica (dominios + `shared/ui`, incluido el banner PWA) |
+| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter (`adapters/fixtures/*.fixture.ts`) + tests de contrato    |
+| R-E-1..14 E2E     | ✅     | 8 flujos; el fixture falla ante **error y warning** de consola (`R-E-9`)                   |
+| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                              |
+| R-RB-3 robustez   | ✅     | Los stores no propagan el error (regresión cubierta); `localStorage` tolerante             |
+| R-QA-2/5          | ✅     | Tests sin red e independientes                                                             |
 
 ### Git / CI / CD
 
@@ -120,8 +120,8 @@
 
 ## Deudas abiertas
 
-1. **`pwa-install-banner`**: sin spec de componente (fuera del alcance por
-   decisión). No hay otras deudas funcionales.
+Ninguna. Todos los componentes con lógica tienen spec y las reglas del punto
+fijo se cumplen.
 
 ## Cómo re-auditar
 
