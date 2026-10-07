@@ -8,11 +8,11 @@ export const CART_ROUTES: Routes = [
   },
   {
     path: 'checkout',
-    loadComponent: () => import('./components/checkout/checkout.component'),
+    loadComponent: () => import('./pages/checkout/checkout.component'),
     canActivate: [authGuard],
   },
   {
     path: 'checkout/confirmation',
-    loadComponent: () => import('./components/confirmation/confirmation.component'),
+    loadComponent: () => import('./pages/confirmation/confirmation.component'),
   },
 ];

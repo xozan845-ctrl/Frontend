@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../core/services/notification.service';
-import { SeoService } from '../../core/services/seo.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { SeoService } from '../../../../core/services/seo.service';
 import PlansComponent from './plans.component';
 
 describe('PlansComponent', () => {

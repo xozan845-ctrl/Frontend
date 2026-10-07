@@ -20,6 +20,6 @@ export const routes: Routes = [
   ...WISHLIST_ROUTES,
   {
     path: '**',
-    loadComponent: () => import('./features/home/not-found.component'),
+    loadComponent: () => import('./features/home/pages/not-found/not-found.component'),
   },
 ];

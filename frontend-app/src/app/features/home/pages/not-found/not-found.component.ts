@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
-import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../core/services/seo.service';
+import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-not-found',

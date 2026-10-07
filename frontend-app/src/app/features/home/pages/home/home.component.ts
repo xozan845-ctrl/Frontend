@@ -1,13 +1,13 @@
 import { Component, inject, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Product, ProductStore, ReviewsStore } from '../products/public-api';
-import { ProductCardComponent } from '../products/public-ui';
-import { CartStore } from '../cart/public-api';
-import { WishlistStore } from '../wishlist/public-api';
-import { SkeletonLoaderComponent } from '../../shared/ui/skeleton/skeleton-loader.component';
-import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
-import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
-import { SeoService } from '../../core/services/seo.service';
+import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
+import { ProductCardComponent } from '../../../products/public-ui';
+import { CartStore } from '../../../cart/public-api';
+import { WishlistStore } from '../../../wishlist/public-api';
+import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
+import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { ScrollRevealDirective } from '../../../../shared/directives/scroll-reveal.directive';
+import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
