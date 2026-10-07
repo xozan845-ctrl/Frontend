@@ -4,21 +4,20 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-07 — **5ª de frontend-ecomerce**, con reglas
-  actualizadas a la **estructura enterprise** (ADR-12) y **migración de código
-  pendiente**.
-- **Estado global:** 🟡 **CUMPLE PARCIAL** — los gates **G-1…G-6** y la seguridad
-  (`R-QA-6`) siguen verdes; arquitectura limpia, presentacionales sin stores,
-  fronteras por API pública y cobertura están en su sitio. Queda **migrar el
-  código** a `core/ · shared/ · layout/ · features/` (ADR-12).
+- **Última auditoría:** 2026-10-07 — **6ª de frontend-ecomerce**: migración
+  **completada** a la estructura enterprise `core/ · shared/ · layout/ ·
+features/` (ADR-12) con separación Smart/Dumb.
+- **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
+  estructura enterprise aplicada, presentacionales sin stores, rutas por
+  feature y cobertura de componentes. **Sin deudas abiertas.**
 
 ## Evidencia ejecutada (2026-10-07)
 
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **477.31 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
+| Build (G-3)        | `npm run build`                | ✅ initial **477.41 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
 | Tests (G-1)        | `npm test -- --watch=false`    | ✅ **51 archivos / 251 tests**                                       |
-| Cobertura (G-2)    | idem                           | ✅ 94.94 / 91.58 / 97.46 / 94.25 (umbral 80/70/80/80)                |
+| Cobertura (G-2)    | idem                           | ✅ 93.94 / 91.68 / 94.61 / 93.70 (umbral 80/70/80/80)                |
 | E2E (G-6)          | `npm run e2e`                  | ✅ **8 flujos Playwright · 0 errores/warnings**                      |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
@@ -31,18 +30,18 @@
 
 ### Arquitectura y naming (`R-AR`, `R-NC`)
 
-| Regla                       | Estado | Evidencia                                                                                        |
-| --------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
-| R-AR-1/2 estructura         | 🟡     | Reglas actualizadas a ADR-12; el código aún vive en `domains/` + `shared/` (migración pendiente) |
-| R-AR-3 puertos + DI         | ✅     | Stores y `checkout` dependen **solo** del `InjectionToken` (sin fallback a la clase)             |
-| R-AR-4/5/7/8/9/11           | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores, entorno               |
-| R-AR-6/12 rutas             | 🟡     | Rutas lazy en `app.routes.ts`; falta extraer `<feature>.routes.ts`                               |
-| R-AR-10 ciclo de vida       | ✅     | `takeUntilDestroyed` + listeners del banner PWA liberados                                        |
-| R-AR-13 frontera de `core/` | 🟡     | `core/` aún no existe como capa (piezas genéricas en `shared/`)                                  |
-| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                     |
-| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                      |
-| R-NC-10 sin `any`           | ✅     | `"strict": true` + adapters con `unknown` + narrowing                                            |
-| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_pwa_dismissed`, …                                                            |
+| Regla                       | Estado | Evidencia                                                                                 |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------------- |
+| R-AR-1/2 estructura         | ✅     | `core/`, `shared/`, `layout/`, `features/`; `core`/`shared`/`layout` no importan features |
+| R-AR-3 puertos + DI         | ✅     | Stores y `checkout` dependen **solo** del `InjectionToken` (sin fallback a la clase)      |
+| R-AR-4/5/7/8/9/11           | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores, entorno        |
+| R-AR-6/12 rutas             | ✅     | `<feature>.routes.ts` compuestos en `app.routes.ts`; páginas lazy                         |
+| R-AR-10 ciclo de vida       | ✅     | `takeUntilDestroyed` + listeners del banner PWA liberados                                 |
+| R-AR-13 frontera de `core/` | ✅     | `core/{config,constants,models,services}` sin UI ni features                              |
+| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                              |
+| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador               |
+| R-NC-10 sin `any`           | ✅     | `"strict": true` + adapters con `unknown` + narrowing                                     |
+| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_pwa_dismissed`, …                                                     |
 
 ### Ingeniería frontend (`R-CX`, `R-SO`, `R-SH`, `R-LZ`, `R-ST`, `R-PF`, `R-HI`)
 
@@ -125,10 +124,8 @@
 
 ## Deudas abiertas
 
-1. **Migración a la estructura enterprise (ADR-12)**: mover `domains/` →
-   `features/`, sacar `layout/` a la raíz, mover las piezas genéricas de
-   `shared/` a `core/`, extraer `<feature>.routes.ts` y terminar de aplicar
-   Smart/Dumb. Por PRs atómicas (`R-AR-1/2/6/12/13`, `R-SO-8`).
+Ninguna. Estructura enterprise aplicada (ADR-12), reglas al día y sin deudas
+funcionales.
 
 ## Cómo re-auditar
 
