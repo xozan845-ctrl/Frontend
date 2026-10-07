@@ -171,3 +171,24 @@
 - **Deuda:** migrar `domains/` → `features/`, sacar `layout/` a la raíz, mover
   genéricos a `core/` y extraer `<feature>.routes.ts`.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 6 — Migración a la estructura enterprise completada (2026-10-07)
+
+- **Alcance:** ejecutar la migración de código de ADR-12 por PRs atómicas.
+- **Migración:**
+  - `domains/<feature>` → `features/<feature>` (M1).
+  - `domains/layout/components/{navbar,footer}` → `layout/*` (M1).
+  - Nuevo `core/{config,constants,models,services}` con la infraestructura
+    transversal; `shared/` queda como presentación/utilidades (M2).
+  - `<feature>.routes.ts` por feature compuestos en `app.routes.ts` (M3).
+  - `pages/` (contenedores) y `components/` (presentacionales) por rol (M4).
+- **Resultado:**
+  - ✅ `npm run build` — initial **477.41 kB**; SW generado.
+  - ✅ `npm test` — **51 archivos / 251 tests**; cobertura **93.94 / 91.68 / 94.61 / 93.70**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 8/8**.
+  - ✅ CI 6/6 jobs requeridos en verde.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
