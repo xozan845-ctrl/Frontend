@@ -16,14 +16,14 @@ import { CartStore } from '../../../cart/public-api';
 import { ReviewsStore } from '../../state/reviews.store';
 import { RecentlyViewedStore } from '../../state/recently-viewed.store';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { NotificationService } from '../../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { SpinnerComponent } from '../../../../shared/ui/spinner/spinner.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { ImageLightboxComponent } from '../../../../shared/ui/image-lightbox/image-lightbox.component';
 import { ProductCarouselComponent } from '../product-carousel/product-carousel.component';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-product-detail',

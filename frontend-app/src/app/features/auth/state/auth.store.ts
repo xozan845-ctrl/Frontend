@@ -12,7 +12,7 @@ import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { User, LoginCredentials, RegisterData } from '../models/auth.model';
 import { AUTH_REPOSITORY } from '../repositories/auth.repository';
-import { NotificationService } from '../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 export interface AuthState {
   user: User | null;

@@ -1,7 +1,7 @@
 import { inject, effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Review } from '../models/review.model';
-import { NotificationService } from '../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { MOCK_REVIEWS } from '../mocks/reviews.mock';
 
 export interface ReviewsState {

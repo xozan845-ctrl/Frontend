@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { LoginFormComponent } from './login-form.component';
 import { AuthStore } from '../../state/auth.store';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { SeoService } from '../../../../core/services/seo.service';
 
 describe('LoginFormComponent', () => {
   const authStore = {

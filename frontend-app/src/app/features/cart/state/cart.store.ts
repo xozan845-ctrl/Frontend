@@ -9,7 +9,7 @@ import {
 } from '@ngrx/signals';
 import type { Product } from '../../products/public-api';
 import { CartItem } from '../models/cart.model';
-import { NotificationService } from '../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { AVAILABLE_COUPONS } from '../constants/coupons.constants';
 
 export interface CartState {

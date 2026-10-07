@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../shared/ui/notification/notification.service';
-import { SeoService } from '../../shared/services/seo.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { SeoService } from '../../core/services/seo.service';
 import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from './constants/plans.constants';
 
 @Component({

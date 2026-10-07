@@ -7,7 +7,7 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.com
 import { StarRatingComponent } from '../../shared/ui/star-rating/star-rating.component';
 import { Product, ReviewsStore } from '../products/public-api';
 import { QuickViewModalComponent } from '../products/public-ui';
-import { SeoService } from '../../shared/services/seo.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-wishlist',

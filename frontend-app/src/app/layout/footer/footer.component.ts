@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NotificationService } from '../../shared/ui/notification/notification.service';
-import { StoreConfigService } from '../../shared/services/store-config.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { StoreConfigService } from '../../core/services/store-config.service';
 
 @Component({
   selector: 'app-footer',

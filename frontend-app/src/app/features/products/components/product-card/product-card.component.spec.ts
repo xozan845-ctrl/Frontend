@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
-import { NotificationService } from '../../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { Product } from '../../models/product.model';
 import { ProductCardComponent } from './product-card.component';
 
