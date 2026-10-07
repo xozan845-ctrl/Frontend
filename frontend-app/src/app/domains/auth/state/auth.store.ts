@@ -67,7 +67,7 @@ export const AuthStore = signalStore(
                 const message = err.message || 'Error al iniciar sesión';
                 patchState(store, { error: message, loading: false });
                 notificationService.showError(message);
-                throw err;
+                return EMPTY;
               }),
             ),
           ),
@@ -93,7 +93,7 @@ export const AuthStore = signalStore(
                 const message = err.message || 'Error al registrarse';
                 patchState(store, { error: message, loading: false });
                 notificationService.showError(message);
-                throw err;
+                return EMPTY;
               }),
             ),
           ),
@@ -153,7 +153,7 @@ export const AuthStore = signalStore(
                   loading: false,
                   error: err.message || 'Error al cerrar sesión',
                 });
-                throw err;
+                return EMPTY;
               }),
             ),
           ),

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe } from 'rxjs';
+import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { Product } from '../models/product.model';
 import { PRODUCT_REPOSITORY } from '../repositories/product.repository';
@@ -112,7 +112,7 @@ export const ProductStore = signalStore(
                 const message = err.message || 'Error al cargar los productos';
                 patchState(store, { error: message, loading: false });
                 notificationService.showError(message);
-                throw err;
+                return EMPTY;
               }),
             ),
           ),
@@ -130,7 +130,7 @@ export const ProductStore = signalStore(
                 const message = err.message || 'Error al cargar el producto';
                 patchState(store, { error: message, loading: false });
                 notificationService.showError(message);
-                throw err;
+                return EMPTY;
               }),
             ),
           ),

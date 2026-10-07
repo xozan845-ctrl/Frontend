@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ProductStore } from './product.store';
 import { Product } from '../models/product.model';
 import { PRODUCT_REPOSITORY, ProductRepository } from '../repositories/product.repository';
@@ -92,6 +92,23 @@ describe('ProductStore', () => {
     expect(store.filteredProducts().map((p) => p.id)).toEqual([1, 3, 2]);
   });
 
+  it('debe ordenar por nombre ascendente y descendente', async () => {
+    const products: Product[] = [
+      { ...makeProduct(1, 'Audio', 100), name: 'Zeta' },
+      { ...makeProduct(2, 'Audio', 100), name: 'Alfa' },
+      { ...makeProduct(3, 'Audio', 100), name: 'Mono' },
+    ];
+    const store = setup(products);
+    store.loadProducts();
+    await vi.waitFor(() => expect(store.products()).toHaveLength(3));
+
+    store.setSortOption('name-asc');
+    expect(store.filteredProducts().map((p) => p.name)).toEqual(['Alfa', 'Mono', 'Zeta']);
+
+    store.setSortOption('name-desc');
+    expect(store.filteredProducts().map((p) => p.name)).toEqual(['Zeta', 'Mono', 'Alfa']);
+  });
+
   it('debe paginar los productos y limitar la página al total', async () => {
     const products = Array.from({ length: 15 }, (_, index) => makeProduct(index + 1, 'Audio', 10));
     const store = setup(products);
@@ -127,5 +144,51 @@ describe('ProductStore', () => {
 
     store.clearSelectedProduct();
     expect(store.selectedProduct()).toBeNull();
+  });
+
+  // regression: R-RB-3 — un error de API no debe matar el `rxMethod`.
+  it('debe permitir recargar los productos tras un error', async () => {
+    let shouldFail = true;
+    const products = [makeProduct(1, 'Audio', 100)];
+    repo = {
+      getProducts: vi.fn(() => (shouldFail ? throwError(() => new Error('boom')) : of(products))),
+      getProductById: vi.fn(() => of(products[0])),
+      getCategories: vi.fn(() => of(['Audio'])),
+    };
+    TestBed.configureTestingModule({
+      providers: [{ provide: PRODUCT_REPOSITORY, useValue: repo }],
+    });
+    const store = TestBed.inject(ProductStore);
+
+    store.loadProducts();
+    await vi.waitFor(() => expect(store.error()).toBe('boom'));
+
+    shouldFail = false;
+    store.loadProducts();
+    await vi.waitFor(() => expect(store.products()).toHaveLength(1));
+    expect(store.error()).toBeNull();
+  });
+
+  it('debe permitir recargar el detalle tras un error', async () => {
+    let shouldFail = true;
+    const products = [makeProduct(1, 'Audio', 100)];
+    repo = {
+      getProducts: vi.fn(() => of(products)),
+      getProductById: vi.fn(() =>
+        shouldFail ? throwError(() => new Error('boom')) : of(products[0]),
+      ),
+      getCategories: vi.fn(() => of(['Audio'])),
+    };
+    TestBed.configureTestingModule({
+      providers: [{ provide: PRODUCT_REPOSITORY, useValue: repo }],
+    });
+    const store = TestBed.inject(ProductStore);
+
+    store.loadProductById(1);
+    await vi.waitFor(() => expect(store.error()).toBe('boom'));
+
+    shouldFail = false;
+    store.loadProductById(1);
+    await vi.waitFor(() => expect(store.selectedProduct()?.id).toBe(1));
   });
 });
