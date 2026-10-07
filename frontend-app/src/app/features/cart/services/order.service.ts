@@ -27,8 +27,15 @@ export class OrderService implements OrderRepository {
       );
     }
 
+    const body = {
+      items: payload.items.map((item) => ({
+        oferta_id: item.ofertaId,
+        cantidad: item.quantity,
+      })),
+    };
+
     return this.http
-      .post<unknown>(this.apiUrl, payload)
+      .post<unknown>(this.apiUrl, body)
       .pipe(map((response) => adaptOrderResponse(response, 0)));
   }
 

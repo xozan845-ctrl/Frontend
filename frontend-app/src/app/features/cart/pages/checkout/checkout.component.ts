@@ -1,12 +1,12 @@
 import { Component, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { NgOptimizedImage, NgClass } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
+import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SeoService } from '../../../../core/services/seo.service';
 import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
@@ -14,19 +14,20 @@ import { CreateOrderPayload } from '../../models/order.model';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [ReactiveFormsModule, NgOptimizedImage, NgClass, TrustBadgesComponent],
+  imports: [RouterLink, NgOptimizedImage, TrustBadgesComponent, EmptyStateComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
 export class CheckoutComponent implements OnDestroy {
   readonly cartStore = inject(CartStore);
   readonly authStore = inject(AuthStore);
-  private fb = inject(FormBuilder);
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
   private readonly seoService = inject(SeoService);
   private readonly orderService: OrderRepository = inject(ORDER_REPOSITORY);
+
+  isSubmitting = signal(false);
 
   constructor() {
     this.seoService.setPage('Checkout', 'Finaliza tu compra en Quantum Store.');
@@ -36,46 +37,14 @@ export class CheckoutComponent implements OnDestroy {
     this.seoService.reset();
   }
 
-  currentStep = signal(1);
-  isSubmitting = signal(false);
-
-  shippingForm = this.fb.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.required, Validators.email]],
-    address: ['', [Validators.required, Validators.minLength(5)]],
-    city: ['', Validators.required],
-    zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-    phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-  });
-
-  paymentForm = this.fb.nonNullable.group({
-    cardName: ['', Validators.required],
-    cardNumber: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
-    expiry: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])/([0-9]{2})$')]],
-    cvv: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]],
-  });
-
-  calculatePoints() {
-    return Math.floor(this.cartStore.totalPrice() * 0.1);
-  }
-
-  goToStep(step: number) {
-    if (step === 2 && this.shippingForm.invalid) {
-      this.shippingForm.markAllAsTouched();
-      return;
-    }
-    if (step === 3 && this.paymentForm.invalid) {
-      this.paymentForm.markAllAsTouched();
-      return;
-    }
-    this.currentStep.set(step);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
+  /**
+   * Core Engine crea la orden a partir de las ofertas del carrito
+   * (`{ items: [{ ofertaId, cantidad }] }`); el total lo calcula el backend.
+   */
   submitOrder() {
-    if (this.isSubmitting()) return;
+    if (this.isSubmitting() || this.cartStore.items().length === 0) return;
     this.isSubmitting.set(true);
-    this.notificationService.showSuccess('Procesando pago...');
+    this.notificationService.showSuccess('Procesando orden...');
 
     const payload: CreateOrderPayload = {
       items: this.cartStore.items().map((item) => ({
