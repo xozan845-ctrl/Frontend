@@ -1,9 +1,8 @@
 # 03 — Reglas de Tests E2E
 
 Aplica a: pruebas que recorren la aplicación completa en un **navegador real**.
-Hoy **no existe** suite E2E (deuda `G-6`); estas reglas son el contrato exigible
-cuando se añada Playwright. Mientras tanto, la verificación más cercana es
-`npm run build` + `ng serve` + revisión manual del flujo.
+La suite vive en `e2e/storefront.spec.ts` (Playwright, `npm run e2e`) y corre en
+el job `G-6` de la CI; estas reglas fijan el contrato que esa suite cumple.
 
 ## Flujos críticos (obligatorios antes de cada release)
 

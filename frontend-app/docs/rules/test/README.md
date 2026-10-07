@@ -5,8 +5,8 @@ del proyecto origen (donde un test validaba la implementación bugueada en vez d
 requisito) y se mantiene: **el test valida el requisito, no la implementación**.
 
 El stack de pruebas es **Vitest** con `@angular/build:unit-test` y **Angular
-TestBed**. Hoy el repo tiene **3 specs triviales** (`app`, `navbar`, `footer`):
-las capas de esta área son el estándar exigible, con sus deudas en
+TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
+(22 archivos / 110 tests) y las deudas están en
 [`../_meta/AUDIT.md`](../_meta/AUDIT.md).
 
 ## Archivos
@@ -88,19 +88,18 @@ npm test                       # suite unit + componentes (Vitest vía Angular)
 npm test -- --coverage         # con cobertura (cuando R-COV-4 esté configurado)
 npm run build                  # G-3: compilación + typecheck + budgets
 npx prettier --check .         # G-4: formato
-npx eslint .                   # G-5: contrato (ESLint aún no configurado)
+npx eslint .                   # G-5: lint
 npm audit --audit-level=high   # R-QA-6: security gate
 ```
 
 ## Pendientes (deuda abierta)
 
-- **Cobertura**: no hay `coverageThreshold` configurado; los 3 specs actuales son
-  smoke tests sin aserciones de requisito (`R-U-4`). El ratchet arranca en el
-  primer PR que configure cobertura (`R-COV-1`, `G-2`).
-- **Capa de componentes**: solo `app`, `navbar` y `footer` tienen spec (y
-  trivial). Formularios y componentes con lógica están sin cubrir (`R-CP-1`).
-- **Capa E2E**: no existe Playwright ni job (`G-6`).
-- **Capa de contrato**: no hay fixtures de respuesta del backend (`G-5`).
-- **Sin CI**: `.github/` no existe; `G-1..G-6` son contrato
-  ([`../ci/README.md`](../ci/README.md)).
-- **Sin ESLint**: `G-5` pendiente de configuración.
+El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`).
+Deudas abiertas destacadas:
+
+- **Cobertura crítica**: el umbral global pasa, pero `auth.store`/`auth.service`
+  y `product.service` siguen por debajo del 80 % de líneas/ramas (`R-QA-1`).
+- **Capa de componentes**: formularios y componentes con lógica (`checkout`,
+  `product-detail`, `search-autocomplete`, `cart-sidebar`, …) sin spec (`R-CP-1`).
+- **Capa de contrato**: sin fixtures de respuesta del backend versionados
+  (`R-C-8`).

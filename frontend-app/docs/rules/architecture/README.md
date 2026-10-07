@@ -36,6 +36,5 @@ que cuelgan referencias casi todas las demás.
 
 ## Pendientes
 
-- Pendiente de auditar: entra en la próxima revisión (`R-COV-3`).
-- Deuda conocida: `shared/ui/search-autocomplete` importa `ProductStore` de
-  `domains/products`, lo que invierte la dirección de `R-AR-2` (ver AUDIT).
+- Estado de cumplimiento y deudas en [`../_meta/AUDIT.md`](../_meta/AUDIT.md)
+  (`R-COV-3`).

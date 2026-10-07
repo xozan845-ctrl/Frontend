@@ -56,9 +56,6 @@ La importancia es cerrar la evidencia: un cambio "terminado" es un commit con
 
 ## Pendientes
 
-- **No existe `.github/workflows/ci.yml`**: los gatillos, jobs y comandos de
-  `01-flujos.md` son el contrato; su creación es el primer PR de infraestructura.
-- **Sin ESLint**: el gate `G-5` exige configurar ESLint (hoy solo hay Prettier)
-  antes de poder ejecutarse.
-- **Sin `coverageThreshold`**: `G-2` exige configurar cobertura en Vitest
-  (`R-COV-4`) antes de poder gatear.
+- Estado de cumplimiento y deudas en [`../_meta/AUDIT.md`](../_meta/AUDIT.md)
+  (`R-COV-3`). La CI implementada cumple gatillos, concurrencia y artifact de
+  cobertura (`R-CI-1..6`, `R-EN-3`).

@@ -83,9 +83,10 @@ src/
 ├── environments/                 # Configuración por entorno (API, flags)
 └── app/
     ├── domains/                  # Features de negocio (feature-first)
-    │   ├── auth/                 # login, register, AuthStore, AuthService
+    │   ├── auth/                 # login, register, AuthStore, guards e interceptors
     │   ├── cart/                 # carrito, checkout, confirmación, OrderService
     │   ├── home/                 # home y not-found
+    │   ├── layout/               # navbar y footer
     │   ├── plans/                # planes y suscripciones
     │   ├── products/             # catálogo, detalle, stores y adapters
     │   └── wishlist/             # lista de deseos
@@ -94,8 +95,7 @@ src/
     │   ├── directives/           # scroll-reveal
     │   ├── models/               # utilidades de respuesta de API
     │   ├── services/             # SEO, configuración de tienda
-    │   ├── ui/                   # componentes de UI reutilizables
-    │   └── utils/                # guards e interceptors
+    │   └── ui/                   # componentes de UI reutilizables
     ├── app.config.ts             # Providers globales (DI de repositorios)
     ├── app.routes.ts             # Rutas lazy por dominio
     └── app.ts                    # Componente raíz

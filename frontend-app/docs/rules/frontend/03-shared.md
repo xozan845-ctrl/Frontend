@@ -16,6 +16,5 @@ genérico y sin acoplarse a los dominios.
 
 - Piezas actuales correctas: `shared/ui/*` (presentacionales), `shared/services/seo.service.ts`,
   `shared/utils/{guards,interceptors}`, `shared/models/api-response.dto.ts`.
-- Deuda conocida: `shared/ui/search-autocomplete` importa `ProductStore` de
-  `domains/products`, violando `R-SH-4` (registrado en AUDIT). Debe moverse al
-  dominio o recibir los datos por `input`.
+- La pieza de buscador vive ahora en `domains/products/components/` y consume su
+  propio store: `shared/` no tiene dependencias hacia `domains/`.

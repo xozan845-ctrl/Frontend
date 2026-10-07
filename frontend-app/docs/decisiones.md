@@ -84,7 +84,8 @@ contexto y consecuencias.
 ## ADR-05: Estado de cliente en `localStorage` (y deuda del token)
 
 - **Fecha**: 2026-10-06
-- **Estado**: Aceptado con deuda
+- **Estado**: Aceptado con deuda (el token de sesión queda **superseded por
+  ADR-10**: access en memoria + refresh en `sessionStorage`)
 - **Contexto**: carrito, wishlist, tema, reseñas y "vistos recientemente" deben
   persistir entre sesiones sin backend. El `AuthStore` también persiste
   `{ user, token }`.

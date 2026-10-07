@@ -34,6 +34,3 @@ backend, gestión de estado, navegación, formularios y ciclo de vida de la SPA.
 - La regla de precio/dinero del backend (centavos) **no aplica** aquí: el
   frontend recibe y muestra montos ya formateados o `number`; aun así, todo
   cálculo de carrito redondea a 2 decimales antes de mostrarse (`R-U-6`).
-- `R-AR-2` tiene una violación conocida (`search-autocomplete`): está registrada
-  como deuda en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) para no bloquear el
-  trabajo actual.

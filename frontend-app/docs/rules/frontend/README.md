@@ -60,6 +60,5 @@ incremental, estado con signal store y rendimiento.
   aplican si más adelante se adopta render en servidor (con ADR nuevo, `R-DO-2`).
 - **La app es zoneless** (no hay `zone.js`): el render se dispara por signals; ver
   `R-PF-7`.
-- Deuda conocida: `R-PF-6` (`product-detail` sondea con `setInterval`), `R-SH-4`
-  (`search-autocomplete` invierte la dependencia) y falta de tests de la lógica
-  de stores/servicios (`R-U-8..12`).
+- Estado de cumplimiento y deudas en [`../_meta/AUDIT.md`](../_meta/AUDIT.md)
+  (`R-COV-3`).
