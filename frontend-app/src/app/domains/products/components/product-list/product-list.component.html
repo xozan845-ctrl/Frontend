@@ -184,7 +184,7 @@
           >
             <i class="fa-solid fa-chevron-left"></i>
           </button>
-          @for (page of getPageNumbers(); track page) {
+          @for (page of pageNumbers(); track page) {
             @if (page === -1) {
               <span
                 class="w-10 h-10 flex items-center justify-center text-slate-400 dark:text-slate-500"

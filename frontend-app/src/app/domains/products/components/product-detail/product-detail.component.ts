@@ -67,7 +67,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   productReviews = computed(() => {
     const p = this.productStore.selectedProduct();
     if (!p) return [];
-    return this.reviewsStore.getReviewsByProductId(p.id);
+    return this.reviewsStore
+      .getReviewsByProductId(p.id)
+      .map((review) => ({ ...review, formattedDate: this.formatDate(review.date) }));
   });
 
   avgRating = computed(() => {
@@ -199,7 +201,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.showReviewForm.set(false);
   }
 
-  formatDate(dateStr: string): string {
+  private formatDate(dateStr: string): string {
     return new Date(dateStr).toLocaleDateString('es-MX', {
       year: 'numeric',
       month: 'long',

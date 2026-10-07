@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal, effect } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, effect, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product.store';
@@ -116,7 +116,7 @@ export class ProductListComponent implements OnInit {
     window.scrollTo({ top: 120, behavior: 'smooth' });
   }
 
-  getPageNumbers(): number[] {
+  readonly pageNumbers = computed<number[]>(() => {
     const total = this.totalPages();
     const current = this.currentPage();
     const pages: number[] = [];
@@ -135,6 +135,6 @@ export class ProductListComponent implements OnInit {
       pages.push(total);
     }
     return pages;
-  }
+  });
 }
 export default ProductListComponent;
