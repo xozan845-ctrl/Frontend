@@ -16,8 +16,8 @@ features/` (ADR-12) con separación Smart/Dumb.
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
 | Build (G-3)        | `npm run build`                | ✅ initial **477.41 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **51 archivos / 251 tests**                                       |
-| Cobertura (G-2)    | idem                           | ✅ 93.94 / 91.68 / 94.61 / 93.70 (umbral 80/70/80/80)                |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **51 archivos / 254 tests**                                       |
+| Cobertura (G-2)    | idem                           | ✅ 94.33 / 91.68 / 95.20 / 94.15 (umbral 80/70/80/80)                |
 | E2E (G-6)          | `npm run e2e`                  | ✅ **8 flujos Playwright · 0 errores/warnings**                      |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
