@@ -1,6 +1,6 @@
 # 01 — Reglas de Unit Tests (lógica pura)
 
-Aplica a: `*.spec.ts` de `adapters/`, utilidades (`shared/models`, `shared/utils`),
+Aplica a: `*.spec.ts` de `adapters/`, utilidades (`core/models`, `core/services`),
 `state/*.store.ts`, `services/*.service.ts`, `guards`, `interceptors` y modelos
 con lógica. Son pruebas **sin red real** y en milisegundos.
 

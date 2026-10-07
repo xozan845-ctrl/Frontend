@@ -154,3 +154,20 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Actualización de reglas — ADR-12: estructura enterprise + Smart/Dumb (2026-10-07)
+
+- **Alcance:** cambio **normativo** (no de código): se adopta la estructura
+  `core/ · shared/ · layout/ · features/` y la separación Smart/Dumb.
+- **Reglas actualizadas:** `R-AR-1`, `R-AR-2`, `R-AR-6`, `R-AR-10`, `R-AR-11`;
+  nuevas `R-AR-12` (rutas por feature) y `R-AR-13` (frontera de `core/`);
+  nueva `R-SO-8` (Smart/Dumb). Naming y `shared/` reescritos a `features/`.
+- **Documentos:** `decisiones.md` (ADR-12, ADR-03 marcado como superado),
+  `README.md`, `architecture/`, `frontend/`, `_meta/CHECKLIST.md`.
+- **Estado global:** 🟡 **CUMPLE PARCIAL** — reglas al día, **migración de código
+  pendiente**.
+- **Deuda:** migrar `domains/` → `features/`, sacar `layout/` a la raíz, mover
+  genéricos a `core/` y extraer `<feature>.routes.ts`.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).

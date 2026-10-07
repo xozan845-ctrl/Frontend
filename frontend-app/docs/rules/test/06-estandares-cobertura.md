@@ -24,7 +24,7 @@ Todo PR incluye las capas marcadas con ✅ para el tipo de cambio tocado.
 
 - Se miden sobre **lógica ejecutable** (`R-COV-4`): `adapters/`, `state/`,
   `services/`, `repositories/` (interfaces y tokens), `guards`, `interceptors`,
-  `shared/models`, `shared/utils`. La capa **presentacional** (plantillas y
+  `core/models`, `core/services`. La capa **presentacional** (plantillas y
   componentes puramente visuales) se excluye del umbral duro, pero se cubre con
   `R-CP-*`.
 - Cobertura medida con `npm test -- --coverage`; los números se registran en

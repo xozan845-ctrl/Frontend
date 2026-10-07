@@ -4,12 +4,13 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-07 — **5ª de frontend-ecomerce**, actualizada al
-  cerrar la nota del banner PWA (`R-AR-10`/`R-CP-1`).
-- **Estado global:** 🟢 **CUMPLE** — los gates **G-1…G-6** y la seguridad
-  (`R-QA-6`) son efectivos en CI; `main` protegida; fronteras de dominio
-  explícitas, presentacionales sin stores, cobertura de componentes y
-  cero warnings en E2E. **Sin deudas abiertas.**
+- **Última auditoría:** 2026-10-07 — **5ª de frontend-ecomerce**, con reglas
+  actualizadas a la **estructura enterprise** (ADR-12) y **migración de código
+  pendiente**.
+- **Estado global:** 🟡 **CUMPLE PARCIAL** — los gates **G-1…G-6** y la seguridad
+  (`R-QA-6`) siguen verdes; arquitectura limpia, presentacionales sin stores,
+  fronteras por API pública y cobertura están en su sitio. Queda **migrar el
+  código** a `core/ · shared/ · layout/ · features/` (ADR-12).
 
 ## Evidencia ejecutada (2026-10-07)
 
@@ -30,15 +31,18 @@
 
 ### Arquitectura y naming (`R-AR`, `R-NC`)
 
-| Regla                      | Estado | Evidencia                                                                            |
-| -------------------------- | ------ | ------------------------------------------------------------------------------------ |
-| R-AR-1/2/4/5/6/7/8/9/11    | ✅     | Feature-first, `shared→domains` = 0, adapters, signal stores, lazy, forms            |
-| R-AR-3 puertos + DI        | ✅     | Stores y `checkout` dependen **solo** del `InjectionToken` (sin fallback a la clase) |
-| R-AR-10 ciclo de vida      | ✅     | `takeUntilDestroyed` en `product-list` y `checkout`                                  |
-| R-NC-1 sufijo `.component` | ✅     | **0** componentes sin sufijo                                                         |
-| R-NC-2 plantillas/estilos  | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador          |
-| R-NC-10 sin `any`          | ✅     | `"strict": true` + adapters con `unknown` + narrowing                                |
-| R-NC-11 claves `ecom_`     | ✅     | `ecom_theme`, `ecom_pwa_dismissed`, …                                                |
+| Regla                       | Estado | Evidencia                                                                                        |
+| --------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| R-AR-1/2 estructura         | 🟡     | Reglas actualizadas a ADR-12; el código aún vive en `domains/` + `shared/` (migración pendiente) |
+| R-AR-3 puertos + DI         | ✅     | Stores y `checkout` dependen **solo** del `InjectionToken` (sin fallback a la clase)             |
+| R-AR-4/5/7/8/9/11           | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores, entorno               |
+| R-AR-6/12 rutas             | 🟡     | Rutas lazy en `app.routes.ts`; falta extraer `<feature>.routes.ts`                               |
+| R-AR-10 ciclo de vida       | ✅     | `takeUntilDestroyed` + listeners del banner PWA liberados                                        |
+| R-AR-13 frontera de `core/` | 🟡     | `core/` aún no existe como capa (piezas genéricas en `shared/`)                                  |
+| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                     |
+| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                      |
+| R-NC-10 sin `any`           | ✅     | `"strict": true` + adapters con `unknown` + narrowing                                            |
+| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_pwa_dismissed`, …                                                            |
 
 ### Ingeniería frontend (`R-CX`, `R-SO`, `R-SH`, `R-LZ`, `R-ST`, `R-PF`, `R-HI`)
 
@@ -48,7 +52,8 @@
 | R-CX-6 fronteras de feature | ✅     | Entrypoints públicos (`public-api.ts`/`public-ui.ts`); sin imports internos cruzados     |
 | R-SO-1/5                    | ✅     | DIP: puertos inyectados sin conocer la implementación                                    |
 | R-SO-6 presentacionales     | ✅     | `product-card`/`quick-view-modal` reciben `input`/emiten `output`; sin stores de dominio |
-| R-SH-1..6                   | ✅     | `shared/` sin dependencias a dominios; ≥2 consumidores                                   |
+| R-SO-8 Smart/Dumb           | ✅     | Contenedores en páginas; presentacionales por `input`/`output`                           |
+| R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                                   |
 | R-LZ-1..6                   | ✅     | Rutas lazy + `@defer` con placeholder; sin preloading                                    |
 | R-ST-1..7                   | ✅     | 6 stores con `withState/Computed/Methods/Hooks` + `rxMethod`                             |
 | R-PF-1/3/5                  | ✅     | Build bajo budget; rutas lazy; sin preloading                                            |
@@ -120,8 +125,10 @@
 
 ## Deudas abiertas
 
-Ninguna. Todos los componentes con lógica tienen spec y las reglas del punto
-fijo se cumplen.
+1. **Migración a la estructura enterprise (ADR-12)**: mover `domains/` →
+   `features/`, sacar `layout/` a la raíz, mover las piezas genéricas de
+   `shared/` a `core/`, extraer `<feature>.routes.ts` y terminar de aplicar
+   Smart/Dumb. Por PRs atómicas (`R-AR-1/2/6/12/13`, `R-SO-8`).
 
 ## Cómo re-auditar
 
