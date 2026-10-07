@@ -105,11 +105,11 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 ## 11. Antes de merge (CI)
 
 - [ ] **G-1** unit + componentes en verde (`npm test`).
-- [ ] **G-2** cobertura ≥ umbral (`R-COV-1`) — _pendiente de configurar_.
+- [ ] **G-2** cobertura ≥ umbral (`R-COV-1`) — configurado en `angular.json`.
 - [ ] **G-3** `npm run build` en verde (typecheck + budgets).
 - [ ] **G-4** formato (`prettier --check .`).
-- [ ] **G-5** lint (`eslint`) — _pendiente de configurar_.
-- [ ] **G-6** E2E de flujos — _pendiente de configurar_.
+- [ ] **G-5** lint (`eslint`) — configurado en `eslint.config.mjs`.
+- [ ] **G-6** E2E de flujos (`npm run e2e`) — Playwright en CI.
 
 ## 12. Git — antes de subir ([`rules/git/`](../git/README.md))
 

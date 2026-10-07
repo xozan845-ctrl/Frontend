@@ -52,7 +52,7 @@ rules/
 | `security/`      | ✅ **activa** (sin auditar)           | [`security/README.md`](./security/README.md)           | Sesión y almacenamiento, sanitización/XSS, secretos y configuración pública, dependencias, validación de entrada (IDs `R-SE`)                                                                         |
 | `test/`          | ✅ **activa** ⚠️ cobertura incipiente | [`test/README.md`](./test/README.md)                   | Reglas de testing: unit puro, componentes, E2E, contrato, robustez, cobertura y QA gates (IDs `R-U/R-CP/R-E/R-C/…/G-*`)                                                                               |
 | `git/`           | ✅ **activa** (sin auditar)           | [`git/README.md`](./git/README.md)                     | Flujo **trunk-based**: `main` protegida, ramas cortas, tags semver, `git add`, `git commit -m`, `git push` y `gh pr` (IDs `R-GB/R-GA/R-GC/R-GP/R-PR`)                                                 |
-| `ci/`            | ✅ **activa** (contrato)              | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. **Hoy no existe `.github/` en el repo**: es el contrato a implementar (IDs `R-CI/R-EN`)                                                      |
+| `ci/`            | ✅ **activa** (implementada)          | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. Implementada en `.github/workflows/ci.yml` (6 jobs) (IDs `R-CI/R-EN`)                                                                        |
 | `cd/`            | ✅ **activa** (contrato)              | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Dockploy** (mismo VPS que Core Engine): build estático, environment `produccion`, smoke y rollback (IDs `R-CD`)                                                          |
 | `ai/`            | ✅ **activa** (nueva)                 | [`ai/README.md`](./ai/README.md)                       | Reglas obligatorias para IAs: contexto, atomicidad, uso de tools y apego al workflow (IDs `R-IA`)                                                                                                     |
 | `documentation/` | ✅ **activa** (nueva)                 | [`documentation/README.md`](./documentation/README.md) | Documentación como código: READMEs, ADRs, variables de entorno y comentarios (IDs `R-DO`)                                                                                                             |
@@ -80,13 +80,11 @@ El área `test/` es el ejemplo canónico al que apuntan las demás.
 
 ## Estado actual (resumen)
 
-El repo arranca con **3 specs triviales** (`app`, `navbar`, `footer`) y sin CI,
-lint, cobertura ni pipeline de despliegue. Las reglas de `test/`, `ci/` y `cd/`
-describen el **estándar exigible**; sus deudas están en
-[`_meta/AUDIT.md`](./_meta/AUDIT.md). Lo ya implementado (feature-first, puertos
-
-- DI, adapters, signal stores, formularios reactivos, accesibilidad base) está
-  recogido en `architecture/`, `ui/` y `security/` con sus deudas marcadas.
+El repo tiene **22 archivos / 110 tests**, cobertura global 81/82/82/80, CI en
+**6 jobs** (`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 8
+flujos** (Playwright) y pipeline de despliegue (Docker + nginx + CSP). El estado
+vigente y las deudas abiertas viven en [`_meta/AUDIT.md`](./_meta/AUDIT.md)
+(`R-COV-3`); aquí solo se describe el punto fijo.
 
 ## Decisión de flujo
 

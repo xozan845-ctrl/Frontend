@@ -35,19 +35,19 @@ Todo PR incluye las capas marcadas con ✅ para el tipo de cambio tocado.
 
 ## Gates de CI (bloquean el merge)
 
-Estado verificado contra el repo: **hoy no existe `.github/workflows/`**, así que
-todos los gates son **contrato a implementar** ([`../ci/README.md`](../ci/README.md)).
-✅ = existe y bloquea · ⏸ = regla vigente, paso no configurado (deuda) · N/A = no
-aplica.
+Estado verificado contra el repo: la CI vive en `.github/workflows/ci.yml`
+([`../ci/README.md`](../ci/README.md)) y los gates **G-1…G-6 + R-QA-6** están
+efectivos. ✅ = existe y bloquea · ⏸ = regla vigente, paso no configurado (deuda)
+· N/A = no aplica.
 
-| Gate | Condición                                                   | Estado                                        |
-| ---- | ----------------------------------------------------------- | --------------------------------------------- |
-| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.      | ⏸ sin CI; los 3 specs actuales pasan en local |
-| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`).          | ⏸ sin `coverageThreshold`                     |
-| G-3  | `npm run build` en verde (typecheck + budgets de `R-PF-1`). | ⏸ sin CI (build local en verde)               |
-| G-4  | Formato conforme: `prettier --check .`.                     | ⏸ sin CI (hay `.prettierrc`)                  |
-| G-5  | Lint en verde (`eslint`).                                   | ⏸ sin ESLint configurado                      |
-| G-6  | E2E de flujos críticos en verde antes de release.           | ⏸ sin suite (`R-E-*`)                         |
+| Gate | Condición                                                   | Estado                                    |
+| ---- | ----------------------------------------------------------- | ----------------------------------------- |
+| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.      | ✅ `npm test` (22 archivos / 110 tests)   |
+| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`).          | ✅ `coverageThresholds` en `angular.json` |
+| G-3  | `npm run build` en verde (typecheck + budgets de `R-PF-1`). | ✅                                        |
+| G-4  | Formato conforme: `prettier --check .`.                     | ✅                                        |
+| G-5  | Lint en verde (`eslint`).                                   | ✅ `eslint.config.mjs`                    |
+| G-6  | E2E de flujos críticos en verde antes de release.           | ✅ Playwright, 8 flujos                   |
 
 > El **security gate** (`npm audit --audit-level=high`) no es un `G-*`: es la
 > regla `R-QA-6`.
