@@ -92,3 +92,34 @@
 - **Deudas:** contrato (`R-C-*`), componentes con lógica (`R-CP-*`), fronteras
   entre dominios (`R-CX-6`), refresh en 401 y operación Dockploy.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 4 — Cierre de hallazgos por PRs atómicas (2026-10-07)
+
+- **Alcance:** corrección de los hallazgos de la 3ª auditoría (y los detectados
+  en esta revisión) mediante **11 PRs atómicas** con checks en verde y merge
+  `--rebase`.
+- **Corregido:**
+  - `R-SE-3/R-SE-9` — resaltado del buscador sin `innerHTML`.
+  - `R-AR-10` — `takeUntilDestroyed` en `checkout`.
+  - `R-DO-1/R-COV-3` — README, reglas de `test/`, `ci/` y `CHECKLIST` sincronizados.
+  - `R-UX-6` — `SeoService` en todas las páginas.
+  - `R-NC-10` — `"strict": true` en TypeScript.
+  - `R-PF-4/R-PF-6` — derivados en `computed`; sin `setTimeout` en dominios.
+  - `R-C-8` — fixtures de contrato versionados por adapter.
+  - `R-QA-1` — cobertura de la lógica crítica ≥ 80 % de líneas y ramas.
+  - `R-RB-3/R-REG-1` — los stores sobreviven a un error de API (bug detectado:
+    el `rxMethod` moría tras el primer fallo y propagaba un error no controlado).
+- **Operativo:** `main` protegida (`R-GB-1`), tag `v1.2.2` (`R-GB-3`) y ramas
+  obsoletas cerradas (`R-GB-7`).
+- **Resultado:**
+  - ✅ `npm run build` — initial **475.65 kB**; SW generado.
+  - ✅ `npm test` — **25 archivos / 147 tests**; cobertura **94.35 / 92.17 / 96.83 / 93.57**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; E2E 8/8.
+  - ✅ CI 6/6 jobs requeridos en verde.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** presentacionales con stores (`R-SO-6`), fronteras entre dominios
+  (`R-CX-6`), componentes con lógica (`R-CP-*`), focus trap en modales
+  (`R-AC-3`) y warnings `NG02952`/`R-E-9`.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
