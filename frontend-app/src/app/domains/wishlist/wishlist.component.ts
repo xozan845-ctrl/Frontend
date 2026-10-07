@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { WishlistStore } from './state/wishlist.store';
@@ -8,6 +8,7 @@ import { StarRatingComponent } from '../../shared/ui/star-rating/star-rating.com
 import { ReviewsStore } from '../products/state/reviews.store';
 import { QuickViewModalComponent } from '../products/components/quick-view-modal/quick-view-modal.component';
 import { Product } from '../products/models/product.model';
+import { SeoService } from '../../shared/services/seo.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -21,12 +22,21 @@ import { Product } from '../products/models/product.model';
   ],
   templateUrl: './wishlist.component.html',
 })
-export class WishlistComponent {
+export class WishlistComponent implements OnDestroy {
   readonly wishlistStore = inject(WishlistStore);
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
+  private readonly seoService = inject(SeoService);
 
   quickViewProduct = signal<Product | null>(null);
+
+  constructor() {
+    this.seoService.setPage('Lista de deseos', 'Tus productos favoritos en Quantum Store.');
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
+  }
 
   getAvgRating(productId: string | number): number {
     return this.reviewsStore.getAverageRating(productId);
