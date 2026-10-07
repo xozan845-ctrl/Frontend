@@ -4,7 +4,6 @@ import {
   input,
   output,
   signal,
-  computed,
   HostListener,
   OnDestroy,
   effect,
@@ -15,9 +14,6 @@ import { switchMap } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../models/product.model';
-import { CartStore } from '../../../cart/state/cart.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist.store';
-import { ReviewsStore } from '../../state/reviews.store';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 
@@ -30,11 +26,14 @@ import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rati
 })
 export class QuickViewModalComponent implements OnDestroy {
   product = input<Product | null>(null);
+  /** Datos que aporta el contenedor: sin stores de dominio (R-SO-6). */
+  isInWishlist = input<boolean>(false);
+  avgRating = input<number>(0);
+  reviewCount = input<number>(0);
   closeModal = output<void>();
+  addToCart = output<Product>();
+  toggleWishlist = output<Product>();
 
-  private readonly cartStore = inject(CartStore);
-  private readonly wishlistStore = inject(WishlistStore);
-  private readonly reviewsStore = inject(ReviewsStore);
   private readonly cartFlyService = inject(CartFlyService);
 
   isAdding = signal(false);
@@ -63,18 +62,6 @@ export class QuickViewModalComponent implements OnDestroy {
     document.body.style.overflow = '';
   }
 
-  readonly avgRating = computed(() =>
-    this.product() ? this.reviewsStore.getAverageRating(this.product()!.id) : 0,
-  );
-
-  readonly reviewCount = computed(() =>
-    this.product() ? this.reviewsStore.getReviewsByProductId(this.product()!.id).length : 0,
-  );
-
-  readonly isInWishlist = computed(() =>
-    this.product() ? this.wishlistStore.isInWishlist(this.product()!.id) : false,
-  );
-
   @HostListener('document:keydown.escape')
   onEscape(): void {
     if (this.product()) this.closeModal.emit();
@@ -90,13 +77,13 @@ export class QuickViewModalComponent implements OnDestroy {
     const p = this.product();
     if (!p || this.isAdding()) return;
     this.isAdding.set(true);
-    this.cartStore.addItem(p);
+    this.addToCart.emit(p);
     this.cartFlyService.fly(buttonEl, p.imageUrl);
     this.addPulse.next();
   }
 
-  toggleWishlist(): void {
+  onToggleWishlist(): void {
     const p = this.product();
-    if (p) this.wishlistStore.toggle(p);
+    if (p) this.toggleWishlist.emit(p);
   }
 }

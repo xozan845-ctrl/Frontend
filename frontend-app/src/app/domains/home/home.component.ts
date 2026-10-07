@@ -2,6 +2,8 @@ import { Component, inject, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductStore } from '../products/state/product.store';
 import { CartStore } from '../cart/state/cart.store';
+import { WishlistStore } from '../wishlist/state/wishlist.store';
+import { ReviewsStore } from '../products/state/reviews.store';
 import { ProductCardComponent } from '../products/components/product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../shared/ui/skeleton/skeleton-loader.component';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
@@ -24,9 +26,23 @@ import { Product } from '../products/models/product.model';
 export class HomeComponent implements OnInit {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
+  private readonly wishlistStore = inject(WishlistStore);
+  private readonly reviewsStore = inject(ReviewsStore);
   private readonly seoService = inject(SeoService);
 
   featuredProducts = computed(() => this.productStore.products().slice(0, 4));
+
+  /** Datos que consume la tarjeta presentacional (R-SO-6). */
+  readonly featuredCards = computed(() => this.featuredProducts().map((p) => this.toCard(p)));
+
+  private toCard(product: Product) {
+    return {
+      product,
+      isInWishlist: this.wishlistStore.isInWishlist(product.id),
+      avgRating: this.reviewsStore.getAverageRating(product.id),
+      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
+    };
+  }
 
   ngOnInit() {
     this.seoService.setPage(
@@ -40,6 +56,10 @@ export class HomeComponent implements OnInit {
 
   onAddToCart(product: Product) {
     this.cartStore.addItem(product);
+  }
+
+  onToggleWishlist(product: Product) {
+    this.wishlistStore.toggle(product);
   }
 
   retryLoad() {

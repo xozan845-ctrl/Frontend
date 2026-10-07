@@ -48,7 +48,7 @@
     >
       <!-- Wishlist -->
       <button
-        (click)="toggleWishlist()"
+        (click)="onToggleWishlist()"
         class="w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110 focus-visible:scale-110 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 backdrop-blur-sm border"
         [class.bg-red-500]="isInWishlist()"
         [class.border-red-500]="isInWishlist()"

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnDestroy, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { WishlistStore } from './state/wishlist.store';
@@ -38,13 +38,25 @@ export class WishlistComponent implements OnDestroy {
     this.seoService.reset();
   }
 
-  getAvgRating(productId: string | number): number {
-    return this.reviewsStore.getAverageRating(productId);
-  }
+  /** Vista de cada producto para la plantilla (R-PF-4/R-SO-6). */
+  readonly wishlistVms = computed(() =>
+    this.wishlistStore.items().map((product) => ({
+      product,
+      avgRating: this.reviewsStore.getAverageRating(product.id),
+      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
+    })),
+  );
 
-  getReviewCount(productId: string | number): number {
-    return this.reviewsStore.getReviewsByProductId(productId).length;
-  }
+  readonly quickViewVm = computed(() => {
+    const product = this.quickViewProduct();
+    if (!product) return null;
+    return {
+      product,
+      isInWishlist: this.wishlistStore.isInWishlist(product.id),
+      avgRating: this.reviewsStore.getAverageRating(product.id),
+      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
+    };
+  });
 
   addToCart(product: Product): void {
     this.cartStore.addItem(product);
