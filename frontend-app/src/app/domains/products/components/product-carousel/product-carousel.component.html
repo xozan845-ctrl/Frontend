@@ -30,7 +30,7 @@
 
     <!-- Carousel Track -->
     <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar -mx-4 px-4">
-      @for (product of visibleProducts(); track product.id) {
+      @for (product of visibleProducts(); track product.id; let i = $index) {
         <a
           [routerLink]="['/product', product.id]"
           class="shrink-0 snap-start w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-16px)] group flex flex-col bg-white dark:bg-surface-800 rounded-2xl border border-slate-100 dark:border-surface-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 shadow-sm"
@@ -39,13 +39,24 @@
           <div
             class="relative aspect-square bg-slate-50 dark:bg-surface-900 flex items-center justify-center overflow-hidden"
           >
-            <img
-              [ngSrc]="product.imageUrl"
-              fill
-              [alt]="product.name"
-              class="object-cover mix-blend-multiply dark:mix-blend-normal p-3 group-hover:scale-105 transition-transform duration-500"
-              (error)="$any($event.target).classList.add('img-error')"
-            />
+            @if (i === 0) {
+              <img
+                [ngSrc]="product.imageUrl"
+                fill
+                priority
+                [alt]="product.name"
+                class="object-cover mix-blend-multiply dark:mix-blend-normal p-3 group-hover:scale-105 transition-transform duration-500"
+                (error)="$any($event.target).classList.add('img-error')"
+              />
+            } @else {
+              <img
+                [ngSrc]="product.imageUrl"
+                fill
+                [alt]="product.name"
+                class="object-cover mix-blend-multiply dark:mix-blend-normal p-3 group-hover:scale-105 transition-transform duration-500"
+                (error)="$any($event.target).classList.add('img-error')"
+              />
+            }
             <div
               class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
               style="display: none"

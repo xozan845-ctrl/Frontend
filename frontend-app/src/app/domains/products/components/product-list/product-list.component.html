@@ -157,10 +157,11 @@
     />
   } @else {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-20">
-      @for (card of cardVms(); track card.product.id) {
+      @for (card of cardVms(); track card.product.id; let i = $index) {
         <app-product-card
           appScrollReveal
           [product]="card.product"
+          [priority]="i < 4"
           [isInWishlist]="card.isInWishlist"
           [avgRating]="card.avgRating"
           [reviewCount]="card.reviewCount"
