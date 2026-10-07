@@ -10,20 +10,27 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { Product } from '../../../products/models/product.model';
 import { CheckoutComponent } from './checkout.component';
 
+const product: Product = {
+  id: 'of-1',
+  name: 'Teclado',
+  description: 'SKU SKU-TEC',
+  price: 1380,
+  imageUrl: '/teclado.jpg',
+  category: 'General',
+  stock: 10,
+};
+
 describe('CheckoutComponent', () => {
   const cartItems = signal<{ product: Product; quantity: number }[]>([]);
   const cartStore = {
     items: cartItems,
-    totalPrice: () => 0,
-    finalPrice: () => 0,
-    discountAmount: () => 0,
-    appliedCoupon: () => null,
+    finalPrice: () => 2760,
     clearCart: vi.fn(),
   };
   const authStore = { user: () => ({ name: 'Ana', email: 'ana@tienda.com' }) };
   const notification = { showSuccess: vi.fn(), showError: vi.fn() };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
-  const orderRepo = { createOrder: vi.fn(() => of({ id: 1 })) };
+  const orderRepo = { createOrder: vi.fn(() => of({ id: 'o-1' })) };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
@@ -44,81 +51,38 @@ describe('CheckoutComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    cartItems.set([]);
   });
 
-  it('debe mostrar el formulario de envío en el primer paso', async () => {
+  it('debe mostrar el estado vacío sin productos', async () => {
     const fixture = await setup();
 
-    expect(fixture.componentInstance.currentStep()).toBe(1);
-    expect(fixture.nativeElement.querySelector('#shippingFullName')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('form')).not.toBeNull();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Carrito vacío');
   });
 
-  it('no debe avanzar al paso de pago con datos de envío inválidos', async () => {
+  it('debe listar los productos y el total', async () => {
+    cartItems.set([{ product, quantity: 2 }]);
     const fixture = await setup();
-    const component = fixture.componentInstance;
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
-    component.goToStep(2);
-
-    expect(component.currentStep()).toBe(1);
-    expect(component.shippingForm.controls.fullName.touched).toBe(true);
+    expect(text).toContain('Teclado');
+    expect(text).toContain('$2760.00');
   });
 
-  it('debe avanzar al pago cuando los datos de envío son válidos', async () => {
+  it('no debe enviar la orden con el carrito vacío', async () => {
     const fixture = await setup();
-    const component = fixture.componentInstance;
-    component.shippingForm.setValue({
-      fullName: 'Ana Pérez',
-      email: 'ana@tienda.com',
-      address: 'Calle Principal 123',
-      city: 'Monterrey',
-      zipCode: '64000',
-      phone: '8112345678',
-    });
 
-    component.goToStep(2);
+    fixture.componentInstance.submitOrder();
 
-    expect(component.currentStep()).toBe(2);
+    expect(orderRepo.createOrder).not.toHaveBeenCalled();
   });
 
-  it('no debe avanzar a revisión con datos de pago inválidos', async () => {
+  it('debe enviar la orden con las ofertas y navegar a confirmación', async () => {
+    cartItems.set([{ product, quantity: 2 }]);
     const fixture = await setup();
-    const component = fixture.componentInstance;
-    component.goToStep(3);
-
-    expect(component.currentStep()).toBe(1);
-    expect(component.paymentForm.controls.cardName.touched).toBe(true);
-  });
-
-  it('debe calcular los puntos como el diez por ciento del total', async () => {
-    cartStore.totalPrice = () => 123.45;
-    const fixture = await setup();
-
-    expect(fixture.componentInstance.calculatePoints()).toBe(12);
-    cartStore.totalPrice = () => 0;
-  });
-
-  it('debe enviar la orden con las ofertas del carrito y navegar a confirmación', async () => {
-    const fixture = await setup();
-    const component = fixture.componentInstance;
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    cartItems.set([
-      {
-        product: {
-          id: 'of-1',
-          name: 'Teclado',
-          description: 'SKU SKU-TEC',
-          price: 1380,
-          imageUrl: '',
-          category: 'General',
-          stock: 10,
-        },
-        quantity: 2,
-      },
-    ]);
 
-    component.submitOrder();
+    fixture.componentInstance.submitOrder();
 
     expect(orderRepo.createOrder).toHaveBeenCalledWith({
       items: [{ ofertaId: 'of-1', quantity: 2 }],

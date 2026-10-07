@@ -37,7 +37,7 @@ describe('OrderService', () => {
     service.createOrder(payload).subscribe((order) => (result = order));
     const request = httpMock.expectOne('https://api.test/orders');
     expect(request.request.method).toBe('POST');
-    expect(request.request.body).toBe(payload);
+    expect(request.request.body).toEqual({ items: [{ oferta_id: 'of-1', cantidad: 1 }] });
     request.flush({
       id: 'o-1',
       estado: 'creada',
