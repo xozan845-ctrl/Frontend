@@ -20,7 +20,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { SpinnerComponent } from '../../../../shared/ui/spinner/spinner.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { ImageLightboxComponent } from '../../../../shared/ui/image-lightbox/image-lightbox.component';
-import { ProductCarouselComponent } from '../product-carousel/product-carousel.component';
+import { ProductCarouselComponent } from '../../components/product-carousel/product-carousel.component';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SeoService } from '../../../../core/services/seo.service';
