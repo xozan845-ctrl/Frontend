@@ -11,6 +11,12 @@
 <div
   class="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white dark:bg-surface-900 border-l border-slate-200 dark:border-surface-700 shadow-2xl transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col"
   [ngClass]="cartStore.isSidebarOpen() ? 'translate-x-0' : 'translate-x-full'"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Carrito de compras"
+  tabindex="-1"
+  [attr.inert]="cartStore.isSidebarOpen() ? null : ''"
+  [appFocusTrap]="cartStore.isSidebarOpen()"
 >
   <!-- Header -->
   <div
@@ -29,6 +35,7 @@
     <button
       (click)="cartStore.toggleSidebar(false)"
       class="w-10 h-10 rounded-full hover:bg-white dark:hover:bg-surface-700 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center shadow-sm hover:shadow-md"
+      aria-label="Cerrar"
     >
       <i class="fa-solid fa-xmark text-xl"></i>
     </button>

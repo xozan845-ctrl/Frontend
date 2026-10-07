@@ -11,6 +11,8 @@
       style="animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both"
       role="dialog"
       aria-modal="true"
+      tabindex="-1"
+      [appFocusTrap]="true"
       [attr.aria-label]="'Vista rápida: ' + product()!.name"
     >
       <!-- Close Button -->
