@@ -17,8 +17,8 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
   authType: 'bearer',
   withCredentials: false,
   endpoints: {
-    products: '/products',
-    categories: '/categories',
+    products: '/catalog/productos',
+    categories: '/catalog/productos',
     auth: '/auth',
     orders: '/orders',
   },

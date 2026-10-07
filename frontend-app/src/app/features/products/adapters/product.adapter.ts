@@ -37,13 +37,14 @@ export function adaptProductFromBackend(raw: unknown): Product {
   const id: string | number = typeof rawId === 'number' ? rawId : String(rawId);
 
   // Normalizar Nombre / Título
-  const name = dto.name || dto.title || dto.product_name || dto.label || 'Producto sin nombre';
+  const name =
+    dto.nombre || dto.name || dto.title || dto.product_name || dto.label || 'Producto sin nombre';
 
   // Normalizar Descripción
-  const description = dto.description || dto.details || dto.desc || '';
+  const description = dto.descripcion || dto.description || dto.details || dto.desc || '';
 
   // Normalizar Precio
-  const rawPrice = dto.price ?? dto.unit_price ?? dto.cost ?? dto.amount ?? 0;
+  const rawPrice = dto.precio_base ?? dto.price ?? dto.unit_price ?? dto.cost ?? dto.amount ?? 0;
   const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(String(rawPrice)) || 0;
 
   // Normalizar Precio Original (si existe)
@@ -69,7 +70,9 @@ export function adaptProductFromBackend(raw: unknown): Product {
 
   // Normalizar Categoría
   let category = 'General';
-  if (typeof dto.category === 'string' && dto.category.trim().length > 0) {
+  if (typeof dto.categoria === 'string' && dto.categoria.trim().length > 0) {
+    category = dto.categoria.trim();
+  } else if (typeof dto.category === 'string' && dto.category.trim().length > 0) {
     category = dto.category.trim();
   } else if (dto.category && typeof dto.category === 'object') {
     category = dto.category.name || dto.category.title || 'General';

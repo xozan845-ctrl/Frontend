@@ -28,7 +28,10 @@ export class AuthService implements AuthRepository {
     }
 
     return this.http
-      .post<unknown>(`${this.apiUrl}/login`, credentials)
+      .post<unknown>(`${this.apiUrl}/login`, {
+        correo: credentials.email,
+        contrasena: credentials.password,
+      })
       .pipe(map((res) => adaptAuthResponseFromBackend(res, credentials.email)));
   }
 
@@ -45,7 +48,12 @@ export class AuthService implements AuthRepository {
     }
 
     return this.http
-      .post<unknown>(`${this.apiUrl}/register`, userData)
+      .post<unknown>(`${this.apiUrl}/registro`, {
+        nombre: userData.name,
+        correo: userData.email,
+        contrasena: userData.password,
+        rol: 'comprador',
+      })
       .pipe(map((res) => adaptAuthResponseFromBackend(res, userData.email)));
   }
 

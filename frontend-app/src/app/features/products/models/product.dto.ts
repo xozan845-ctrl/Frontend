@@ -7,17 +7,21 @@ export interface BackendProductDTO {
   _id?: string | number;
   productId?: string | number;
   product_id?: string | number;
+  sku?: string;
 
   name?: string;
+  nombre?: string;
   title?: string;
   product_name?: string;
   label?: string;
 
   description?: string;
+  descripcion?: string;
   details?: string;
   desc?: string;
 
   price?: number | string;
+  precio_base?: number | string;
   unit_price?: number | string;
   cost?: number | string;
   amount?: number | string;
@@ -37,6 +41,7 @@ export interface BackendProductDTO {
   photos?: string[];
 
   category?: string | { id?: string | number; name?: string; title?: string };
+  categoria?: string;
   category_name?: string;
   categoryName?: string;
   department?: string;
@@ -46,6 +51,7 @@ export interface BackendProductDTO {
   quantity?: number;
   stock_quantity?: number;
   in_stock?: boolean;
+  estado?: string;
 
   variants?: {
     colors?: { name: string; hex: string }[];
