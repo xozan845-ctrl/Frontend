@@ -146,11 +146,15 @@
       @defer (on viewport) {
         <!-- Grid for Featured with more spacing -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
-          @for (product of featuredProducts(); track product.id) {
+          @for (card of featuredCards(); track card.product.id) {
             <app-product-card
               appScrollReveal
-              [product]="product"
+              [product]="card.product"
+              [isInWishlist]="card.isInWishlist"
+              [avgRating]="card.avgRating"
+              [reviewCount]="card.reviewCount"
               (addToCart)="onAddToCart($event)"
+              (toggleWishlist)="onToggleWishlist($event)"
             />
           }
         </div>

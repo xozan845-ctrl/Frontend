@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product.store';
 import { CartStore } from '../../../cart/state/cart.store';
+import { WishlistStore } from '../../../wishlist/state/wishlist.store';
+import { ReviewsStore } from '../../state/reviews.store';
 import { ProductCardComponent } from '../product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SearchAutocompleteComponent } from '../search-autocomplete/search-autocomplete.component';
@@ -28,6 +30,8 @@ import { Product } from '../../models/product.model';
 export class ProductListComponent implements OnInit {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
+  private readonly wishlistStore = inject(WishlistStore);
+  private readonly reviewsStore = inject(ReviewsStore);
   private readonly route = inject(ActivatedRoute);
   private readonly seoService = inject(SeoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -44,6 +48,27 @@ export class ProductListComponent implements OnInit {
   readonly totalPages = this.productStore.totalPages;
 
   quickViewProduct = signal<Product | null>(null);
+
+  /** Datos que consumen las piezas presentacionales (R-SO-6). */
+  readonly cardVms = computed(() => this.paginatedProducts().map((p) => this.toCard(p)));
+
+  readonly quickViewVm = computed(() => {
+    const product = this.quickViewProduct();
+    return product ? this.toCard(product) : null;
+  });
+
+  private toCard(product: Product) {
+    return {
+      product,
+      isInWishlist: this.wishlistStore.isInWishlist(product.id),
+      avgRating: this.reviewsStore.getAverageRating(product.id),
+      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
+    };
+  }
+
+  onToggleWishlist(product: Product) {
+    this.wishlistStore.toggle(product);
+  }
 
   sortOptions = [
     { value: 'default', label: 'Relevancia' },

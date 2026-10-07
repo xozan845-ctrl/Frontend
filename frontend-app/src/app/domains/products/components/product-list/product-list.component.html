@@ -157,12 +157,16 @@
     />
   } @else {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-20">
-      @for (product of paginatedProducts(); track product.id) {
+      @for (card of cardVms(); track card.product.id) {
         <app-product-card
           appScrollReveal
-          [product]="product"
+          [product]="card.product"
+          [isInWishlist]="card.isInWishlist"
+          [avgRating]="card.avgRating"
+          [reviewCount]="card.reviewCount"
           (addToCart)="addToCart($event)"
           (quickView)="openQuickView($event)"
+          (toggleWishlist)="onToggleWishlist($event)"
         />
       }
     </div>
@@ -234,4 +238,12 @@
 </div>
 
 <!-- Quick View Modal -->
-<app-quick-view-modal [product]="quickViewProduct()" (closeModal)="quickViewProduct.set(null)" />
+<app-quick-view-modal
+  [product]="quickViewVm()?.product ?? null"
+  [isInWishlist]="quickViewVm()?.isInWishlist ?? false"
+  [avgRating]="quickViewVm()?.avgRating ?? 0"
+  [reviewCount]="quickViewVm()?.reviewCount ?? 0"
+  (closeModal)="quickViewProduct.set(null)"
+  (addToCart)="addToCart($event)"
+  (toggleWishlist)="onToggleWishlist($event)"
+/>

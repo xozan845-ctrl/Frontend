@@ -15,8 +15,6 @@ import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Product } from '../../models/product.model';
 import { NotificationService } from '../../../../shared/ui/notification/notification.service';
-import { WishlistStore } from '../../../wishlist/state/wishlist.store';
-import { ReviewsStore } from '../../state/reviews.store';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 
@@ -30,22 +28,20 @@ export class ProductCardComponent {
   @ViewChild('productImage', { read: ElementRef }) productImageRef!: ElementRef<HTMLImageElement>;
 
   product = input.required<Product>();
+  /** Datos que aporta el contenedor: el presentacional no conoce stores (R-SO-6). */
+  isInWishlist = input<boolean>(false);
+  avgRating = input<number>(0);
+  reviewCount = input<number>(0);
   addToCart = output<Product>();
   quickView = output<Product>();
+  toggleWishlist = output<Product>();
 
   private readonly notificationService = inject(NotificationService);
-  private readonly wishlistStore = inject(WishlistStore);
-  private readonly reviewsStore = inject(ReviewsStore);
   private readonly cartFlyService = inject(CartFlyService);
 
   isAdding = signal(false);
 
-  // Derivados en `computed` (R-PF-4): nunca se recalculan en la plantilla.
-  readonly isInWishlist = computed(() => this.wishlistStore.isInWishlist(this.product().id));
-  readonly avgRating = computed(() => this.reviewsStore.getAverageRating(this.product().id));
-  readonly reviewCount = computed(
-    () => this.reviewsStore.getReviewsByProductId(this.product().id).length,
-  );
+  // Derivado puro del input (R-PF-4).
   readonly discountPercent = computed(() => {
     const orig = this.product().originalPrice;
     const price = this.product().price;
@@ -67,8 +63,8 @@ export class ProductCardComponent {
       .subscribe(() => this.isAdding.set(false));
   }
 
-  toggleWishlist(): void {
-    this.wishlistStore.toggle(this.product());
+  onToggleWishlist(): void {
+    this.toggleWishlist.emit(this.product());
   }
 
   onAddToCart(buttonEl: HTMLButtonElement): void {
