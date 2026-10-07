@@ -17,6 +17,6 @@ salidas). Se ejecutan con **Angular TestBed** dentro de Vitest, sin red real.
 ## Verificación
 
 ```bash
-npm test -- --include src/app/domains/**/*.spec.ts
+npm test -- --include src/app/features/**/*.spec.ts
 grep -rn "querySelector('.\(bg-\|text-\|flex\)" src --include=*.spec.ts   # R-CP-2: vacío
 ```

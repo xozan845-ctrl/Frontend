@@ -50,7 +50,9 @@ contexto y consecuencias.
 ## ADR-03: Arquitectura Angular feature-first con NgRx Signals
 
 - **Fecha**: 2026-10-06
-- **Estado**: Aceptado (implementado)
+- **Estado**: Aceptado (implementado) — **superado en organización por ADR-12**
+  (la estructura pasa a `core/ · shared/ · layout/ · features/`; se conservan
+  standalone, lazy y `signalStore`)
 - **Contexto**: la app creció por dominios (`auth`, `cart`, `home`, `plans`,
   `products`, `wishlist`) y utiliza `@ngrx/signals` para estado.
 - **Decisión**: organizar por **dominio** (`domains/<feature>`) + código
@@ -222,3 +224,43 @@ contexto y consecuencias.
   Es un **cambio rompiente con impacto visual** (escala de sombras/radios,
   variantes): requiere **QA visual**; revertir es volver a v3 (reintroduce los
   advisories).
+
+---
+
+## ADR-12: Estructura enterprise (`core/` · `shared/` · `layout/` · `features/`) y separación Smart/Dumb
+
+- **Fecha**: 2026-10-07
+- **Estado**: Aceptado (migración en curso)
+- **Contexto**: la app creció con un feature-first simple (`domains/` + `shared/`)
+  que ya no expresa bien las fronteras al escalar a varios equipos y dominios:
+  no hay una capa explícita de infraestructura transversal (`core/`), el chrome
+  visual vive dentro de un "dominio" (`domains/layout`), las piezas genéricas
+  (`shared/models`, `shared/services`) se mezclan con la presentación, y cada
+  feature declara sus rutas inline en `app.routes.ts`.
+- **Decisión**: adoptar una estructura **empresarial por capas de primer nivel**
+  y una separación explícita entre contenedores y presentacionales:
+  - **`core/`** — infraestructura transversal **sin UI ni reglas de negocio**:
+    tokens/config de API, adapters genéricos de envelopes, servicios de
+    aplicación sin UI (SEO, configuración de tienda, notificaciones). `core/` no
+    depende de `shared/`, `layout/` ni `features/`.
+  - **`shared/`** — presentación y utilidades **reutilizables y sin lógica de
+    negocio**: `ui/`, `directives/`, `pipes/`, `constants/`. Puede depender de
+    `core/`, nunca de `features/`.
+  - **`layout/`** — chrome de la aplicación (`navbar/`, `footer/`, drawers)
+    montado por `app.component`; sin reglas de negocio.
+  - **`features/<feature>/`** — dominios de negocio con **clean/hexagonal**
+    interno: `pages/`, `components/`, `state/` (signal stores), `services/`,
+    `repositories/` (puertos + `InjectionToken`), `adapters/`, `models/`,
+    `constants/`, `mocks/`, `public-api.ts`, `public-ui.ts` y
+    `<feature>.routes.ts`.
+  - **Rutas por feature**: `app.routes.ts` compone con `loadChildren`/
+    `loadComponent`; los features exponen su propio `<feature>.routes.ts`.
+  - **Smart vs Dumb**: contenedores (páginas y componentes _smart_) inyectan
+    stores/servicios y orquestan; presentacionales (_dumb_) reciben `input`,
+    emiten `output` y **no** inyectan stores ni servicios de dominio.
+- **Consecuencias**: se renombra `domains/` → `features/`; `layout` sube a
+  `app/layout/`; las piezas genéricas se mueven de `shared/` a `core/`; se
+  actualizan las reglas `R-AR-1/2/6`, se añaden `R-AR-12` (rutas por feature) y
+  `R-AR-13` (frontera de `core/`), y se añade `R-SO-8` (Smart/Dumb). La migración
+  se hace por PRs atómicas (código + specs + `angular.json` de cobertura), sin
+  romper los gates. Revertir es volver a `domains/` + `shared/`.

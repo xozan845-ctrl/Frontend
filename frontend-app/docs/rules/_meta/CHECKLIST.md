@@ -31,17 +31,19 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 
 ## 3. Arquitectura ([`architecture/`](../architecture/README.md))
 
-- [ ] **R-AR-1** — El código vive en `domains/<feature>/` o `shared/`, con la carpeta correcta por tipo.
-- [ ] **R-AR-2** — `shared/` no importa de `domains/`; el dominio vecino se consume por su API pública.
+- [ ] **R-AR-1** — El código vive en `core/`, `shared/`, `layout/` o `features/<feature>/` (con `pages/`/`components/` por rol).
+- [ ] **R-AR-2** — `core/`/`shared/`/`layout/` no importan `features/`; `core/` no usa `shared/`; el feature vecino se consume por su API pública.
 - [ ] **R-AR-3** — La infraestructura se consume por puerto + `InjectionToken` cableado en `app.config.ts`.
 - [ ] **R-AR-4** — Las respuestas externas pasan por un adapter; el dominio no conoce `snake_case` ni envelopes.
 - [ ] **R-AR-5** — El estado compartido vive en `signalStore`; derivados en `withComputed`.
-- [ ] **R-AR-6** — Componentes standalone; rutas con `loadComponent`/`loadChildren`.
+- [ ] **R-AR-6** — Componentes standalone; rutas lazy por feature (`R-AR-12`).
 - [ ] **R-AR-7** — Formularios con `ReactiveFormsModule`; sin `ngModel` de negocio.
 - [ ] **R-AR-8** — Sin `HttpClient` en componentes.
 - [ ] **R-AR-9** — Errores traducidos y notificados; sin `alert`/`confirm`.
-- [ ] **R-AR-10** — Suscripciones liberadas (`takeUntilDestroyed`/`async`).
-- [ ] **R-AR-11** — Sin hosts/URLs hardcodeados; configuración en `environment`.
+- [ ] **R-AR-10** — Suscripciones y listeners de `window`/`document` liberados (`takeUntilDestroyed`/`ngOnDestroy`).
+- [ ] **R-AR-11** — Sin hosts/URLs hardcodeados; configuración en `environment`/`core/config`.
+- [ ] **R-AR-12** — El feature declara `<feature>.routes.ts`; `app.routes.ts` lo compone con `loadChildren`.
+- [ ] **R-AR-13** — `core/` sin UI ni negocio y sin importar `features/`.
 
 ## 4. Nomenclatura ([`02-naming.md`](../architecture/02-naming.md))
 
@@ -56,8 +58,8 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-CX-1/2** — Capas y dependencia hacia dentro; la infraestructura por puerto/adaptador.
 - [ ] **R-CX-3/4** — Lógica fuera de componentes; modelo de dominio puro.
 - [ ] **R-CX-5/6** — Casos de uso con nombre de dominio; fronteras de feature respetadas.
-- [ ] **R-SO-1/5/6** — SRP y DIP; presentacionales sin stores/servicios de dominio.
-- [ ] **R-SH-1/3/4** — Qué va en `shared/` (≥2 consumidores); `shared/` no importa dominios.
+- [ ] **R-SO-1/5/6/8** — SRP y DIP; presentacionales (_dumb_) sin stores/servicios de dominio; contenedores (_smart_) en `pages/`.
+- [ ] **R-SH-1/3/4** — Qué va en `shared/` (≥2 consumidores); `shared/` no importa features; servicios transversales en `core/`.
 - [ ] **R-LZ-1/2/3** — Rutas lazy; `@defer` con trigger y `@placeholder` para UI pesada.
 - [ ] **R-HI-2/3/4** — Si hay SSR: hidratación incremental y código seguro para servidor. _(Hoy no aplica: sin SSR.)_
 - [ ] **R-ST-1/3/4** — Una fuente de verdad; derivados en `withComputed`; mutaciones con `patchState`.

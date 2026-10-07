@@ -78,34 +78,45 @@ La URL base y los endpoints se configuran en
 
 ## 📁 Estructura del Proyecto
 
+> **Estructura enterprise** (`core/` · `shared/` · `layout/` · `features/`,
+> ADR-12). Migración en curso desde el feature-first previo (`domains/`).
+
 ```text
 src/
 ├── environments/                 # Configuración por entorno (API, flags)
 └── app/
-    ├── domains/                  # Features de negocio (feature-first)
-    │   ├── auth/                 # login, register, AuthStore, guards e interceptors
-    │   ├── cart/                 # carrito, checkout, confirmación, OrderService
-    │   ├── home/                 # home y not-found
-    │   ├── layout/               # navbar y footer
-    │   ├── plans/                # planes y suscripciones
-    │   ├── products/             # catálogo, detalle, stores y adapters
-    │   └── wishlist/             # lista de deseos
-    ├── shared/                   # Código transversal
-    │   ├── constants/            # API config, company info
-    │   ├── directives/           # scroll-reveal
-    │   ├── models/               # utilidades de respuesta de API
-    │   ├── services/             # SEO, configuración de tienda
+    ├── core/                     # Infraestructura transversal · SIN UI · no depende de features
+    │   ├── config/               # API config (endpoints, dataSource)
+    │   ├── models/               # helpers genéricos de respuesta de API
+    │   └── services/             # SEO, configuración de tienda, notificaciones
+    ├── shared/                   # Presentación/utilidades reutilizables (sin negocio)
+    │   ├── constants/            # company info
+    │   ├── directives/           # scroll-reveal, focus-trap
+    │   ├── pipes/                # (si aplica)
     │   └── ui/                   # componentes de UI reutilizables
+    ├── layout/                   # Chrome de la app
+    │   ├── navbar/
+    │   └── footer/
+    ├── features/                 # Dominios de negocio (clean/hexagonal)
+    │   ├── auth/                 # pages/login, pages/register, state, services, repositories, adapters, guards
+    │   ├── cart/                 # pages/cart-view, pages/checkout, pages/confirmation, state, services, repositories, adapters
+    │   ├── home/                 # pages/home, pages/not-found
+    │   ├── plans/                # pages/plans
+    │   ├── products/             # pages/, components/, state, services, repositories, adapters, models
+    │   └── wishlist/             # pages/wishlist, state
+    ├── app.component.ts          # Componente raíz (standalone)
     ├── app.config.ts             # Providers globales (DI de repositorios)
-    ├── app.routes.ts             # Rutas lazy por dominio
-    └── app.ts                    # Componente raíz
+    └── app.routes.ts             # Rutas raíz; compone los <feature>.routes.ts
 ```
 
-Cada dominio agrupa sus `components/`, `state/`, `services/`, `repositories/`,
-`adapters/`, `models/`, `constants/` y `mocks/`. El patrón común es **puerto**
-(interfaz + `InjectionToken`) → servicio que lo implementa → adapter que normaliza
-la respuesta del backend. Detalle en
-[`docs/rules/architecture/`](./docs/rules/architecture/README.md).
+Cada feature agrupa sus `pages/`, `components/`, `state/`, `services/`,
+`repositories/`, `adapters/`, `models/`, `constants/` y `mocks/`, y expone sus
+rutas en `<feature>.routes.ts`. El patrón común es **puerto** (interfaz +
+`InjectionToken`) → servicio que lo implementa → adapter que normaliza la
+respuesta del backend. La separación **Smart/Dumb** y las fronteras entre
+features se detallan en
+[`docs/rules/frontend/`](./docs/rules/frontend/README.md) y
+[`docs/rules/architecture/`](./docs/rules/architecture/README.md) (ADR-12).
 
 ---
 
