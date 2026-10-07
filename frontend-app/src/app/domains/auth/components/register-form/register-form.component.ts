@@ -1,7 +1,8 @@
-import { Component, inject, effect, signal } from '@angular/core';
+import { Component, inject, effect, signal, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth.store';
+import { SeoService } from '../../../../shared/services/seo.service';
 
 @Component({
   selector: 'app-register-form',
@@ -10,10 +11,11 @@ import { AuthStore } from '../../state/auth.store';
   templateUrl: './register-form.component.html',
   styles: [],
 })
-export class RegisterFormComponent {
+export class RegisterFormComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  private readonly seoService = inject(SeoService);
 
   readonly registerForm = this.fb.group({
     name: ['', Validators.required],
@@ -24,11 +26,17 @@ export class RegisterFormComponent {
   showPassword = signal(false);
 
   constructor() {
+    this.seoService.setPage('Crear cuenta', 'Regístrate en Quantum Store.');
+
     effect(() => {
       if (this.authStore.isAuthenticated()) {
         this.router.navigate(['/shop']);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 
   isFieldInvalid(field: string): boolean {

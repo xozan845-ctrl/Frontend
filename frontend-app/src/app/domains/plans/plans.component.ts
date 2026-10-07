@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../shared/ui/notification/notification.service';
+import { SeoService } from '../../shared/services/seo.service';
 import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from './constants/plans.constants';
 
 @Component({
@@ -10,11 +11,20 @@ import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from './constants/plans.c
   templateUrl: './plans.component.html',
   styles: [],
 })
-export default class PlansComponent {
+export default class PlansComponent implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
+  private readonly seoService = inject(SeoService);
   readonly billingType = signal<'personal' | 'empresa'>('personal');
   readonly plans: PlanTier[] = PLANS;
   readonly planFeatures: PlanFeature[] = PLAN_FEATURES;
+
+  constructor() {
+    this.seoService.setPage('Planes y suscripciones', 'Elige tu membresía de Quantum Store.');
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
+  }
 
   selectPlan(planName: string) {
     if (planName === 'Pro') {
