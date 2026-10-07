@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { App } from './app.component';
-import { AUTH_REPOSITORY } from './domains/auth/repositories/auth.repository';
+import { AUTH_REPOSITORY } from './features/auth/repositories/auth.repository';
 
 const authRepoStub = {
   login: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),

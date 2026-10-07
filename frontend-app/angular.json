@@ -91,12 +91,12 @@
             "coverage": true,
             "coverageReporters": ["text", "lcov"],
             "coverageInclude": [
-              "src/app/domains/**/adapters/**/*.ts",
-              "src/app/domains/**/guards/**/*.ts",
-              "src/app/domains/**/interceptors/**/*.ts",
-              "src/app/domains/**/repositories/**/*.ts",
-              "src/app/domains/**/services/**/*.ts",
-              "src/app/domains/**/state/**/*.ts",
+              "src/app/features/**/adapters/**/*.ts",
+              "src/app/features/**/guards/**/*.ts",
+              "src/app/features/**/interceptors/**/*.ts",
+              "src/app/features/**/repositories/**/*.ts",
+              "src/app/features/**/services/**/*.ts",
+              "src/app/features/**/state/**/*.ts",
               "src/app/shared/models/**/*.ts",
               "src/app/shared/services/**/*.ts",
               "src/app/shared/utils/**/*.ts"
