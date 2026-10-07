@@ -95,4 +95,101 @@ describe('AuthService', () => {
 
     expect(error?.message).toContain('apiUrl no configurado');
   });
+
+  describe('dataSource mock', () => {
+    beforeEach(() => {
+      environment.apiConfig.dataSource = 'mock';
+    });
+
+    it('debe autenticar en mock cuando las credenciales son válidas', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service
+        .login({ email: 'ana@tienda.com', password: 'secreto1' })
+        .subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.email).toBe('ana@tienda.com');
+      expect(result?.token).toContain('mock-jwt');
+    });
+
+    it('debe rechazar en mock cuando la contraseña es corta', () => {
+      build();
+      let error: Error | undefined;
+
+      service.login({ email: 'ana@tienda.com', password: '123' }).subscribe({
+        error: (err: Error) => (error = err),
+      });
+
+      expect(error?.message).toContain('Credenciales inválidas');
+    });
+
+    it('debe registrar en mock', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service
+        .register({ name: 'Nuevo', email: 'nuevo@tienda.com', password: 'secreto1' })
+        .subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.name).toBe('Nuevo');
+    });
+
+    it('debe cerrar sesión en mock', async () => {
+      build();
+      let result: boolean | undefined;
+
+      service.logout().subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBe(true), { timeout: 2000 });
+
+      expect(result).toBe(true);
+    });
+
+    it('debe renovar la sesión en mock', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service.refresh('refresh-1').subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.refreshToken).toBe('refresh-1');
+    });
+  });
+
+  describe('sin apiUrl configurada', () => {
+    beforeEach(() => {
+      environment.apiUrl = '';
+    });
+
+    it('debe fallar el registro', () => {
+      build();
+      let error: Error | undefined;
+
+      service
+        .register({ name: 'Nuevo', email: 'nuevo@tienda.com', password: 'secreto1' })
+        .subscribe({ error: (err: Error) => (error = err) });
+
+      expect(error?.message).toContain('apiUrl no configurado');
+    });
+
+    it('debe fallar el logout', () => {
+      build();
+      let error: Error | undefined;
+
+      service.logout().subscribe({ error: (err: Error) => (error = err) });
+
+      expect(error?.message).toContain('apiUrl no configurado');
+    });
+
+    it('debe fallar la renovación', () => {
+      build();
+      let error: Error | undefined;
+
+      service.refresh('refresh-1').subscribe({ error: (err: Error) => (error = err) });
+
+      expect(error?.message).toContain('apiUrl no configurado');
+    });
+  });
 });

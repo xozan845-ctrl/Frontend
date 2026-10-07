@@ -85,4 +85,88 @@ describe('ProductService', () => {
 
     expect(error?.message).toContain('apiUrl no configurado');
   });
+
+  it('debe devolver el producto mock por id', () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let result: Product | undefined;
+
+    service.getProductById(MOCK_PRODUCTS[0].id).subscribe((product) => (result = product));
+
+    expect(result?.id).toBe(MOCK_PRODUCTS[0].id);
+  });
+
+  it('debe devolver el primer producto mock cuando el id no existe', () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let result: Product | undefined;
+
+    service.getProductById('no-existe').subscribe((product) => (result = product));
+
+    expect(result).toEqual(MOCK_PRODUCTS[0]);
+  });
+
+  it('debe devolver categorías únicas en mock', () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let result: string[] = [];
+
+    service.getCategories().subscribe((categories) => (result = categories));
+
+    const expected = Array.from(new Set(MOCK_PRODUCTS.map((p) => p.category)));
+    expect(result).toEqual(expected);
+  });
+
+  it('debe fallar el detalle cuando no hay apiUrl configurada', () => {
+    environment.apiUrl = '';
+    build();
+    let error: Error | undefined;
+
+    service.getProductById(1).subscribe({ error: (err: Error) => (error = err) });
+
+    expect(error?.message).toContain('apiUrl no configurado');
+  });
+
+  it('debe caer a los productos cuando el endpoint de categorías falla', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: string[] = [];
+
+    service.getCategories().subscribe((categories) => (result = categories));
+    httpMock
+      .expectOne('https://api.test/categories')
+      .flush('boom', { status: 500, statusText: 'Server Error' });
+    httpMock.expectOne('https://api.test/products').flush({
+      data: [
+        { id: 1, name: 'A', price: 1, category: 'Audio' },
+        { id: 2, name: 'B', price: 2, category: 'Audio' },
+        { id: 3, name: 'C', price: 3, category: 'Video' },
+      ],
+    });
+
+    expect(result).toEqual(['Audio', 'Video']);
+  });
+
+  it('debe fallar las categorías cuando no hay apiUrl configurada', () => {
+    environment.apiUrl = '';
+    build();
+    let error: Error | undefined;
+
+    service.getCategories().subscribe({ error: (err: Error) => (error = err) });
+
+    expect(error?.message).toContain('apiUrl no configurado');
+  });
+
+  it('debe normalizar categorías que llegan como objeto', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: string[] = [];
+
+    service.getCategories().subscribe((categories) => (result = categories));
+    httpMock
+      .expectOne('https://api.test/categories')
+      .flush({ data: [{ name: 'Audio' }, { title: 'Video' }, {}] });
+
+    expect(result).toEqual(['Audio', 'Video', 'General']);
+  });
 });
