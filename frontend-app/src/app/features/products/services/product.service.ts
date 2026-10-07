@@ -9,7 +9,7 @@ import {
   adaptProductListFromBackend,
   adaptSingleProductFromBackend,
 } from '../adapters/product.adapter';
-import { unwrapApiListResponse } from '../../../shared/models/api-response.dto';
+import { unwrapApiListResponse } from '../../../core/models/api-response.dto';
 
 import { ProductRepository } from '../repositories/product.repository';
 

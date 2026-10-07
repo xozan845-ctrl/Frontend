@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { NgOptimizedImage, NgClass } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { SeoService } from '../../../../core/services/seo.service';
 import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
 

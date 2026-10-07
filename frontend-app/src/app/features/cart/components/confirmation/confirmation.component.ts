@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-confirmation',

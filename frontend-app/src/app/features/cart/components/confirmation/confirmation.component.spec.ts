@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { SeoService } from '../../../../core/services/seo.service';
 import { ConfirmationComponent } from './confirmation.component';
 
 describe('ConfirmationComponent', () => {

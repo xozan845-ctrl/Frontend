@@ -97,9 +97,8 @@
               "src/app/features/**/repositories/**/*.ts",
               "src/app/features/**/services/**/*.ts",
               "src/app/features/**/state/**/*.ts",
-              "src/app/shared/models/**/*.ts",
-              "src/app/shared/services/**/*.ts",
-              "src/app/shared/utils/**/*.ts"
+              "src/app/core/models/**/*.ts",
+              "src/app/core/services/**/*.ts"
             ],
             "coverageExclude": [
               "src/**/*.spec.ts",

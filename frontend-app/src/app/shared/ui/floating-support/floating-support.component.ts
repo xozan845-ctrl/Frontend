@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { COMPANY_INFO } from '../../constants/company.constants';
+import { COMPANY_INFO } from '../../../core/constants/company.constants';
 
 @Component({
   selector: 'app-floating-support',

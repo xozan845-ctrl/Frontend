@@ -14,7 +14,7 @@ import { switchMap } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Product } from '../../models/product.model';
-import { NotificationService } from '../../../../shared/ui/notification/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 

@@ -4,7 +4,7 @@ import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore } from '../../features/auth/public-api';
 import { CartStore } from '../../features/cart/public-api';
 import { WishlistStore } from '../../features/wishlist/public-api';
-import { StoreConfigService } from '../../shared/services/store-config.service';
+import { StoreConfigService } from '../../core/services/store-config.service';
 
 @Component({
   selector: 'app-navbar',

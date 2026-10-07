@@ -3,7 +3,7 @@ import { BackendProductDTO } from '../models/product.dto';
 import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
-} from '../../../shared/models/api-response.dto';
+} from '../../../core/models/api-response.dto';
 
 const DEFAULT_FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';

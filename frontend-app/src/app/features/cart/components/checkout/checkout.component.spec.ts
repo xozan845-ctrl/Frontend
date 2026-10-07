@@ -4,8 +4,8 @@ import { of } from 'rxjs';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { CartStore } from '../../state/cart.store';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
-import { NotificationService } from '../../../../shared/ui/notification/notification.service';
-import { SeoService } from '../../../../shared/services/seo.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { SeoService } from '../../../../core/services/seo.service';
 import { CheckoutComponent } from './checkout.component';
 
 describe('CheckoutComponent', () => {

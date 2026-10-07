@@ -6,8 +6,8 @@ import { ProductStore } from '../products/public-api';
 import { CartStore } from '../cart/public-api';
 import { WishlistStore } from '../wishlist/public-api';
 import { ReviewsStore } from '../products/public-api';
-import { SeoService } from '../../shared/services/seo.service';
-import { NotificationService } from '../../shared/ui/notification/notification.service';
+import { SeoService } from '../../core/services/seo.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { CartFlyService } from '../../shared/ui/cart-fly/cart-fly.service';
 import { HomeComponent } from './home.component';
 
