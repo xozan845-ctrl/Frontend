@@ -3,13 +3,13 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
-import { authInterceptor } from './domains/auth/interceptors/auth.interceptor';
-import { PRODUCT_REPOSITORY } from './domains/products/repositories/product.repository';
-import { ProductService } from './domains/products/services/product.service';
-import { ORDER_REPOSITORY } from './domains/cart/repositories/order.repository';
-import { OrderService } from './domains/cart/services/order.service';
-import { AUTH_REPOSITORY } from './domains/auth/repositories/auth.repository';
-import { AuthService } from './domains/auth/services/auth.service';
+import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
+import { PRODUCT_REPOSITORY } from './features/products/repositories/product.repository';
+import { ProductService } from './features/products/services/product.service';
+import { ORDER_REPOSITORY } from './features/cart/repositories/order.repository';
+import { OrderService } from './features/cart/services/order.service';
+import { AUTH_REPOSITORY } from './features/auth/repositories/auth.repository';
+import { AuthService } from './features/auth/services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
-import { AuthStore } from '../../../auth/public-api';
-import { CartStore } from '../../../cart/public-api';
-import { WishlistStore } from '../../../wishlist/public-api';
-import { StoreConfigService } from '../../../../shared/services/store-config.service';
+import { AuthStore } from '../../features/auth/public-api';
+import { CartStore } from '../../features/cart/public-api';
+import { WishlistStore } from '../../features/wishlist/public-api';
+import { StoreConfigService } from '../../shared/services/store-config.service';
 
 @Component({
   selector: 'app-navbar',
