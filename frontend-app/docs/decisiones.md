@@ -267,18 +267,16 @@ contexto y consecuencias.
 
 ## ADR-13: Configuración de despliegue en runtime (`/config.json`)
 
-- **Contexto**: el storefront consume las ofertas de **una** tienda de Core
-  Engine (multi-tienda), identificada por `storeId`. Fijarla en
-  `environment.prod.ts` obliga a recompilar el bundle por entorno y deja el
-  valor de producción como deuda (vacío hasta conocer el UUID). La URL del API
-  es configuración pública (`R-CD-2`), no un secreto.
-- **Decisión**: resolver `apiUrl` y `storeId` en **tiempo de ejecución** desde
-  `/config.json`, generado por el contenedor a partir de `API_URL`/`STORE_ID`
+- **Contexto**: la URL base del API cambia por entorno y fijarla en
+  `environment.prod.ts` obliga a recompilar el bundle. Es configuración pública
+  (`R-CD-2`), no un secreto.
+- **Decisión**: resolver `apiUrl` en **tiempo de ejecución** desde
+  `/config.json`, generado por el contenedor a partir de `API_URL`
   (`docker-entrypoint.d/40-runtime-config.sh`). La app lo carga con
   `provideAppInitializer` antes de crear los servicios, que siguen leyendo
-  `environment` (`R-AR-11`); los valores vacíos conservan el fallback de
+  `environment` (`R-AR-11`); un valor vacío conserva el fallback de
   `src/environments/`. Si el archivo falta o falla, no hay ruido en consola
-  (`R-E-9`).
+  (`R-E-9`). La **tienda** no vive aquí: se resuelve por URL (ADR-15).
 - **Consecuencias**: el mismo build sirve a cualquier entorno cambiando solo
   variables del contenedor (alineado con `R-CD-4`); `config.json` se versiona
   vacío como plantilla y se añade al `assetGroups` del service worker. Revertir
@@ -297,3 +295,26 @@ contexto y consecuencias.
   precios opcionales nulos.
 - **Consecuencias**: una sola fuente de verdad para moneda y locale; cambiar de
   divisa es editar `CURRENCY`. Revertir es volver a `$` + `toFixed(2)`.
+
+## ADR-15: Storefront multi-tienda por URL (`/tienda/:storeId`)
+
+- **Contexto**: Core Engine es **multi-tienda (multi-tenant)**: cada vendedor
+  tiene su tienda y sus ofertas, y su superficie pública es **por tienda**
+  (`GET /api/v1/tiendas/:id` → `{ tienda, ofertas }`); no existe un endpoint
+  público que liste tiendas. Fijar un `storeId` en `environment`/`config.json`
+  ataba el frontend a una sola tienda y contradecía el modelo.
+- **Decisión**: resolver la tienda **desde la URL**. Todo el storefront vive
+  bajo `/tienda/:storeId` (home, `shop`, `producto/:id`, `carrito`, `checkout`,
+  `wishlist`), con un `storefrontResolver` que carga la tienda y sus ofertas en
+  `ProductStore` antes de activar la ruta; los componentes reciben `storeId`
+  como `input` (`withComponentInputBinding`) y construyen enlaces store-scoped.
+  La raíz `/` es una entrada multi-tienda (`store-entry`); los componentes
+  presentacionales reciben `storeId` por `input` (no inyectan stores, `R-SO-6`).
+  Se elimina `storeId` de `environment`, `ApiConfiguration` y de
+  `/config.json`, y las rutas dejan de exigir sesión para navegar (el catálogo
+  es público); solo `checkout` sigue protegido y redirige a
+  `/login?returnUrl=<ruta>`.
+- **Consecuencias**: un mismo build sirve a todas las tiendas y el enlace de
+  cada tienda se comparte (`/tienda/<id>`). Cuando el backend exponga un
+  directorio público (`GET /api/v1/tiendas`), la raíz podrá poblarse con él sin
+  cambiar el resto. Revertir es volver a fijar un `storeId` de configuración.

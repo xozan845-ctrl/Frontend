@@ -78,23 +78,26 @@ Pasos:
   `docker-entrypoint.d/40-runtime-config.sh`, así que se ajusta **sin
   recompilar**:
 
-  | Variable   | Descripción                                                         | Ejemplo                                |
-  | ---------- | ------------------------------------------------------------------- | -------------------------------------- |
-  | `API_URL`  | URL base del gateway de Core Engine (opcional; vacío = environment) | `https://api.kbcoleccion.com/api/v1`   |
-  | `STORE_ID` | UUID de la tienda publicada cuyas ofertas consume el storefront     | `f7603931-b32d-4251-962a-a9c9e290d1c5` |
+  | Variable  | Descripción                                                         | Ejemplo                              |
+  | --------- | ------------------------------------------------------------------- | ------------------------------------ |
+  | `API_URL` | URL base del gateway de Core Engine (opcional; vacío = environment) | `https://api.kbcoleccion.com/api/v1` |
 
-  En local se usa el fallback de `environment.ts` (la tienda de desarrollo).
+  En local se usa el fallback de `environment.ts`.
+
+- **Tienda (multi-tenant)**: el storefront no lleva `storeId` en configuración.
+  Cada tienda se sirve en su URL `/tienda/:storeId` (ver ADR-15); un mismo build
+  atiende a todas. El enlace de cada tienda se comparte con sus clientes.
 
 ## 5. Verificaciones tras el despliegue (smoke, `R-CD-9`)
 
-| #   | Comprobación                                                               | ☐   |
-| --- | -------------------------------------------------------------------------- | --- |
-| 1   | `curl -fsS https://<dominio>/` responde 200                                | ☐   |
-| 2   | La home carga el catálogo (o al menos el bundle inicial)                   | ☐   |
-| 3   | Refrescar una ruta interna (`/shop`, `/checkout`) no da 404 (fallback SPA) | ☐   |
-| 4   | La app alcanza el API configurado (login funciona)                         | ☐   |
-| 5   | El token no viaja en el bundle (`R-CD-2`)                                  | ☐   |
-| 6   | Rollback posible: redesplegar la versión anterior                          | ☐   |
+| #   | Comprobación                                                              | ☐   |
+| --- | ------------------------------------------------------------------------- | --- |
+| 1   | `curl -fsS https://<dominio>/` responde 200                               | ☐   |
+| 2   | La home carga el catálogo (o al menos el bundle inicial)                  | ☐   |
+| 3   | Refrescar una ruta interna (`/tienda/<id>/shop`) no da 404 (fallback SPA) | ☐   |
+| 4   | La app alcanza el API configurado (login funciona)                        | ☐   |
+| 5   | El token no viaja en el bundle (`R-CD-2`)                                 | ☐   |
+| 6   | Rollback posible: redesplegar la versión anterior                         | ☐   |
 
 ## 6. Rollback en producción (`R-CD-10`)
 
