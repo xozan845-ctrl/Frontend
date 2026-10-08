@@ -63,7 +63,8 @@ test('R-E-2: el detalle de producto muestra el producto seleccionado', async ({ 
 });
 
 test('R-E-3: agregar al carrito actualiza el contador del navbar', async ({ page }) => {
-  await open(page, `${STORE}/shop`);
+  // El carrito vive en el servidor y exige sesión (rol comprador).
+  await login(page, `${STORE}/shop`);
 
   await page.getByRole('button', { name: 'Añadir al Carrito' }).first().click();
 
