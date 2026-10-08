@@ -8,7 +8,7 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, pipe } from 'rxjs';
+import { EMPTY, firstValueFrom, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { User, LoginCredentials, RegisterData } from '../models/auth.model';
 import { AUTH_REPOSITORY } from '../repositories/auth.repository';
@@ -47,121 +47,154 @@ export const AuthStore = signalStore(
       store,
       authService = inject(AUTH_REPOSITORY),
       notificationService = inject(NotificationService),
-    ) => ({
-      login: rxMethod<LoginCredentials>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((credentials) =>
-            authService.login(credentials).pipe(
-              tap((response) => {
-                patchState(store, {
-                  user: response.user,
-                  token: response.token ?? null,
-                  refreshToken: response.refreshToken ?? null,
-                  loading: false,
-                });
-                notificationService.showSuccess(`¡Bienvenido, ${response.user.name}!`);
-              }),
-              catchError((err: Error) => {
-                const message = err.message || 'Error al iniciar sesión';
-                patchState(store, { error: message, loading: false });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
+    ) => {
+      // Deduplica renovaciones concurrentes disparadas por 401 (R-SE-1).
+      let refreshInFlight: Promise<boolean> | null = null;
+
+      return {
+        login: rxMethod<LoginCredentials>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap((credentials) =>
+              authService.login(credentials).pipe(
+                tap((response) => {
+                  patchState(store, {
+                    user: response.user,
+                    token: response.token ?? null,
+                    refreshToken: response.refreshToken ?? null,
+                    loading: false,
+                  });
+                  notificationService.showSuccess(`¡Bienvenido, ${response.user.name}!`);
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'Error al iniciar sesión';
+                  patchState(store, { error: message, loading: false });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              ),
             ),
           ),
         ),
-      ),
-      register: rxMethod<RegisterData>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((userData) =>
-            authService.register(userData).pipe(
-              tap((response) => {
-                patchState(store, {
-                  user: response.user,
-                  token: response.token ?? null,
-                  refreshToken: response.refreshToken ?? null,
-                  loading: false,
-                });
-                notificationService.showSuccess(
-                  `¡Cuenta creada exitosamente! Bienvenido, ${response.user.name}`,
-                );
-              }),
-              catchError((err: Error) => {
-                const message = err.message || 'Error al registrarse';
-                patchState(store, { error: message, loading: false });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
+        register: rxMethod<RegisterData>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap((userData) =>
+              authService.register(userData).pipe(
+                tap((response) => {
+                  patchState(store, {
+                    user: response.user,
+                    token: response.token ?? null,
+                    refreshToken: response.refreshToken ?? null,
+                    loading: false,
+                  });
+                  notificationService.showSuccess(
+                    `¡Cuenta creada exitosamente! Bienvenido, ${response.user.name}`,
+                  );
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'Error al registrarse';
+                  patchState(store, { error: message, loading: false });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              ),
             ),
           ),
         ),
-      ),
-      refreshSession: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() => {
-            const refreshToken = store.refreshToken();
-            if (!refreshToken) {
-              patchState(store, { loading: false });
-              return EMPTY;
-            }
-            return authService.refresh(refreshToken).pipe(
-              tap((response) => {
-                patchState(store, {
-                  user: response.user,
-                  token: response.token ?? null,
-                  refreshToken: response.refreshToken ?? refreshToken,
-                  loading: false,
-                });
-              }),
-              catchError((err: Error) => {
-                patchState(store, {
-                  user: null,
-                  token: null,
-                  refreshToken: null,
-                  loading: false,
-                  error: err.message || 'La sesión expiró',
-                });
+        refreshSession: rxMethod<void>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap(() => {
+              const refreshToken = store.refreshToken();
+              if (!refreshToken) {
+                patchState(store, { loading: false });
                 return EMPTY;
-              }),
-            );
-          }),
+              }
+              return authService.refresh(refreshToken).pipe(
+                tap((response) => {
+                  patchState(store, {
+                    user: response.user,
+                    token: response.token ?? null,
+                    refreshToken: response.refreshToken ?? refreshToken,
+                    loading: false,
+                  });
+                }),
+                catchError((err: Error) => {
+                  patchState(store, {
+                    user: null,
+                    token: null,
+                    refreshToken: null,
+                    loading: false,
+                    error: err.message || 'La sesión expiró',
+                  });
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
         ),
-      ),
-      logout: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() =>
-            authService.logout().pipe(
-              tap(() => {
-                patchState(store, {
-                  user: null,
-                  token: null,
-                  refreshToken: null,
-                  loading: false,
-                });
-                notificationService.showInfo('Sesión cerrada correctamente');
-              }),
-              catchError((err: Error) => {
-                patchState(store, {
-                  user: null,
-                  token: null,
-                  refreshToken: null,
-                  loading: false,
-                  error: err.message || 'Error al cerrar sesión',
-                });
-                return EMPTY;
-              }),
+        logout: rxMethod<void>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap(() =>
+              authService.logout().pipe(
+                tap(() => {
+                  patchState(store, {
+                    user: null,
+                    token: null,
+                    refreshToken: null,
+                    loading: false,
+                  });
+                  notificationService.showInfo('Sesión cerrada correctamente');
+                }),
+                catchError((err: Error) => {
+                  patchState(store, {
+                    user: null,
+                    token: null,
+                    refreshToken: null,
+                    loading: false,
+                    error: err.message || 'Error al cerrar sesión',
+                  });
+                  return EMPTY;
+                }),
+              ),
             ),
           ),
         ),
-      ),
-      clearError() {
-        patchState(store, { error: null });
-      },
-    }),
+        clearError() {
+          patchState(store, { error: null });
+        },
+        /**
+         * Renueva la sesión una vez y devuelve si quedó autenticada (sin tocar
+         * `loading`). La usa el interceptor ante un 401 (R-SE-1).
+         */
+        refreshTokenOnce(): Promise<boolean> {
+          if (refreshInFlight) return refreshInFlight;
+          const refreshToken = store.refreshToken();
+          if (!refreshToken) return Promise.resolve(false);
+
+          refreshInFlight = firstValueFrom(authService.refresh(refreshToken))
+            .then((response) => {
+              patchState(store, {
+                user: response.user,
+                token: response.token ?? null,
+                refreshToken: response.refreshToken ?? refreshToken,
+                error: null,
+              });
+              return Boolean(response.token);
+            })
+            .catch(() => {
+              patchState(store, { user: null, token: null, refreshToken: null });
+              return false;
+            })
+            .finally(() => {
+              refreshInFlight = null;
+            });
+          return refreshInFlight;
+        },
+      };
+    },
   ),
   withHooks({
     onInit(store) {
