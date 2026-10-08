@@ -1,9 +1,8 @@
 import { Component, inject, computed, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
 import { ProductCardComponent } from '../../../products/public-ui';
 import { CartStore } from '../../../cart/public-api';
-import { AuthStore } from '../../../auth/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
@@ -25,8 +24,6 @@ import { SeoService } from '../../../../core/services/seo.service';
 export class HomeComponent implements OnInit {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
-  private readonly authStore = inject(AuthStore);
-  private readonly router = inject(Router);
   private readonly wishlistStore = inject(WishlistStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly seoService = inject(SeoService);
@@ -57,10 +54,6 @@ export class HomeComponent implements OnInit {
   }
 
   onAddToCart(product: Product) {
-    if (!this.authStore.isAuthenticated()) {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-      return;
-    }
     this.cartStore.addItem(product);
   }
 

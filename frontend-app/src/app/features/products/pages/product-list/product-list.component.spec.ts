@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { CartStore } from '../../../cart/state/cart.store';
-import { AuthStore } from '../../../auth/state/auth.store';
 import { WishlistStore } from '../../../wishlist/state/wishlist.store';
 import { ReviewsStore } from '../../state/reviews.store';
 import { ProductStore } from '../../state/product.store';
@@ -102,7 +101,6 @@ describe('ProductListComponent', () => {
         { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
         { provide: ProductStore, useValue: productStore },
         { provide: CartStore, useValue: cartStore },
-        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
         { provide: WishlistStore, useValue: wishlistStore },
         { provide: ReviewsStore, useValue: reviewsStore },
         { provide: SeoService, useValue: seo },
