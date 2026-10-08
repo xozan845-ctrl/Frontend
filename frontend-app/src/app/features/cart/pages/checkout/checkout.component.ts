@@ -5,6 +5,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/public-api';
 import { ProductStore } from '../../../products/public-api';
+import { OrderStore } from '../../state/order.store';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
@@ -29,6 +30,7 @@ export class CheckoutComponent implements OnDestroy {
   private readonly seoService = inject(SeoService);
   private readonly orderService: OrderRepository = inject(ORDER_REPOSITORY);
   private readonly productStore = inject(ProductStore);
+  private readonly orderStore = inject(OrderStore);
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
@@ -64,7 +66,8 @@ export class CheckoutComponent implements OnDestroy {
       .createOrder(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (order) => {
+          this.orderStore.setLastOrder(order);
           this.cartStore.clearCart();
           this.isSubmitting.set(false);
           this.router.navigate(['/tienda', this.storeId(), 'checkout', 'confirmacion']);

@@ -4,58 +4,84 @@
   <div
     class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-[2rem] border border-slate-200 dark:border-surface-700 p-8 md:p-16 shadow-xl"
   >
-    <div class="mb-12 border-b border-slate-200 dark:border-surface-700 pb-10">
-      <div
-        class="inline-block bg-accent-600 text-white font-bold uppercase tracking-widest text-[10px] px-4 py-2 rounded-full mb-8 shadow-md"
-      >
-        <i class="fa-solid fa-check mr-2"></i> Transacción Completada
+    @if (order(); as ord) {
+      <div class="mb-12 border-b border-slate-200 dark:border-surface-700 pb-10">
+        <div
+          class="inline-block bg-accent-600 text-white font-bold uppercase tracking-widest text-[10px] px-4 py-2 rounded-full mb-8 shadow-md"
+        >
+          <i class="fa-solid fa-check mr-2"></i> Transacción Completada
+        </div>
+        <h1
+          class="text-5xl md:text-7xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading leading-none"
+        >
+          Orden<br />Confirmada
+        </h1>
       </div>
-      <h1
-        class="text-5xl md:text-7xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading leading-none"
-      >
-        Orden<br />Confirmada
-      </h1>
-    </div>
 
-    <p class="text-base text-slate-500 dark:text-slate-400 font-medium mb-12 leading-relaxed">
-      Su solicitud ha sido ingresada al sistema. En breve recibirá un manifiesto detallado en su
-      correo electrónico con la información de rastreo.
-    </p>
+      <p class="text-base text-slate-500 dark:text-slate-400 font-medium mb-12 leading-relaxed">
+        Su solicitud ha sido ingresada al sistema. En breve recibirá un manifiesto detallado en su
+        correo electrónico con la información de rastreo.
+      </p>
 
-    <div class="grid grid-cols-2 gap-6 mb-16">
-      <div
-        class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
-      >
-        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
-          >ID de Referencia</span
+      <div class="grid grid-cols-2 gap-6 mb-16">
+        <div
+          class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
         >
-        <span
-          class="text-xl font-black text-slate-900 dark:text-white font-mono bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 px-3 py-1 rounded inline-block min-w-[140px] text-center"
-          >{{ orderNumber }}</span
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+            >ID de Referencia</span
+          >
+          <span
+            class="text-xl font-black text-slate-900 dark:text-white font-mono bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 px-3 py-1 rounded inline-block min-w-[140px] text-center"
+            >{{ ord.orderNumber }}</span
+          >
+        </div>
+        <div
+          class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
         >
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+            >Estado</span
+          >
+          <span
+            class="text-xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter"
+            >{{ ord.status }}</span
+          >
+        </div>
+        <div
+          class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
+        >
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+            >Total</span
+          >
+          <span
+            class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter"
+            >{{ ord.total | appCurrency }}</span
+          >
+        </div>
+        <div
+          class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
+        >
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
+            >Fecha</span
+          >
+          <span
+            class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter"
+            >{{ createdAtLabel() }}</span
+          >
+        </div>
       </div>
-      <div
-        class="bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
-      >
-        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
-          >Estado</span
+    } @else {
+      <div class="mb-12 border-b border-slate-200 dark:border-surface-700 pb-10">
+        <h1
+          class="text-4xl md:text-6xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading leading-none"
         >
-        <span
-          class="text-xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter"
-          >Confirmada</span
-        >
+          Sin orden<br />reciente
+        </h1>
       </div>
-      <div
-        class="col-span-2 bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl p-6 shadow-sm"
-      >
-        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block"
-          >ETA de Despacho</span
-        >
-        <span class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter"
-          >24 - 48 Horas Laborales</span
-        >
-      </div>
-    </div>
+      <p class="text-base text-slate-500 dark:text-slate-400 font-medium mb-12 leading-relaxed">
+        No encontramos una orden reciente para mostrar. Si acabas de comprar, revisa tu historial de
+        pedidos; si no, explora la tienda.
+      </p>
+    }
 
     <div class="flex flex-col sm:flex-row gap-4">
       <a

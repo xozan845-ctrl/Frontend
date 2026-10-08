@@ -4,12 +4,18 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { ProductStore } from '../../../products/state/product.store';
 import { ConfirmationComponent } from './confirmation.component';
 
+const order = {
+  id: 'ord-1',
+  orderNumber: 'ORD-123456',
+  status: 'creada',
+  total: 2760,
+  createdAt: '2026-10-08T10:00:00.000Z',
+};
+
 describe('ConfirmationComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };
 
-  beforeEach(() => vi.clearAllMocks());
-
-  it('debe mostrar la confirmación y un número de orden con formato válido', async () => {
+  const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [ConfirmationComponent],
       providers: [
@@ -20,14 +26,35 @@ describe('ConfirmationComponent', () => {
     }).compileComponents();
     const fixture = TestBed.createComponent(ConfirmationComponent);
     fixture.detectChanges();
-    const component = fixture.componentInstance;
+    return fixture;
+  };
 
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Orden');
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Confirmada');
-    expect(component.orderNumber).toMatch(/^ORD-\d{6}$/);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionStorage.clear();
+    TestBed.resetTestingModule();
+  });
+
+  afterEach(() => sessionStorage.clear());
+
+  it('debe mostrar la orden real (id, estado y total)', async () => {
+    sessionStorage.setItem('ecom_last_order', JSON.stringify(order));
+
+    const fixture = await setup();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('ORD-123456');
+    expect(text).toContain('creada');
+    expect(text).toContain('C$2,760.00');
     expect(seo.setPage).toHaveBeenCalledWith(
       'Pedido confirmado',
       'Tu pedido en Quantum Store fue confirmado.',
     );
+  });
+
+  it('debe mostrar el estado vacío cuando no hay orden reciente', async () => {
+    const fixture = await setup();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Sin orden');
   });
 });
