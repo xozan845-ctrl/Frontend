@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
-import { AuthResponse } from '../models/auth.model';
+import { AuthResponse, User } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
 
 describe('AuthService', () => {
@@ -89,6 +89,47 @@ describe('AuthService', () => {
     request.flush({ token: 'nuevo', user: { id: 1, name: 'Ana', email: 'ana@tienda.com' } });
 
     expect(result?.token).toBe('nuevo');
+  });
+
+  it('debe obtener el perfil de la sesión con GET /auth/me', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: User | undefined;
+
+    service.me().subscribe((u) => (result = u));
+    const request = httpMock.expectOne('https://api.test/auth/me');
+    expect(request.request.method).toBe('GET');
+    request.flush({ user_id: 'u-1', email: 'ana@tienda.com', rol: 'comprador' });
+
+    expect(result?.id).toBe('u-1');
+    expect(result?.email).toBe('ana@tienda.com');
+    expect(result?.role).toBe('comprador');
+  });
+
+  it('debe solicitar el restablecimiento de contraseña', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: boolean | undefined;
+
+    service.resetPassword('ana@tienda.com').subscribe((r) => (result = r));
+    const request = httpMock.expectOne('https://api.test/auth/restablecer-contrasena');
+    expect(request.request.body).toEqual({ correo: 'ana@tienda.com' });
+    request.flush({ ok: true });
+
+    expect(result).toBe(true);
+  });
+
+  it('debe cambiar la contraseña', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: boolean | undefined;
+
+    service.changePassword('actual123', 'nueva12345').subscribe((r) => (result = r));
+    const request = httpMock.expectOne('https://api.test/auth/cambiar-contrasena');
+    expect(request.request.body).toEqual({ actual: 'actual123', nueva: 'nueva12345' });
+    request.flush({ ok: true });
+
+    expect(result).toBe(true);
   });
 
   it('debe emitir un error cuando no hay apiUrl configurada', () => {

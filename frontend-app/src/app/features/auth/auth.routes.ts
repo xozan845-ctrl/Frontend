@@ -9,4 +9,8 @@ export const AUTH_ROUTES: Routes = [
     path: 'register',
     loadComponent: () => import('./pages/register-form/register-form.component'),
   },
+  {
+    path: 'recuperar',
+    loadComponent: () => import('./pages/forgot-password/forgot-password.component'),
+  },
 ];

@@ -4,7 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { AuthResponse, LoginCredentials, RegisterData, User } from '../models/auth.model';
-import { adaptAuthResponseFromBackend } from '../adapters/auth.adapter';
+import { adaptAuthResponseFromBackend, adaptUserFromBackend } from '../adapters/auth.adapter';
 import { AuthRepository } from '../repositories/auth.repository';
 
 @Injectable({
@@ -76,6 +76,69 @@ export class AuthService implements AuthRepository {
 
     return this.http
       .post<unknown>(`${this.apiUrl}/logout`, { refresh_token: refreshToken })
+      .pipe(map(() => true));
+  }
+
+  /** Perfil de la sesión actual (`GET /auth/me` → `{user_id,email,rol}`). */
+  me(): Observable<User> {
+    if (environment.apiConfig?.dataSource === 'mock') {
+      return of({ id: 'mock-user', email: 'mock@tienda.com', name: 'Mock' }).pipe(delay(150));
+    }
+
+    if (!environment.apiUrl) {
+      return throwError(
+        () =>
+          new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
+      );
+    }
+
+    return this.http
+      .get<unknown>(`${this.apiUrl}/me`)
+      .pipe(map((res) => adaptUserFromBackend(res)));
+  }
+
+  /**
+   * Solicita el restablecimiento de contraseña por correo. El backend responde
+   * `{ ok: true }` siempre (no revela si el correo existe, OWASP A07).
+   */
+  resetPassword(email: string): Observable<boolean> {
+    if (environment.apiConfig?.dataSource === 'mock') {
+      return of(true).pipe(delay(300));
+    }
+
+    if (!environment.apiUrl) {
+      return throwError(
+        () =>
+          new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
+      );
+    }
+
+    return this.http
+      .post<unknown>(`${this.apiUrl}/restablecer-contrasena`, { correo: email })
+      .pipe(map(() => true));
+  }
+
+  /**
+   * Cambia la contraseña autenticada. Core Engine invalida las sesiones
+   * abiertas al cambiarla, así que el llamador debe limpiar la sesión local.
+   */
+  changePassword(currentPassword: string, newPassword: string): Observable<boolean> {
+    if (environment.apiConfig?.dataSource === 'mock') {
+      return of(true).pipe(delay(300));
+    }
+
+    if (!environment.apiUrl) {
+      return throwError(
+        () =>
+          new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
+      );
+    }
+
+    return this.http
+      .post<unknown>(`${this.apiUrl}/cambiar-contrasena`, {
+        actual: currentPassword,
+        nueva: newPassword,
+      })
       .pipe(map(() => true));
   }
 

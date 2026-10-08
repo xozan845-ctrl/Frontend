@@ -18,6 +18,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -96,6 +99,18 @@ describe('AuthStore', () => {
     await vi.waitFor(() => expect(sessionStorage.getItem('ecom_refresh_token')).toBeNull());
   });
 
+  it('clearSession limpia la sesión local sin llamar al backend', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+
+    store.clearSession();
+
+    expect(store.isAuthenticated()).toBe(false);
+    expect(store.refreshToken()).toBeNull();
+    expect(repo.logout).not.toHaveBeenCalled();
+  });
+
   it('debe limpiar el error', () => {
     const store = setup();
 
@@ -130,6 +145,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -150,6 +168,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => throwError(() => new Error('email duplicado'))),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -167,6 +188,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -185,6 +209,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => throwError(() => new Error('sesión expirada'))),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -202,6 +229,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => throwError(() => new Error('sin conexión'))),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -220,6 +250,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of(authResponse)),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -241,6 +274,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => of({ user: authResponse.user, token: 'nuevo' })),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -279,6 +315,9 @@ describe('AuthStore', () => {
       register: vi.fn(() => of(authResponse)),
       refresh: vi.fn(() => throwError(() => new Error('expirada'))),
       logout: vi.fn(() => of(true)),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
