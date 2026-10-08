@@ -55,12 +55,7 @@ export class CheckoutComponent implements OnDestroy {
     this.isSubmitting.set(true);
     this.notificationService.showSuccess('Procesando orden...');
 
-    const payload: CreateOrderPayload = {
-      items: this.cartStore.items().map((item) => ({
-        ofertaId: String(item.product.id),
-        quantity: item.quantity,
-      })),
-    };
+    const payload: CreateOrderPayload = { usarCarrito: true };
 
     this.orderService
       .createOrder(payload)
@@ -68,7 +63,7 @@ export class CheckoutComponent implements OnDestroy {
       .subscribe({
         next: (order) => {
           this.orderStore.setLastOrder(order);
-          this.cartStore.clearCart();
+          this.cartStore.reset();
           this.isSubmitting.set(false);
           this.router.navigate(['/tienda', this.storeId(), 'checkout', 'confirmacion']);
         },

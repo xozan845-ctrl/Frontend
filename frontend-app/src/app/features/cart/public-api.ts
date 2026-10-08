@@ -4,3 +4,4 @@ export type { OrderResponse, OrderItem, OrderTimelineEvent } from './models/orde
 export { CartStore } from './state/cart.store';
 export { OrderStore } from './state/order.store';
 export { ORDER_REPOSITORY, type OrderRepository } from './repositories/order.repository';
+export { CART_REPOSITORY, type CartRepository } from './repositories/cart.repository';

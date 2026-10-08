@@ -4,6 +4,7 @@ export interface ApiEndpointsConfig {
   storefront: string;
   auth: string;
   orders: string;
+  cart: string;
 }
 
 export interface ApiConfiguration {
@@ -23,5 +24,6 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     storefront: '/tiendas',
     auth: '/auth',
     orders: '/orders',
+    cart: '/carrito',
   },
 };

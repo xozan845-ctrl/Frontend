@@ -29,12 +29,14 @@ export class OrderService implements OrderRepository {
       return this.missingApiUrl();
     }
 
-    const body = {
-      items: payload.items.map((item) => ({
-        oferta_id: item.ofertaId,
-        cantidad: item.quantity,
-      })),
-    };
+    const body = payload.usarCarrito
+      ? { usar_carrito: true }
+      : {
+          items: (payload.items ?? []).map((item) => ({
+            oferta_id: item.ofertaId,
+            cantidad: item.quantity,
+          })),
+        };
 
     return this.http
       .post<unknown>(this.apiUrl, body)

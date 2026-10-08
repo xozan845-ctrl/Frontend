@@ -1,152 +1,147 @@
 import { TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
 import { CartStore } from './cart.store';
+import { CartItem } from '../models/cart.model';
 import { Product } from '../../products/models/product.model';
-import { AVAILABLE_COUPONS } from '../constants/coupons.constants';
+import { CART_REPOSITORY, CartRepository } from '../repositories/cart.repository';
+import { AuthStore } from '../../auth/public-api';
+import { NotificationService } from '../../../core/services/notification.service';
 
 const product = (id: number, price = 100): Product => ({
-  id,
+  id: String(id),
   name: `Producto ${id}`,
   description: '',
   price,
-  imageUrl: `https://img/${id}.png`,
+  imageUrl: '',
   category: 'General',
   stock: 10,
 });
 
+const cartItems: CartItem[] = [{ product: product(1, 50), quantity: 2 }];
+
 describe('CartStore', () => {
+  let repo: CartRepository;
+  const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
+
+  const setup = (authenticated = true) => {
+    repo = {
+      getCart: vi.fn(() => of(cartItems)),
+      addItem: vi.fn(() => of(cartItems)),
+      updateQuantity: vi.fn(() => of(cartItems)),
+      removeItem: vi.fn(() => of([])),
+      clearCart: vi.fn(() => of([])),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: CART_REPOSITORY, useValue: repo },
+        { provide: AuthStore, useValue: { isAuthenticated: () => authenticated } },
+        { provide: NotificationService, useValue: notification },
+      ],
+    });
+    return TestBed.inject(CartStore);
+  };
+
   beforeEach(() => {
-    localStorage.clear();
-    TestBed.configureTestingModule({});
+    vi.clearAllMocks();
+    TestBed.resetTestingModule();
   });
 
-  afterEach(() => localStorage.clear());
+  it('debe cargar el carrito del servidor con sesión y calcular totales', async () => {
+    const store = setup(true);
 
-  it('debe iniciar con el carrito vacío', () => {
-    const store = TestBed.inject(CartStore);
-
-    expect(store.items()).toEqual([]);
-    expect(store.totalItems()).toBe(0);
-    expect(store.totalPrice()).toBe(0);
-    expect(store.finalPrice()).toBe(0);
-  });
-
-  it('debe agregar un producto y calcular los totales', () => {
-    const store = TestBed.inject(CartStore);
-
-    store.addItem(product(1, 50), 2);
-
-    expect(store.items()).toHaveLength(1);
+    await vi.waitFor(() => expect(store.items()).toHaveLength(1));
+    expect(repo.getCart).toHaveBeenCalled();
     expect(store.totalItems()).toBe(2);
     expect(store.totalPrice()).toBe(100);
   });
 
-  it('debe incrementar la cantidad al agregar el mismo producto', () => {
-    const store = TestBed.inject(CartStore);
+  it('no debe cargar el carrito sin sesión', () => {
+    const store = setup(false);
 
-    store.addItem(product(1), 1);
-    store.addItem(product(1), 3);
-
-    expect(store.items()).toHaveLength(1);
-    expect(store.totalItems()).toBe(4);
+    expect(store.items()).toEqual([]);
+    expect(repo.getCart).not.toHaveBeenCalled();
   });
 
-  it('debe actualizar la cantidad de un producto', () => {
-    const store = TestBed.inject(CartStore);
-    store.addItem(product(1), 1);
+  it('debe delegar addItem al repositorio', () => {
+    const store = setup(true);
+    const item: CartItem[] = [{ product: product(1, 50), quantity: 3 }];
+    vi.mocked(repo.addItem).mockReturnValue(of(item));
 
-    store.updateQuantity(1, 5);
+    store.addItem(product(1, 50), 2);
 
+    expect(repo.addItem).toHaveBeenCalledWith('1', 2);
+    expect(store.items()).toEqual(item);
+  });
+
+  it('debe delegar updateQuantity al repositorio', () => {
+    const store = setup(true);
+    vi.mocked(repo.updateQuantity).mockReturnValue(of([{ product: product(1), quantity: 5 }]));
+
+    store.updateQuantity('1', 5);
+
+    expect(repo.updateQuantity).toHaveBeenCalledWith('1', 5);
     expect(store.totalItems()).toBe(5);
   });
 
-  it('debe eliminar el producto cuando la cantidad queda en cero o menos', () => {
-    const store = TestBed.inject(CartStore);
-    store.addItem(product(1), 2);
+  it('debe delegar removeItem al repositorio y notificar', () => {
+    const store = setup(true);
 
-    store.updateQuantity(1, 0);
+    store.removeItem('1');
 
+    expect(repo.removeItem).toHaveBeenCalledWith('1');
+    expect(notification.showSuccess).toHaveBeenCalled();
     expect(store.items()).toEqual([]);
   });
 
-  it('debe eliminar un producto por id', () => {
-    const store = TestBed.inject(CartStore);
-    store.addItem(product(1), 1);
-    store.addItem(product(2), 1);
-
-    store.removeItem(1);
-
-    expect(store.items().map((item) => item.product.id)).toEqual([2]);
-  });
-
-  it('debe aplicar un cupón válido y calcular descuento y precio final', () => {
-    const store = TestBed.inject(CartStore);
-    store.addItem(product(1, 100), 1);
-
-    store.applyCoupon(AVAILABLE_COUPONS['DESCUENTO10'].code);
-
-    expect(store.appliedCoupon()).toBe('DESCUENTO10');
-    expect(store.discountPercentage()).toBe(10);
-    expect(store.discountAmount()).toBe(10);
-    expect(store.finalPrice()).toBe(90);
-  });
-
-  it('debe ignorar un cupón inválido', () => {
-    const store = TestBed.inject(CartStore);
-
-    store.applyCoupon('NO-EXISTE');
-
-    expect(store.appliedCoupon()).toBeNull();
-    expect(store.discountPercentage()).toBe(0);
-  });
-
-  it('debe quitar el cupón aplicado', () => {
-    const store = TestBed.inject(CartStore);
-    store.applyCoupon('PROMO20');
-
-    store.removeCoupon();
-
-    expect(store.appliedCoupon()).toBeNull();
-    expect(store.discountPercentage()).toBe(0);
-  });
-
-  it('debe limpiar el carrito y el cupón', () => {
-    const store = TestBed.inject(CartStore);
-    store.addItem(product(1), 2);
-    store.applyCoupon('PROMO20');
+  it('debe vaciar el carrito en el servidor', () => {
+    const store = setup(true);
 
     store.clearCart();
 
+    expect(repo.clearCart).toHaveBeenCalled();
     expect(store.items()).toEqual([]);
-    expect(store.appliedCoupon()).toBeNull();
+  });
+
+  it('debe limpiar el estado local con reset sin llamar al backend', () => {
+    const store = setup(true);
+    vi.mocked(repo.clearCart).mockClear();
+
+    store.reset();
+
+    expect(store.items()).toEqual([]);
+    expect(repo.clearCart).not.toHaveBeenCalled();
+  });
+
+  it('debe registrar el error del carrito', () => {
+    repo = {
+      getCart: vi.fn(() => throwError(() => new Error('boom'))),
+      addItem: vi.fn(() => of([])),
+      updateQuantity: vi.fn(() => of([])),
+      removeItem: vi.fn(() => of([])),
+      clearCart: vi.fn(() => of([])),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: CART_REPOSITORY, useValue: repo },
+        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
+        { provide: NotificationService, useValue: notification },
+      ],
+    });
+    const store = TestBed.inject(CartStore);
+
+    store.loadCart();
+
+    expect(store.error()).toBe('boom');
+    expect(notification.showError).toHaveBeenCalled();
   });
 
   it('debe alternar el sidebar y aceptar un valor explícito', () => {
-    const store = TestBed.inject(CartStore);
+    const store = setup(true);
 
     store.toggleSidebar();
     expect(store.isSidebarOpen()).toBe(true);
 
     store.toggleSidebar(false);
     expect(store.isSidebarOpen()).toBe(false);
-  });
-
-  it('debe persistir los items en localStorage', async () => {
-    const store = TestBed.inject(CartStore);
-
-    store.addItem(product(1), 2);
-
-    await vi.waitFor(() => {
-      const stored = JSON.parse(localStorage.getItem('ecom_cart_items') ?? '[]');
-      expect(stored).toHaveLength(1);
-    });
-  });
-
-  it('debe cargar los items desde localStorage al iniciar', () => {
-    localStorage.setItem('ecom_cart_items', JSON.stringify([{ product: product(9), quantity: 3 }]));
-
-    const store = TestBed.inject(CartStore);
-
-    expect(store.items()).toHaveLength(1);
-    expect(store.totalItems()).toBe(3);
   });
 });

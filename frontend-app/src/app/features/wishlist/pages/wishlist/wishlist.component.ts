@@ -1,8 +1,9 @@
 import { Component, inject, signal, OnDestroy, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { WishlistStore } from '../../state/wishlist.store';
 import { CartStore } from '../../../cart/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
@@ -26,8 +27,10 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 export class WishlistComponent implements OnDestroy {
   readonly wishlistStore = inject(WishlistStore);
   private readonly cartStore = inject(CartStore);
+  private readonly authStore = inject(AuthStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly productStore = inject(ProductStore);
+  private readonly router = inject(Router);
   private readonly seoService = inject(SeoService);
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
@@ -64,6 +67,10 @@ export class WishlistComponent implements OnDestroy {
   });
 
   addToCart(product: Product): void {
+    if (!this.authStore.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
     this.cartStore.addItem(product);
   }
 
