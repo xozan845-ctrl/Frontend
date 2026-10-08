@@ -249,4 +249,46 @@ describe('AuthStore', () => {
     await vi.waitFor(() => expect(store.token()).toBe('nuevo'));
     expect(store.refreshToken()).toBe('refresh-1');
   });
+
+  it('refreshTokenOnce renueva la sesión y devuelve true', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+    vi.mocked(repo.refresh).mockClear();
+
+    const renewed = await store.refreshTokenOnce();
+
+    expect(renewed).toBe(true);
+    expect(repo.refresh).toHaveBeenCalledWith('refresh-1');
+    expect(store.isAuthenticated()).toBe(true);
+  });
+
+  it('refreshTokenOnce devuelve false sin refresh token', async () => {
+    const store = setup();
+
+    const renewed = await store.refreshTokenOnce();
+
+    expect(renewed).toBe(false);
+    expect(repo.refresh).not.toHaveBeenCalled();
+  });
+
+  it('refreshTokenOnce limpia la sesión si la renovación falla', async () => {
+    repo = {
+      login: vi.fn(() => of(authResponse)),
+      register: vi.fn(() => of(authResponse)),
+      refresh: vi.fn(() => throwError(() => new Error('expirada'))),
+      logout: vi.fn(() => of(true)),
+    };
+    TestBed.configureTestingModule({
+      providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
+    });
+    const store = TestBed.inject(AuthStore);
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+
+    const renewed = await store.refreshTokenOnce();
+
+    expect(renewed).toBe(false);
+    expect(store.isAuthenticated()).toBe(false);
+  });
 });

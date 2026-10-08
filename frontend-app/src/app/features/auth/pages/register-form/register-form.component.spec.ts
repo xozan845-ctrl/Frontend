@@ -49,6 +49,17 @@ describe('RegisterFormComponent', () => {
     expect(authStore.register).not.toHaveBeenCalled();
   });
 
+  it('debe exigir contraseñas de al menos 8 caracteres (back: MinLength 8)', async () => {
+    const fixture = await setup();
+    const password = fixture.componentInstance.registerForm.get('password');
+
+    password?.setValue('corta12');
+    expect(password?.invalid).toBe(true);
+
+    password?.setValue('segura12');
+    expect(password?.valid).toBe(true);
+  });
+
   it('debe registrar cuando el formulario es válido', async () => {
     const fixture = await setup();
     fixture.componentInstance.registerForm.setValue({
