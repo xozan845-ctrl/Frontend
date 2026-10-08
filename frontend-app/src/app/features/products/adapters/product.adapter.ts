@@ -125,30 +125,69 @@ export function adaptSingleProductFromBackend(response: unknown): Product {
 
 /**
  * Ofertas del storefront (Core Engine `GET /tiendas/:id` → `{ tienda, ofertas }`).
- * El `id` de la oferta es el `oferta_id` que exige el checkout.
+ * El `id` de la oferta es el `oferta_id` que exige el checkout. Las ofertas solo
+ * traen `producto_nombre`/`precio_venta`/`stock`/`sku`, así que la descripción y
+ * la categoría se enriquecen desde el catálogo (`catalog`).
  */
-export function adaptOfertaListFromBackend(response: unknown): Product[] {
+export function adaptOfertaListFromBackend(
+  response: unknown,
+  catalog?: Map<string, CatalogEntry>,
+): Product[] {
   if (!response || typeof response !== 'object') return [];
   const ofertas = (response as Record<string, unknown>)['ofertas'];
   if (!Array.isArray(ofertas)) return [];
-  return ofertas.map(adaptOfertaFromBackend);
+  return ofertas.map((oferta) => adaptOfertaFromBackend(oferta, catalog));
 }
 
-export function adaptOfertaFromBackend(raw: unknown): Product {
+export function adaptOfertaFromBackend(raw: unknown, catalog?: Map<string, CatalogEntry>): Product {
   const oferta = (raw ?? {}) as Record<string, unknown>;
   const rawPrice = oferta['precio_venta'] ?? oferta['precio_base'] ?? 0;
   const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(String(rawPrice)) || 0;
   const sku = typeof oferta['sku'] === 'string' ? oferta['sku'] : '';
 
+  const entry =
+    catalog?.get(String(oferta['producto_id'] ?? '')) ?? (sku ? catalog?.get(sku) : undefined);
+
   return {
     id: (oferta['id'] ?? `of-${Date.now()}`) as string | number,
     name: typeof oferta['producto_nombre'] === 'string' ? oferta['producto_nombre'] : 'Producto',
-    description: sku ? `SKU ${sku}` : '',
+    description: entry?.description || (sku ? `SKU ${sku}` : ''),
     price,
     imageUrl: DEFAULT_FALLBACK_IMAGE,
-    category: 'General',
+    category: entry?.category || 'General',
     stock: Number(oferta['stock'] ?? 0),
   };
+}
+
+/** Campos del producto de catálogo que se fusionan sobre la oferta. */
+export interface CatalogEntry {
+  description: string;
+  category: string;
+}
+
+/**
+ * Índice de productos de catálogo (`GET /catalog/productos`) por `id` y por
+ * `sku`, para enriquecer las ofertas del storefront.
+ */
+export function buildCatalogLookup(response: unknown): Map<string, CatalogEntry> {
+  const lookup = new Map<string, CatalogEntry>();
+  for (const raw of unwrapApiListResponse(response)) {
+    if (!raw || typeof raw !== 'object') continue;
+    const producto = raw as Record<string, unknown>;
+    const entry: CatalogEntry = {
+      description: typeof producto['descripcion'] === 'string' ? producto['descripcion'] : '',
+      category:
+        typeof producto['categoria'] === 'string' && producto['categoria']
+          ? producto['categoria']
+          : '',
+    };
+    for (const key of [producto['id'], producto['_id'], producto['sku']]) {
+      if (key !== undefined && key !== null && key !== '') {
+        lookup.set(String(key), entry);
+      }
+    }
+  }
+  return lookup;
 }
 
 /**
@@ -173,10 +212,14 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
  * Storefront completo de una tienda (`GET /tiendas/:id` → `{ tienda, ofertas }`).
  * Las ofertas se mapean a `Product` (su `id` es el `oferta_id` del checkout).
  */
-export function adaptStorefrontFromBackend(response: unknown): {
+export function adaptStorefrontFromBackend(
+  response: unknown,
+  catalogResponse?: unknown,
+): {
   store: Store | null;
   products: Product[];
 } {
+  const catalog = catalogResponse ? buildCatalogLookup(catalogResponse) : undefined;
   const tienda =
     response && typeof response === 'object'
       ? (response as Record<string, unknown>)['tienda']
@@ -184,6 +227,6 @@ export function adaptStorefrontFromBackend(response: unknown): {
 
   return {
     store: adaptStoreFromBackend(tienda),
-    products: adaptOfertaListFromBackend(response),
+    products: adaptOfertaListFromBackend(response, catalog),
   };
 }
