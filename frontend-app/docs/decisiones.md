@@ -264,3 +264,23 @@ contexto y consecuencias.
   `R-AR-13` (frontera de `core/`), y se añade `R-SO-8` (Smart/Dumb). La migración
   se hace por PRs atómicas (código + specs + `angular.json` de cobertura), sin
   romper los gates. Revertir es volver a `domains/` + `shared/`.
+
+## ADR-13: Configuración de despliegue en runtime (`/config.json`)
+
+- **Contexto**: el storefront consume las ofertas de **una** tienda de Core
+  Engine (multi-tienda), identificada por `storeId`. Fijarla en
+  `environment.prod.ts` obliga a recompilar el bundle por entorno y deja el
+  valor de producción como deuda (vacío hasta conocer el UUID). La URL del API
+  es configuración pública (`R-CD-2`), no un secreto.
+- **Decisión**: resolver `apiUrl` y `storeId` en **tiempo de ejecución** desde
+  `/config.json`, generado por el contenedor a partir de `API_URL`/`STORE_ID`
+  (`docker-entrypoint.d/40-runtime-config.sh`). La app lo carga con
+  `provideAppInitializer` antes de crear los servicios, que siguen leyendo
+  `environment` (`R-AR-11`); los valores vacíos conservan el fallback de
+  `src/environments/`. Si el archivo falta o falla, no hay ruido en consola
+  (`R-E-9`).
+- **Consecuencias**: el mismo build sirve a cualquier entorno cambiando solo
+  variables del contenedor (alineado con `R-CD-4`); `config.json` se versiona
+  vacío como plantilla y se añade al `assetGroups` del service worker. Revertir
+  es volver a fijar los valores en `environment.prod.ts` y quitar el
+  `provideAppInitializer`.

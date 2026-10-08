@@ -72,6 +72,18 @@ Pasos:
   `https://api.kbcoleccion.com/api/v1`.
 - Si se necesitan URLs distintas por entorno, usar `fileReplacements` de
   `angular.json`, no valores inyectados a mano en el servidor (`R-CD-4`).
+- **Configuración de runtime (`/config.json`)**: la app descarga `/config.json`
+  al arrancar (`RuntimeConfigService`) y aplica sus valores no vacíos sobre
+  `environment`. El contenedor lo genera desde variables de entorno con
+  `docker-entrypoint.d/40-runtime-config.sh`, así que se ajusta **sin
+  recompilar**:
+
+  | Variable   | Descripción                                                         | Ejemplo                                |
+  | ---------- | ------------------------------------------------------------------- | -------------------------------------- |
+  | `API_URL`  | URL base del gateway de Core Engine (opcional; vacío = environment) | `https://api.kbcoleccion.com/api/v1`   |
+  | `STORE_ID` | UUID de la tienda publicada cuyas ofertas consume el storefront     | `f7603931-b32d-4251-962a-a9c9e290d1c5` |
+
+  En local se usa el fallback de `environment.ts` (la tienda de desarrollo).
 
 ## 5. Verificaciones tras el despliegue (smoke, `R-CD-9`)
 
