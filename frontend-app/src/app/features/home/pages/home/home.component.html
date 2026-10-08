@@ -25,7 +25,7 @@
       </p>
       <div class="flex items-center gap-6">
         <a
-          routerLink="/shop"
+          [routerLink]="['/tienda', storeId(), 'shop']"
           class="group relative inline-flex items-center justify-center bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-1 hover:bg-accent-600 dark:hover:bg-accent-500 dark:hover:text-white active:scale-95"
         >
           <span class="relative z-10 flex items-center gap-3"
@@ -74,7 +74,7 @@
       </div>
       <div class="w-full md:w-2/3 flex flex-col gap-8">
         <a
-          routerLink="/shop"
+          [routerLink]="['/tienda', storeId(), 'shop']"
           class="relative text-4xl md:text-5xl font-black uppercase text-slate-800 dark:text-slate-200 hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex justify-between items-center group after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent-600 dark:after:bg-accent-400 after:transition-all after:duration-300 group-hover:after:w-full"
         >
           Laptops
@@ -84,7 +84,7 @@
         </a>
         <hr class="border-slate-100 dark:border-surface-700" />
         <a
-          routerLink="/shop"
+          [routerLink]="['/tienda', storeId(), 'shop']"
           class="relative text-4xl md:text-5xl font-black uppercase text-slate-800 dark:text-slate-200 hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex justify-between items-center group after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent-600 dark:after:bg-accent-400 after:transition-all after:duration-300 group-hover:after:w-full"
         >
           Smartphones
@@ -94,7 +94,7 @@
         </a>
         <hr class="border-slate-100 dark:border-surface-700" />
         <a
-          routerLink="/shop"
+          [routerLink]="['/tienda', storeId(), 'shop']"
           class="relative text-4xl md:text-5xl font-black uppercase text-slate-800 dark:text-slate-200 hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex justify-between items-center group after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent-600 dark:after:bg-accent-400 after:transition-all after:duration-300 group-hover:after:w-full"
         >
           Audio
@@ -115,7 +115,7 @@
         Selección Principal
       </h2>
       <a
-        routerLink="/shop"
+        [routerLink]="['/tienda', storeId(), 'shop']"
         class="text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400 hover:text-accent-700 transition-colors flex items-center gap-2 group"
       >
         Ver tienda
@@ -150,6 +150,7 @@
             <app-product-card
               appScrollReveal
               [product]="card.product"
+              [storeId]="storeId()"
               [priority]="i === 0"
               [isInWishlist]="card.isInWishlist"
               [avgRating]="card.avgRating"

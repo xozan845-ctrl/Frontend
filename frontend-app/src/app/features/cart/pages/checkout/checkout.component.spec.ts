@@ -4,6 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { CartStore } from '../../state/cart.store';
+import { ProductStore } from '../../../products/state/product.store';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -39,6 +40,7 @@ describe('CheckoutComponent', () => {
         provideRouter([]),
         { provide: CartStore, useValue: cartStore },
         { provide: AuthStore, useValue: authStore },
+        { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
         { provide: ORDER_REPOSITORY, useValue: orderRepo },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
@@ -88,6 +90,6 @@ describe('CheckoutComponent', () => {
       items: [{ ofertaId: 'of-1', quantity: 2 }],
     });
     expect(cartStore.clearCart).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith(['/checkout/confirmation']);
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'checkout', 'confirmacion']);
   });
 });

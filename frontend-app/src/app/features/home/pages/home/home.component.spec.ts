@@ -42,9 +42,10 @@ describe('HomeComponent', () => {
   const productList = signal(products);
   const productStore = {
     products: productList,
+    storeId: signal(''),
     loading: signal(false),
     error: signal<string | null>(null),
-    loadProducts: vi.fn(),
+    reload: vi.fn(),
   };
   const cartStore = { addItem: vi.fn() };
   const wishlistStore = { isInWishlist: vi.fn(() => false), toggle: vi.fn() };
@@ -94,20 +95,13 @@ describe('HomeComponent', () => {
     expect(fixture.componentInstance.featuredCards()[0].isInWishlist).toBe(false);
   });
 
-  it('debe solicitar productos al iniciar cuando la lista está vacía', async () => {
-    productList.set([]);
-    await setup();
-
-    expect(productStore.loadProducts).toHaveBeenCalled();
-  });
-
   it('debe reintentar la carga después de un error', async () => {
     productStore.error.set('fallo de red');
     const fixture = await setup();
 
     fixture.componentInstance.retryLoad();
 
-    expect(productStore.loadProducts).toHaveBeenCalled();
+    expect(productStore.reload).toHaveBeenCalled();
   });
 
   it('debe delegar al store al añadir un producto al carrito', async () => {

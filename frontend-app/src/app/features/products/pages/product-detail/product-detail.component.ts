@@ -2,13 +2,13 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
   OnDestroy,
   signal,
   effect,
+  input,
   untracked,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { NgOptimizedImage, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductStore } from '../../state/product.store';
@@ -44,17 +44,20 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css',
 })
-export class ProductDetailComponent implements OnInit, OnDestroy {
+export class ProductDetailComponent implements OnDestroy {
   readonly productStore = inject(ProductStore);
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly wishlistStore = inject(WishlistStore);
   readonly recentlyViewedStore = inject(RecentlyViewedStore);
-  private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
   private readonly cartFlyService = inject(CartFlyService);
   private readonly fb = inject(FormBuilder);
   private readonly seoService = inject(SeoService);
+
+  /** Parámetros de ruta (`/tienda/:storeId/producto/:id`, `R-AR-12`). */
+  readonly storeId = input<string>('');
+  readonly id = input<string>('');
 
   showReviewForm = signal(false);
   selectedRating = signal(0);
@@ -127,6 +130,15 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   ];
 
   constructor() {
+    // Selecciona el producto dentro del storefront ya cargado por el resolver.
+    effect(() => {
+      const id = this.id();
+      const products = this.productStore.products();
+      if (id && products.length > 0) {
+        this.productStore.selectProduct(id);
+      }
+    });
+
     effect(() => {
       const p = this.productStore.selectedProduct();
       if (p) {
@@ -138,14 +150,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      const id: string | number = isNaN(Number(idParam)) ? idParam : Number(idParam);
-      this.productStore.loadProductById(id);
-    }
   }
 
   ngOnDestroy() {

@@ -13,7 +13,7 @@ const CONFIG_TIMEOUT_MS = 5000;
 /**
  * Carga la configuración de despliegue (`config.json`) durante el arranque y
  * la aplica sobre `environment`, de modo que los servicios (que leen
- * `environment.apiUrl`/`storeId` al construirse) vean los valores efectivos.
+ * `environment.apiUrl` al construirse) vean los valores efectivos.
  *
  * Se registra con `provideAppInitializer` en `app.config.ts`: los servicios de
  * `features/` se crean después del arranque, por lo que ya leen la config
@@ -43,10 +43,6 @@ export class RuntimeConfigService {
 
     if (config.apiUrl) {
       environment.apiUrl = config.apiUrl;
-    }
-
-    if (config.storeId) {
-      environment.apiConfig.storeId = config.storeId;
     }
   }
 }

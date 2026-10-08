@@ -1,8 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore } from '../../features/auth/public-api';
 import { CartStore } from '../../features/cart/public-api';
+import { ProductStore } from '../../features/products/public-api';
 import { WishlistStore } from '../../features/wishlist/public-api';
 import { StoreConfigService } from '../../core/services/store-config.service';
 
@@ -16,7 +17,20 @@ export class Navbar implements OnInit {
   readonly authStore = inject(AuthStore);
   readonly cartStore = inject(CartStore);
   readonly wishlistStore = inject(WishlistStore);
+  readonly productStore = inject(ProductStore);
   private readonly storeConfig = inject(StoreConfigService);
+
+  /** Tienda activa (de la URL); los enlaces del storefront la incluyen. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
+  readonly storeName = computed(() => this.productStore.store()?.name ?? '');
+  readonly homeLink = computed(() => (this.storeId() ? ['/tienda', this.storeId()] : ['/']));
+  readonly shopLink = computed(() =>
+    this.storeId() ? ['/tienda', this.storeId(), 'shop'] : ['/'],
+  );
+  readonly wishlistLink = computed(() =>
+    this.storeId() ? ['/tienda', this.storeId(), 'wishlist'] : ['/'],
+  );
+
   get companyInfo() {
     return this.storeConfig.companyInfo();
   }

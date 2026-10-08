@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { AuthStore } from '../../../auth/public-api';
+import { ProductStore } from '../../../products/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
@@ -27,6 +28,11 @@ export class CheckoutComponent implements OnDestroy {
   private notificationService = inject(NotificationService);
   private readonly seoService = inject(SeoService);
   private readonly orderService: OrderRepository = inject(ORDER_REPOSITORY);
+  private readonly productStore = inject(ProductStore);
+
+  /** Tienda activa (de la URL) para enlaces store-scoped. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
+  readonly shopRoute = computed(() => `/tienda/${this.storeId()}/shop`);
 
   isSubmitting = signal(false);
 
@@ -61,7 +67,7 @@ export class CheckoutComponent implements OnDestroy {
         next: () => {
           this.cartStore.clearCart();
           this.isSubmitting.set(false);
-          this.router.navigate(['/checkout/confirmation']);
+          this.router.navigate(['/tienda', this.storeId(), 'checkout', 'confirmacion']);
         },
         error: (err) => {
           this.isSubmitting.set(false);

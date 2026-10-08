@@ -5,7 +5,10 @@
   <div
     class="relative aspect-square bg-slate-50 dark:bg-surface-800 mb-6 overflow-hidden rounded-2xl shadow-sm border border-slate-100 dark:border-surface-700 transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-2"
   >
-    <a [routerLink]="['/product', product().id]" class="absolute inset-0 block h-full w-full">
+    <a
+      [routerLink]="['/tienda', storeId(), 'producto', product().id]"
+      class="absolute inset-0 block h-full w-full"
+    >
       @if (priority()) {
         <img
           #productImage
@@ -94,7 +97,10 @@
   <div class="flex flex-col grow px-2">
     <!-- Name + Price -->
     <div class="flex justify-between items-start gap-4 mb-2">
-      <a [routerLink]="['/product', product().id]" class="block flex-1 min-w-0">
+      <a
+        [routerLink]="['/tienda', storeId(), 'producto', product().id]"
+        class="block flex-1 min-w-0"
+      >
         <h3
           class="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors line-clamp-2"
         >

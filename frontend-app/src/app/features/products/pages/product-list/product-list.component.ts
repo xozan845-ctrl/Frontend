@@ -1,4 +1,13 @@
-import { Component, DestroyRef, inject, OnInit, signal, effect, computed } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  effect,
+  computed,
+  input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product.store';
@@ -35,6 +44,9 @@ export class ProductListComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly seoService = inject(SeoService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** Tienda activa, enlazada desde la URL (`/tienda/:storeId`, `R-AR-12`). */
+  readonly storeId = input<string>('');
 
   // Delegar señales computadas y de estado a ProductStore
   readonly categories = this.productStore.categories;
@@ -91,9 +103,7 @@ export class ProductListComponent implements OnInit {
       'Catálogo de Productos',
       'Explora todo nuestro catálogo editorial de tecnología.',
     );
-    if (this.productStore.products().length === 0) {
-      this.productStore.loadProducts();
-    }
+    // El storefront ya lo cargó `storefrontResolver` antes de activar la ruta.
     // Support ?cat= query param from search autocomplete
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['cat']) {
@@ -129,7 +139,7 @@ export class ProductListComponent implements OnInit {
   }
 
   retryLoad() {
-    this.productStore.loadProducts();
+    this.productStore.reload();
   }
 
   clearFilters() {

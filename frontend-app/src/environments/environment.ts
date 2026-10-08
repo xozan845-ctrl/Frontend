@@ -7,6 +7,5 @@ export const environment = {
   apiConfig: {
     ...DEFAULT_API_CONFIG,
     dataSource: 'api',
-    storeId: 'f7603931-b32d-4251-962a-a9c9e290d1c5',
   } as ApiConfiguration,
 };

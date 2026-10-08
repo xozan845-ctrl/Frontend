@@ -143,7 +143,7 @@
 
           <!-- View Full Detail -->
           <a
-            [routerLink]="['/product', product()!.id]"
+            [routerLink]="['/tienda', storeId(), 'producto', product()!.id]"
             (click)="closeModal.emit()"
             class="mt-4 text-center text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400 hover:text-accent-700 transition-colors flex items-center justify-center gap-2"
           >

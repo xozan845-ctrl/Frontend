@@ -37,7 +37,10 @@ describe('SearchAutocompleteComponent', () => {
       imports: [SearchAutocompleteComponent],
       providers: [
         provideRouter([]),
-        { provide: ProductStore, useValue: { products: () => products } },
+        {
+          provide: ProductStore,
+          useValue: { products: () => products, storeId: () => 'tienda-1' },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(SearchAutocompleteComponent);
@@ -82,7 +85,7 @@ describe('SearchAutocompleteComponent', () => {
     fixture.componentInstance.focusedIndex.set(0);
     fixture.componentInstance.onKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
 
-    expect(router.navigate).toHaveBeenCalledWith(['/product', 1]);
+    expect(router.navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'producto', 1]);
   });
 
   it('debe cerrar los resultados con Escape', async () => {

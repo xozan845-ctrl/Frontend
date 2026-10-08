@@ -5,7 +5,7 @@ import { AuthStore } from '../state/auth.store';
 
 describe('authGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = {} as RouterStateSnapshot;
+  const state = { url: '/tienda/x/checkout' } as RouterStateSnapshot;
 
   const run = (isAuthenticated: boolean) => {
     const router = { navigate: vi.fn() };
@@ -34,6 +34,8 @@ describe('authGuard', () => {
     const { result, router } = run(false);
 
     expect(result).toBe(false);
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    expect(router.navigate).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: '/tienda/x/checkout' },
+    });
   });
 });

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
+import { ProductStore } from '../../../products/state/product.store';
 import { Product } from '../../../products/models/product.model';
 import { CartSidebarComponent } from './cart-sidebar.component';
 
@@ -29,7 +30,11 @@ describe('CartSidebarComponent', () => {
     vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [CartSidebarComponent],
-      providers: [provideRouter([]), { provide: CartStore, useValue: cartStore }],
+      providers: [
+        provideRouter([]),
+        { provide: CartStore, useValue: cartStore },
+        { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(CartSidebarComponent);
     fixture.detectChanges();
@@ -78,6 +83,6 @@ describe('CartSidebarComponent', () => {
     button.click();
 
     expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
-    expect(navigate).toHaveBeenCalledWith(['/checkout']);
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'checkout']);
   });
 });

@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthStore } from '../state/auth.store';
 
-export const authGuard: CanActivateFn = (_route, _state) => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
 
@@ -10,7 +10,8 @@ export const authGuard: CanActivateFn = (_route, _state) => {
     return true;
   }
 
-  // Not authenticated, redirect to login without adding expected console noise.
-  router.navigate(['/login']);
+  // Not authenticated: redirect to login preserving the attempted URL so the
+  // user returns to the right store after signing in (multi-tienda).
+  router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
   return false;
 };

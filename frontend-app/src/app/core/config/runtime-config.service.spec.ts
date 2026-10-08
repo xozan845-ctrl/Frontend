@@ -7,7 +7,6 @@ import { environment } from '../../../environments/environment';
 describe('RuntimeConfigService', () => {
   let httpMock: HttpTestingController;
   const originalApiUrl = environment.apiUrl;
-  const originalStoreId = environment.apiConfig.storeId;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,20 +18,16 @@ describe('RuntimeConfigService', () => {
   afterEach(() => {
     httpMock.verify();
     environment.apiUrl = originalApiUrl;
-    environment.apiConfig.storeId = originalStoreId;
   });
 
-  it('aplica apiUrl y storeId desde config.json', async () => {
+  it('aplica apiUrl desde config.json', async () => {
     const service = TestBed.inject(RuntimeConfigService);
 
     const pending = service.load();
-    httpMock
-      .expectOne('config.json')
-      .flush({ apiUrl: 'https://api.example.com/api/v1', storeId: 'store-42' });
+    httpMock.expectOne('config.json').flush({ apiUrl: 'https://api.example.com/api/v1' });
     await pending;
 
     expect(environment.apiUrl).toBe('https://api.example.com/api/v1');
-    expect(environment.apiConfig.storeId).toBe('store-42');
   });
 
   it('conserva environment si config.json falla', async () => {
@@ -43,17 +38,15 @@ describe('RuntimeConfigService', () => {
     await pending;
 
     expect(environment.apiUrl).toBe(originalApiUrl);
-    expect(environment.apiConfig.storeId).toBe(originalStoreId);
   });
 
-  it('ignora valores vacíos y mantiene el fallback de environment', async () => {
+  it('ignora apiUrl vacío y mantiene el fallback de environment', async () => {
     const service = TestBed.inject(RuntimeConfigService);
 
     const pending = service.load();
-    httpMock.expectOne('config.json').flush({ apiUrl: '', storeId: '' });
+    httpMock.expectOne('config.json').flush({ apiUrl: '' });
     await pending;
 
     expect(environment.apiUrl).toBe(originalApiUrl);
-    expect(environment.apiConfig.storeId).toBe(originalStoreId);
   });
 });

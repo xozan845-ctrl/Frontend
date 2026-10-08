@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ProductStore } from '../../features/products/public-api';
 import { NotificationService } from '../../core/services/notification.service';
 import { StoreConfigService } from '../../core/services/store-config.service';
 
@@ -12,6 +13,15 @@ import { StoreConfigService } from '../../core/services/store-config.service';
 export class Footer {
   private readonly notificationService = inject(NotificationService);
   private readonly storeConfig = inject(StoreConfigService);
+  private readonly productStore = inject(ProductStore);
+
+  /** Tienda activa (de la URL) para enlaces store-scoped. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
+  readonly homeLink = computed(() => (this.storeId() ? ['/tienda', this.storeId()] : ['/']));
+  readonly shopLink = computed(() =>
+    this.storeId() ? ['/tienda', this.storeId(), 'shop'] : ['/'],
+  );
+
   get companyInfo() {
     return this.storeConfig.companyInfo();
   }

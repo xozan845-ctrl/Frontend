@@ -161,6 +161,7 @@
         <app-product-card
           appScrollReveal
           [product]="card.product"
+          [storeId]="storeId()"
           [priority]="i < 4"
           [isInWishlist]="card.isInWishlist"
           [avgRating]="card.avgRating"
@@ -241,6 +242,7 @@
 <!-- Quick View Modal -->
 <app-quick-view-modal
   [product]="quickViewVm()?.product ?? null"
+  [storeId]="storeId()"
   [isInWishlist]="quickViewVm()?.isInWishlist ?? false"
   [avgRating]="quickViewVm()?.avgRating ?? 0"
   [reviewCount]="quickViewVm()?.reviewCount ?? 0"

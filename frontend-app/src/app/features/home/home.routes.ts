@@ -1,10 +1,17 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../auth/guards/auth.guard';
 
+/** Home del storefront; se monta como hijo de `/tienda/:storeId` (`R-AR-12`). */
 export const HOME_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/home/home.component'),
-    canActivate: [authGuard],
+  },
+];
+
+/** Entrada raíz de la plataforma multi-tienda (sin tienda en la URL). */
+export const ROOT_ROUTES: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./pages/store-entry/store-entry.component'),
   },
 ];

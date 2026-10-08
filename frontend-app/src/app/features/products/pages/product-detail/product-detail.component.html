@@ -16,7 +16,7 @@
       class="flex items-center gap-3 mb-16 text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50 dark:bg-surface-800 px-4 py-2 inline-flex rounded-full shadow-sm border border-slate-100 dark:border-surface-700"
     >
       <a
-        routerLink="/shop"
+        [routerLink]="['/tienda', storeId(), 'shop']"
         class="hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
         >Tienda</a
       >
@@ -476,6 +476,7 @@
         <div class="mt-24 pt-16 border-t border-slate-200 dark:border-surface-700">
           <app-product-carousel
             [products]="recentlyViewedOtherProducts()"
+            [storeId]="storeId()"
             title="Vistos Recientemente"
           />
         </div>
