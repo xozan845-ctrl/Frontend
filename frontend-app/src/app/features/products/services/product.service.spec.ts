@@ -36,13 +36,17 @@ describe('ProductService', () => {
     let result: Storefront | undefined;
 
     service.getStorefront('tienda-1').subscribe((storefront) => (result = storefront));
-    const request = httpMock.expectOne('https://api.test/tiendas/tienda-1');
-    expect(request.request.method).toBe('GET');
-    request.flush({
+
+    const storefrontRequest = httpMock.expectOne('https://api.test/tiendas/tienda-1');
+    expect(storefrontRequest.request.method).toBe('GET');
+    httpMock.expectOne('https://api.test/catalog/productos').flush({ items: [] });
+
+    storefrontRequest.flush({
       tienda: { id: 'tienda-1', nombre: 'Mi Tienda', descripcion: 'Demo' },
       ofertas: [
         {
           id: 'of-1',
+          producto_id: 'p-1',
           producto_nombre: 'Teclado',
           precio_venta: '1380.00',
           stock: 10,
@@ -58,6 +62,60 @@ describe('ProductService', () => {
       price: 1380,
       stock: 10,
     });
+  });
+
+  it('debe enriquecer la oferta con descripción y categoría del catálogo', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: Storefront | undefined;
+
+    service.getStorefront('tienda-1').subscribe((storefront) => (result = storefront));
+
+    httpMock.expectOne('https://api.test/catalog/productos').flush({
+      items: [
+        {
+          id: 'p-1',
+          sku: 'SKU-TEC',
+          nombre: 'Teclado',
+          descripcion: 'RGB',
+          categoria: 'Periféricos',
+        },
+      ],
+    });
+    httpMock.expectOne('https://api.test/tiendas/tienda-1').flush({
+      tienda: { id: 'tienda-1', nombre: 'Mi Tienda' },
+      ofertas: [
+        {
+          id: 'of-1',
+          producto_id: 'p-1',
+          producto_nombre: 'Teclado',
+          precio_venta: '1380.00',
+          stock: 10,
+          sku: 'SKU-TEC',
+        },
+      ],
+    });
+
+    expect(result?.products[0]).toMatchObject({
+      description: 'RGB',
+      category: 'Periféricos',
+    });
+  });
+
+  it('debe cargar el storefront aunque el catálogo falle (best-effort)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: Storefront | undefined;
+
+    service.getStorefront('tienda-1').subscribe((storefront) => (result = storefront));
+
+    httpMock.expectOne('https://api.test/catalog/productos').error(new ProgressEvent('error'));
+    httpMock.expectOne('https://api.test/tiendas/tienda-1').flush({
+      tienda: { id: 'tienda-1' },
+      ofertas: [{ id: 'of-1', producto_nombre: 'Teclado', precio_venta: '100.00', stock: 1 }],
+    });
+
+    expect(result?.products[0]).toMatchObject({ name: 'Teclado', category: 'General' });
   });
 
   it('debe usar los mocks cuando dataSource es mock', () => {

@@ -4,6 +4,7 @@ import {
   adaptSingleProductFromBackend,
   adaptStoreFromBackend,
   adaptStorefrontFromBackend,
+  buildCatalogLookup,
 } from './product.adapter';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30';
@@ -166,6 +167,35 @@ describe('product.adapter', () => {
 
       expect(store).toBeNull();
       expect(products).toEqual([]);
+    });
+
+    it('debe enriquecer las ofertas con el catálogo (por producto_id y sku)', () => {
+      const catalog = buildCatalogLookup({
+        items: [
+          { id: 'p-1', sku: 'SKU-TEC', descripcion: 'Teclado RGB', categoria: 'Periféricos' },
+        ],
+      });
+
+      const { products } = adaptStorefrontFromBackend(
+        {
+          tienda: { id: 't-1' },
+          ofertas: [
+            { id: 'of-1', producto_id: 'p-1', producto_nombre: 'Teclado', precio_venta: '100.00' },
+            { id: 'of-2', sku: 'SKU-TEC', producto_nombre: 'Teclado 2', precio_venta: '120.00' },
+            { id: 'of-3', producto_nombre: 'Sin catálogo', precio_venta: '10.00', sku: 'SKU-X' },
+          ],
+        },
+        {
+          items: [
+            { id: 'p-1', sku: 'SKU-TEC', descripcion: 'Teclado RGB', categoria: 'Periféricos' },
+          ],
+        },
+      );
+
+      expect(catalog.get('p-1')?.category).toBe('Periféricos');
+      expect(products[0]).toMatchObject({ description: 'Teclado RGB', category: 'Periféricos' });
+      expect(products[1]).toMatchObject({ description: 'Teclado RGB', category: 'Periféricos' });
+      expect(products[2]).toMatchObject({ description: 'SKU SKU-X', category: 'General' });
     });
   });
 });
