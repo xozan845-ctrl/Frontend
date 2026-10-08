@@ -91,6 +91,7 @@ describe('AuthStore', () => {
     store.logout();
 
     await vi.waitFor(() => expect(store.isAuthenticated()).toBe(false));
+    expect(repo.logout).toHaveBeenCalledWith('refresh-1');
     expect(store.refreshToken()).toBeNull();
     await vi.waitFor(() => expect(sessionStorage.getItem('ecom_refresh_token')).toBeNull());
   });

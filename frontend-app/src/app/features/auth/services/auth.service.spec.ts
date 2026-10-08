@@ -63,14 +63,15 @@ describe('AuthService', () => {
     expect(result?.user.name).toBe('Nuevo');
   });
 
-  it('debe cerrar sesión con un POST de logout', () => {
+  it('debe cerrar sesión enviando el refresh_token (revoca solo esa sesión)', () => {
     environment.apiUrl = 'https://api.test';
     build();
     let result: boolean | undefined;
 
-    service.logout().subscribe((r) => (result = r));
+    service.logout('refresh-1').subscribe((r) => (result = r));
     const request = httpMock.expectOne('https://api.test/auth/logout');
     expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ refresh_token: 'refresh-1' });
     request.flush({});
 
     expect(result).toBe(true);

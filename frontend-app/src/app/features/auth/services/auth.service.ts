@@ -57,7 +57,12 @@ export class AuthService implements AuthRepository {
       .pipe(map((res) => adaptAuthResponseFromBackend(res, userData.email)));
   }
 
-  logout(): Observable<boolean> {
+  /**
+   * Cierra sesión. Envía el `refresh_token` para revocar **solo esta** sesión
+   * (Core Engine revoca todas si se omite). Exige un access token válido; el
+   * interceptor lo renueva y reintenta si expiró.
+   */
+  logout(refreshToken?: string): Observable<boolean> {
     if (environment.apiConfig?.dataSource === 'mock') {
       return of(true).pipe(delay(200));
     }
@@ -69,7 +74,9 @@ export class AuthService implements AuthRepository {
       );
     }
 
-    return this.http.post<unknown>(`${this.apiUrl}/logout`, {}).pipe(map(() => true));
+    return this.http
+      .post<unknown>(`${this.apiUrl}/logout`, { refresh_token: refreshToken })
+      .pipe(map(() => true));
   }
 
   refresh(refreshToken: string): Observable<AuthResponse> {
