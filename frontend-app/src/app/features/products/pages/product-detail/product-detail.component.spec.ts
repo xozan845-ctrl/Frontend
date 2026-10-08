@@ -69,7 +69,7 @@ describe('ProductDetailComponent', () => {
         { provide: NotificationService, useValue: notification },
         { provide: CartFlyService, useValue: cartFly },
         { provide: SeoService, useValue: seo },
-        { provide: AuthStore, useValue: { isAuthenticated: () => false } },
+        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(ProductDetailComponent);

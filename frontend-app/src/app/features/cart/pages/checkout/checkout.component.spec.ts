@@ -25,8 +25,8 @@ describe('CheckoutComponent', () => {
   const cartItems = signal<{ product: Product; quantity: number }[]>([]);
   const cartStore = {
     items: cartItems,
-    finalPrice: () => 2760,
-    clearCart: vi.fn(),
+    totalPrice: () => 2760,
+    reset: vi.fn(),
   };
   const authStore = { user: () => ({ name: 'Ana', email: 'ana@tienda.com' }) };
   const notification = { showSuccess: vi.fn(), showError: vi.fn() };
@@ -86,10 +86,8 @@ describe('CheckoutComponent', () => {
 
     fixture.componentInstance.submitOrder();
 
-    expect(orderRepo.createOrder).toHaveBeenCalledWith({
-      items: [{ ofertaId: 'of-1', quantity: 2 }],
-    });
-    expect(cartStore.clearCart).toHaveBeenCalled();
+    expect(orderRepo.createOrder).toHaveBeenCalledWith({ usarCarrito: true });
+    expect(cartStore.reset).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'checkout', 'confirmacion']);
   });
 });
