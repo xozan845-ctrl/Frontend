@@ -1,0 +1,92 @@
+<div class="min-h-[70vh] bg-slate-50 dark:bg-surface-900 py-16 px-4 transition-colors duration-300">
+  <div class="max-w-3xl mx-auto flex flex-col gap-8">
+    <a
+      routerLink="/cuenta/pedidos"
+      class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+    >
+      <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mis pedidos
+    </a>
+
+    @if (loading()) {
+      <p class="text-sm text-slate-500">Cargando pedido…</p>
+    } @else if (error()) {
+      <app-empty-state
+        variant="error"
+        icon="fa-solid fa-triangle-exclamation"
+        title="No se pudo cargar el pedido"
+        [subtitle]="error()!"
+        actionLabel="Reintentar"
+        [actionClick]="retry"
+      />
+    } @else if (order(); as ord) {
+      <section class="card p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block"
+              >Pedido</span
+            >
+            <span class="text-2xl font-black font-mono">{{ ord.orderNumber }}</span>
+          </div>
+          <span class="badge badge-primary">{{ ord.status }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block"
+              >Total</span
+            >
+            <span class="text-xl font-black">{{ ord.total | appCurrency }}</span>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block"
+              >Fecha</span
+            >
+            <span class="text-xl font-black">{{ ord.createdAt | date: 'short' }}</span>
+          </div>
+        </div>
+      </section>
+
+      @if (ord.items && ord.items.length > 0) {
+        <section class="card p-8">
+          <h2 class="text-xl font-black uppercase tracking-tighter font-heading mb-6">Artículos</h2>
+          <div class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700">
+            @for (item of ord.items; track item.ofertaId) {
+              <div class="flex items-center justify-between gap-4 py-4">
+                <div class="flex flex-col min-w-0">
+                  <span class="font-bold truncate">{{ item.name }}</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">
+                    {{ item.sku }} · {{ item.quantity }} × {{ item.unitPrice | appCurrency }}
+                  </span>
+                </div>
+                <span class="font-black shrink-0">{{
+                  item.quantity * item.unitPrice | appCurrency
+                }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      @if (timeline().length > 0) {
+        <section class="card p-8">
+          <h2 class="text-xl font-black uppercase tracking-tighter font-heading mb-6">
+            Seguimiento
+          </h2>
+          <ol class="flex flex-col gap-4">
+            @for (event of timeline(); track event.id) {
+              <li class="flex items-start gap-4">
+                <span class="w-2 h-2 mt-2 rounded-full bg-accent-600 shrink-0"></span>
+                <div class="flex flex-col">
+                  <span class="font-bold uppercase text-sm">{{ event.type }}</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">{{
+                    event.createdAt | date: 'medium'
+                  }}</span>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+    }
+  </div>
+</div>

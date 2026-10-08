@@ -1,4 +1,9 @@
-import { adaptOrderResponse, generateMockOrderResponse } from './order.adapter';
+import {
+  adaptOrderListFromBackend,
+  adaptOrderResponse,
+  adaptOrderTimelineFromBackend,
+  generateMockOrderResponse,
+} from './order.adapter';
 
 describe('order.adapter', () => {
   describe('adaptOrderResponse', () => {
@@ -60,6 +65,28 @@ describe('order.adapter', () => {
       expect(order.id).toMatch(/^ord-/);
       expect(order.orderNumber).toMatch(/^ORD-/);
       expect(() => new Date(order.createdAt).toISOString()).not.toThrow();
+    });
+  });
+
+  describe('adaptOrderListFromBackend', () => {
+    it('debe normalizar un arreglo o un envelope', () => {
+      expect(adaptOrderListFromBackend([{ id: 'o-1' }])).toHaveLength(1);
+      expect(adaptOrderListFromBackend({ items: [{ id: 'o-1' }, { id: 'o-2' }] })).toHaveLength(2);
+      expect(adaptOrderListFromBackend(null)).toEqual([]);
+    });
+  });
+
+  describe('adaptOrderTimelineFromBackend', () => {
+    it('debe mapear los eventos del timeline', () => {
+      const timeline = adaptOrderTimelineFromBackend([
+        { id: 1, tipo: 'orden.creada', payload: { a: 1 }, version: 1, creado_en: '2026-01-01' },
+      ]);
+
+      expect(timeline[0]).toMatchObject({ id: 1, type: 'orden.creada', version: 1 });
+    });
+
+    it('debe tolerar respuestas no válidas', () => {
+      expect(adaptOrderTimelineFromBackend(null)).toEqual([]);
     });
   });
 });
