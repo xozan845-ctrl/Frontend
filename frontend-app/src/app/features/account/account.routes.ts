@@ -8,4 +8,14 @@ export const ACCOUNT_ROUTES: Routes = [
     loadComponent: () => import('./pages/account/account.component'),
     canActivate: [authGuard],
   },
+  {
+    path: 'cuenta/pedidos',
+    loadComponent: () => import('./pages/orders/orders.component'),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'cuenta/pedidos/:id',
+    loadComponent: () => import('./pages/order-detail/order-detail.component'),
+    canActivate: [authGuard],
+  },
 ];

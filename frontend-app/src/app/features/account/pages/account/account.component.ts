@@ -7,7 +7,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthStore, AUTH_REPOSITORY } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -22,7 +22,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [ReactiveFormsModule, UpperCasePipe],
+  imports: [ReactiveFormsModule, UpperCasePipe, RouterLink],
   templateUrl: './account.component.html',
 })
 export default class AccountComponent implements OnInit {
