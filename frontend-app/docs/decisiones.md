@@ -284,3 +284,16 @@ contexto y consecuencias.
   vacío como plantilla y se añade al `assetGroups` del service worker. Revertir
   es volver a fijar los valores en `environment.prod.ts` y quitar el
   `provideAppInitializer`.
+
+## ADR-14: Moneda del storefront en córdobas (NIO)
+
+- **Contexto**: Core Engine maneja montos en córdobas nicaragüenses (NIO), pero
+  la UI mostraba `$` y `toFixed(2)` en 15 puntos, sin separadores locales ni
+  símbolo correcto.
+- **Decisión**: centralizar el formato en `core/config/currency.config.ts`
+  (`Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' })` →
+  `C$1,200.00`) y exponerlo con el pipe standalone `appCurrency`
+  (`shared/pipes`). `core/` lo usa también el SEO; el pipe devuelve `''` para
+  precios opcionales nulos.
+- **Consecuencias**: una sola fuente de verdad para moneda y locale; cambiar de
+  divisa es editar `CURRENCY`. Revertir es volver a `$` + `toFixed(2)`.
