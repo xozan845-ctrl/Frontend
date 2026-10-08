@@ -138,7 +138,7 @@ export const AuthStore = signalStore(
           pipe(
             tap(() => patchState(store, { loading: true, error: null })),
             switchMap(() =>
-              authService.logout().pipe(
+              authService.logout(store.refreshToken() ?? undefined).pipe(
                 tap(() => {
                   patchState(store, {
                     user: null,
