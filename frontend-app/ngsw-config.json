@@ -11,6 +11,7 @@
           "/index.html",
           "/manifest.webmanifest",
           "/icon.svg",
+          "/config.json",
           "/*.css",
           "/*.js"
         ]
