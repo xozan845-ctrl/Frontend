@@ -119,7 +119,7 @@
 
                 <div class="flex items-center gap-1">
                   <span class="text-lg font-black text-slate-900 dark:text-white tracking-tighter">
-                    ${{ (item.product.price * item.quantity).toFixed(2) }}
+                    {{ item.product.price * item.quantity | appCurrency }}
                   </span>
                   <button
                     (click)="cartStore.removeItem(item.product.id)"
@@ -149,7 +149,7 @@
         <span
           class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none"
         >
-          ${{ cartStore.totalPrice().toFixed(2) }}
+          {{ cartStore.totalPrice() | appCurrency }}
         </span>
       </div>
 

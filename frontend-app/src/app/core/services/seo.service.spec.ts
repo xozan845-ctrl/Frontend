@@ -44,7 +44,7 @@ describe('SeoService', () => {
   it('debe truncar la descripción y añadir el precio en la ficha de producto', () => {
     service.setProductPage('Teclado', 'x'.repeat(300), 99.5);
 
-    expect(meta.getTag('name="description"')?.content).toBe(`${'x'.repeat(150)} — Desde $99.50`);
+    expect(meta.getTag('name="description"')?.content).toBe(`${'x'.repeat(150)} — Desde C$99.50`);
     expect(meta.getTag('property="og:description"')?.content).toBe('x'.repeat(200));
   });
 

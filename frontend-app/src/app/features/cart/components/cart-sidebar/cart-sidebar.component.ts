@@ -4,11 +4,12 @@ import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-cart-sidebar',
   standalone: true,
-  imports: [NgOptimizedImage, EmptyStateComponent, FocusTrapDirective],
+  imports: [NgOptimizedImage, EmptyStateComponent, FocusTrapDirective, AppCurrencyPipe],
   templateUrl: './cart-sidebar.component.html',
   styleUrl: './cart-sidebar.component.css',
 })

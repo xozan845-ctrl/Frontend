@@ -24,6 +24,7 @@ import { ProductCarouselComponent } from '../../components/product-carousel/prod
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SeoService } from '../../../../core/services/seo.service';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-product-detail',
@@ -38,6 +39,7 @@ import { SeoService } from '../../../../core/services/seo.service';
     ImageLightboxComponent,
     ProductCarouselComponent,
     EmptyStateComponent,
+    AppCurrencyPipe,
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css',

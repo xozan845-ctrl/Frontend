@@ -17,11 +17,12 @@ import { Product } from '../../models/product.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [RouterLink, NgOptimizedImage, StarRatingComponent],
+  imports: [RouterLink, NgOptimizedImage, StarRatingComponent, AppCurrencyPipe],
   templateUrl: './product-card.component.html',
 })
 export class ProductCardComponent {

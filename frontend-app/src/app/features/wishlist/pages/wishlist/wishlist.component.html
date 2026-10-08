@@ -103,7 +103,7 @@
                 </h3>
               </a>
               <span class="text-lg font-black text-slate-900 dark:text-white shrink-0">
-                {{ '$' }}{{ item.product.price.toFixed(2) }}
+                {{ item.product.price | appCurrency }}
               </span>
             </div>
 

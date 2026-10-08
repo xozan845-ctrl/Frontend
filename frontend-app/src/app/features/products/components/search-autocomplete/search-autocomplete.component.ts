@@ -13,6 +13,7 @@ import { ProductStore } from '../../state/product.store';
 import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 /** Fragmento de texto para resaltar sin concatenar HTML (R-SE-3). */
 interface HighlightPart {
@@ -23,7 +24,7 @@ interface HighlightPart {
 @Component({
   selector: 'app-search-autocomplete',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AppCurrencyPipe],
   templateUrl: './search-autocomplete.component.html',
   styleUrl: './search-autocomplete.component.css',
 })

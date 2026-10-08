@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from '../../constants/plans.constants';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-plans',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AppCurrencyPipe],
   templateUrl: './plans.component.html',
 })
 export default class PlansComponent implements OnDestroy {

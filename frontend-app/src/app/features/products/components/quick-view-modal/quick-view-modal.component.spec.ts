@@ -38,7 +38,7 @@ describe('QuickViewModalComponent', () => {
     expect(dialog.getAttribute('aria-modal')).toBe('true');
     expect(dialog.getAttribute('aria-label')).toContain(product.name);
     expect(dialog.textContent).toContain(product.description);
-    expect(dialog.textContent).toContain('$500.00');
+    expect(dialog.textContent).toContain('C$500.00');
   });
 
   it('debe emitir cierre al pulsar el botón de cerrar', () => {

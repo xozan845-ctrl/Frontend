@@ -10,11 +10,12 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SeoService } from '../../../../core/services/seo.service';
 import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [NgOptimizedImage, TrustBadgesComponent, EmptyStateComponent],
+  imports: [NgOptimizedImage, TrustBadgesComponent, EmptyStateComponent, AppCurrencyPipe],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })

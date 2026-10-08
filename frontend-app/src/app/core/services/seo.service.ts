@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
+import { formatCurrency } from '../config/currency.config';
 
 /**
  * Servicio transversal de SEO dinámico (`R-UX-6`): centraliza el `<title>` y
@@ -32,7 +33,7 @@ export class SeoService {
   /** SEO completo de una ficha de producto, incluida Open Graph para compartir. */
   setProductPage(name: string, description: string, price: number): void {
     this.updateTitle(name);
-    this.updateMeta(`${description.slice(0, 150)} — Desde $${price.toFixed(2)}`);
+    this.updateMeta(`${description.slice(0, 150)} — Desde ${formatCurrency(price)}`);
     this.meta.updateTag({ property: 'og:title', content: `${name} | Quantum Store` });
     this.meta.updateTag({ property: 'og:description', content: description.slice(0, 200) });
     this.meta.updateTag({ property: 'og:type', content: 'product' });

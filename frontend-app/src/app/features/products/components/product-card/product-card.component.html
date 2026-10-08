@@ -103,11 +103,11 @@
       </a>
       <div class="shrink-0 text-right">
         <span class="text-lg font-black text-slate-900 dark:text-white tracking-tighter">
-          {{ '$' }}{{ product().price.toFixed(2) }}
+          {{ product().price | appCurrency }}
         </span>
         @if (product().originalPrice && product().originalPrice! > product().price) {
           <span class="block text-xs text-slate-400 line-through font-medium">
-            {{ '$' }}{{ product().originalPrice!.toFixed(2) }}
+            {{ product().originalPrice | appCurrency }}
           </span>
         }
       </div>

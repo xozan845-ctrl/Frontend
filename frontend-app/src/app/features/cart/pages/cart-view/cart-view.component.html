@@ -46,7 +46,7 @@
                   {{ item.product.name }}
                 </h3>
                 <div class="text-sm text-slate-500 font-medium">
-                  ${{ item.product.price.toFixed(2) }} C/U
+                  {{ item.product.price | appCurrency }} C/U
                 </div>
               </div>
 
@@ -91,7 +91,7 @@
                 >Subtotal</span
               >
               <span class="text-2xl font-black text-slate-900 dark:text-white">
-                ${{ (item.product.price * item.quantity).toFixed(2) }}
+                {{ item.product.price * item.quantity | appCurrency }}
               </span>
             </div>
           </div>
@@ -113,9 +113,9 @@
             class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500"
           >
             <span>Subtotal ({{ cartStore.totalItems() }})</span>
-            <span class="text-slate-900 dark:text-white"
-              >${{ cartStore.totalPrice().toFixed(2) }}</span
-            >
+            <span class="text-slate-900 dark:text-white">{{
+              cartStore.totalPrice() | appCurrency
+            }}</span>
           </div>
           <div
             class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500"
@@ -131,9 +131,9 @@
           <span class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white"
             >Total USD</span
           >
-          <span class="text-4xl font-black tracking-tighter text-slate-900 dark:text-white"
-            >${{ cartStore.totalPrice().toFixed(2) }}</span
-          >
+          <span class="text-4xl font-black tracking-tighter text-slate-900 dark:text-white">{{
+            cartStore.totalPrice() | appCurrency
+          }}</span>
         </div>
 
         <div class="flex flex-col gap-4">
