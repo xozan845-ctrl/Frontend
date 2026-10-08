@@ -8,6 +8,7 @@ import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rati
 import { Product, ReviewsStore } from '../../../products/public-api';
 import { QuickViewModalComponent } from '../../../products/public-ui';
 import { SeoService } from '../../../../core/services/seo.service';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-wishlist',
@@ -18,6 +19,7 @@ import { SeoService } from '../../../../core/services/seo.service';
     EmptyStateComponent,
     StarRatingComponent,
     QuickViewModalComponent,
+    AppCurrencyPipe,
   ],
   templateUrl: './wishlist.component.html',
 })

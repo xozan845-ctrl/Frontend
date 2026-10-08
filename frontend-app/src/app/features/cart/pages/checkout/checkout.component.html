@@ -37,11 +37,11 @@
                 {{ item.product.name }}
               </p>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                {{ item.quantity }} × ${{ item.product.price.toFixed(2) }}
+                {{ item.quantity }} × {{ item.product.price | appCurrency }}
               </p>
             </div>
             <span class="font-black text-slate-900 dark:text-white shrink-0">
-              ${{ (item.product.price * item.quantity).toFixed(2) }}
+              {{ item.product.price * item.quantity | appCurrency }}
             </span>
           </div>
         }
@@ -54,7 +54,7 @@
           >Total</span
         >
         <span class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">
-          ${{ cartStore.finalPrice().toFixed(2) }}
+          {{ cartStore.finalPrice() | appCurrency }}
         </span>
       </div>
     </div>

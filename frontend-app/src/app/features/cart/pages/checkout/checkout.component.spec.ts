@@ -66,7 +66,7 @@ describe('CheckoutComponent', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
     expect(text).toContain('Teclado');
-    expect(text).toContain('$2760.00');
+    expect(text).toContain('C$2,760.00');
   });
 
   it('no debe enviar la orden con el carrito vacío', async () => {

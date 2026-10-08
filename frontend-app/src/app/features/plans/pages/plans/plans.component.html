@@ -92,7 +92,7 @@
               {{ plan.name }}
             </h3>
             <div class="text-5xl font-black tracking-tighter mb-2">
-              ${{ getPlanPrice(plan) }}
+              {{ getPlanPrice(plan) | appCurrency }}
               <span class="text-xs font-bold text-slate-400"
                 >/{{ plan.id === 'basic' ? 'MES' : getBillingCycleText() }}</span
               >
@@ -226,7 +226,7 @@
             {{ plan.name }}
           </h3>
           <div class="text-5xl font-black tracking-tighter mb-8">
-            ${{ getPlanPrice(plan) }}
+            {{ getPlanPrice(plan) | appCurrency }}
             <span class="text-xs font-bold text-slate-400"
               >/{{ plan.id === 'basic' ? 'MES' : getBillingCycleText() }}</span
             >

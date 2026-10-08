@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-cart-view',
   standalone: true,
-  imports: [NgOptimizedImage, EmptyStateComponent],
+  imports: [NgOptimizedImage, EmptyStateComponent, AppCurrencyPipe],
   templateUrl: './cart-view.component.html',
 })
 export class CartViewComponent {

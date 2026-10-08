@@ -47,7 +47,7 @@ describe('CartViewComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.textContent).toContain(product.name);
-    expect(host.textContent).toContain('$300.00');
+    expect(host.textContent).toContain('C$300.00');
     expect(host.textContent).toContain('Subtotal (2)');
   });
 

@@ -126,12 +126,12 @@
           <div class="flex items-baseline gap-3">
             <span
               class="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 dark:text-white"
-              >{{ '$' }}{{ product.price.toFixed(2) }}</span
+              >{{ product.price | appCurrency }}</span
             >
             @if (product.originalPrice && product.originalPrice > product.price) {
-              <span class="text-xl text-slate-400 line-through font-bold"
-                >{{ '$' }}{{ product.originalPrice.toFixed(2) }}</span
-              >
+              <span class="text-xl text-slate-400 line-through font-bold">{{
+                product.originalPrice | appCurrency
+              }}</span>
               <span
                 class="text-sm font-black text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-md"
                 >-{{ discountPercent() }}%</span

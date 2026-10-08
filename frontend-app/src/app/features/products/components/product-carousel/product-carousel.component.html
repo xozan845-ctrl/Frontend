@@ -77,7 +77,7 @@
               {{ product.name }}
             </h4>
             <p class="text-sm font-black text-slate-900 dark:text-white mt-2 tracking-tighter">
-              {{ '$' }}{{ product.price.toFixed(2) }}
+              {{ product.price | appCurrency }}
             </p>
           </div>
         </a>

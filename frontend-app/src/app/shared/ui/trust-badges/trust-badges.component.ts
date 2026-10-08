@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { formatCurrency } from '../../../core/config/currency.config';
 
 interface TrustBadge {
   icon: string;
@@ -23,7 +24,7 @@ export class TrustBadgesComponent {
     {
       icon: 'fa-solid fa-truck-fast',
       title: 'Envío Gratis',
-      subtitle: 'En pedidos +$50',
+      subtitle: `En pedidos +${formatCurrency(50)}`,
       color: 'bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400',
     },
     {

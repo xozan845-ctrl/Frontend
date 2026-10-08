@@ -40,7 +40,7 @@ describe('CartSidebarComponent', () => {
 
     expect(dialog.getAttribute('aria-modal')).toBe('true');
     expect(dialog.textContent).toContain('Mouse');
-    expect(dialog.textContent).toContain('$100.00');
+    expect(dialog.textContent).toContain('C$100.00');
   });
 
   it('debe incrementar la cantidad del producto', () => {
