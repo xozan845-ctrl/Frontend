@@ -1,0 +1,107 @@
+<div class="min-h-[70vh] bg-slate-50 dark:bg-surface-900 py-16 px-4 transition-colors duration-300">
+  <div class="max-w-2xl mx-auto flex flex-col gap-8">
+    <!-- Perfil -->
+    <section class="card p-8">
+      <h1 class="text-3xl font-black uppercase tracking-tighter font-heading mb-6">Mi Cuenta</h1>
+
+      <div class="flex items-center gap-4">
+        <div
+          class="w-12 h-12 bg-accent-600 text-white flex items-center justify-center font-black text-lg rounded-full"
+        >
+          {{ authStore.user()?.name?.charAt(0) | uppercase }}
+        </div>
+        <div class="flex flex-col">
+          <span class="font-black text-lg uppercase tracking-tight">{{
+            authStore.user()?.name
+          }}</span>
+          <span class="text-sm text-slate-500 dark:text-slate-400">{{
+            profile()?.email ?? authStore.user()?.email
+          }}</span>
+        </div>
+      </div>
+
+      @if (profile()?.role) {
+        <div class="mt-6">
+          <span class="badge badge-primary">{{ profile()!.role }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- Cambiar contraseña -->
+    <section class="card p-8">
+      <h2 class="text-xl font-black uppercase tracking-tighter font-heading mb-2">
+        Cambiar contraseña
+      </h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+        Al cambiarla, se cerrarán tus sesiones abiertas y deberás iniciar sesión de nuevo.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+        <div class="flex flex-col gap-2">
+          <label
+            for="current"
+            class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+            >Contraseña actual</label
+          >
+          <input
+            id="current"
+            type="password"
+            formControlName="current"
+            autocomplete="current-password"
+            class="input"
+            [class.input-error]="isInvalid('current')"
+          />
+          @if (isInvalid('current')) {
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+              >Introduce tu contraseña actual</span
+            >
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="next" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+            >Nueva contraseña</label
+          >
+          <input
+            id="next"
+            type="password"
+            formControlName="next"
+            autocomplete="new-password"
+            class="input"
+            [class.input-error]="isInvalid('next')"
+          />
+          @if (isInvalid('next')) {
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+              >Mínimo 8 caracteres</span
+            >
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label
+            for="confirm"
+            class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+            >Confirmar nueva contraseña</label
+          >
+          <input
+            id="confirm"
+            type="password"
+            formControlName="confirm"
+            autocomplete="new-password"
+            class="input"
+            [class.input-error]="isInvalid('confirm') || form.hasError('passwordMismatch')"
+          />
+          @if (form.hasError('passwordMismatch') && form.get('confirm')?.touched) {
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+              >Las contraseñas no coinciden</span
+            >
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg mt-2" [disabled]="submitting()">
+          {{ submitting() ? 'Guardando…' : 'Cambiar contraseña' }}
+        </button>
+      </form>
+    </section>
+  </div>
+</div>

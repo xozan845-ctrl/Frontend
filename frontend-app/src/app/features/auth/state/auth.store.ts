@@ -165,6 +165,10 @@ export const AuthStore = signalStore(
         clearError() {
           patchState(store, { error: null });
         },
+        /** Limpia la sesión local sin llamar al backend (p. ej. tras cambiar contraseña). */
+        clearSession(): void {
+          patchState(store, { user: null, token: null, refreshToken: null, error: null });
+        },
         /**
          * Renueva la sesión una vez y devuelve si quedó autenticada (sin tocar
          * `loading`). La usa el interceptor ante un 401 (R-SE-1).

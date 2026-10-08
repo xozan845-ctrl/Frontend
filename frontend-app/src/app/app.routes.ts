@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ACCOUNT_ROUTES } from './features/account/account.routes';
 import { AUTH_ROUTES } from './features/auth/auth.routes';
 import { CART_ROUTES } from './features/cart/cart.routes';
 import { HOME_ROUTES, ROOT_ROUTES } from './features/home/home.routes';
@@ -19,6 +20,7 @@ import { storefrontResolver } from './features/products/resolvers/storefront.res
 export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
+  ...ACCOUNT_ROUTES,
   ...ROOT_ROUTES,
   {
     path: 'tienda/:storeId',
