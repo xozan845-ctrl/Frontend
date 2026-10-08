@@ -1,8 +1,15 @@
-import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
+import { RuntimeConfigService } from './core/config/runtime-config.service';
 import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
 import { PRODUCT_REPOSITORY } from './features/products/repositories/product.repository';
 import { ProductService } from './features/products/services/product.service';
@@ -16,6 +23,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
+    // Configuración de despliegue en runtime (`/config.json`) antes de crear
+    // los servicios que leen `environment` (R-AR-11, R-CD-4).
+    provideAppInitializer(() => inject(RuntimeConfigService).load()),
     // Inversión de Dependencias (DIP - Clean Architecture):
     // El dominio y la capa de aplicación dependen de interfaces abstractas.
     // Aquí se conectan a sus implementaciones de infraestructura (HTTP/Mocks).

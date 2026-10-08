@@ -12,4 +12,7 @@ RUN npm run build
 FROM nginx:1.27-alpine AS runtime
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/frontend-app/browser /usr/share/nginx/html
+# Config de runtime (/config.json) generada desde API_URL/STORE_ID al arrancar.
+COPY docker-entrypoint.d/ /docker-entrypoint.d/
+RUN chmod +x /docker-entrypoint.d/*.sh
 EXPOSE 80
