@@ -2,7 +2,6 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartStore } from '../../../cart/state/cart.store';
-import { AuthStore } from '../../../auth/state/auth.store';
 import { ReviewsStore } from '../../../products/state/reviews.store';
 import { ProductStore } from '../../../products/state/product.store';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -45,7 +44,6 @@ describe('WishlistComponent', () => {
         provideRouter([]),
         { provide: WishlistStore, useValue: wishlistStore },
         { provide: CartStore, useValue: cartStore },
-        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
         { provide: ReviewsStore, useValue: reviewsStore },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
         { provide: SeoService, useValue: seo },

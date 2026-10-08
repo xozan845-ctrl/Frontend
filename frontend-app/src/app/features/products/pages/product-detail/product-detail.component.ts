@@ -8,12 +8,11 @@ import {
   input,
   untracked,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { NgOptimizedImage, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductStore } from '../../state/product.store';
 import { CartStore } from '../../../cart/public-api';
-import { AuthStore } from '../../../auth/public-api';
 import { ReviewsStore } from '../../state/reviews.store';
 import { RecentlyViewedStore } from '../../state/recently-viewed.store';
 import { WishlistStore } from '../../../wishlist/public-api';
@@ -48,8 +47,6 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 export class ProductDetailComponent implements OnDestroy {
   readonly productStore = inject(ProductStore);
   private readonly cartStore = inject(CartStore);
-  private readonly authStore = inject(AuthStore);
-  private readonly router = inject(Router);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly wishlistStore = inject(WishlistStore);
   readonly recentlyViewedStore = inject(RecentlyViewedStore);
@@ -161,10 +158,6 @@ export class ProductDetailComponent implements OnDestroy {
   }
 
   addToCart(buttonEl: HTMLButtonElement): void {
-    if (!this.authStore.isAuthenticated()) {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-      return;
-    }
     const product = this.productStore.selectedProduct();
     if (product) {
       this.cartStore.addItem(product, this.quantity());

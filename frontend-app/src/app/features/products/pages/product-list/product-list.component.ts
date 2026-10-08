@@ -9,10 +9,9 @@ import {
   input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product.store';
 import { CartStore } from '../../../cart/public-api';
-import { AuthStore } from '../../../auth/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { ReviewsStore } from '../../state/reviews.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
@@ -40,8 +39,6 @@ import { Product } from '../../models/product.model';
 export class ProductListComponent implements OnInit {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
-  private readonly authStore = inject(AuthStore);
-  private readonly router = inject(Router);
   private readonly wishlistStore = inject(WishlistStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly route = inject(ActivatedRoute);
@@ -134,15 +131,7 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: Product) {
-    if (!this.requireSession()) return;
     this.cartStore.addItem(product);
-  }
-
-  /** El carrito vive en el servidor y exige sesión; si no, redirige al login. */
-  private requireSession(): boolean {
-    if (this.authStore.isAuthenticated()) return true;
-    this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-    return false;
   }
 
   openQuickView(product: Product) {

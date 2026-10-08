@@ -4,7 +4,6 @@ import { provideRouter } from '@angular/router';
 import { Product } from '../../../products/public-api';
 import { ProductStore } from '../../../products/public-api';
 import { CartStore } from '../../../cart/public-api';
-import { AuthStore } from '../../../auth/state/auth.store';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { ReviewsStore } from '../../../products/public-api';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -65,7 +64,6 @@ describe('HomeComponent', () => {
         provideRouter([]),
         { provide: ProductStore, useValue: productStore },
         { provide: CartStore, useValue: cartStore },
-        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
         { provide: WishlistStore, useValue: wishlistStore },
         { provide: ReviewsStore, useValue: reviewsStore },
         { provide: SeoService, useValue: seo },

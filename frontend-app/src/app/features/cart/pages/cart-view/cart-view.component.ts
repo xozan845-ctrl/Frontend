@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
 import { ProductStore } from '../../../products/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
@@ -14,6 +15,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 })
 export class CartViewComponent {
   readonly cartStore = inject(CartStore);
+  readonly authStore = inject(AuthStore);
   private readonly productStore = inject(ProductStore);
   private readonly router = inject(Router);
 
@@ -25,6 +27,19 @@ export class CartViewComponent {
 
   checkout() {
     this.router.navigate(['/tienda', this.storeId(), 'checkout']);
+  }
+
+  /** Invita al invitado a iniciar sesión y volver al checkout (donde se vuelca el carrito). */
+  goToLogin() {
+    this.router.navigate(['/login'], {
+      queryParams: { returnUrl: `/tienda/${this.storeId()}/checkout` },
+    });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register'], {
+      queryParams: { returnUrl: `/tienda/${this.storeId()}/checkout` },
+    });
   }
 
   confirmClearCart() {

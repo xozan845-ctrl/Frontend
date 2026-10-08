@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
 import { ProductStore } from '../../../products/state/product.store';
+import { AuthStore } from '../../../auth/state/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartViewComponent } from './cart-view.component';
 
@@ -35,6 +36,7 @@ describe('CartViewComponent', () => {
         provideRouter([]),
         { provide: CartStore, useValue: cartStore },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
+        { provide: AuthStore, useValue: { isAuthenticated: () => false } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(CartViewComponent);

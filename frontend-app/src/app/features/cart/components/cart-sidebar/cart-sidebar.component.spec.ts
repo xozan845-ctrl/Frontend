@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
 import { ProductStore } from '../../../products/state/product.store';
+import { AuthStore } from '../../../auth/state/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartSidebarComponent } from './cart-sidebar.component';
 
@@ -34,6 +35,7 @@ describe('CartSidebarComponent', () => {
         provideRouter([]),
         { provide: CartStore, useValue: cartStore },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
+        { provide: AuthStore, useValue: { isAuthenticated: () => false } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(CartSidebarComponent);

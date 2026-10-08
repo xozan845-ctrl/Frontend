@@ -17,17 +17,19 @@ const product = (id: number, price = 100): Product => ({
   stock: 10,
 });
 
-const cartItems: CartItem[] = [{ product: product(1, 50), quantity: 2 }];
+const serverItems: CartItem[] = [{ product: product(1, 50), quantity: 2 }];
+const STORAGE_KEY = 'ecom_cart_items';
 
 describe('CartStore', () => {
   let repo: CartRepository;
+  let authenticated: boolean;
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
-  const setup = (authenticated = true) => {
+  const setup = () => {
     repo = {
-      getCart: vi.fn(() => of(cartItems)),
-      addItem: vi.fn(() => of(cartItems)),
-      updateQuantity: vi.fn(() => of(cartItems)),
+      getCart: vi.fn(() => of(serverItems)),
+      addItem: vi.fn(() => of(serverItems)),
+      updateQuantity: vi.fn(() => of(serverItems)),
       removeItem: vi.fn(() => of([])),
       clearCart: vi.fn(() => of([])),
     };
@@ -42,77 +44,121 @@ describe('CartStore', () => {
   };
 
   beforeEach(() => {
+    localStorage.clear();
     vi.clearAllMocks();
+    authenticated = false;
     TestBed.resetTestingModule();
   });
 
-  it('debe cargar el carrito del servidor con sesión y calcular totales', async () => {
-    const store = setup(true);
+  afterEach(() => localStorage.clear());
 
-    await vi.waitFor(() => expect(store.items()).toHaveLength(1));
-    expect(repo.getCart).toHaveBeenCalled();
+  // ── Invitado (carrito local) ────────────────────────────────────────────────
+  it('invitado: addItem es local, persiste y muestra el mensaje para registrarse', () => {
+    const store = setup();
+
+    store.addItem(product(1, 50), 2);
+
+    expect(store.items()).toHaveLength(1);
     expect(store.totalItems()).toBe(2);
     expect(store.totalPrice()).toBe(100);
+    expect(repo.addItem).not.toHaveBeenCalled();
+    expect(notification.showInfo).toHaveBeenCalled();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toHaveLength(1);
   });
 
-  it('no debe cargar el carrito sin sesión', () => {
-    const store = setup(false);
+  it('invitado: carga el carrito local al iniciar', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([{ product: product(9), quantity: 3 }]));
 
+    const store = setup();
+
+    await vi.waitFor(() => expect(store.totalItems()).toBe(3));
+  });
+
+  it('invitado: updateQuantity y removeItem son locales', () => {
+    const store = setup();
+    store.addItem(product(1), 1);
+
+    store.updateQuantity('1', 5);
+    expect(store.totalItems()).toBe(5);
+
+    store.removeItem('1');
     expect(store.items()).toEqual([]);
-    expect(repo.getCart).not.toHaveBeenCalled();
+    expect(repo.updateQuantity).not.toHaveBeenCalled();
   });
 
-  it('debe delegar addItem al repositorio', () => {
-    const store = setup(true);
-    const item: CartItem[] = [{ product: product(1, 50), quantity: 3 }];
-    vi.mocked(repo.addItem).mockReturnValue(of(item));
+  // ── Autenticado (carrito del servidor) ──────────────────────────────────────
+  it('con sesión: addItem delega al servidor', () => {
+    authenticated = true;
+    const store = setup();
 
     store.addItem(product(1, 50), 2);
 
     expect(repo.addItem).toHaveBeenCalledWith('1', 2);
-    expect(store.items()).toEqual(item);
+    expect(store.items()).toEqual(serverItems);
   });
 
-  it('debe delegar updateQuantity al repositorio', () => {
-    const store = setup(true);
-    vi.mocked(repo.updateQuantity).mockReturnValue(of([{ product: product(1), quantity: 5 }]));
+  it('con sesión: loadCart usa el servidor', () => {
+    authenticated = true;
+    const store = setup();
+    vi.mocked(repo.getCart).mockClear();
 
-    store.updateQuantity('1', 5);
+    store.loadCart();
 
-    expect(repo.updateQuantity).toHaveBeenCalledWith('1', 5);
-    expect(store.totalItems()).toBe(5);
+    expect(repo.getCart).toHaveBeenCalled();
+    expect(store.totalItems()).toBe(2);
   });
 
-  it('debe delegar removeItem al repositorio y notificar', () => {
-    const store = setup(true);
+  it('con sesión: updateQuantity/removeItem/clearCart delegan al servidor', () => {
+    authenticated = true;
+    const store = setup();
+
+    store.updateQuantity('1', 3);
+    expect(repo.updateQuantity).toHaveBeenCalledWith('1', 3);
 
     store.removeItem('1');
-
     expect(repo.removeItem).toHaveBeenCalledWith('1');
-    expect(notification.showSuccess).toHaveBeenCalled();
-    expect(store.items()).toEqual([]);
-  });
-
-  it('debe vaciar el carrito en el servidor', () => {
-    const store = setup(true);
 
     store.clearCart();
-
     expect(repo.clearCart).toHaveBeenCalled();
-    expect(store.items()).toEqual([]);
   });
 
-  it('debe limpiar el estado local con reset sin llamar al backend', () => {
-    const store = setup(true);
-    vi.mocked(repo.clearCart).mockClear();
+  it('vuelca el carrito local al servidor (mergeLocalCart)', () => {
+    authenticated = true;
+    const store = setup();
+    const local: CartItem[] = [
+      { product: product(5, 10), quantity: 1 },
+      { product: product(6, 20), quantity: 2 },
+    ];
+
+    store.mergeLocalCart(local);
+
+    expect(repo.addItem).toHaveBeenCalledTimes(2);
+    expect(repo.getCart).toHaveBeenCalled();
+    expect(notification.showSuccess).toHaveBeenCalled();
+  });
+
+  it('mergeLocalCart sin items solo carga el servidor', () => {
+    authenticated = true;
+    const store = setup();
+
+    store.mergeLocalCart([]);
+
+    expect(repo.addItem).not.toHaveBeenCalled();
+    expect(repo.getCart).toHaveBeenCalled();
+  });
+
+  it('reset limpia estado y almacenamiento local', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([{ product: product(1), quantity: 1 }]));
+    const store = setup();
 
     store.reset();
 
     expect(store.items()).toEqual([]);
-    expect(repo.clearCart).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 
   it('debe registrar el error del carrito', () => {
+    authenticated = true;
     repo = {
       getCart: vi.fn(() => throwError(() => new Error('boom'))),
       addItem: vi.fn(() => of([])),
@@ -136,7 +182,7 @@ describe('CartStore', () => {
   });
 
   it('debe alternar el sidebar y aceptar un valor explícito', () => {
-    const store = setup(true);
+    const store = setup();
 
     store.toggleSidebar();
     expect(store.isSidebarOpen()).toBe(true);
