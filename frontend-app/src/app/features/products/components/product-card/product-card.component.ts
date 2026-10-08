@@ -29,6 +29,8 @@ export class ProductCardComponent {
   @ViewChild('productImage', { read: ElementRef }) productImageRef!: ElementRef<HTMLImageElement>;
 
   product = input.required<Product>();
+  /** Tienda activa para construir enlaces store-scoped (multi-tienda). */
+  storeId = input<string>('');
   /** Datos que aporta el contenedor: el presentacional no conoce stores (R-SO-6). */
   isInWishlist = input<boolean>(false);
   avgRating = input<number>(0);

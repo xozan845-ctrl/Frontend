@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartStore } from '../../../cart/state/cart.store';
 import { ReviewsStore } from '../../../products/state/reviews.store';
+import { ProductStore } from '../../../products/state/product.store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { Product } from '../../../products/models/product.model';
 import { WishlistComponent } from './wishlist.component';
@@ -44,6 +45,7 @@ describe('WishlistComponent', () => {
         { provide: WishlistStore, useValue: wishlistStore },
         { provide: CartStore, useValue: cartStore },
         { provide: ReviewsStore, useValue: reviewsStore },
+        { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
         { provide: SeoService, useValue: seo },
       ],
     }).compileComponents();

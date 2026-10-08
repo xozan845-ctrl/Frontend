@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { CartStore } from '../../../cart/state/cart.store';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -28,12 +28,17 @@ const product: Product = {
 
 describe('ProductDetailComponent', () => {
   const selectedProduct = signal<Product | null>(product);
+  const allProducts = signal<Product[]>([product]);
   const recentlyViewedProducts = signal<Product[]>([]);
   const productStore = {
+    products: allProducts,
     selectedProduct,
+    storeId: signal(''),
     loading: signal(false),
     error: signal<string | null>(null),
-    loadProductById: vi.fn(),
+    selectProduct: vi.fn((id: string | number) =>
+      selectedProduct.set(allProducts().find((p) => String(p.id) === String(id)) ?? null),
+    ),
     clearSelectedProduct: vi.fn(() => selectedProduct.set(null)),
   };
   const cartStore = { addItem: vi.fn() };
@@ -56,10 +61,6 @@ describe('ProductDetailComponent', () => {
       imports: [ProductDetailComponent],
       providers: [
         provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => '9' } } },
-        },
         { provide: ProductStore, useValue: productStore },
         { provide: CartStore, useValue: cartStore },
         { provide: ReviewsStore, useValue: reviewsStore },
@@ -72,6 +73,8 @@ describe('ProductDetailComponent', () => {
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(ProductDetailComponent);
+    fixture.componentRef.setInput('storeId', 'tienda-1');
+    fixture.componentRef.setInput('id', '9');
     fixture.detectChanges();
     return fixture;
   };
@@ -79,13 +82,14 @@ describe('ProductDetailComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     selectedProduct.set(product);
+    allProducts.set([product]);
     recentlyViewedProducts.set([]);
   });
 
-  it('debe solicitar el producto de la ruta y mostrar sus datos', async () => {
+  it('debe seleccionar el producto de la ruta y mostrar sus datos', async () => {
     const fixture = await setup();
 
-    expect(productStore.loadProductById).toHaveBeenCalledWith(9);
+    expect(productStore.selectProduct).toHaveBeenCalledWith('9');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(product.name);
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('-17%');
   });

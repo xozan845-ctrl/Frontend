@@ -11,6 +11,4 @@
 export interface RuntimeConfig {
   /** URL base del API (gateway de Core Engine). */
   apiUrl?: string;
-  /** Tienda publicada cuyas ofertas consume el storefront. */
-  storeId?: string;
 }

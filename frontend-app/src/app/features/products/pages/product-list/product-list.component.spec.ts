@@ -76,7 +76,7 @@ describe('ProductListComponent', () => {
     setPriceMax: vi.fn((value: number | null) => priceMax.set(value)),
     setSortOption: vi.fn((value: string) => sortOption.set(value)),
     setPage: vi.fn((value: number) => currentPage.set(value)),
-    loadProducts: vi.fn(),
+    reload: vi.fn(),
     clearFilters: vi.fn(() => {
       selectedCategory.set('All');
       priceMin.set(null);
@@ -154,7 +154,7 @@ describe('ProductListComponent', () => {
       'No fue posible cargar el catálogo',
     );
     retry.click();
-    expect(productStore.loadProducts).toHaveBeenCalled();
+    expect(productStore.reload).toHaveBeenCalled();
   });
 
   it('debe aplicar la categoría elegida', async () => {

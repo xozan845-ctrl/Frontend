@@ -1,14 +1,16 @@
 import { inject } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
-import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, pipe } from 'rxjs';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { Product } from '../models/product.model';
+import { Store } from '../models/store.model';
 import { PRODUCT_REPOSITORY } from '../repositories/product.repository';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FILTER_CATEGORIES } from '../constants/categories.constants';
 
 export interface ProductState {
+  /** Tienda activa (resuelta por URL); `null` fuera del storefront. */
+  store: Store | null;
+  storeId: string | null;
   products: Product[];
   selectedProduct: Product | null;
   loading: boolean;
@@ -22,6 +24,8 @@ export interface ProductState {
 }
 
 const initialState: ProductState = {
+  store: null,
+  storeId: null,
   products: [],
   selectedProduct: null,
   loading: false,
@@ -99,42 +103,34 @@ export const ProductStore = signalStore(
       productRepo = inject(PRODUCT_REPOSITORY),
       notificationService = inject(NotificationService),
     ) => ({
-      loadProducts: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() =>
-            productRepo.getProducts().pipe(
-              tap((products) => {
-                patchState(store, { products, loading: false });
-              }),
-              catchError((err: Error) => {
-                const message = err.message || 'Error al cargar los productos';
-                patchState(store, { error: message, loading: false });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
-            ),
-          ),
-        ),
-      ),
-      loadProductById: rxMethod<string | number>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null, selectedProduct: null })),
-          switchMap((id) =>
-            productRepo.getProductById(id).pipe(
-              tap((product) => {
-                patchState(store, { selectedProduct: product, loading: false });
-              }),
-              catchError((err: Error) => {
-                const message = err.message || 'Error al cargar el producto';
-                patchState(store, { error: message, loading: false });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
-            ),
-          ),
-        ),
-      ),
+      /**
+       * Carga la tienda y sus ofertas. Devuelve una promesa para que el resolver
+       * de ruta espere antes de activar la página (multi-tienda por URL).
+       */
+      async loadStore(storeId: string): Promise<void> {
+        patchState(store, { loading: true, error: null });
+        try {
+          const { store: tienda, products } = await firstValueFrom(
+            productRepo.getStorefront(storeId),
+          );
+          patchState(store, {
+            store: tienda,
+            storeId,
+            products,
+            loading: false,
+            currentPage: 1,
+          });
+        } catch (err) {
+          const message = (err as Error).message || 'Error al cargar la tienda';
+          patchState(store, { store: null, storeId, products: [], error: message, loading: false });
+          notificationService.showError(message);
+        }
+      },
+      /** Selecciona un producto ya cargado del storefront (sin volver a pedirlo). */
+      selectProduct(id: string | number) {
+        const found = store.products().find((p) => String(p.id) === String(id)) ?? null;
+        patchState(store, { selectedProduct: found });
+      },
       clearSelectedProduct() {
         patchState(store, { selectedProduct: null });
       },
@@ -165,4 +161,11 @@ export const ProductStore = signalStore(
       },
     }),
   ),
+  withMethods((store) => ({
+    /** Recarga el storefront actual (reintentos). */
+    reload(): Promise<void> {
+      const id = store.storeId();
+      return id ? store.loadStore(id) : Promise.resolve();
+    },
+  })),
 );

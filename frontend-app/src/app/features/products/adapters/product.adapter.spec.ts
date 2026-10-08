@@ -2,6 +2,8 @@ import {
   adaptProductFromBackend,
   adaptProductListFromBackend,
   adaptSingleProductFromBackend,
+  adaptStoreFromBackend,
+  adaptStorefrontFromBackend,
 } from './product.adapter';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30';
@@ -113,6 +115,57 @@ describe('product.adapter', () => {
       const product = adaptSingleProductFromBackend({ id: 6, name: 'Webcam' });
 
       expect(product.name).toBe('Webcam');
+    });
+  });
+
+  describe('adaptStoreFromBackend', () => {
+    it('debe mapear la tienda del backend (snake_case)', () => {
+      const store = adaptStoreFromBackend({
+        id: 't-1',
+        vendedor_id: 'v-1',
+        nombre: 'Mi Tienda',
+        descripcion: 'Demo',
+      });
+
+      expect(store).toEqual({
+        id: 't-1',
+        vendorId: 'v-1',
+        name: 'Mi Tienda',
+        description: 'Demo',
+      });
+    });
+
+    it('debe devolver null si no hay id o el valor no es válido', () => {
+      expect(adaptStoreFromBackend(null)).toBeNull();
+      expect(adaptStoreFromBackend({ nombre: 'Sin id' })).toBeNull();
+    });
+  });
+
+  describe('adaptStorefrontFromBackend', () => {
+    it('debe mapear tienda y ofertas de Core Engine', () => {
+      const { store, products } = adaptStorefrontFromBackend({
+        tienda: { id: 't-1', nombre: 'Mi Tienda', vendedor_id: 'v-1' },
+        ofertas: [
+          {
+            id: 'of-1',
+            producto_nombre: 'Teclado',
+            precio_venta: '1380.00',
+            stock: 10,
+            sku: 'SKU-1',
+          },
+        ],
+      });
+
+      expect(store?.name).toBe('Mi Tienda');
+      expect(products).toHaveLength(1);
+      expect(products[0]).toMatchObject({ id: 'of-1', name: 'Teclado', price: 1380, stock: 10 });
+    });
+
+    it('debe tolerar respuestas sin tienda ni ofertas', () => {
+      const { store, products } = adaptStorefrontFromBackend(null);
+
+      expect(store).toBeNull();
+      expect(products).toEqual([]);
     });
   });
 });

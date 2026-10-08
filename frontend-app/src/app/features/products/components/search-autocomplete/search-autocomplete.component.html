@@ -79,7 +79,7 @@
           <div class="flex flex-col gap-1">
             @for (item of highlightedProducts(); track item.product.id; let i = $index) {
               <a
-                [routerLink]="['/product', item.product.id]"
+                [routerLink]="['/tienda', storeId(), 'producto', item.product.id]"
                 (click)="close()"
                 role="option"
                 [attr.aria-selected]="focusedIndex() === i"

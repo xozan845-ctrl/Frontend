@@ -1,4 +1,5 @@
 import { Product } from '../models/product.model';
+import { Store } from '../models/store.model';
 import { BackendProductDTO } from '../models/product.dto';
 import {
   unwrapApiListResponse,
@@ -147,5 +148,42 @@ export function adaptOfertaFromBackend(raw: unknown): Product {
     imageUrl: DEFAULT_FALLBACK_IMAGE,
     category: 'General',
     stock: Number(oferta['stock'] ?? 0),
+  };
+}
+
+/**
+ * Tienda de Core Engine (`GET /tiendas/:id` → `tienda`). Tolerante a
+ * `snake_case`/`camelCase`; devuelve `null` si no hay id.
+ */
+export function adaptStoreFromBackend(raw: unknown): Store | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const tienda = raw as Record<string, unknown>;
+  const id = tienda['id'];
+  if (id === null || id === undefined || id === '') return null;
+
+  return {
+    id: String(id),
+    vendorId: String(tienda['vendedor_id'] ?? tienda['vendorId'] ?? ''),
+    name: typeof tienda['nombre'] === 'string' ? tienda['nombre'] : 'Tienda',
+    description: typeof tienda['descripcion'] === 'string' ? tienda['descripcion'] : '',
+  };
+}
+
+/**
+ * Storefront completo de una tienda (`GET /tiendas/:id` → `{ tienda, ofertas }`).
+ * Las ofertas se mapean a `Product` (su `id` es el `oferta_id` del checkout).
+ */
+export function adaptStorefrontFromBackend(response: unknown): {
+  store: Store | null;
+  products: Product[];
+} {
+  const tienda =
+    response && typeof response === 'object'
+      ? (response as Record<string, unknown>)['tienda']
+      : undefined;
+
+  return {
+    store: adaptStoreFromBackend(tienda),
+    products: adaptOfertaListFromBackend(response),
   };
 }

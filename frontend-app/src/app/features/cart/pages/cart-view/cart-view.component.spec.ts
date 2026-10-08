@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
+import { ProductStore } from '../../../products/state/product.store';
 import { Product } from '../../../products/models/product.model';
 import { CartViewComponent } from './cart-view.component';
 
@@ -30,7 +31,11 @@ describe('CartViewComponent', () => {
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [CartViewComponent],
-      providers: [provideRouter([]), { provide: CartStore, useValue: cartStore }],
+      providers: [
+        provideRouter([]),
+        { provide: CartStore, useValue: cartStore },
+        { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
+      ],
     }).compileComponents();
     const fixture = TestBed.createComponent(CartViewComponent);
     fixture.detectChanges();
@@ -68,7 +73,7 @@ describe('CartViewComponent', () => {
 
     button.click();
 
-    expect(navigate).toHaveBeenCalledWith(['/checkout']);
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'checkout']);
   });
 
   it('debe mostrar la confirmación antes de vaciar el carrito', async () => {

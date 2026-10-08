@@ -14,6 +14,7 @@ export class ProductCarouselComponent {
   products = input.required<Product[]>();
   title = input('Vistos Recientemente');
   itemsPerPage = input(5);
+  storeId = input<string>('');
 
   currentIndex = signal(0);
 

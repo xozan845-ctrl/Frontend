@@ -41,7 +41,7 @@
       title="Sin Favoritos"
       subtitle="Aún no has guardado ningún producto. Explora nuestra tienda y agrega los que más te gusten."
       actionLabel="Explorar Tienda"
-      actionRoute="/shop"
+      [actionRoute]="'/tienda/' + storeId() + '/shop'"
     />
   } @else {
     <!-- Product Grid -->
@@ -95,7 +95,10 @@
           <!-- Info -->
           <div class="flex flex-col grow px-2">
             <div class="flex justify-between items-start gap-4 mb-2">
-              <a [routerLink]="['/product', item.product.id]" class="block min-w-0">
+              <a
+                [routerLink]="['/tienda', storeId(), 'producto', item.product.id]"
+                class="block min-w-0"
+              >
                 <h3
                   class="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors line-clamp-2"
                 >
@@ -134,7 +137,7 @@
                 </div>
               }
               <a
-                [routerLink]="['/product', item.product.id]"
+                [routerLink]="['/tienda', storeId(), 'producto', item.product.id]"
                 class="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all shadow-sm"
                 aria-label="Ver detalle"
               >
@@ -151,6 +154,7 @@
 <!-- Quick View Modal -->
 <app-quick-view-modal
   [product]="quickViewVm()?.product ?? null"
+  [storeId]="storeId()"
   [isInWishlist]="quickViewVm()?.isInWishlist ?? false"
   [avgRating]="quickViewVm()?.avgRating ?? 0"
   [reviewCount]="quickViewVm()?.reviewCount ?? 0"

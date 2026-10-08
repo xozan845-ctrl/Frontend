@@ -28,6 +28,8 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 })
 export class QuickViewModalComponent implements OnDestroy {
   product = input<Product | null>(null);
+  /** Tienda activa para construir enlaces store-scoped (multi-tienda). */
+  storeId = input<string>('');
   /** Datos que aporta el contenedor: sin stores de dominio (R-SO-6). */
   isInWishlist = input<boolean>(false);
   avgRating = input<number>(0);

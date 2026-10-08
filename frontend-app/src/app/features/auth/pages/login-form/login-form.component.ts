@@ -1,6 +1,6 @@
 import { Component, inject, effect, signal, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth.store';
 import { SeoService } from '../../../../core/services/seo.service';
 
@@ -14,6 +14,7 @@ export class LoginFormComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly seoService = inject(SeoService);
 
   readonly loginForm = this.fb.group({
@@ -26,12 +27,19 @@ export class LoginFormComponent implements OnDestroy {
   constructor() {
     this.seoService.setPage('Iniciar sesión', 'Accede a tu cuenta de Quantum Store.');
 
-    // Redirect user to store if already logged in
+    // Redirige al usuario autenticado (a `returnUrl` o a la entrada multi-tienda).
     effect(() => {
       if (this.authStore.isAuthenticated()) {
-        this.router.navigate(['/shop']);
+        this.redirectAfterAuth();
       }
     });
+  }
+
+  /** Vuelve a la ruta protegida de origen (`returnUrl`) o a la entrada raíz. */
+  private redirectAfterAuth(): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
+    this.router.navigateByUrl(safeUrl);
   }
 
   ngOnDestroy(): void {

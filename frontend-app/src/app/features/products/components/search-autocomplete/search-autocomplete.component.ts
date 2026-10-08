@@ -40,6 +40,9 @@ export class SearchAutocompleteComponent implements OnDestroy {
   isOpen = signal(false);
   focusedIndex = signal(-1);
 
+  /** Tienda activa (de la URL) para construir enlaces store-scoped. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
+
   private readonly allCategories = PRODUCT_CATEGORIES;
 
   matchedProducts = computed(() => {
@@ -117,7 +120,7 @@ export class SearchAutocompleteComponent implements OnDestroy {
   }
 
   selectCategory(cat: string): void {
-    this.router.navigate(['/shop'], { queryParams: { cat } });
+    this.router.navigate(['/tienda', this.storeId(), 'shop'], { queryParams: { cat } });
     this.close();
   }
 
@@ -161,7 +164,7 @@ export class SearchAutocompleteComponent implements OnDestroy {
       case 'Enter':
         if (this.focusedIndex() >= 0) {
           const selected = products[this.focusedIndex()];
-          this.router.navigate(['/product', selected.id]);
+          this.router.navigate(['/tienda', this.storeId(), 'producto', selected.id]);
           this.close();
         }
         break;

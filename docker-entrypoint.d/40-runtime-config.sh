@@ -5,9 +5,8 @@
 #
 # Variables:
 #   API_URL   - URL base del gateway de Core Engine (opcional)
-#   STORE_ID  - UUID de la tienda publicada cuyas ofertas consume el storefront
 set -eu
 
 CONFIG_PATH="/usr/share/nginx/html/config.json"
 
-printf '{"apiUrl":"%s","storeId":"%s"}\n' "${API_URL:-}" "${STORE_ID:-}" > "$CONFIG_PATH"
+printf '{"apiUrl":"%s"}\n' "${API_URL:-}" > "$CONFIG_PATH"

@@ -15,7 +15,7 @@
       title="Carrito vacío"
       subtitle="Agrega productos antes de confirmar la orden."
       actionLabel="Ir a la tienda"
-      actionRoute="/shop"
+      [actionRoute]="shopRoute()"
     />
   } @else {
     <div

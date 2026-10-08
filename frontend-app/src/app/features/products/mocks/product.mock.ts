@@ -1,4 +1,13 @@
 import { Product } from '../models/product.model';
+import { Store } from '../models/store.model';
+
+/** Tienda mock para el modo `dataSource: 'mock'` (E2E hermético). */
+export const MOCK_STORE: Store = {
+  id: 'tienda-demo',
+  vendorId: 'vendedor-demo',
+  name: 'Tienda Demo',
+  description: 'Storefront de demostración para pruebas herméticas.',
+};
 
 export const MOCK_PRODUCTS: Product[] = [
   {

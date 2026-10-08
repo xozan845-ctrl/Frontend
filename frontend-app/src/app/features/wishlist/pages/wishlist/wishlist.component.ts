@@ -5,7 +5,7 @@ import { WishlistStore } from '../../state/wishlist.store';
 import { CartStore } from '../../../cart/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
-import { Product, ReviewsStore } from '../../../products/public-api';
+import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
 import { QuickViewModalComponent } from '../../../products/public-ui';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
@@ -27,7 +27,11 @@ export class WishlistComponent implements OnDestroy {
   readonly wishlistStore = inject(WishlistStore);
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
+  private readonly productStore = inject(ProductStore);
   private readonly seoService = inject(SeoService);
+
+  /** Tienda activa (de la URL) para enlaces store-scoped. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
 
   quickViewProduct = signal<Product | null>(null);
 

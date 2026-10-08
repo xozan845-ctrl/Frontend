@@ -30,6 +30,9 @@ export class HomeComponent implements OnInit {
 
   featuredProducts = computed(() => this.productStore.products().slice(0, 4));
 
+  /** Tienda activa (de la URL) para enlaces store-scoped. */
+  readonly storeId = computed(() => this.productStore.storeId() ?? '');
+
   /** Datos que consume la tarjeta presentacional (R-SO-6). */
   readonly featuredCards = computed(() => this.featuredProducts().map((p) => this.toCard(p)));
 
@@ -47,9 +50,7 @@ export class HomeComponent implements OnInit {
       'Inicio',
       'Hardware premium y tecnología sin concesiones para profesionales.',
     );
-    if (this.productStore.products().length === 0) {
-      this.productStore.loadProducts();
-    }
+    // El storefront lo carga `storefrontResolver` antes de activar la ruta.
   }
 
   onAddToCart(product: Product) {
@@ -61,7 +62,7 @@ export class HomeComponent implements OnInit {
   }
 
   retryLoad() {
-    this.productStore.loadProducts();
+    this.productStore.reload();
   }
 }
 export default HomeComponent;
