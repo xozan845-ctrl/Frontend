@@ -1,4 +1,14 @@
-import { Component, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnDestroy,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -14,9 +24,10 @@ import { SeoService } from '../../../../core/services/seo.service';
   imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent],
   templateUrl: './order-detail.component.html',
 })
-export default class OrderDetailComponent {
+export default class OrderDetailComponent implements OnDestroy {
   private readonly orderRepo = inject(ORDER_REPOSITORY);
   private readonly seoService = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Id de la orden (`/cuenta/pedidos/:id`, `R-AR-12`). */
   readonly id = input<string>('');
@@ -43,16 +54,22 @@ export default class OrderDetailComponent {
     forkJoin({
       order: this.orderRepo.getOrder(id),
       timeline: this.orderRepo.getTimeline(id).pipe(catchError(() => of([]))),
-    }).subscribe({
-      next: ({ order, timeline }) => {
-        this.order.set(order);
-        this.timeline.set(timeline);
-        this.loading.set(false);
-      },
-      error: (err: Error) => {
-        this.error.set(err.message || 'No se pudo cargar el pedido.');
-        this.loading.set(false);
-      },
-    });
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ order, timeline }) => {
+          this.order.set(order);
+          this.timeline.set(timeline);
+          this.loading.set(false);
+        },
+        error: (err: Error) => {
+          this.error.set(err.message || 'No se pudo cargar el pedido.');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 }
