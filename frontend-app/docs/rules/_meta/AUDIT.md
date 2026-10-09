@@ -4,10 +4,10 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-09 — **7ª de frontend-ecomerce**: storefront
-  **multi-tienda** (ADR-15), alta de tienda guiada (ADR-16), área de cuenta y
-  **cierre de los hallazgos** del módulo `stores` (UX, arquitectura, tests y
-  documentación).
+- **Última auditoría:** 2026-10-09 — **8ª de frontend-ecomerce**: segunda
+  pasada sobre el módulo `stores` contra las familias **no auditadas** (contrato
+  con el backend, accesibilidad, cobertura por archivo, arquitectura y
+  validación de entrada); todos los hallazgos cerrados.
 - **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
   presupuesto inicial **dentro de budget**, cobertura con umbral elevado
   (`R-COV-1`) y **sin deudas abiertas**.
@@ -16,16 +16,16 @@
 
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **498.40 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **67 archivos / 359 tests**                                       |
-| Cobertura (G-2)    | idem                           | ✅ 90.15 / 82.52 / 92.19 / 91.33 (umbral **85/75/85/85**, `R-COV-1`) |
+| Build (G-3)        | `npm run build`                | ✅ initial **498.81 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **68 archivos / 378 tests**                                       |
+| Cobertura (G-2)    | idem                           | ✅ 91.64 / 84.03 / 94.46 / 91.88 (umbral **85/75/85/85**, `R-COV-1`) |
 | E2E (G-6)          | `npm run e2e`                  | ✅ **9 flujos Playwright · 0 errores/warnings**                      |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
 | Seguridad (R-QA-6) | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                            |
 | CI                 | `gh pr checks`                 | ✅ 6/6 jobs requeridos, en verde                                     |
 | `main` protegida   | `gh api .../protection`        | ✅ PR obligatorio + 6 checks, sin force, `enforce_admins: true`      |
-| Release            | `git tag`                      | ✅ `v1.12.0` sobre `main`                                            |
+| Release            | `git tag`                      | ✅ `v1.13.0` sobre `main`                                            |
 
 ## Cumplimiento por área
 
@@ -56,19 +56,19 @@
 | R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                               |
 | R-LZ-1..6                   | ✅     | Rutas lazy + `@defer (on idle)`; mocks fuera del bundle inicial; sin preloading      |
 | R-ST-1..7                   | ✅     | 7 stores con `withState/Computed/Methods/Hooks` + `rxMethod`; una fuente de verdad   |
-| R-PF-1/3/5                  | ✅     | Build **498.40 kB** (< 500 kB); rutas lazy; sin preloading                           |
+| R-PF-1/3/5                  | ✅     | Build **498.81 kB** (< 500 kB); rutas lazy; sin preloading                           |
 | R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`          |
 | R-PF-4/6/7                  | ✅     | Derivados en `computed`; sin `setTimeout`/`setInterval` en dominios; **zoneless**    |
 | R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                           |
 
 ### UI (`R-AC`, `R-UX`)
 
-| Regla            | Estado | Evidencia                                                                                      |
-| ---------------- | ------ | ---------------------------------------------------------------------------------------------- |
-| R-AC-1/2/4/5/6/7 | ✅     | `templateAccessibility` 0 errores; `alt`; `prefers-reduced-motion`; `aria-live` en toasts      |
-| R-AC-3 modales   | ✅     | `focus-trap.directive` (foco atrapado y devuelto) + `role="dialog"`/`aria-modal`               |
-| R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío (incluido el asistente), responsive, dark mode, textos en español |
-| R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir) + manifest + SW + `theme-color`     |
+| Regla            | Estado | Evidencia                                                                                                                                                |
+| ---------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R-AC-1/2/4/5/6/7 | ✅     | `templateAccessibility` 0 errores; `alt`; `prefers-reduced-motion`; `aria-live` en toasts; stepper con nombre accesible (R-AC-1) y carga `role="status"` |
+| R-AC-3 modales   | ✅     | `focus-trap.directive` (foco atrapado y devuelto) + `role="dialog"`/`aria-modal`                                                                         |
+| R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío (incluido el asistente), responsive, dark mode, textos en español                                                           |
+| R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir) + manifest + SW + `theme-color`                                                               |
 
 ### Seguridad (`R-SE`)
 
@@ -88,7 +88,7 @@
 | R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva                         |
 | R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96                      |
 | R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2)          |
-| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato                                                  |
+| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`, R-C-1/2/6/8)                    |
 | R-E-1..15 E2E     | ✅     | **9 flujos**; el fixture falla ante **error y warning** de consola (`R-E-9`); alta de tienda `R-E-15` |
 | R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                         |
 | R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                  |
@@ -102,7 +102,7 @@
 | Regla                   | Estado | Evidencia                                                                     |
 | ----------------------- | ------ | ----------------------------------------------------------------------------- |
 | R-GB-1 `main` protegida | ✅     | PR obligatorio + 6 checks + sin force + `enforce_admins`                      |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.12.0`                                  |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.13.0`                                  |
 | R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                       |
 | R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                  |
 | R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase` |
@@ -113,7 +113,7 @@
 
 | Regla      | Estado | Evidencia                                                                                   |
 | ---------- | ------ | ------------------------------------------------------------------------------------------- |
-| R-DO-1/2/6 | ✅     | README (rutas y features al día), reglas, API pública entre dominios y ADRs (ADR-01…ADR-17) |
+| R-DO-1/2/6 | ✅     | README (rutas y features al día), reglas, API pública entre dominios y ADRs (ADR-01…ADR-18) |
 | R-IA-1..6  | ✅     | Trabajo por PRs atómicas con evidencia y regression-first                                   |
 
 ## Gates de CI
@@ -131,7 +131,12 @@
 Ninguna. Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por
 PRs atómicas (UX/SEO, arquitectura/DTO/`rxMethod`, tests de robustez y
 documentación), el presupuesto inicial volvió a estar dentro de `budget`
-(R-PF-1) y el umbral de cobertura se elevó (R-COV-1).
+(R-PF-1) y el umbral de cobertura se elevó (R-COV-1). La **segunda pasada**
+(contrato backend, accesibilidad, cobertura por archivo, arquitectura y
+validación de entrada) también cerró todos sus hallazgos: envelope `{ data }` y
+`mensaje` del backend (R-C-1/2), fixture de contrato de `stores` (R-C-8), ramas
+del servicio al 95% (R-QA-1), nombre accesible del stepper y región viva de carga
+(R-AC-1/7) y **ADR-18** para la provisión por feature (R-AR-3).
 
 ### Deudas de backend (fuera del alcance del frontend)
 
