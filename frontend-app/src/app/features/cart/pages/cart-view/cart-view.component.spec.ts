@@ -6,6 +6,7 @@ import { ProductStore } from '../../../products/state/product.store';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartViewComponent } from './cart-view.component';
+import { SeoService } from '../../../../core/services/seo.service';
 
 const product: Product = {
   id: 21,
@@ -19,14 +20,20 @@ const product: Product = {
 
 describe('CartViewComponent', () => {
   const items = signal([{ product, quantity: 2 }]);
+  const loading = signal(false);
+  const error = signal<string | null>(null);
+  const seo = { setPage: vi.fn(), reset: vi.fn() };
   const cartStore = {
     items,
+    loading,
+    error,
     totalItems: () => items().reduce((count, item) => count + item.quantity, 0),
     totalPrice: () =>
       items().reduce((total, item) => total + item.product.price * item.quantity, 0),
     updateQuantity: vi.fn(),
     removeItem: vi.fn(),
     clearCart: vi.fn(() => items.set([])),
+    loadCart: vi.fn(),
   };
 
   const setup = async () => {
@@ -37,6 +44,7 @@ describe('CartViewComponent', () => {
         { provide: CartStore, useValue: cartStore },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
         { provide: AuthStore, useValue: { isAuthenticated: () => false } },
+        { provide: SeoService, useValue: seo },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(CartViewComponent);
@@ -47,6 +55,8 @@ describe('CartViewComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     items.set([{ product, quantity: 2 }]);
+    loading.set(false);
+    error.set(null);
   });
 
   it('debe mostrar el producto, cantidad y total del carrito', async () => {
@@ -139,5 +149,38 @@ describe('CartViewComponent', () => {
 
     expect(fixture.componentInstance.showClearConfirm()).toBe(false);
     expect(cartStore.clearCart).not.toHaveBeenCalled();
+  });
+
+  it('debe mostrar el estado de carga cuando el carrito está cargando y vacío', async () => {
+    items.set([]);
+    loading.set(true);
+    const fixture = await setup();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[data-testid="cart-loading"]'),
+    ).not.toBeNull();
+  });
+
+  it('debe mostrar el estado de error con reintento', async () => {
+    items.set([]);
+    error.set('No se pudo cargar tu carrito.');
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.textContent).toContain('No pudimos cargar tu carrito');
+    const retry = Array.from(host.querySelectorAll<HTMLButtonElement>('button')).find((b) =>
+      b.textContent?.includes('Reintentar'),
+    );
+    retry?.click();
+
+    expect(cartStore.loadCart).toHaveBeenCalled();
+  });
+
+  it('debe actualizar el SEO al entrar y restaurarlo al salir', async () => {
+    const fixture = await setup();
+
+    expect(seo.setPage).toHaveBeenCalled();
+    fixture.destroy();
+    expect(seo.reset).toHaveBeenCalled();
   });
 });
