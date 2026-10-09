@@ -11,10 +11,11 @@ export const storefrontResolver: ResolveFn<void> = (route) => {
   const storeId = route.paramMap.get('storeId');
   const productStore = inject(ProductStore);
 
-  if (!storeId) return Promise.resolve();
+  if (!storeId) return;
   if (productStore.storeId() === storeId && productStore.products().length > 0) {
-    return Promise.resolve();
+    return;
   }
 
-  return productStore.loadStore(storeId);
+  // Dispara la carga (rxMethod); la página muestra su estado de carga.
+  productStore.loadStore(storeId);
 };
