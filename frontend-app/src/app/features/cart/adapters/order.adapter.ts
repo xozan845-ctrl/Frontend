@@ -1,4 +1,5 @@
 import { OrderItem, OrderResponse, OrderTimelineEvent } from '../models/order.model';
+import { BackendOrderDTO, BackendOrderItemDTO, BackendTimelineEventDTO } from '../models/order.dto';
 import { unwrapApiListResponse } from '../../../core/models/api-response.dto';
 
 function toNumber(value: unknown, fallback = 0): number {
@@ -8,20 +9,18 @@ function toNumber(value: unknown, fallback = 0): number {
 
 /** Normaliza una línea de orden (`ItemOrden` de Core Engine). */
 function adaptOrderItem(raw: unknown): OrderItem {
-  const item = (raw ?? {}) as Record<string, unknown>;
-  const cents = item['precio_unitario_cents'];
+  const item = (raw ?? {}) as BackendOrderItemDTO;
+  const cents = item.precio_unitario_cents;
   const unitPrice =
-    typeof cents === 'number'
-      ? cents / 100
-      : toNumber(item['precio_unitario'] ?? item['unit_price'], 0);
+    typeof cents === 'number' ? cents / 100 : toNumber(item.precio_unitario ?? item.unit_price, 0);
 
   return {
-    ofertaId: String(item['oferta_id'] ?? item['ofertaId'] ?? ''),
-    sku: typeof item['sku'] === 'string' ? item['sku'] : '',
-    name: typeof item['producto_nombre'] === 'string' ? item['producto_nombre'] : 'Producto',
-    quantity: toNumber(item['cantidad'] ?? item['quantity'], 1),
+    ofertaId: String(item.oferta_id ?? item.ofertaId ?? ''),
+    sku: typeof item.sku === 'string' ? item.sku : '',
+    name: typeof item.producto_nombre === 'string' ? item.producto_nombre : 'Producto',
+    quantity: toNumber(item.cantidad ?? item.quantity, 1),
     unitPrice,
-    storeId: String(item['tienda_id'] ?? item['storeId'] ?? ''),
+    storeId: String(item.tienda_id ?? item.storeId ?? ''),
   };
 }
 
@@ -34,29 +33,27 @@ export function adaptOrderResponse(raw: unknown, fallbackTotal: number): OrderRe
     return generateMockOrderResponse(fallbackTotal);
   }
 
-  const r = raw as Record<string, unknown>;
-  const rawData = r['data'];
-  const data = rawData && typeof rawData === 'object' ? (rawData as Record<string, unknown>) : r;
-  const id = (data['id'] ?? data['_id'] ?? `ord-${Date.now()}`) as string | number;
-  const totalCents = data['total_cents'];
+  const r = raw as BackendOrderDTO;
+  const rawData = r.data;
+  const data = (rawData && typeof rawData === 'object' ? rawData : r) as BackendOrderDTO;
+  const id = (data.id ?? data._id ?? `ord-${Date.now()}`) as string | number;
+  const totalCents = data.total_cents;
   const total =
     typeof totalCents === 'number'
       ? totalCents / 100
-      : Number(data['total'] ?? data['amount'] ?? fallbackTotal);
+      : Number(data.total ?? data.amount ?? fallbackTotal);
 
-  const rawItems = data['items'];
+  const rawItems = data.items;
 
   return {
     id,
-    orderNumber: String(
-      data['orderNumber'] ?? data['order_number'] ?? `ORD-${String(id).slice(-6)}`,
-    ),
-    status: String(data['estado'] ?? data['status'] ?? 'creada'),
+    orderNumber: String(data.orderNumber ?? data.order_number ?? `ORD-${String(id).slice(-6)}`),
+    status: String(data.estado ?? data.status ?? 'creada'),
     total,
     createdAt: String(
-      data['creado_en'] ?? data['createdAt'] ?? data['created_at'] ?? new Date().toISOString(),
+      data.creado_en ?? data.createdAt ?? data.created_at ?? new Date().toISOString(),
     ),
-    storeId: data['tienda_id'] ? String(data['tienda_id']) : undefined,
+    storeId: data.tienda_id ? String(data.tienda_id) : undefined,
     items: Array.isArray(rawItems) ? rawItems.map(adaptOrderItem) : undefined,
   };
 }
@@ -69,13 +66,13 @@ export function adaptOrderListFromBackend(response: unknown): OrderResponse[] {
 /** Normaliza el timeline de una orden (`GET /orders/:id/timeline`). */
 export function adaptOrderTimelineFromBackend(response: unknown): OrderTimelineEvent[] {
   return unwrapApiListResponse(response).map((raw) => {
-    const event = (raw ?? {}) as Record<string, unknown>;
+    const event = (raw ?? {}) as BackendTimelineEventDTO;
     return {
-      id: toNumber(event['id'], 0),
-      type: String(event['tipo'] ?? event['type'] ?? 'evento'),
-      payload: event['payload'],
-      version: toNumber(event['version'], 0),
-      createdAt: String(event['creado_en'] ?? event['createdAt'] ?? ''),
+      id: toNumber(event.id, 0),
+      type: String(event.tipo ?? event.type ?? 'evento'),
+      payload: event.payload,
+      version: toNumber(event.version, 0),
+      createdAt: String(event.creado_en ?? event.createdAt ?? ''),
     };
   });
 }
