@@ -21,4 +21,6 @@ export interface RegisterData {
   email: string;
   password: string;
   name: string;
+  /** Rol registrable: comprador (por defecto) o vendedor (para crear tienda). */
+  role?: 'customer' | 'seller';
 }
