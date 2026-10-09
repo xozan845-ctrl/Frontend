@@ -11,7 +11,7 @@ import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.dir
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
-  selector: 'app-cart-sidebar',
+  selector: 'app-cart-drawer',
   standalone: true,
   imports: [
     NgOptimizedImage,
@@ -20,10 +20,10 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
     FocusTrapDirective,
     AppCurrencyPipe,
   ],
-  templateUrl: './cart-sidebar.component.html',
-  styleUrl: './cart-sidebar.component.css',
+  templateUrl: './cart-drawer.component.html',
+  styleUrl: './cart-drawer.component.css',
 })
-export class CartSidebarComponent {
+export class CartDrawerComponent {
   readonly cartStore = inject(CartStore);
   readonly cartUiStore = inject(CartUiStore);
   readonly authStore = inject(AuthStore);
@@ -38,6 +38,9 @@ export class CartSidebarComponent {
   readonly reloadCart = (): void => {
     this.cartStore.loadCart();
   };
+
+  /** Acción estable para el `EmptyState` (sin `bind` en plantilla, R-PF-4). */
+  readonly emptyCartAction = (): void => this.goToCart();
 
   goToCart() {
     this.cartUiStore.toggleSidebar(false);

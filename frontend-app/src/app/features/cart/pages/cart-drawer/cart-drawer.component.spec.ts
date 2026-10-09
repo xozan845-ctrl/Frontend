@@ -6,7 +6,7 @@ import { CartUiStore } from '../../state/cart-ui.store';
 import { ProductStore } from '../../../products/state/product.store';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { Product } from '../../../products/models/product.model';
-import { CartSidebarComponent } from './cart-sidebar.component';
+import { CartDrawerComponent } from './cart-drawer.component';
 
 const product: Product = {
   id: 4,
@@ -18,8 +18,8 @@ const product: Product = {
   stock: 4,
 };
 
-describe('CartSidebarComponent', () => {
-  let fixture: ComponentFixture<CartSidebarComponent>;
+describe('CartDrawerComponent', () => {
+  let fixture: ComponentFixture<CartDrawerComponent>;
   const items = signal([{ product, quantity: 2 }]);
   const loading = signal(false);
   const error = signal<string | null>(null);
@@ -40,7 +40,7 @@ describe('CartSidebarComponent', () => {
     loading.set(false);
     error.set(null);
     await TestBed.configureTestingModule({
-      imports: [CartSidebarComponent],
+      imports: [CartDrawerComponent],
       providers: [
         provideRouter([]),
         { provide: CartStore, useValue: cartStore },
@@ -49,7 +49,7 @@ describe('CartSidebarComponent', () => {
         { provide: AuthStore, useValue: { isAuthenticated: () => false } },
       ],
     }).compileComponents();
-    fixture = TestBed.createComponent(CartSidebarComponent);
+    fixture = TestBed.createComponent(CartDrawerComponent);
     fixture.detectChanges();
   });
 
@@ -80,7 +80,7 @@ describe('CartSidebarComponent', () => {
   });
 
   it('debe cerrar el panel al pulsar cerrar', () => {
-    fixture.nativeElement.querySelector('[aria-label="Cerrar"]').click();
+    fixture.nativeElement.querySelector('[data-testid="drawer-close"]').click();
 
     expect(cartUiStore.toggleSidebar).toHaveBeenCalledWith(false);
   });
@@ -107,9 +107,7 @@ describe('CartSidebarComponent', () => {
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     const host = fixture.nativeElement as HTMLElement;
-    const button = Array.from(host.querySelectorAll<HTMLButtonElement>('button')).find((item) =>
-      item.textContent?.includes('Procesar Orden'),
-    )!;
+    const button = host.querySelector<HTMLButtonElement>('[data-testid="drawer-checkout"]')!;
 
     button.click();
 

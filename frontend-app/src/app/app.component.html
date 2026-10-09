@@ -11,8 +11,12 @@
   <app-footer />
 </div>
 
-<app-cart-sidebar />
 <app-toast />
+@defer (on idle) {
+  <app-cart-drawer />
+} @placeholder {
+  <span aria-hidden="true"></span>
+}
 @defer (on idle) {
   <app-floating-support />
 } @placeholder {

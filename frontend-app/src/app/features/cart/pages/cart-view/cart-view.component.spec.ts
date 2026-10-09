@@ -79,9 +79,9 @@ describe('CartViewComponent', () => {
   it('debe navegar a checkout al procesar la orden', async () => {
     const fixture = await setup();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    const button = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Procesar Orden'))!;
+    const button = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+      '[data-testid="cart-checkout"]',
+    )!;
 
     button.click();
 
@@ -90,11 +90,9 @@ describe('CartViewComponent', () => {
 
   it('debe mostrar la confirmación antes de vaciar el carrito', async () => {
     const fixture = await setup();
-    const clear = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
-
-    clear.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="cart-clear"]')!
+      .click();
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('¿Vaciar carrito?');
@@ -103,16 +101,13 @@ describe('CartViewComponent', () => {
 
   it('debe vaciar el carrito al confirmar', async () => {
     const fixture = await setup();
-    const clear = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
-    clear.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="cart-clear"]')!
+      .click();
     fixture.detectChanges();
-    const confirm = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.trim() === 'Vaciar')!;
-
-    confirm.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="cart-confirm-clear"]')!
+      .click();
     fixture.detectChanges();
 
     expect(cartStore.clearCart).toHaveBeenCalledOnce();
@@ -121,10 +116,9 @@ describe('CartViewComponent', () => {
 
   it('debe exponer el modal de vaciado como diálogo accesible', async () => {
     const fixture = await setup();
-    const clear = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
-    clear.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="cart-clear"]')!
+      .click();
     fixture.detectChanges();
 
     const host = fixture.nativeElement as HTMLElement;
@@ -137,10 +131,9 @@ describe('CartViewComponent', () => {
 
   it('debe cerrar el modal de vaciado al pulsar Escape', async () => {
     const fixture = await setup();
-    const clear = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
-    clear.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="cart-clear"]')!
+      .click();
     fixture.detectChanges();
 
     const dialog = (fixture.nativeElement as HTMLElement).querySelector('[role="dialog"]')!;
