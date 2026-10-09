@@ -170,6 +170,7 @@ export class AuthService implements AuthRepository {
         id: Math.floor(Math.random() * 1000),
         email: credentials.email,
         name: name.charAt(0).toUpperCase() + name.slice(1),
+        role: 'comprador',
       };
       return of({
         user: mockUser,

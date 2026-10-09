@@ -87,7 +87,10 @@ export const CartStore = signalStore(
       authStore = inject(AuthStore),
       notificationService = inject(NotificationService),
     ) => {
-      const isGuest = (): boolean => !authStore.isAuthenticated();
+      // El carrito del servidor es solo para el rol comprador (`/carrito` es
+      // comprador-only); un vendedor/admin usa el carrito local para no recibir 403.
+      const useServerCart = (): boolean =>
+        authStore.isAuthenticated() && authStore.user()?.role === 'comprador';
 
       /** Ejecuta una operación del carrito del servidor y refresca el estado. */
       const runServer = (request$: Observable<CartItem[]>, successMessage?: string): void => {
@@ -113,14 +116,14 @@ export const CartStore = signalStore(
       return {
         /** Carga el carrito: del servidor con sesión, o el local del invitado. */
         loadCart() {
-          if (isGuest()) {
+          if (!useServerCart()) {
             patchState(store, { items: readLocalCart() });
             return;
           }
           runServer(cartRepo.getCart());
         },
         addItem(product: Product, quantity = 1) {
-          if (isGuest()) {
+          if (!useServerCart()) {
             setLocal(mergeItem(store.items(), product, quantity));
             notificationService.showInfo(
               'Añadido al carrito. Inicia sesión o regístrate para guardarlo y completar la compra.',
@@ -130,7 +133,7 @@ export const CartStore = signalStore(
           runServer(cartRepo.addItem(String(product.id), quantity));
         },
         updateQuantity(productId: string | number, quantity: number) {
-          if (isGuest()) {
+          if (!useServerCart()) {
             const items =
               quantity <= 0
                 ? store.items().filter((item) => String(item.product.id) !== String(productId))
@@ -145,7 +148,7 @@ export const CartStore = signalStore(
           runServer(cartRepo.updateQuantity(String(productId), quantity));
         },
         removeItem(productId: string | number) {
-          if (isGuest()) {
+          if (!useServerCart()) {
             setLocal(store.items().filter((item) => String(item.product.id) !== String(productId)));
             notificationService.showInfo('Producto eliminado del carrito');
             return;
@@ -153,7 +156,7 @@ export const CartStore = signalStore(
           runServer(cartRepo.removeItem(String(productId)), 'Producto eliminado del carrito');
         },
         clearCart() {
-          if (isGuest()) {
+          if (!useServerCart()) {
             setLocal([]);
             return;
           }
@@ -198,7 +201,7 @@ export const CartStore = signalStore(
     onInit(store, authStore = inject(AuthStore)) {
       // Invitado: carga el carrito local. Al iniciar sesión: vuelca el local.
       effect(() => {
-        if (authStore.isAuthenticated()) {
+        if (authStore.isAuthenticated() && authStore.user()?.role === 'comprador') {
           store.mergeLocalCart(readLocalCart());
         } else {
           patchState(store, { items: readLocalCart() });

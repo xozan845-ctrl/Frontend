@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import {
   FormBuilder,
@@ -31,7 +31,7 @@ type ProductRow = FormGroup<{
   imports: [ReactiveFormsModule, RouterLink, CreateStoreStepperComponent, NgClass],
   templateUrl: './create-store.component.html',
 })
-export default class CreateStoreComponent implements OnInit {
+export default class CreateStoreComponent {
   private readonly fb = inject(FormBuilder);
   readonly wizard = inject(StoreWizardStore);
   readonly authStore = inject(AuthStore);
@@ -63,6 +63,7 @@ export default class CreateStoreComponent implements OnInit {
   readonly productRows = this.fb.array<ProductRow>([]);
 
   readonly submitting = signal(false);
+  private catalogRequested = false;
 
   constructor() {
     this.seoService.setPage(
@@ -77,6 +78,19 @@ export default class CreateStoreComponent implements OnInit {
       }
     });
 
+    // Al entrar al paso de productos, carga el catálogo una sola vez.
+    effect(() => {
+      if (
+        this.wizard.step() === 3 &&
+        this.wizard.catalog().length === 0 &&
+        !this.wizard.catalogLoading() &&
+        !this.catalogRequested
+      ) {
+        this.catalogRequested = true;
+        this.wizard.loadCatalog();
+      }
+    });
+
     // Prepara el formulario de productos cuando llega el catálogo.
     effect(() => {
       const catalog = this.wizard.catalog();
@@ -84,13 +98,6 @@ export default class CreateStoreComponent implements OnInit {
         this.buildProductRows(catalog);
       }
     });
-  }
-
-  ngOnInit(): void {
-    // Si se entra directo al paso de productos (p. ej. tras refrescar), carga el catálogo.
-    if (this.wizard.step() === 3 && this.wizard.catalog().length === 0) {
-      this.wizard.loadCatalog();
-    }
   }
 
   // ── Paso 1: cuenta ─────────────────────────────────────────────────────────
