@@ -170,6 +170,68 @@ describe('AuthService', () => {
     expect(error?.message).toBe('La contraseña actual es incorrecta.');
   });
 
+  it('debe traducir el error de login', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service
+      .login({ email: 'user@test', password: 'password' })
+      .subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/login')
+      .flush(
+        { mensaje: 'Las credenciales son incorrectas.' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(error?.message).toBe('Las credenciales son incorrectas.');
+  });
+
+  it('debe traducir el error de register', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service
+      .register({ name: 'Test', email: 'test@test', password: '123456' })
+      .subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/registro')
+      .flush(
+        { mensaje: 'El rol vendedor requiere plan superior.' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(error?.message).toBe('El rol vendedor requiere plan superior.');
+  });
+
+  it('debe traducir el error de logout', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.logout().subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/logout')
+      .flush({ mensaje: 'Token inválido' }, { status: 400, statusText: 'Bad Request' });
+
+    expect(error?.message).toBe('Token inválido');
+  });
+
+  it('debe traducir el error de resetPassword', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.resetPassword('test@test').subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/restablecer-contrasena')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo solicitar el restablecimiento.');
+  });
+
   it('debe traducir el error de GET /auth/me con el fallback', () => {
     environment.apiUrl = 'https://api.test';
     build();
