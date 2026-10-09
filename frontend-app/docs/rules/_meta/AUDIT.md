@@ -4,9 +4,9 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-09 — **9ª de frontend-ecomerce**: auditoría del
-  módulo **`cart`** (contrato, accesibilidad, cobertura, store, arquitectura) y
-  cierre de todos sus hallazgos.
+- **Última auditoría:** 2026-10-09 — **10ª de frontend-ecomerce**: auditoría del
+  módulo **`products`** (contrato, store, arquitectura, UX, cobertura) y cierre
+  de todos sus hallazgos.
 - **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
   presupuesto inicial **dentro de budget**, cobertura con umbral elevado
   (`R-COV-1`) y **sin deudas abiertas**.
@@ -15,16 +15,16 @@
 
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **485.16 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **71 archivos / 410 tests**                                       |
-| Cobertura (G-2)    | idem                           | ✅ 93.81 / 90.55 / 93.47 / 93.92 (umbral **85/75/85/85**, `R-COV-1`) |
+| Build (G-3)        | `npm run build`                | ✅ initial **483.30 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **71 archivos / 419 tests**                                       |
+| Cobertura (G-2)    | idem                           | ✅ 95.57 / 91.45 / 94.25 / 95.81 (umbral **85/75/85/85**, `R-COV-1`) |
 | E2E (G-6)          | `npm run e2e`                  | ✅ **9 flujos Playwright · 0 errores/warnings**                      |
 | Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
 | Seguridad (R-QA-6) | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                            |
 | CI                 | `gh pr checks`                 | ✅ 6/6 jobs requeridos, en verde                                     |
 | `main` protegida   | `gh api .../protection`        | ✅ PR obligatorio + 6 checks, sin force, `enforce_admins: true`      |
-| Release            | `git tag`                      | ✅ `v1.14.0` sobre `main`                                            |
+| Release            | `git tag`                      | ✅ `v1.15.0` sobre `main`                                            |
 
 ## Cumplimiento por área
 
@@ -55,7 +55,7 @@
 | R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                               |
 | R-LZ-1..6                   | ✅     | Rutas lazy + `@defer (on idle)`; mocks fuera del bundle inicial; sin preloading      |
 | R-ST-1..7                   | ✅     | 7 stores con `withState/Computed/Methods/Hooks` + `rxMethod`; una fuente de verdad   |
-| R-PF-1/3/5                  | ✅     | Build **485.16 kB** (< 500 kB); rutas lazy; sin preloading                           |
+| R-PF-1/3/5                  | ✅     | Build **483.30 kB** (< 500 kB); rutas lazy; sin preloading                           |
 | R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`          |
 | R-PF-4/6/7                  | ✅     | Derivados en `computed`; sin `setTimeout`/`setInterval` en dominios; **zoneless**    |
 | R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                           |
@@ -101,7 +101,7 @@
 | Regla                   | Estado | Evidencia                                                                     |
 | ----------------------- | ------ | ----------------------------------------------------------------------------- |
 | R-GB-1 `main` protegida | ✅     | PR obligatorio + 6 checks + sin force + `enforce_admins`                      |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.14.0`                                  |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.15.0`                                  |
 | R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                       |
 | R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                  |
 | R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase` |
@@ -143,7 +143,14 @@ envelope + fixture de contrato (R-C-1/8, R-NC-9), cobertura de la lógica críti
 ≥ 80% (R-QA-1), `rxMethod` y `CartUiStore` (R-ST-5/6), persistencia en
 `withHooks` (R-ST-7), endpoints sin hardcode y errores traducidos (R-AR-9/11) y
 el drawer como contenedor diferido (`@defer`, R-AR-6/R-LZ-1/R-SO-8) — lo que bajó
-el inicial a **485.16 kB**.
+el inicial a **483.30 kB**.
+
+La **auditoría del módulo `products`** (10ª) cerró sus 15 hallazgos: DTOs de
+oferta/tienda y errores traducidos (R-NC-9, R-AR-9), `loadStore` con `rxMethod`
+(R-ST-5), el buscador como contenedor (R-SO-8), el enlace `/shop` corregido
+(R-DO-1), sin `bind` en plantilla y SEO restaurado (R-PF-4, R-UX-6), buscador con
+`NgOptimizedImage` (R-PF-2), iconos accesibles y `data-testid` (R-AC-1, R-CP-2) y
+los stores secundarios al 100% (R-U-8, R-RB-4).
 
 ### Deudas de backend (fuera del alcance del frontend)
 
