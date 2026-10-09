@@ -220,3 +220,30 @@
 - **Deudas:** ninguna en frontend (quedan límites del backend: sin directorio
   público de tiendas, sin imágenes de producto y CORS en producción).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 8 — Segunda pasada del módulo `stores` (reglas no auditadas) (2026-10-09)
+
+- **Alcance:** auditar `stores` contra las familias de reglas **no** cubiertas
+  antes (contrato, accesibilidad, cobertura por archivo, store, componentes,
+  naming, arquitectura, rendimiento, docs) y cerrar los hallazgos (PRs #78–#81).
+- **Hallazgos corregidos:**
+  - `fix(stores,core)` — envelope `{ data }` en el adapter y prioridad al
+    `mensaje` del backend; DTO con `creado_en`; fixture de contrato de `stores`
+    (R-C-1/2/6/8).
+  - `test(stores)` — ramas de `store.service` al 95% (73.9% → 95.7%) e
+    inmutabilidad del store (R-QA-1, R-U-8).
+  - `fix(stores)` — nombre accesible del stepper, región viva de carga y sin
+    funciones en la plantilla (R-AC-1/7, R-PF-4).
+  - `refactor(stores,home)` — regla del vendedor al store, **ADR-18** + R-AR-3,
+    endpoints sin hardcode y validación del id de tienda (R-CX-3, R-AR-3/11,
+    R-SE-6).
+- **Resultado:**
+  - ✅ `npm run build` — initial **498.81 kB** (< 500 kB).
+  - ✅ `npm test` — **68 archivos / 378 tests**; cobertura **91.64 / 84.03 / 94.46 / 91.88**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 9/9**.
+  - ✅ CI 6/6 jobs requeridos en verde; release `v1.13.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
