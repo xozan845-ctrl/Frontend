@@ -362,6 +362,39 @@ contexto y consecuencias.
   enlaces compartidos de tiendas (`/tienda/<id>`) ni el resto de la app.
   Revertir es volver a rutas 100 % en inglés y renombrar todos los enlaces.
 
+## ADR-18: Integración con el backend de IA `ai_scraper_executor` (segunda fuente de datos)
+
+- **Fecha**: 2026-10-09
+- **Estado**: Aceptado
+- **Contexto**: existe un backend **independiente** (`ai_scraper_executor`,
+  NestJS + worker Crawlee/Playwright + LLM) que expone una API REST asíncrona
+  bajo `/api/v1` (jobs, sesiones tipo chat, radiografía/memoria, métricas). No
+  comparte dominio ni autenticación con el gateway de Core Engine; su única
+  superficie de consumo es un **endpoint HTTP** con **CORS** por allowlist
+  (`CORS_ORIGINS`) y, opcionalmente, cabecera `x-api-key`.
+- **Decisión**: integrarlo como un **feature aislado** del frontend
+  (`features/ai-scraper`), consumido por HTTP a través de **un endpoint**:
+  - El host vive en `environment.aiScraperUrl` (`R-AR-11`); los paths y
+    constantes en `features/ai-scraper/constants` (`R-AR-13`). **No** se
+    reutiliza `apiUrl` (son backends distintos).
+  - CORS se habilita **en el backend** (`CORS_ORIGINS=<origen del frontend>`);
+    el frontend no hace proxy ni intermedia.
+  - La API key (si el despliegue la exige) se aporta en **runtime** y se guarda
+    en `sessionStorage` (`ecom_ai_scraper_key`); un interceptor dedicado añade
+    `x-api-key` **solo** a las peticiones a `aiScraperUrl` (`R-SE-1/2/8`). Nunca
+    va en el bundle.
+  - El consumo sigue el patrón del frontend: **puertos + `InjectionToken`**
+    (`R-AR-3`, `R-SO-4`), **adapters** tolerantes (`R-AR-4`), **signal stores**
+    con **polling reactivo** (`timer` + `rxMethod`, nunca `setInterval`,
+    `R-ST-5`, `R-PF-6`) y **rutas lazy** (`R-AR-12`, `R-LZ-1`).
+  - Alcance "consumo completo": jobs (crear/listar/detalle/cancelar/reintentar),
+    sesiones tipo chat, radiografía/memoria y métricas/salud.
+- **Consecuencias**: nueva superficie `core/config/ai-scraper.config.ts` (paths),
+  CSP `connect-src` ampliada al host del backend (`R-SE-9`) y cobertura de
+  contrato/adapters/servicios/stores/UI. El backend debe permitir el origen del
+  frontend por CORS. Revertir es quitar la ruta `/ia`, el enlace del navbar y el
+  feature; el resto del storefront no se toca.
+
 ## ADR-18: Provisión de infraestructura por feature en rutas lazy
 
 - **Contexto**: `R-AR-3` fija que la composición de puertos→servicios vive en

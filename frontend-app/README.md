@@ -4,8 +4,9 @@ Frontend web e-commerce ("Quantum Store") desarrollado con **Angular 22**,
 gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 
 > Este repositorio es **solo el frontend**. Consume el API del backend
-> (gateway de Core Engine, `/api/v1`). La arquitectura, las reglas y las
-> decisiones del proyecto viven en [`docs/`](./docs).
+> (gateway de Core Engine, `/api/v1`) y, de forma **independiente**, el backend
+> de IA `ai_scraper_executor` (`/api/v1`, ADR-18). La arquitectura, las reglas y
+> las decisiones del proyecto viven en [`docs/`](./docs).
 
 ---
 
@@ -20,6 +21,7 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 - **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
 - **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
+- **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs**, **chat** por sesión (URL → radiografía → instrucciones → resultados), radiografía/memoria y métricas.
 - **Búsqueda** con autocompletado, **dark mode**, **PWA install banner** y página `404`.
 
 ---
@@ -67,6 +69,14 @@ La URL base y los endpoints se configuran en
 (`src/app/core/config/api.config.ts`). Con `apiUrl: ''` y `dataSource: 'api'` la
 app avisa de que falta configuración; con `dataSource: 'mock'` usa datos de prueba.
 
+El backend de IA es **independiente** y se consume por **un único endpoint** con
+**CORS** (ADR-18): `aiScraperUrl` en
+[`environment.ts`](./src/environments/environment.ts) /
+[`environment.prod.ts`](./src/environments/environment.prod.ts). El backend debe
+permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
+**API key** se introduce en runtime en `/ia` (se guarda en `sessionStorage`;
+**nunca** viaja en el bundle).
+
 ---
 
 ## 📜 Scripts
@@ -106,6 +116,7 @@ src/
     │   └── footer/
     ├── features/                 # Dominios de negocio (clean/hexagonal)
     │   ├── account/              # pages/ (perfil, pedidos), state, services, repositories, adapters
+    │   ├── ai-scraper/           # pages/ (dashboard, detalle, chat), components/, state, services, repositories, adapters, models
     │   ├── auth/                 # pages/login, pages/register, state, services, repositories, adapters, guards
     │   ├── cart/                 # pages/cart-view, pages/checkout, pages/confirmation, state, services, repositories, adapters
     │   ├── home/                 # pages/home, pages/store-entry (raíz multi-tienda), pages/not-found
