@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
 import { ProductStore } from '../../../products/state/product.store';
@@ -18,17 +19,26 @@ const product: Product = {
 
 describe('CartSidebarComponent', () => {
   let fixture: ComponentFixture<CartSidebarComponent>;
+  const items = signal([{ product, quantity: 2 }]);
+  const loading = signal(false);
+  const error = signal<string | null>(null);
   const cartStore = {
     isSidebarOpen: () => true,
-    items: () => [{ product, quantity: 2 }],
+    items,
+    loading,
+    error,
     totalPrice: () => 100,
     toggleSidebar: vi.fn(),
     updateQuantity: vi.fn(),
     removeItem: vi.fn(),
+    loadCart: vi.fn(),
   };
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    items.set([{ product, quantity: 2 }]);
+    loading.set(false);
+    error.set(null);
     await TestBed.configureTestingModule({
       imports: [CartSidebarComponent],
       providers: [
@@ -80,6 +90,16 @@ describe('CartSidebarComponent', () => {
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
     expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
+  });
+
+  it('debe mostrar el estado de carga cuando el carrito está cargando y vacío', () => {
+    items.set([]);
+    loading.set(true);
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[data-testid="cart-loading"]'),
+    ).not.toBeNull();
   });
 
   it('debe navegar a checkout al procesar la orden', () => {
