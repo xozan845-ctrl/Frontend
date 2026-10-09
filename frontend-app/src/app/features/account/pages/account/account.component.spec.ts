@@ -97,4 +97,12 @@ describe('AccountComponent', () => {
     expect(notification.showError).toHaveBeenCalledWith('actual incorrecta');
     expect(authStore.clearSession).not.toHaveBeenCalled();
   });
+
+  it('debe restaurar el SEO al destruirse', async () => {
+    const fixture = await setup();
+
+    fixture.destroy();
+
+    expect(seo.reset).toHaveBeenCalled();
+  });
 });

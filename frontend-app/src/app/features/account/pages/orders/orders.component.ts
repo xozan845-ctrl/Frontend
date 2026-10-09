@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ORDER_REPOSITORY, OrderResponse } from '../../../cart/public-api';
@@ -13,9 +14,10 @@ import { SeoService } from '../../../../core/services/seo.service';
   imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './orders.component.html',
 })
-export default class OrdersComponent implements OnInit {
+export default class OrdersComponent implements OnInit, OnDestroy {
   private readonly orderRepo = inject(ORDER_REPOSITORY);
   private readonly seoService = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly orders = signal<OrderResponse[]>([]);
   readonly loading = signal(true);
@@ -35,15 +37,22 @@ export default class OrdersComponent implements OnInit {
   load(): void {
     this.loading.set(true);
     this.error.set(null);
-    this.orderRepo.getOrders().subscribe({
-      next: (orders) => {
-        this.orders.set(orders);
-        this.loading.set(false);
-      },
-      error: (err: Error) => {
-        this.error.set(err.message || 'No se pudieron cargar tus pedidos.');
-        this.loading.set(false);
-      },
-    });
+    this.orderRepo
+      .getOrders()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (orders) => {
+          this.orders.set(orders);
+          this.loading.set(false);
+        },
+        error: (err: Error) => {
+          this.error.set(err.message || 'No se pudieron cargar tus pedidos.');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 }

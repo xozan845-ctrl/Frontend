@@ -70,4 +70,12 @@ describe('OrdersComponent', () => {
 
     expect(orderRepo.getOrders).toHaveBeenCalledTimes(2);
   });
+
+  it('debe restaurar el SEO al destruirse', async () => {
+    const fixture = await setup();
+
+    fixture.destroy();
+
+    expect(seo.reset).toHaveBeenCalled();
+  });
 });

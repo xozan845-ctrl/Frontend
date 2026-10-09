@@ -1,4 +1,5 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
 import {
   AbstractControl,
@@ -25,13 +26,14 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule, UpperCasePipe, RouterLink],
   templateUrl: './account.component.html',
 })
-export default class AccountComponent implements OnInit {
+export default class AccountComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly authService = inject(AUTH_REPOSITORY);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly seoService = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Perfil autoritativo de `GET /auth/me`. */
   readonly profile = signal<{ email: string; role: string } | null>(null);
@@ -51,12 +53,19 @@ export default class AccountComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.me().subscribe({
-      next: (user) => this.profile.set({ email: user.email, role: user.role ?? '' }),
-      error: () => {
-        // El perfil local (`AuthStore`) ya muestra los datos; no bloquea la página.
-      },
-    });
+    this.authService
+      .me()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user) => this.profile.set({ email: user.email, role: user.role ?? '' }),
+        error: () => {
+          // El perfil local (`AuthStore`) ya muestra los datos; no bloquea la página.
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 
   isInvalid(field: string): boolean {
@@ -72,18 +81,21 @@ export default class AccountComponent implements OnInit {
 
     const { current, next } = this.form.getRawValue();
     this.submitting.set(true);
-    this.authService.changePassword(current, next).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        this.notification.showSuccess('Contraseña actualizada. Vuelve a iniciar sesión.');
-        // Core Engine invalida las sesiones al cambiarla: limpiamos la local.
-        this.authStore.clearSession();
-        this.router.navigate(['/login']);
-      },
-      error: (err: Error) => {
-        this.submitting.set(false);
-        this.notification.showError(err.message || 'No se pudo cambiar la contraseña.');
-      },
-    });
+    this.authService
+      .changePassword(current, next)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.notification.showSuccess('Contraseña actualizada. Vuelve a iniciar sesión.');
+          // Core Engine invalida las sesiones al cambiarla: limpiamos la local.
+          this.authStore.clearSession();
+          this.router.navigate(['/login']);
+        },
+        error: (err: Error) => {
+          this.submitting.set(false);
+          this.notification.showError(err.message || 'No se pudo cambiar la contraseña.');
+        },
+      });
   }
 }
