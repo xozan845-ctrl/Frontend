@@ -42,6 +42,26 @@ describe('StoreEntryComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/tienda', 't-1', 'shop']);
   });
 
+  it('debe normalizar el id al entrar a la tienda', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.goToStore('  t-1  ');
+
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 't-1', 'shop']);
+  });
+
+  it('no debe navegar cuando el id de tienda es inválido', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.goToStore('   ');
+    fixture.componentInstance.goToStore('../admin');
+    fixture.componentInstance.goToStore('a'.repeat(101));
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it('debe actualizar el SEO al entrar', async () => {
     await setup();
 

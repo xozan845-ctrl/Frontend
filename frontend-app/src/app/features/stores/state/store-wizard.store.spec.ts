@@ -61,6 +61,22 @@ describe('StoreWizardStore', () => {
     expect(wizard.store()).toBeNull();
   });
 
+  it('debe avanzar al paso de tienda cuando hay sesión de vendedor', () => {
+    const wizard = setup();
+
+    wizard.startForSeller(true);
+
+    expect(wizard.step()).toBe(2);
+  });
+
+  it('debe permanecer en el paso de cuenta cuando no es vendedor', () => {
+    const wizard = setup();
+
+    wizard.startForSeller(false);
+
+    expect(wizard.step()).toBe(1);
+  });
+
   it('debe quedarse en el paso 1 cuando retrocede en el primer paso', () => {
     const wizard = setup();
 

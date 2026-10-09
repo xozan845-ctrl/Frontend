@@ -21,7 +21,7 @@ const MOCK_STORE: Store = {
 })
 export class StoreService implements StoreRepository {
   private readonly http = inject(HttpClient);
-  private readonly vendorEndpoint = environment.apiConfig?.endpoints?.vendor || '/vendedores';
+  private readonly vendorEndpoint = environment.apiConfig.endpoints.vendor;
 
   createStore(draft: StoreDraft): Observable<Store> {
     if (this.isMock()) return of(MOCK_STORE).pipe(delay(400));

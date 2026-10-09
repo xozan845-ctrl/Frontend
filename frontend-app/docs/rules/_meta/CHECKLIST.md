@@ -33,7 +33,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 
 - [ ] **R-AR-1** — El código vive en `core/`, `shared/`, `layout/` o `features/<feature>/` (con `pages/`/`components/` por rol).
 - [ ] **R-AR-2** — `core/`/`shared/`/`layout/` no importan `features/`; `core/` no usa `shared/`; el feature vecino se consume por su API pública.
-- [ ] **R-AR-3** — La infraestructura se consume por puerto + `InjectionToken` cableado en `app.config.ts`.
+- [ ] **R-AR-3** — La infraestructura se consume por puerto + `InjectionToken` cableado en `app.config.ts` (transversales) o en los `providers` de la ruta lazy del feature (ADR-18).
 - [ ] **R-AR-4** — Las respuestas externas pasan por un adapter; el dominio no conoce `snake_case` ni envelopes.
 - [ ] **R-AR-5** — El estado compartido vive en `signalStore`; derivados en `withComputed`.
 - [ ] **R-AR-6** — Componentes standalone; rutas lazy por feature (`R-AR-12`).

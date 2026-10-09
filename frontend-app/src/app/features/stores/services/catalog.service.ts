@@ -18,8 +18,7 @@ const MOCK_CATALOG: CatalogProductOption[] = [
 })
 export class CatalogService implements CatalogRepository {
   private readonly http = inject(HttpClient);
-  private readonly catalogEndpoint =
-    environment.apiConfig?.endpoints?.products || '/catalog/productos';
+  private readonly catalogEndpoint = environment.apiConfig.endpoints.products;
 
   listCatalog(): Observable<CatalogProductOption[]> {
     if (this.isMock()) return of(MOCK_CATALOG).pipe(delay(300));
