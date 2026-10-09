@@ -19,6 +19,8 @@ import { AUTH_REPOSITORY } from './features/auth/repositories/auth.repository';
 import { AuthService } from './features/auth/services/auth.service';
 import { CART_REPOSITORY } from './features/cart/repositories/cart.repository';
 import { CartService } from './features/cart/services/cart.service';
+import { STORE_REPOSITORY } from './features/stores/repositories/store.repository';
+import { StoreService } from './features/stores/services/store.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +37,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ORDER_REPOSITORY, useClass: OrderService },
     { provide: AUTH_REPOSITORY, useClass: AuthService },
     { provide: CART_REPOSITORY, useClass: CartService },
+    { provide: STORE_REPOSITORY, useClass: StoreService },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

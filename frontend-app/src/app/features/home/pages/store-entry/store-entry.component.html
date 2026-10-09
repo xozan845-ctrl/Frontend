@@ -1,35 +1,56 @@
 <section
-  class="min-h-[70vh] flex items-center justify-center px-4 py-24 bg-slate-50 dark:bg-surface-900 transition-colors duration-300"
+  class="min-h-[80vh] flex items-center justify-center px-4 py-24 bg-slate-50 dark:bg-surface-900 transition-colors duration-300"
 >
-  <div
-    class="w-full max-w-lg bg-white dark:bg-surface-800 border border-slate-100 dark:border-surface-700 rounded-3xl shadow-xl p-10 text-center"
-  >
-    <div
-      class="inline-block bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
-    >
-      Plataforma multi-tienda
+  <div class="w-full max-w-4xl grid md:grid-cols-2 gap-6">
+    <!-- Buscar tienda -->
+    <div class="card p-10 text-center flex flex-col justify-center">
+      <div
+        class="inline-block bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 self-center"
+      >
+        Plataforma multi-tienda
+      </div>
+
+      <h1 class="text-3xl font-black uppercase tracking-tighter font-heading mb-4">
+        Elige tu tienda
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 font-medium mb-8">
+        Cada vendedor tiene su propia tienda. Introduce el identificador de la tienda para entrar a
+        su catálogo.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <label class="sr-only" for="storeId">Identificador de tienda</label>
+        <input
+          id="storeId"
+          type="text"
+          (input)="onInput($event)"
+          (keyup.enter)="goToStore()"
+          placeholder="Identificador de la tienda"
+          class="input flex-1"
+        />
+        <button type="button" class="btn btn-primary btn-md" (click)="goToStore()">Entrar</button>
+      </div>
     </div>
 
-    <h1 class="text-3xl font-black uppercase tracking-tighter font-heading mb-4">
-      Elige tu tienda
-    </h1>
+    <!-- Crear tienda -->
+    <div class="card p-10 text-center flex flex-col justify-center">
+      <div
+        class="w-16 h-16 mx-auto rounded-2xl bg-accent-600 text-white flex items-center justify-center text-2xl mb-6 shadow-lg shadow-accent-600/30"
+      >
+        <i class="fa-solid fa-store"></i>
+      </div>
 
-    <p class="text-slate-500 dark:text-slate-400 font-medium mb-8">
-      Cada vendedor tiene su propia tienda. Introduce el identificador de la tienda para entrar a su
-      catálogo.
-    </p>
+      <h2 class="text-3xl font-black uppercase tracking-tighter font-heading mb-4">
+        ¿Vendes tecnología?
+      </h2>
+      <p class="text-slate-500 dark:text-slate-400 font-medium mb-8">
+        Crea tu tienda en minutos, publica tus productos y llega a más clientes. Abrir tu tienda es
+        <b>gratis</b>: solo necesitas una cuenta de vendedor.
+      </p>
 
-    <div class="flex flex-col sm:flex-row gap-3">
-      <label class="sr-only" for="storeId">Identificador de tienda</label>
-      <input
-        id="storeId"
-        type="text"
-        (input)="onInput($event)"
-        (keyup.enter)="goToStore()"
-        placeholder="Identificador de la tienda"
-        class="input flex-1"
-      />
-      <button type="button" class="btn btn-primary btn-md" (click)="goToStore()">Entrar</button>
+      <button type="button" class="btn btn-primary btn-lg w-full" (click)="goToCreateStore()">
+        <i class="fa-solid fa-rocket mr-2"></i> Crear mi tienda
+      </button>
     </div>
   </div>
 </section>

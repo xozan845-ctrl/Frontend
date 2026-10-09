@@ -52,7 +52,7 @@ export class AuthService implements AuthRepository {
         nombre: userData.name,
         correo: userData.email,
         contrasena: userData.password,
-        rol: 'comprador',
+        rol: userData.role === 'seller' ? 'vendedor' : 'comprador',
       })
       .pipe(map((res) => adaptAuthResponseFromBackend(res, userData.email)));
   }
@@ -188,6 +188,7 @@ export class AuthService implements AuthRepository {
       id: Math.floor(Math.random() * 1000),
       email: userData.email,
       name: userData.name,
+      role: userData.role === 'seller' ? 'vendedor' : 'comprador',
     };
     return of({
       user: mockUser,

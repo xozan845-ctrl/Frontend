@@ -1,0 +1,29 @@
+<ol class="flex items-center gap-2" aria-label="Pasos para crear tu tienda">
+  @for (step of steps(); track step.id; let last = $last) {
+    <li class="flex items-center gap-2 flex-1 min-w-0">
+      <span
+        class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-sm font-black transition-colors"
+        [ngClass]="
+          step.id <= current()
+            ? 'bg-accent-600 text-white'
+            : 'bg-slate-100 dark:bg-surface-700 text-slate-400'
+        "
+        [attr.aria-current]="step.id === current() ? 'step' : null"
+      >
+        @if (step.id < current()) {
+          <i class="fa-solid fa-check"></i>
+        } @else {
+          {{ step.id }}
+        }
+      </span>
+      <span
+        class="text-[10px] font-bold uppercase tracking-widest truncate hidden sm:block"
+        [ngClass]="step.id <= current() ? 'text-slate-900 dark:text-white' : 'text-slate-400'"
+        >{{ step.label }}</span
+      >
+      @if (!last) {
+        <span class="flex-1 h-px bg-slate-200 dark:bg-surface-700 mx-1 min-w-4"></span>
+      }
+    </li>
+  }
+</ol>

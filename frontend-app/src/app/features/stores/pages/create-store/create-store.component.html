@@ -1,0 +1,300 @@
+<div class="min-h-[80vh] bg-slate-50 dark:bg-surface-900 py-16 px-4 transition-colors duration-300">
+  <div class="max-w-2xl mx-auto flex flex-col gap-10">
+    <header class="text-center">
+      <div
+        class="inline-block bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+      >
+        Vende en Quantum
+      </div>
+      <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tighter font-heading mb-4">
+        Crea tu tienda
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 font-medium">
+        Abre tu tienda en minutos y empieza a vender: crea tu cuenta, describe tu tienda y publica
+        tus productos.
+      </p>
+    </header>
+
+    <app-create-store-stepper [steps]="steps" [current]="step()" />
+
+    @switch (step()) {
+      <!-- Paso 1 · Cuenta -->
+      @case (1) {
+        <section class="card p-8">
+          <h2 class="text-2xl font-black uppercase tracking-tighter font-heading mb-2">
+            Crea tu cuenta de vendedor
+          </h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+            Necesitas una cuenta de vendedor para abrir tu tienda. Es gratis.
+          </p>
+
+          @if (isBuyer()) {
+            <div
+              class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 text-sm text-amber-800 dark:text-amber-300 mb-6"
+            >
+              Iniciaste sesión con una cuenta de <b>comprador</b>. Para crear una tienda necesitas
+              una cuenta de vendedor.
+              <button (click)="logout()" class="mt-3 btn btn-secondary btn-sm">
+                Cerrar sesión
+              </button>
+            </div>
+          } @else {
+            @if (authStore.error()) {
+              <div
+                class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 p-4 mb-6 text-xs font-bold"
+              >
+                {{ authStore.error() }}
+              </div>
+            }
+
+            <form [formGroup]="accountForm" (ngSubmit)="register()" class="flex flex-col gap-5">
+              <div class="flex flex-col gap-2">
+                <label
+                  for="name"
+                  class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                  >Nombre</label
+                >
+                <input
+                  id="name"
+                  type="text"
+                  formControlName="name"
+                  autocomplete="name"
+                  placeholder="Ana Pérez"
+                  class="input"
+                  [class.input-error]="invalid(accountForm, 'name')"
+                />
+                @if (invalid(accountForm, 'name')) {
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+                    >Introduce tu nombre</span
+                  >
+                }
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  for="email"
+                  class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                  >Correo electrónico</label
+                >
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  placeholder="correo@ejemplo.com"
+                  class="input"
+                  [class.input-error]="invalid(accountForm, 'email')"
+                />
+                @if (invalid(accountForm, 'email')) {
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+                    >Introduce un correo válido</span
+                  >
+                }
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  for="password"
+                  class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                  >Contraseña</label
+                >
+                <div class="relative">
+                  <input
+                    id="password"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    formControlName="password"
+                    autocomplete="new-password"
+                    placeholder="••••••••"
+                    class="input pr-12"
+                    [class.input-error]="invalid(accountForm, 'password')"
+                  />
+                  <button
+                    type="button"
+                    (click)="showPassword.set(!showPassword())"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  >
+                    <i class="fa-solid" [ngClass]="showPassword() ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+                @if (invalid(accountForm, 'password')) {
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+                    >Mínimo 8 caracteres</span
+                  >
+                }
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg mt-2"
+                [disabled]="authStore.loading()"
+              >
+                {{ authStore.loading() ? 'Creando cuenta…' : 'Crear cuenta y continuar' }}
+              </button>
+            </form>
+
+            <p class="mt-6 text-center text-xs font-bold text-slate-500">
+              ¿Ya tienes cuenta de vendedor?
+              <a
+                [routerLink]="['/login']"
+                [queryParams]="{ returnUrl: '/crear-tienda' }"
+                class="text-slate-900 dark:text-white hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-black"
+                >Inicia sesión</a
+              >
+            </p>
+          }
+        </section>
+      }
+
+      <!-- Paso 2 · Tienda -->
+      @case (2) {
+        <section class="card p-8">
+          <h2 class="text-2xl font-black uppercase tracking-tighter font-heading mb-2">
+            Describe tu tienda
+          </h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+            Este es el nombre y la descripción que verán tus clientes.
+          </p>
+
+          <form [formGroup]="storeForm" (ngSubmit)="createStore()" class="flex flex-col gap-5">
+            <div class="flex flex-col gap-2">
+              <label
+                for="store-name"
+                class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                >Nombre de la tienda</label
+              >
+              <input
+                id="store-name"
+                type="text"
+                formControlName="name"
+                placeholder="Tienda Demo"
+                class="input"
+                [class.input-error]="invalid(storeForm, 'name')"
+              />
+              @if (invalid(storeForm, 'name')) {
+                <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
+                  >El nombre debe tener entre 2 y 100 caracteres</span
+                >
+              }
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label
+                for="store-description"
+                class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                >Descripción <span class="text-slate-400">(opcional)</span></label
+              >
+              <textarea
+                id="store-description"
+                formControlName="description"
+                rows="3"
+                placeholder="¿Qué vendes? Cuéntaselo a tus clientes."
+                class="input resize-none"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg mt-2"
+              [disabled]="wizard.loading() || submitting()"
+            >
+              {{ wizard.loading() || submitting() ? 'Creando tienda…' : 'Crear mi tienda' }}
+            </button>
+          </form>
+        </section>
+      }
+
+      <!-- Paso 3 · Productos -->
+      @case (3) {
+        <section class="card p-8">
+          <h2 class="text-2xl font-black uppercase tracking-tighter font-heading mb-2">
+            Publica tus primeros productos
+          </h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+            Elige productos del catálogo y define tu margen. Puedes omitir este paso y hacerlo más
+            tarde.
+          </p>
+
+          @if (wizard.catalogLoading()) {
+            <p class="text-sm text-slate-500 py-8 text-center">Cargando catálogo…</p>
+          } @else if (wizard.catalog().length === 0) {
+            <p class="text-sm text-slate-500 py-8 text-center">
+              No hay productos en el catálogo todavía.
+            </p>
+          } @else {
+            <ul class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700 mb-8">
+              @for (option of wizard.catalog(); track option.id; let i = $index) {
+                <li class="py-4 flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    class="w-5 h-5 accent-accent-600 shrink-0"
+                    [checked]="rowAt(i).controls.selected.value"
+                    (change)="toggleRow(i)"
+                    [attr.aria-label]="'Publicar ' + option.name"
+                  />
+                  <div class="flex flex-col min-w-0 flex-1">
+                    <span class="font-bold truncate">{{ option.name }}</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">{{ option.sku }}</span>
+                  </div>
+                  <label class="flex items-center gap-2 shrink-0 text-xs text-slate-500">
+                    Margen
+                    <input
+                      type="number"
+                      min="0"
+                      max="90"
+                      [formControl]="rowAt(i).controls.margin"
+                      class="input w-20 py-2 text-center"
+                    />
+                    %
+                  </label>
+                </li>
+              }
+            </ul>
+          }
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              (click)="publish()"
+              class="btn btn-primary btn-lg flex-1"
+              [disabled]="submitting() || wizard.loading() || !hasSelection()"
+            >
+              {{ submitting() || wizard.loading() ? 'Publicando…' : 'Publicar y finalizar' }}
+            </button>
+            <button
+              type="button"
+              (click)="skipProducts()"
+              class="btn btn-secondary btn-lg flex-1"
+              [disabled]="submitting() || wizard.loading()"
+            >
+              Omitir por ahora
+            </button>
+          </div>
+        </section>
+      }
+
+      <!-- Paso 4 · Listo -->
+      @case (4) {
+        <section class="card p-10 text-center">
+          <div
+            class="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-6"
+          >
+            <i class="fa-solid fa-check text-3xl text-emerald-600 dark:text-emerald-400"></i>
+          </div>
+          <h2 class="text-3xl font-black uppercase tracking-tighter font-heading mb-3">
+            ¡Tu tienda está lista!
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 mb-2">
+            <b>{{ wizard.store()?.name }}</b> ya está publicada.
+          </p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">
+            {{ wizard.publishedCount() }} producto(s) publicado(s).
+          </p>
+          <button type="button" (click)="goToStore()" class="btn btn-primary btn-lg">
+            Ver mi tienda
+          </button>
+        </section>
+      }
+    }
+  </div>
+</div>
