@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError, forkJoin, from } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { toUserMessage } from '../../../core/models/api-error';
 import { adaptStorefrontFromBackend } from '../adapters/product.adapter';
 import { ProductRepository, Storefront } from '../repositories/product.repository';
 
@@ -11,9 +12,8 @@ import { ProductRepository, Storefront } from '../repositories/product.repositor
 })
 export class ProductService implements ProductRepository {
   private readonly http = inject(HttpClient);
-  private readonly storefrontEndpoint = environment.apiConfig?.endpoints?.storefront || '/tiendas';
-  private readonly catalogEndpoint =
-    environment.apiConfig?.endpoints?.products || '/catalog/productos';
+  private readonly storefrontEndpoint = environment.apiConfig.endpoints.storefront;
+  private readonly catalogEndpoint = environment.apiConfig.endpoints.products;
 
   /**
    * Storefront de una tienda: `GET /tiendas/:storeId` → `{ tienda, ofertas }`.
@@ -48,6 +48,9 @@ export class ProductService implements ProductRepository {
 
     return forkJoin({ storefront: storefront$, catalog: catalog$ }).pipe(
       map(({ storefront, catalog }) => adaptStorefrontFromBackend(storefront, catalog)),
+      catchError((error) =>
+        throwError(() => new Error(toUserMessage(error, 'No se pudo cargar la tienda.'))),
+      ),
     );
   }
 }
