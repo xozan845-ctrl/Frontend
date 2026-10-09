@@ -43,6 +43,7 @@
           <a
             [routerLink]="['/cuenta/pedidos', order.id]"
             class="card p-6 flex items-center justify-between gap-4 hover:shadow-md transition-shadow"
+            data-testid="order-link"
           >
             <div class="flex flex-col gap-1 min-w-0">
               <span class="font-black font-mono text-sm">{{ order.orderNumber }}</span>
@@ -52,7 +53,7 @@
             </div>
             <div class="flex items-center gap-4 shrink-0">
               <span class="font-black">{{ order.total | appCurrency }}</span>
-              <i class="fa-solid fa-chevron-right text-slate-400"></i>
+              <i class="fa-solid fa-chevron-right text-slate-400" aria-hidden="true"></i>
             </div>
           </a>
         }

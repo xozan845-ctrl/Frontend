@@ -68,11 +68,6 @@ export default class AccountComponent implements OnInit, OnDestroy {
     this.seoService.reset();
   }
 
-  isInvalid(field: string): boolean {
-    const control = this.form.get(field);
-    return !!(control && control.invalid && (control.dirty || control.touched));
-  }
-
   onSubmit(): void {
     if (this.form.invalid || this.submitting()) {
       this.form.markAllAsTouched();
