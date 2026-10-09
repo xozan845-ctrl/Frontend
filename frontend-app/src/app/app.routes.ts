@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { ACCOUNT_ROUTES } from './features/account/account.routes';
-import { STORES_ROUTES } from './features/stores/stores.routes';
 import { AUTH_ROUTES } from './features/auth/auth.routes';
 import { CART_ROUTES } from './features/cart/cart.routes';
 import { HOME_ROUTES, ROOT_ROUTES } from './features/home/home.routes';
@@ -22,7 +21,12 @@ export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
   ...ACCOUNT_ROUTES,
-  ...STORES_ROUTES,
+  {
+    // `stores` se carga con `loadChildren` para no arrastrar su infraestructura
+    // (puertos, servicios y store del asistente) al bundle inicial (R-LZ-1, R-PF-1).
+    path: '',
+    loadChildren: () => import('./features/stores/stores.routes').then((m) => m.STORES_ROUTES),
+  },
   ...ROOT_ROUTES,
   {
     path: 'tienda/:storeId',
