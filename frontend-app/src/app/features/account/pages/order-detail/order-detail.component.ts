@@ -16,12 +16,13 @@ import { catchError } from 'rxjs/operators';
 import { ORDER_REPOSITORY, OrderResponse, OrderTimelineEvent } from '../../../cart/public-api';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent],
+  imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './order-detail.component.html',
 })
 export default class OrderDetailComponent implements OnDestroy {

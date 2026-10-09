@@ -10,7 +10,13 @@
     </div>
 
     @if (loading()) {
-      <div class="flex flex-col gap-4">
+      <div
+        class="flex flex-col gap-4"
+        role="status"
+        aria-live="polite"
+        data-testid="orders-loading"
+      >
+        <span class="sr-only">Cargando pedidos…</span>
         @for (i of [1, 2, 3]; track i) {
           <app-skeleton-loader height="96px" customClass="rounded-2xl" />
         }
