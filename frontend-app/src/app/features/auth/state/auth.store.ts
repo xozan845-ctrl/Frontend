@@ -102,38 +102,6 @@ export const AuthStore = signalStore(
             ),
           ),
         ),
-        refreshSession: rxMethod<void>(
-          pipe(
-            tap(() => patchState(store, { loading: true, error: null })),
-            switchMap(() => {
-              const refreshToken = store.refreshToken();
-              if (!refreshToken) {
-                patchState(store, { loading: false });
-                return EMPTY;
-              }
-              return authService.refresh(refreshToken).pipe(
-                tap((response) => {
-                  patchState(store, {
-                    user: response.user,
-                    token: response.token ?? null,
-                    refreshToken: response.refreshToken ?? refreshToken,
-                    loading: false,
-                  });
-                }),
-                catchError((err: Error) => {
-                  patchState(store, {
-                    user: null,
-                    token: null,
-                    refreshToken: null,
-                    loading: false,
-                    error: err.message || 'La sesión expiró',
-                  });
-                  return EMPTY;
-                }),
-              );
-            }),
-          ),
-        ),
         logout: rxMethod<void>(
           pipe(
             tap(() => patchState(store, { loading: true, error: null })),
@@ -188,8 +156,13 @@ export const AuthStore = signalStore(
               });
               return Boolean(response.token);
             })
-            .catch(() => {
-              patchState(store, { user: null, token: null, refreshToken: null });
+            .catch((err: Error) => {
+              patchState(store, {
+                user: null,
+                token: null,
+                refreshToken: null,
+                error: err?.message || 'La sesión expiró',
+              });
               return false;
             })
             .finally(() => {
@@ -210,7 +183,7 @@ export const AuthStore = signalStore(
         const storedRefresh = sessionStorage.getItem(REFRESH_STORAGE_KEY);
         if (storedRefresh) {
           patchState(store, { refreshToken: storedRefresh });
-          store.refreshSession();
+          void store.refreshTokenOnce();
         }
       } catch (e) {
         console.error('Failed to restore auth session', e);

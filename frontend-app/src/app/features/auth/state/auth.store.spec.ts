@@ -131,9 +131,9 @@ describe('AuthStore', () => {
   it('no debe renovar cuando no hay refresh token en memoria', async () => {
     const store = setup();
 
-    store.refreshSession();
+    const renewed = await store.refreshTokenOnce();
 
-    await vi.waitFor(() => expect(store.loading()).toBe(false));
+    expect(renewed).toBe(false);
     expect(repo.refresh).not.toHaveBeenCalled();
   });
 
