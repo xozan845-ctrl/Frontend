@@ -36,7 +36,14 @@ describe('CartStore', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: CART_REPOSITORY, useValue: repo },
-        { provide: AuthStore, useValue: { isAuthenticated: () => authenticated } },
+        {
+          provide: AuthStore,
+          useValue: {
+            isAuthenticated: () => authenticated,
+            user: () =>
+              authenticated ? { id: 1, email: 'a@a.com', name: 'A', role: 'comprador' } : null,
+          },
+        },
         { provide: NotificationService, useValue: notification },
       ],
     });
@@ -169,7 +176,13 @@ describe('CartStore', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: CART_REPOSITORY, useValue: repo },
-        { provide: AuthStore, useValue: { isAuthenticated: () => true } },
+        {
+          provide: AuthStore,
+          useValue: {
+            isAuthenticated: () => true,
+            user: () => ({ id: 1, email: 'a@a.com', name: 'A', role: 'comprador' }),
+          },
+        },
         { provide: NotificationService, useValue: notification },
       ],
     });

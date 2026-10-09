@@ -102,9 +102,12 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: 'Demo' });
 
     await fixture.componentInstance.createStore();
+    fixture.detectChanges();
 
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });
     expect(fixture.componentInstance.wizard.step()).toBe(3);
+    // Al entrar al paso 3 se carga el catálogo automáticamente.
+    await vi.waitFor(() => expect(repo.listCatalog).toHaveBeenCalled());
   });
 
   it('debe navegar a la tienda en el paso final', async () => {
