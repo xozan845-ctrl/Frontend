@@ -54,6 +54,37 @@ describe('order.adapter', () => {
 
       expect(order.total).toBe(42);
     });
+
+    it('debe usar _id y derivar el orderNumber cuando faltan', () => {
+      const order = adaptOrderResponse({ _id: 'abcdef123' }, 0);
+
+      expect(order.id).toBe('abcdef123');
+      expect(order.orderNumber).toMatch(/^ORD-/);
+    });
+
+    it('debe mapear items en camelCase con unit_price y storeId', () => {
+      const order = adaptOrderResponse(
+        {
+          id: 'o-1',
+          items: [{ ofertaId: 'of-9', quantity: 2, unit_price: '12.5', storeId: 't-9' }],
+        },
+        0,
+      );
+
+      expect(order.items?.[0]).toMatchObject({
+        ofertaId: 'of-9',
+        quantity: 2,
+        unitPrice: 12.5,
+        storeId: 't-9',
+      });
+    });
+
+    it('debe mapear precio_unitario (sin centavos) y dejar items indefinidos', () => {
+      expect(
+        adaptOrderResponse({ id: 'o-1', items: [{ precio_unitario: 30 }] }, 0).items?.[0].unitPrice,
+      ).toBe(30);
+      expect(adaptOrderResponse({ id: 'o-1' }, 0).items).toBeUndefined();
+    });
   });
 
   describe('generateMockOrderResponse', () => {
@@ -87,6 +118,16 @@ describe('order.adapter', () => {
 
     it('debe tolerar respuestas no válidas', () => {
       expect(adaptOrderTimelineFromBackend(null)).toEqual([]);
+    });
+
+    it('debe mapear camelCase y tolerar entradas nulas', () => {
+      const timeline = adaptOrderTimelineFromBackend([
+        { id: '5', type: 'x', createdAt: '2026' },
+        null,
+      ]);
+
+      expect(timeline[0]).toMatchObject({ id: 5, type: 'x', version: 0, createdAt: '2026' });
+      expect(timeline[1]).toMatchObject({ id: 0, type: 'evento', version: 0 });
     });
   });
 });
