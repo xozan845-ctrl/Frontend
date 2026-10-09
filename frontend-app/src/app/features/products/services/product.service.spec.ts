@@ -118,6 +118,20 @@ describe('ProductService', () => {
     expect(result?.products[0]).toMatchObject({ name: 'Teclado', category: 'General' });
   });
 
+  it('debe traducir el error del storefront a un mensaje de dominio', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.getStorefront('tienda-1').subscribe({ error: (err: Error) => (error = err) });
+
+    const storefront = httpMock.expectOne('https://api.test/tiendas/tienda-1');
+    httpMock.expectOne('https://api.test/catalog/productos').flush({ items: [] });
+    storefront.flush({ mensaje: 'Tienda no encontrada' }, { status: 404, statusText: 'Not Found' });
+
+    expect(error?.message).toBe('Tienda no encontrada');
+  });
+
   it('debe usar los mocks cuando dataSource es mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();

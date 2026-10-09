@@ -1,6 +1,11 @@
 import { Product } from '../models/product.model';
 import { Store } from '../models/store.model';
-import { BackendProductDTO } from '../models/product.dto';
+import {
+  BackendProductDTO,
+  BackendOfertaDTO,
+  BackendTiendaDTO,
+  BackendStorefrontDTO,
+} from '../models/product.dto';
 import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
@@ -133,29 +138,29 @@ export function adaptOfertaListFromBackend(
   response: unknown,
   catalog?: Map<string, CatalogEntry>,
 ): Product[] {
-  if (!response || typeof response !== 'object') return [];
-  const ofertas = (response as Record<string, unknown>)['ofertas'];
+  const storefront = (response ?? {}) as BackendStorefrontDTO;
+  const ofertas = storefront.ofertas;
   if (!Array.isArray(ofertas)) return [];
   return ofertas.map((oferta) => adaptOfertaFromBackend(oferta, catalog));
 }
 
 export function adaptOfertaFromBackend(raw: unknown, catalog?: Map<string, CatalogEntry>): Product {
-  const oferta = (raw ?? {}) as Record<string, unknown>;
-  const rawPrice = oferta['precio_venta'] ?? oferta['precio_base'] ?? 0;
+  const oferta = (raw ?? {}) as BackendOfertaDTO;
+  const rawPrice = oferta.precio_venta ?? oferta.precio_base ?? 0;
   const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(String(rawPrice)) || 0;
-  const sku = typeof oferta['sku'] === 'string' ? oferta['sku'] : '';
+  const sku = typeof oferta.sku === 'string' ? oferta.sku : '';
 
   const entry =
-    catalog?.get(String(oferta['producto_id'] ?? '')) ?? (sku ? catalog?.get(sku) : undefined);
+    catalog?.get(String(oferta.producto_id ?? '')) ?? (sku ? catalog?.get(sku) : undefined);
 
   return {
-    id: (oferta['id'] ?? `of-${Date.now()}`) as string | number,
-    name: typeof oferta['producto_nombre'] === 'string' ? oferta['producto_nombre'] : 'Producto',
+    id: (oferta.id ?? `of-${Date.now()}`) as string | number,
+    name: typeof oferta.producto_nombre === 'string' ? oferta.producto_nombre : 'Producto',
     description: entry?.description || (sku ? `SKU ${sku}` : ''),
     price,
     imageUrl: DEFAULT_FALLBACK_IMAGE,
     category: entry?.category || 'General',
-    stock: Number(oferta['stock'] ?? 0),
+    stock: Number(oferta.stock ?? 0),
   };
 }
 
@@ -173,15 +178,13 @@ export function buildCatalogLookup(response: unknown): Map<string, CatalogEntry>
   const lookup = new Map<string, CatalogEntry>();
   for (const raw of unwrapApiListResponse(response)) {
     if (!raw || typeof raw !== 'object') continue;
-    const producto = raw as Record<string, unknown>;
+    const producto = raw as BackendProductDTO;
     const entry: CatalogEntry = {
-      description: typeof producto['descripcion'] === 'string' ? producto['descripcion'] : '',
+      description: typeof producto.descripcion === 'string' ? producto.descripcion : '',
       category:
-        typeof producto['categoria'] === 'string' && producto['categoria']
-          ? producto['categoria']
-          : '',
+        typeof producto.categoria === 'string' && producto.categoria ? producto.categoria : '',
     };
-    for (const key of [producto['id'], producto['_id'], producto['sku']]) {
+    for (const key of [producto.id, producto._id, producto.sku]) {
       if (key !== undefined && key !== null && key !== '') {
         lookup.set(String(key), entry);
       }
@@ -196,15 +199,15 @@ export function buildCatalogLookup(response: unknown): Map<string, CatalogEntry>
  */
 export function adaptStoreFromBackend(raw: unknown): Store | null {
   if (!raw || typeof raw !== 'object') return null;
-  const tienda = raw as Record<string, unknown>;
-  const id = tienda['id'];
+  const tienda = raw as BackendTiendaDTO;
+  const id = tienda.id;
   if (id === null || id === undefined || id === '') return null;
 
   return {
     id: String(id),
-    vendorId: String(tienda['vendedor_id'] ?? tienda['vendorId'] ?? ''),
-    name: typeof tienda['nombre'] === 'string' ? tienda['nombre'] : 'Tienda',
-    description: typeof tienda['descripcion'] === 'string' ? tienda['descripcion'] : '',
+    vendorId: String(tienda.vendedor_id ?? tienda.vendorId ?? ''),
+    name: typeof tienda.nombre === 'string' ? tienda.nombre : 'Tienda',
+    description: typeof tienda.descripcion === 'string' ? tienda.descripcion : '',
   };
 }
 
@@ -220,13 +223,10 @@ export function adaptStorefrontFromBackend(
   products: Product[];
 } {
   const catalog = catalogResponse ? buildCatalogLookup(catalogResponse) : undefined;
-  const tienda =
-    response && typeof response === 'object'
-      ? (response as Record<string, unknown>)['tienda']
-      : undefined;
+  const storefront = (response ?? {}) as BackendStorefrontDTO;
 
   return {
-    store: adaptStoreFromBackend(tienda),
+    store: adaptStoreFromBackend(storefront.tienda),
     products: adaptOfertaListFromBackend(response, catalog),
   };
 }

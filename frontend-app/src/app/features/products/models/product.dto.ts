@@ -58,3 +58,30 @@ export interface BackendProductDTO {
     specs?: string[];
   };
 }
+
+/** Oferta de Core Engine (`GET /tiendas/:id` → `ofertas[]`). Tolerante a `snake_case`. */
+export interface BackendOfertaDTO {
+  id?: string | number | null;
+  producto_id?: string | number | null;
+  producto_nombre?: string;
+  precio_venta?: number | string | null;
+  precio_base?: number | string | null;
+  stock?: number | string | null;
+  sku?: string;
+  tienda_id?: string | number | null;
+}
+
+/** Tienda de Core Engine dentro del storefront (`tienda`). */
+export interface BackendTiendaDTO {
+  id?: string | number | null;
+  vendedor_id?: string | number | null;
+  vendorId?: string | number | null;
+  nombre?: string;
+  descripcion?: string;
+}
+
+/** Respuesta del storefront (`GET /tiendas/:id`). */
+export interface BackendStorefrontDTO {
+  tienda?: BackendTiendaDTO | null;
+  ofertas?: BackendOfertaDTO[];
+}
