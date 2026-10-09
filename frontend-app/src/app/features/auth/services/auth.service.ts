@@ -33,7 +33,12 @@ export class AuthService implements AuthRepository {
         correo: credentials.email,
         contrasena: credentials.password,
       })
-      .pipe(map((res) => adaptAuthResponseFromBackend(res, credentials.email)));
+      .pipe(
+        map((res) => adaptAuthResponseFromBackend(res, credentials.email)),
+        catchError((error) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo iniciar sesión.'))),
+        ),
+      );
   }
 
   register(userData: RegisterData): Observable<AuthResponse> {
@@ -55,7 +60,12 @@ export class AuthService implements AuthRepository {
         contrasena: userData.password,
         rol: userData.role === 'seller' ? 'vendedor' : 'comprador',
       })
-      .pipe(map((res) => adaptAuthResponseFromBackend(res, userData.email)));
+      .pipe(
+        map((res) => adaptAuthResponseFromBackend(res, userData.email)),
+        catchError((error) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo registrar la cuenta.'))),
+        ),
+      );
   }
 
   /**
@@ -75,9 +85,12 @@ export class AuthService implements AuthRepository {
       );
     }
 
-    return this.http
-      .post<unknown>(`${this.apiUrl}/logout`, { refresh_token: refreshToken })
-      .pipe(map(() => true));
+    return this.http.post<unknown>(`${this.apiUrl}/logout`, { refresh_token: refreshToken }).pipe(
+      map(() => true),
+      catchError((error) =>
+        throwError(() => new Error(toUserMessage(error, 'No se pudo cerrar sesión.'))),
+      ),
+    );
   }
 
   /** Perfil de la sesión actual (`GET /auth/me` → `{user_id,email,rol}`). */
@@ -117,9 +130,14 @@ export class AuthService implements AuthRepository {
       );
     }
 
-    return this.http
-      .post<unknown>(`${this.apiUrl}/restablecer-contrasena`, { correo: email })
-      .pipe(map(() => true));
+    return this.http.post<unknown>(`${this.apiUrl}/restablecer-contrasena`, { correo: email }).pipe(
+      map(() => true),
+      catchError((error) =>
+        throwError(
+          () => new Error(toUserMessage(error, 'No se pudo solicitar el restablecimiento.')),
+        ),
+      ),
+    );
   }
 
   /**
