@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import CreateStoreComponent from './create-store.component';
 import { StoreWizardStore } from '../../state/store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
+import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -102,7 +103,8 @@ describe('CreateStoreComponent', () => {
     expect(repo.createStore).not.toHaveBeenCalled();
   });
 
-  it('debe crear la tienda y avanzar al paso de productos', async () => {
+  // regression: 71 — al crear la tienda se entra al paso 3 y se carga el catálogo.
+  it('debe cargar el catálogo cuando crea la tienda y avanza al paso de productos', async () => {
     const fixture = await setup();
     fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: 'Demo' });
 
@@ -110,8 +112,22 @@ describe('CreateStoreComponent', () => {
     await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(3));
 
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });
-    // Al entrar al paso 3 se carga el catálogo automáticamente.
     expect(catalogRepo.listCatalog).toHaveBeenCalled();
+  });
+
+  it('debe mostrar el estado de carga del catálogo mientras se cargan los productos', async () => {
+    const pending = new Subject<CatalogProductOption[]>();
+    const fixture = await setup();
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(pending);
+    fixture.componentInstance.wizard.goToProductsStep();
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[data-testid="catalog-loading"]'),
+    ).not.toBeNull();
+
+    pending.next([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }]);
+    pending.complete();
   });
 
   it('debe navegar a la tienda en el paso final', async () => {

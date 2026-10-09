@@ -63,6 +63,30 @@ describe('CatalogService', () => {
     expect(error?.message).toContain('No pudimos conectar con el servidor');
   });
 
+  it('debe devolver un arreglo vacío cuando la respuesta no trae productos', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let options: unknown[] | undefined;
+
+    service.listCatalog().subscribe((catalog) => (options = catalog));
+    httpMock.expectOne('https://api.test/catalog/productos').flush({});
+
+    expect(options).toEqual([]);
+  });
+
+  it('debe degradar con el fallback cuando el servidor responde 500', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.listCatalog().subscribe({ error: (err: Error) => (error = err) });
+    httpMock
+      .expectOne('https://api.test/catalog/productos')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo cargar el catálogo.');
+  });
+
   it('debe emitir un error cuando no hay apiUrl configurada', () => {
     environment.apiUrl = '';
     build();
