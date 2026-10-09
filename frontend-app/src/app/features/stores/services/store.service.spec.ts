@@ -92,6 +92,49 @@ describe('StoreService', () => {
     httpMock.expectNone(() => true);
   });
 
+  it('debe traducir el 409 a un mensaje de negocio (tienda ya existente)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.createStore({ name: 'X', description: '' }).subscribe({
+      error: (err: Error) => (error = err),
+    });
+    httpMock
+      .expectOne('https://api.test/vendedores/tienda')
+      .flush({}, { status: 409, statusText: 'Conflict' });
+
+    expect(error?.message).toBe('Ya tienes una tienda creada.');
+  });
+
+  it('debe traducir el 403 (rol no vendedor) a un mensaje de negocio', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.createStore({ name: 'X', description: '' }).subscribe({
+      error: (err: Error) => (error = err),
+    });
+    httpMock
+      .expectOne('https://api.test/vendedores/tienda')
+      .flush({}, { status: 403, statusText: 'Forbidden' });
+
+    expect(error?.message).toBe('Necesitas una cuenta de vendedor para esta acción.');
+  });
+
+  it('debe traducir un fallo de red (status 0) a un mensaje de negocio', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.listCatalog().subscribe({ error: (err: Error) => (error = err) });
+    httpMock
+      .expectOne('https://api.test/catalog/productos')
+      .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
+
+    expect(error?.message).toContain('No pudimos conectar con el servidor');
+  });
+
   it('debe emitir un error cuando no hay apiUrl configurada', () => {
     environment.apiUrl = '';
     build();

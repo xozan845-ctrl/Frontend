@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import CreateStoreComponent from './create-store.component';
 import { StoreWizardStore } from '../../state/store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
@@ -128,5 +128,60 @@ describe('CreateStoreComponent', () => {
 
     expect(repo.publishOffer).not.toHaveBeenCalled();
     expect(fixture.componentInstance.wizard.step()).toBe(4);
+  });
+
+  it('debe exponer hasSelection como derivado al seleccionar un producto', async () => {
+    const fixture = await setup();
+    fixture.componentInstance.wizard.setStep(3);
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.componentInstance.productRows.length).toBe(1));
+    expect(fixture.componentInstance.hasSelection()).toBe(false);
+
+    fixture.componentInstance.toggleRow(0);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.hasSelection()).toBe(true);
+  });
+
+  it('debe mostrar el estado de error del catálogo con reintento', async () => {
+    const fixture = await setup();
+    vi.mocked(repo.listCatalog).mockReturnValue(throwError(() => new Error('boom')));
+    fixture.componentInstance.wizard.setStep(3);
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.error()).toBe('boom'));
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'No pudimos cargar el catálogo',
+    );
+
+    vi.mocked(repo.listCatalog).mockClear();
+    fixture.componentInstance.retryCatalog();
+    expect(repo.listCatalog).toHaveBeenCalled();
+  });
+
+  it('debe mostrar el error al crear la tienda con reintento', async () => {
+    const fixture = await setup();
+    vi.mocked(repo.createStore).mockReturnValue(
+      throwError(() => new Error('No se pudo crear la tienda.')),
+    );
+    fixture.componentInstance.wizard.setStep(2);
+    fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: '' });
+    fixture.detectChanges();
+
+    await fixture.componentInstance.createStore();
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'No se pudo crear la tienda.',
+    );
+  });
+
+  it('debe restaurar el SEO al destruirse', async () => {
+    const fixture = await setup();
+
+    fixture.destroy();
+
+    expect(seo.reset).toHaveBeenCalled();
   });
 });

@@ -1,19 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import StoreEntryComponent from './store-entry.component';
+import { SeoService } from '../../../../core/services/seo.service';
 
 describe('StoreEntryComponent', () => {
+  const seo = { setPage: vi.fn(), reset: vi.fn() };
+
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [StoreEntryComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: SeoService, useValue: seo }],
     }).compileComponents();
     const fixture = TestBed.createComponent(StoreEntryComponent);
     fixture.detectChanges();
     return fixture;
   };
 
-  beforeEach(() => TestBed.resetTestingModule());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    TestBed.resetTestingModule();
+  });
 
   it('debe navegar al asistente al pulsar "Crear mi tienda"', async () => {
     const fixture = await setup();
@@ -34,5 +40,19 @@ describe('StoreEntryComponent', () => {
     fixture.componentInstance.goToStore('t-1');
 
     expect(navigate).toHaveBeenCalledWith(['/tienda', 't-1', 'shop']);
+  });
+
+  it('debe actualizar el SEO al entrar', async () => {
+    await setup();
+
+    expect(seo.setPage).toHaveBeenCalled();
+  });
+
+  it('debe restaurar el SEO al salir', async () => {
+    const fixture = await setup();
+
+    fixture.destroy();
+
+    expect(seo.reset).toHaveBeenCalled();
   });
 });

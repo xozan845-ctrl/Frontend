@@ -44,6 +44,9 @@ export class StoreService implements StoreRepository {
           if (!store) throw new Error('No se pudo interpretar la tienda creada.');
           return store;
         }),
+        catchError((error: unknown) =>
+          throwError(() => new Error(this.toUserMessage(error, 'No se pudo crear la tienda.'))),
+        ),
       );
   }
 
@@ -53,9 +56,12 @@ export class StoreService implements StoreRepository {
 
     return this.http.get<unknown>(`${environment.apiUrl}${this.vendorEndpoint}/me/tienda`).pipe(
       map((response) => adaptStoreFromBackend(response)),
-      catchError((error: HttpErrorResponse) =>
-        error.status === 404 ? of<Store | null>(null) : throwError(() => error),
-      ),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) return of<Store | null>(null);
+        return throwError(
+          () => new Error(this.toUserMessage(error, 'No se pudo cargar tu tienda.')),
+        );
+      }),
     );
   }
 
@@ -63,9 +69,12 @@ export class StoreService implements StoreRepository {
     if (this.isMock()) return of(MOCK_CATALOG).pipe(delay(300));
     if (!environment.apiUrl) return this.missingApiUrl();
 
-    return this.http
-      .get<unknown>(`${environment.apiUrl}${this.catalogEndpoint}`)
-      .pipe(map((response) => adaptCatalogOptionsFromBackend(response)));
+    return this.http.get<unknown>(`${environment.apiUrl}${this.catalogEndpoint}`).pipe(
+      map((response) => adaptCatalogOptionsFromBackend(response)),
+      catchError((error: unknown) =>
+        throwError(() => new Error(this.toUserMessage(error, 'No se pudo cargar el catálogo.'))),
+      ),
+    );
   }
 
   publishOffer(offer: OfferDraft): Observable<void> {
@@ -77,11 +86,37 @@ export class StoreService implements StoreRepository {
         producto_id: offer.productId,
         margen: offer.margin,
       })
-      .pipe(map(() => undefined));
+      .pipe(
+        map(() => undefined),
+        catchError((error: unknown) =>
+          throwError(
+            () => new Error(this.toUserMessage(error, 'No se pudo publicar el producto.')),
+          ),
+        ),
+      );
   }
 
   private isMock(): boolean {
     return environment.apiConfig?.dataSource === 'mock';
+  }
+
+  /** Traduce errores técnicos (HTTP) a un mensaje de dominio para el usuario (`R-AR-9`, `R-UX-4`). */
+  private toUserMessage(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) {
+      switch (error.status) {
+        case 0:
+          return 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.';
+        case 400:
+          return 'Revisa los datos e inténtalo de nuevo.';
+        case 403:
+          return 'Necesitas una cuenta de vendedor para esta acción.';
+        case 409:
+          return 'Ya tienes una tienda creada.';
+        default:
+          return fallback;
+      }
+    }
+    return (error as Error)?.message || fallback;
   }
 
   private missingApiUrl<T>(): Observable<T> {
