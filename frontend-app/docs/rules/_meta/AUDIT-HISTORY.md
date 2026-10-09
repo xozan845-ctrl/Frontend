@@ -192,3 +192,31 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 7 — Storefront multi-tienda, alta de tienda y cierre de hallazgos (2026-10-09)
+
+- **Alcance:** auditoría del módulo `stores` (crear tienda) y corrección de
+  **todos** sus hallazgos por etapas (PRs atómicas #73–#77).
+- **Cambios:**
+  - `fix(stores)` estados de error/carga con reintento, SEO (`reset`) y errores
+    HTTP traducidos a dominio (R-UX-1/4/6, R-AR-9).
+  - `refactor(stores)` DTOs `Backend...DTO`, puertos `StoreRepository` y
+    `CatalogRepository` (ISP), `rxMethod` y métodos con nombre de dominio
+    (R-NC-9, R-SO-1/4, R-ST-5, R-CX-3/5).
+  - `test(stores,cart)` shapes de adapter, boundaries, regresiones marcadas
+    (`regression: 71`) y edge cases 500/409/respuesta malformada
+    (R-U-5, R-RB-1, R-U-9, R-REG-1/3, R-QA-4).
+  - `docs`/`perf`: README y rutas al día (ADR-17, R-NC-12), ID E2E `R-E-15`,
+    `stores` con `loadChildren`, mocks fuera del bundle inicial
+    (R-LZ-1, R-PF-1) y ratchet de cobertura (R-COV-1).
+- **Resultado:**
+  - ✅ `npm run build` — initial **498.40 kB** (< 500 kB); SW generado.
+  - ✅ `npm test` — **67 archivos / 359 tests**; cobertura **90.15 / 82.52 / 92.19 / 91.33**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 9/9**.
+  - ✅ CI 6/6 jobs requeridos en verde; release `v1.12.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna en frontend (quedan límites del backend: sin directorio
+  público de tiendas, sin imágenes de producto y CORS en producción).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
