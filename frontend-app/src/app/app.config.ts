@@ -11,6 +11,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { RuntimeConfigService } from './core/config/runtime-config.service';
 import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
+import { aiScraperAuthInterceptor } from './features/ai-scraper/interceptors/ai-scraper-auth.interceptor';
 import { PRODUCT_REPOSITORY } from './features/products/repositories/product.repository';
 import { ProductService } from './features/products/services/product.service';
 import { ORDER_REPOSITORY } from './features/cart/repositories/order.repository';
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, aiScraperAuthInterceptor])),
     // Configuración de despliegue en runtime (`/config.json`) antes de crear
     // los servicios que leen `environment` (R-AR-11, R-CD-4).
     provideAppInitializer(() => inject(RuntimeConfigService).load()),
