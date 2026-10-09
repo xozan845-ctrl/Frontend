@@ -52,4 +52,49 @@ describe('ReviewsStore', () => {
     expect(added.id).toMatch(/^r-/);
     expect(() => new Date(added.date).toISOString()).not.toThrow();
   });
+
+  it('debe restaurar las reseñas guardadas en localStorage', () => {
+    const saved = [
+      {
+        id: 'r-1',
+        productId: 9,
+        authorName: 'Ana',
+        rating: 5,
+        comment: 'x',
+        date: '2026-01-01',
+      },
+    ];
+    localStorage.setItem('ecom_reviews', JSON.stringify(saved));
+
+    const store = TestBed.inject(ReviewsStore);
+
+    expect(store.reviews()).toEqual(saved);
+  });
+
+  it('debe persistir las reseñas en localStorage', async () => {
+    const store = TestBed.inject(ReviewsStore);
+
+    store.addReview({ productId: 3, authorName: 'Luis', rating: 5, comment: 'Excelente' });
+
+    await vi.waitFor(() => {
+      const stored = JSON.parse(localStorage.getItem('ecom_reviews') ?? '[]');
+      expect(stored.some((r: { authorName: string }) => r.authorName === 'Luis')).toBe(true);
+    });
+  });
+
+  it('debe usar las reseñas de ejemplo cuando el localStorage está corrupto', () => {
+    localStorage.setItem('ecom_reviews', '{no-json');
+
+    const store = TestBed.inject(ReviewsStore);
+
+    expect(store.reviews()).toEqual(MOCK_REVIEWS);
+  });
+
+  it('debe usar las reseñas de ejemplo cuando el localStorage no es un arreglo', () => {
+    localStorage.setItem('ecom_reviews', '{"no":"array"}');
+
+    const store = TestBed.inject(ReviewsStore);
+
+    expect(store.reviews()).toEqual(MOCK_REVIEWS);
+  });
 });
