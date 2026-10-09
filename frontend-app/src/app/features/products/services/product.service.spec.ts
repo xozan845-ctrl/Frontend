@@ -118,13 +118,14 @@ describe('ProductService', () => {
     expect(result?.products[0]).toMatchObject({ name: 'Teclado', category: 'General' });
   });
 
-  it('debe usar los mocks cuando dataSource es mock', () => {
+  it('debe usar los mocks cuando dataSource es mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
     let result: Storefront | undefined;
 
     service.getStorefront('cualquiera').subscribe((storefront) => (result = storefront));
 
+    await vi.waitFor(() => expect(result).toBeDefined());
     expect(result?.store).toEqual(MOCK_STORE);
     expect(result?.products).toEqual(MOCK_PRODUCTS);
   });

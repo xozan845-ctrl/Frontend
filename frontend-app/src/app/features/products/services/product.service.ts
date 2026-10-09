@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError, forkJoin } from 'rxjs';
+import { Observable, of, throwError, forkJoin, from } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { MOCK_PRODUCTS, MOCK_STORE } from '../mocks/product.mock';
 import { adaptStorefrontFromBackend } from '../adapters/product.adapter';
 import { ProductRepository, Storefront } from '../repositories/product.repository';
 
@@ -26,7 +25,11 @@ export class ProductService implements ProductRepository {
    */
   getStorefront(storeId: string): Observable<Storefront> {
     if (environment.apiConfig?.dataSource === 'mock') {
-      return of({ store: MOCK_STORE, products: MOCK_PRODUCTS });
+      // Los datos de prueba se cargan con un `import()` dinámico: no forman
+      // parte del bundle inicial en producción (R-PF-1).
+      return from(import('../mocks/product.mock')).pipe(
+        map(({ MOCK_STORE, MOCK_PRODUCTS }) => ({ store: MOCK_STORE, products: MOCK_PRODUCTS })),
+      );
     }
 
     if (!environment.apiUrl) {
