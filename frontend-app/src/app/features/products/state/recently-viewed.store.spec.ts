@@ -64,4 +64,38 @@ describe('RecentlyViewedStore', () => {
 
     expect(store.products()).toEqual([]);
   });
+
+  it('debe restaurar los productos vistos desde localStorage', () => {
+    localStorage.setItem('ecom_recently_viewed', JSON.stringify([product(7)]));
+
+    const store = TestBed.inject(RecentlyViewedStore);
+
+    expect(store.products().map((p) => p.id)).toEqual([7]);
+  });
+
+  it('debe persistir los productos vistos en localStorage', async () => {
+    const store = TestBed.inject(RecentlyViewedStore);
+
+    store.addProduct(product(3));
+
+    await vi.waitFor(() =>
+      expect(JSON.parse(localStorage.getItem('ecom_recently_viewed') ?? '[]')).toHaveLength(1),
+    );
+  });
+
+  it('debe ignorar un localStorage con JSON corrupto', () => {
+    localStorage.setItem('ecom_recently_viewed', '{no-json');
+
+    const store = TestBed.inject(RecentlyViewedStore);
+
+    expect(store.products()).toEqual([]);
+  });
+
+  it('debe ignorar un localStorage que no es un arreglo', () => {
+    localStorage.setItem('ecom_recently_viewed', '{"no":"array"}');
+
+    const store = TestBed.inject(RecentlyViewedStore);
+
+    expect(store.products()).toEqual([]);
+  });
 });

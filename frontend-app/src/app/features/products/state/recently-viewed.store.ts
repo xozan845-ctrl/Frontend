@@ -28,18 +28,20 @@ export const RecentlyViewedStore = signalStore(
       try {
         const stored = localStorage.getItem(RECENTLY_VIEWED_KEY);
         if (stored) {
-          patchState(store, { products: JSON.parse(stored) as Product[] });
+          const parsed = JSON.parse(stored);
+          // Solo se acepta un arreglo; cualquier otro shape se ignora (R-RB-4).
+          if (Array.isArray(parsed)) patchState(store, { products: parsed as Product[] });
         }
-      } catch (e) {
-        console.error('Failed to load recently viewed from localStorage', e);
+      } catch {
+        // JSON corrupto o storage no disponible: se arranca vacío (R-RB-4).
       }
 
       effect(() => {
         const products = store.products();
         try {
           localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(products));
-        } catch (e) {
-          console.error('Failed to save recently viewed to localStorage', e);
+        } catch {
+          // Storage no disponible: se ignora.
         }
       });
     },

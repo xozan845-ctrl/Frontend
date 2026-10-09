@@ -41,13 +41,16 @@ export const ReviewsStore = signalStore(
       try {
         const stored = localStorage.getItem(REVIEWS_KEY);
         if (stored) {
-          const parsed = JSON.parse(stored) as Review[];
-          patchState(store, { reviews: parsed.length > 0 ? parsed : MOCK_REVIEWS });
+          const parsed = JSON.parse(stored);
+          // Solo se acepta un arreglo no vacío (R-RB-4).
+          patchState(store, {
+            reviews: Array.isArray(parsed) && parsed.length > 0 ? parsed : MOCK_REVIEWS,
+          });
         } else {
           patchState(store, { reviews: MOCK_REVIEWS });
         }
-      } catch (e) {
-        console.error('Failed to load reviews from localStorage', e);
+      } catch {
+        // JSON corrupto o storage no disponible: se usan las de ejemplo (R-RB-4).
         patchState(store, { reviews: MOCK_REVIEWS });
       }
 
@@ -56,8 +59,8 @@ export const ReviewsStore = signalStore(
         const reviews = store.reviews();
         try {
           localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
-        } catch (e) {
-          console.error('Failed to save reviews to localStorage', e);
+        } catch {
+          // Storage no disponible: se ignora.
         }
       });
     },
