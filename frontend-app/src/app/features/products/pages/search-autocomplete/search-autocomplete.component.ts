@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 import { ProductStore } from '../../state/product.store';
 import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
@@ -24,7 +25,7 @@ interface HighlightPart {
 @Component({
   selector: 'app-search-autocomplete',
   standalone: true,
-  imports: [RouterLink, AppCurrencyPipe],
+  imports: [RouterLink, NgOptimizedImage, AppCurrencyPipe],
   templateUrl: './search-autocomplete.component.html',
   styleUrl: './search-autocomplete.component.css',
 })

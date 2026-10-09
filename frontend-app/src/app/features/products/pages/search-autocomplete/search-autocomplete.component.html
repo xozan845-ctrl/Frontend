@@ -17,6 +17,7 @@
       placeholder="Buscar productos, categorías..."
       autocomplete="off"
       role="combobox"
+      data-testid="search-input"
       [attr.aria-expanded]="isOpen()"
       aria-controls="search-dropdown"
       aria-haspopup="listbox"
@@ -28,7 +29,7 @@
         class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
         aria-label="Limpiar búsqueda"
       >
-        <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
     }
   </div>
@@ -50,7 +51,7 @@
           <p
             class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-2"
           >
-            <i class="fa-solid fa-tag"></i> Categorías
+            <i class="fa-solid fa-tag" aria-hidden="true"></i> Categorías
           </p>
           <div class="flex flex-wrap gap-2">
             @for (cat of matchedCategories(); track cat) {
@@ -59,6 +60,7 @@
                 class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-surface-700 border border-slate-200 dark:border-surface-600 text-slate-600 dark:text-slate-300 hover:bg-accent-600 hover:text-white hover:border-accent-600 transition-all"
                 role="option"
                 aria-selected="false"
+                data-testid="search-category"
               >
                 {{ cat }}
               </button>
@@ -74,7 +76,7 @@
           <p
             class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 flex items-center gap-2"
           >
-            <i class="fa-solid fa-box"></i> Productos
+            <i class="fa-solid fa-box" aria-hidden="true"></i> Productos
           </p>
           <div class="flex flex-col gap-1">
             @for (item of highlightedProducts(); track item.product.id; let i = $index) {
@@ -83,6 +85,7 @@
                 (click)="close()"
                 role="option"
                 [attr.aria-selected]="focusedIndex() === i"
+                data-testid="search-option"
                 [class.bg-slate-50]="focusedIndex() === i"
                 [class.dark:bg-surface-700]="focusedIndex() === i"
                 class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors group cursor-pointer"
@@ -91,7 +94,8 @@
                   class="w-10 h-10 bg-slate-100 dark:bg-surface-900 rounded-lg overflow-hidden shrink-0 flex items-center justify-center relative"
                 >
                   <img
-                    [src]="item.product.imageUrl"
+                    [ngSrc]="item.product.imageUrl"
+                    fill
                     [alt]="item.product.name"
                     class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal p-1"
                     (error)="$any($event.target).classList.add('img-error')"
@@ -100,7 +104,10 @@
                     class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-900"
                     style="display: none"
                   >
-                    <i class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-xs"></i>
+                    <i
+                      class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-xs"
+                      aria-hidden="true"
+                    ></i>
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
