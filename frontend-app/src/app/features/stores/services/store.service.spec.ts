@@ -57,19 +57,6 @@ describe('StoreService', () => {
     expect(result).toBeNull();
   });
 
-  it('debe listar el catálogo (GET /catalog/productos)', () => {
-    environment.apiUrl = 'https://api.test';
-    build();
-    let result: unknown[] | undefined;
-
-    service.listCatalog().subscribe((options) => (result = options));
-    httpMock
-      .expectOne('https://api.test/catalog/productos')
-      .flush({ items: [{ id: 'p-1', nombre: 'Teclado', sku: 'SKU-1' }] });
-
-    expect(result).toEqual([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }]);
-  });
-
   it('debe publicar una oferta (POST /vendedores/productos)', () => {
     environment.apiUrl = 'https://api.test';
     build();
@@ -127,9 +114,11 @@ describe('StoreService', () => {
     build();
     let error: Error | undefined;
 
-    service.listCatalog().subscribe({ error: (err: Error) => (error = err) });
+    service.createStore({ name: 'X', description: '' }).subscribe({
+      error: (err: Error) => (error = err),
+    });
     httpMock
-      .expectOne('https://api.test/catalog/productos')
+      .expectOne('https://api.test/vendedores/tienda')
       .error(new ProgressEvent('error'), { status: 0, statusText: 'Unknown Error' });
 
     expect(error?.message).toContain('No pudimos conectar con el servidor');

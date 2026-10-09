@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { StoreWizardStore } from './store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../repositories/store.repository';
+import { CATALOG_REPOSITORY, CatalogRepository } from '../repositories/catalog.repository';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Store } from '../../products/public-api';
 
@@ -9,19 +10,23 @@ const store: Store = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', descriptio
 
 describe('StoreWizardStore', () => {
   let repo: StoreRepository;
+  let catalogRepo: CatalogRepository;
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
   const setup = () => {
     repo = {
       createStore: vi.fn(() => of(store)),
       getMyStore: vi.fn(() => of(null)),
-      listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
       publishOffer: vi.fn(() => of(undefined)),
+    };
+    catalogRepo = {
+      listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
     };
     TestBed.configureTestingModule({
       providers: [
         StoreWizardStore,
         { provide: STORE_REPOSITORY, useValue: repo },
+        { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: NotificationService, useValue: notification },
       ],
     });
@@ -44,11 +49,12 @@ describe('StoreWizardStore', () => {
   it('debe navegar entre pasos y resetear', () => {
     const wizard = setup();
 
-    wizard.next();
+    wizard.goToStoreStep();
     expect(wizard.step()).toBe(2);
-    wizard.back();
-    expect(wizard.step()).toBe(1);
-    wizard.setStep(3);
+    wizard.goToProductsStep();
+    expect(wizard.step()).toBe(3);
+    wizard.goBack();
+    expect(wizard.step()).toBe(2);
     wizard.reset();
 
     expect(wizard.step()).toBe(1);
@@ -58,57 +64,55 @@ describe('StoreWizardStore', () => {
   it('debe crear la tienda y avanzar al paso de productos', async () => {
     const wizard = setup();
 
-    const ok = await wizard.createStore({ name: 'Mi Tienda', description: '' });
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.step()).toBe(3));
 
-    expect(ok).toBe(true);
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: '' });
     expect(wizard.store()).toEqual(store);
-    expect(wizard.step()).toBe(3);
     expect(notification.showSuccess).toHaveBeenCalled();
   });
 
   it('debe registrar el error al crear la tienda', async () => {
     const wizard = setup();
     vi.mocked(repo.createStore).mockReturnValue(throwError(() => new Error('boom')));
+    wizard.goToStoreStep();
 
-    const ok = await wizard.createStore({ name: 'X', description: '' });
+    wizard.createStore({ name: 'X', description: '' });
+    await vi.waitFor(() => expect(wizard.error()).toBe('boom'));
 
-    expect(ok).toBe(false);
-    expect(wizard.error()).toBe('boom');
+    expect(wizard.step()).toBe(2);
     expect(notification.showError).toHaveBeenCalled();
   });
 
-  it('debe cargar el catálogo y registrar su error', () => {
+  it('debe cargar el catálogo y registrar su error', async () => {
     const wizard = setup();
 
     wizard.loadCatalog();
-    expect(wizard.catalog()).toHaveLength(1);
+    await vi.waitFor(() => expect(wizard.catalog()).toHaveLength(1));
     expect(wizard.catalogLoading()).toBe(false);
 
-    vi.mocked(repo.listCatalog).mockReturnValue(throwError(() => new Error('boom')));
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(throwError(() => new Error('boom')));
     wizard.loadCatalog();
-    expect(wizard.error()).toBe('boom');
+    await vi.waitFor(() => expect(wizard.error()).toBe('boom'));
   });
 
   it('debe publicar ofertas y avanzar a "Listo"', async () => {
     const wizard = setup();
 
-    const ok = await wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
+    wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
+    await vi.waitFor(() => expect(wizard.step()).toBe(4));
 
-    expect(ok).toBe(true);
     expect(repo.publishOffer).toHaveBeenCalledWith({ productId: 'p-1', margin: 15 });
-    expect(wizard.step()).toBe(4);
     expect(wizard.publishedCount()).toBe(1);
   });
 
   it('sin ofertas solo avanza a "Listo"', async () => {
     const wizard = setup();
 
-    const ok = await wizard.publishOffers([]);
+    wizard.publishOffers([]);
+    await vi.waitFor(() => expect(wizard.step()).toBe(4));
 
-    expect(ok).toBe(true);
     expect(repo.publishOffer).not.toHaveBeenCalled();
-    expect(wizard.step()).toBe(4);
     expect(wizard.publishedCount()).toBe(0);
   });
 
@@ -116,10 +120,9 @@ describe('StoreWizardStore', () => {
     const wizard = setup();
     vi.mocked(repo.publishOffer).mockReturnValue(throwError(() => new Error('boom')));
 
-    const ok = await wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
+    wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('boom'));
 
-    expect(ok).toBe(false);
-    expect(wizard.error()).toBe('boom');
     expect(notification.showError).toHaveBeenCalled();
   });
 });
