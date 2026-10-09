@@ -124,6 +124,34 @@ describe('StoreService', () => {
     expect(error?.message).toContain('No pudimos conectar con el servidor');
   });
 
+  it('debe degradar con un error controlado cuando la respuesta no trae id', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.createStore({ name: 'X', description: '' }).subscribe({
+      error: (err: Error) => (error = err),
+    });
+    httpMock.expectOne('https://api.test/vendedores/tienda').flush({ mensaje: 'sin id' });
+
+    expect(error?.message).toBe('No se pudo interpretar la tienda creada.');
+  });
+
+  it('debe degradar con el fallback cuando el servidor responde 500', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe({
+      error: (err: Error) => (error = err),
+    });
+    httpMock
+      .expectOne('https://api.test/vendedores/productos')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo publicar el producto.');
+  });
+
   it('debe emitir un error cuando no hay apiUrl configurada', () => {
     environment.apiUrl = '';
     build();

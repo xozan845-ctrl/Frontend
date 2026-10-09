@@ -1,6 +1,6 @@
 <ol class="flex items-center gap-2" aria-label="Pasos para crear tu tienda">
   @for (step of steps(); track step.id; let last = $last) {
-    <li class="flex items-center gap-2 flex-1 min-w-0">
+    <li class="flex items-center gap-2 flex-1 min-w-0" [attr.data-testid]="'step-' + step.id">
       <span
         class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-sm font-black transition-colors"
         [ngClass]="

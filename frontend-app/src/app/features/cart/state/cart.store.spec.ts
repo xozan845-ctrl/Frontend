@@ -23,6 +23,7 @@ const STORAGE_KEY = 'ecom_cart_items';
 describe('CartStore', () => {
   let repo: CartRepository;
   let authenticated: boolean;
+  let role: 'comprador' | 'vendedor';
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
   const setup = () => {
@@ -40,8 +41,7 @@ describe('CartStore', () => {
           provide: AuthStore,
           useValue: {
             isAuthenticated: () => authenticated,
-            user: () =>
-              authenticated ? { id: 1, email: 'a@a.com', name: 'A', role: 'comprador' } : null,
+            user: () => (authenticated ? { id: 1, email: 'a@a.com', name: 'A', role } : null),
           },
         },
         { provide: NotificationService, useValue: notification },
@@ -54,6 +54,7 @@ describe('CartStore', () => {
     localStorage.clear();
     vi.clearAllMocks();
     authenticated = false;
+    role = 'comprador';
     TestBed.resetTestingModule();
   });
 
@@ -112,6 +113,22 @@ describe('CartStore', () => {
     store.loadCart();
 
     expect(repo.getCart).toHaveBeenCalled();
+    expect(store.totalItems()).toBe(2);
+  });
+
+  // regression: 71 — `GET /carrito` es comprador-only; un vendedor debe usar el
+  // carrito local para no provocar un 403.
+  it('debe usar el carrito local cuando la sesión es de vendedor', () => {
+    authenticated = true;
+    role = 'vendedor';
+    const store = setup();
+
+    store.addItem(product(1, 50), 2);
+    store.loadCart();
+
+    expect(repo.getCart).not.toHaveBeenCalled();
+    expect(repo.addItem).not.toHaveBeenCalled();
+    expect(store.items()).toHaveLength(1);
     expect(store.totalItems()).toBe(2);
   });
 

@@ -61,6 +61,35 @@ describe('StoreWizardStore', () => {
     expect(wizard.store()).toBeNull();
   });
 
+  it('debe quedarse en el paso 1 cuando retrocede en el primer paso', () => {
+    const wizard = setup();
+
+    wizard.goBack();
+
+    expect(wizard.step()).toBe(1);
+    expect(wizard.isFirstStep()).toBe(true);
+  });
+
+  // regression: 71 — el catálogo debe cargarse al entrar al paso de productos.
+  it('debe cargar el catálogo cuando avanza al paso de productos', async () => {
+    const wizard = setup();
+
+    wizard.goToProductsStep();
+
+    await vi.waitFor(() => expect(wizard.catalog()).toHaveLength(1));
+    expect(catalogRepo.listCatalog).toHaveBeenCalledTimes(1);
+  });
+
+  it('debe reportar el último paso cuando está en "Listo"', async () => {
+    const wizard = setup();
+
+    wizard.publishOffers([]);
+    await vi.waitFor(() => expect(wizard.step()).toBe(4));
+
+    expect(wizard.isLastStep()).toBe(true);
+    expect(wizard.isFirstStep()).toBe(false);
+  });
+
   it('debe crear la tienda y avanzar al paso de productos', async () => {
     const wizard = setup();
 

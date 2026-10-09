@@ -165,6 +165,7 @@
                 type="button"
                 (click)="createStore()"
                 class="btn btn-secondary btn-sm shrink-0"
+                data-testid="retry-create-store"
               >
                 Reintentar
               </button>
@@ -208,7 +209,12 @@
               ></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg mt-2" [disabled]="wizard.loading()">
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg mt-2"
+              [disabled]="wizard.loading()"
+              data-testid="create-store-submit"
+            >
               {{ wizard.loading() ? 'Creando tienda…' : 'Crear mi tienda' }}
             </button>
           </form>
@@ -227,7 +233,11 @@
           </p>
 
           @if (wizard.catalogLoading()) {
-            <div class="flex flex-col gap-3 mb-8" aria-label="Cargando catálogo">
+            <div
+              class="flex flex-col gap-3 mb-8"
+              aria-label="Cargando catálogo"
+              data-testid="catalog-loading"
+            >
               @for (i of [1, 2, 3]; track i) {
                 <app-skeleton-loader height="56px" customClass="rounded-xl" />
               }
@@ -258,6 +268,7 @@
                     [checked]="rowAt(i).controls.selected.value"
                     (change)="toggleRow(i)"
                     [attr.aria-label]="'Publicar ' + option.name"
+                    [attr.data-testid]="'product-' + option.id"
                   />
                   <div class="flex flex-col min-w-0 flex-1">
                     <span class="font-bold truncate">{{ option.name }}</span>
@@ -285,6 +296,7 @@
               (click)="publish()"
               class="btn btn-primary btn-lg flex-1"
               [disabled]="wizard.loading() || !hasSelection()"
+              data-testid="publish-products"
             >
               {{ wizard.loading() ? 'Publicando…' : 'Publicar y finalizar' }}
             </button>
@@ -293,6 +305,7 @@
               (click)="skipProducts()"
               class="btn btn-secondary btn-lg flex-1"
               [disabled]="wizard.loading()"
+              data-testid="skip-products"
             >
               Omitir por ahora
             </button>

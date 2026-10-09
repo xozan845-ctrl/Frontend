@@ -20,7 +20,7 @@ describe('CreateStoreStepperComponent', () => {
     const fixture = await setup(2);
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelectorAll('li')).toHaveLength(4);
+    expect(host.querySelectorAll('[data-testid^="step-"]')).toHaveLength(4);
     expect(host.querySelector('[aria-current="step"]')).not.toBeNull();
   });
 
