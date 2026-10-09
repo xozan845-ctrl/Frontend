@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import CreateStoreComponent from './create-store.component';
 import { StoreWizardStore } from '../../state/store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
+import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -13,6 +14,7 @@ const createdStore = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', descriptio
 
 describe('CreateStoreComponent', () => {
   let repo: StoreRepository;
+  let catalogRepo: CatalogRepository;
   let currentUser: User | null;
   const authStore = {
     user: () => currentUser,
@@ -29,8 +31,10 @@ describe('CreateStoreComponent', () => {
     repo = {
       createStore: vi.fn(() => of(createdStore)),
       getMyStore: vi.fn(() => of(null)),
-      listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
       publishOffer: vi.fn(() => of(undefined)),
+    };
+    catalogRepo = {
+      listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
     };
     await TestBed.configureTestingModule({
       imports: [CreateStoreComponent],
@@ -38,6 +42,7 @@ describe('CreateStoreComponent', () => {
         provideRouter([]),
         StoreWizardStore,
         { provide: STORE_REPOSITORY, useValue: repo },
+        { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
@@ -92,7 +97,7 @@ describe('CreateStoreComponent', () => {
   it('no debe crear la tienda si el formulario es inválido', async () => {
     const fixture = await setup();
 
-    await fixture.componentInstance.createStore();
+    fixture.componentInstance.createStore();
 
     expect(repo.createStore).not.toHaveBeenCalled();
   });
@@ -101,18 +106,18 @@ describe('CreateStoreComponent', () => {
     const fixture = await setup();
     fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: 'Demo' });
 
-    await fixture.componentInstance.createStore();
-    fixture.detectChanges();
+    fixture.componentInstance.createStore();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(3));
 
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });
-    expect(fixture.componentInstance.wizard.step()).toBe(3);
     // Al entrar al paso 3 se carga el catálogo automáticamente.
-    await vi.waitFor(() => expect(repo.listCatalog).toHaveBeenCalled());
+    expect(catalogRepo.listCatalog).toHaveBeenCalled();
   });
 
   it('debe navegar a la tienda en el paso final', async () => {
     const fixture = await setup();
-    await fixture.componentInstance.wizard.createStore({ name: 'Mi Tienda', description: '' });
+    fixture.componentInstance.wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     fixture.componentInstance.goToStore();
@@ -122,17 +127,17 @@ describe('CreateStoreComponent', () => {
 
   it('debe poder omitir la publicación de productos', async () => {
     const fixture = await setup();
-    fixture.componentInstance.wizard.setStep(3);
+    fixture.componentInstance.wizard.goToProductsStep();
 
-    await fixture.componentInstance.skipProducts();
+    fixture.componentInstance.skipProducts();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(4));
 
     expect(repo.publishOffer).not.toHaveBeenCalled();
-    expect(fixture.componentInstance.wizard.step()).toBe(4);
   });
 
   it('debe exponer hasSelection como derivado al seleccionar un producto', async () => {
     const fixture = await setup();
-    fixture.componentInstance.wizard.setStep(3);
+    fixture.componentInstance.wizard.goToProductsStep();
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.productRows.length).toBe(1));
     expect(fixture.componentInstance.hasSelection()).toBe(false);
@@ -145,8 +150,8 @@ describe('CreateStoreComponent', () => {
 
   it('debe mostrar el estado de error del catálogo con reintento', async () => {
     const fixture = await setup();
-    vi.mocked(repo.listCatalog).mockReturnValue(throwError(() => new Error('boom')));
-    fixture.componentInstance.wizard.setStep(3);
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(throwError(() => new Error('boom')));
+    fixture.componentInstance.wizard.goToProductsStep();
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.wizard.error()).toBe('boom'));
     fixture.detectChanges();
@@ -155,9 +160,9 @@ describe('CreateStoreComponent', () => {
       'No pudimos cargar el catálogo',
     );
 
-    vi.mocked(repo.listCatalog).mockClear();
+    vi.mocked(catalogRepo.listCatalog).mockClear();
     fixture.componentInstance.retryCatalog();
-    expect(repo.listCatalog).toHaveBeenCalled();
+    expect(catalogRepo.listCatalog).toHaveBeenCalled();
   });
 
   it('debe mostrar el error al crear la tienda con reintento', async () => {
@@ -165,11 +170,12 @@ describe('CreateStoreComponent', () => {
     vi.mocked(repo.createStore).mockReturnValue(
       throwError(() => new Error('No se pudo crear la tienda.')),
     );
-    fixture.componentInstance.wizard.setStep(2);
+    fixture.componentInstance.wizard.goToStoreStep();
     fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: '' });
     fixture.detectChanges();
 
-    await fixture.componentInstance.createStore();
+    fixture.componentInstance.createStore();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.error()).toBeDefined());
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(

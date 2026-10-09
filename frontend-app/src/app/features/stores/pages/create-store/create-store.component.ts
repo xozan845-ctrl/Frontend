@@ -77,9 +77,6 @@ export default class CreateStoreComponent implements OnDestroy {
     return this.productRows.controls.some((row) => row.controls.selected.value);
   });
 
-  readonly submitting = signal(false);
-  private catalogRequested = false;
-
   constructor() {
     this.seoService.setPage(
       'Crear mi tienda',
@@ -89,24 +86,11 @@ export default class CreateStoreComponent implements OnDestroy {
     // Con sesión de vendedor, avanza automáticamente del paso de cuenta.
     effect(() => {
       if (this.isSeller() && this.wizard.step() === 1) {
-        this.wizard.setStep(2);
+        this.wizard.goToStoreStep();
       }
     });
 
-    // Al entrar al paso de productos, carga el catálogo una sola vez.
-    effect(() => {
-      if (
-        this.wizard.step() === 3 &&
-        this.wizard.catalog().length === 0 &&
-        !this.wizard.catalogLoading() &&
-        !this.catalogRequested
-      ) {
-        this.catalogRequested = true;
-        this.wizard.loadCatalog();
-      }
-    });
-
-    // Prepara el formulario de productos cuando llega el catálogo.
+    // Prepara el formulario de productos cuando llega el catálogo (estado de UI).
     effect(() => {
       const catalog = this.wizard.catalog();
       if (this.wizard.step() === 3 && catalog.length > 0 && this.productRows.length === 0) {
@@ -130,15 +114,13 @@ export default class CreateStoreComponent implements OnDestroy {
   }
 
   // ── Paso 2: tienda ─────────────────────────────────────────────────────────
-  async createStore(): Promise<void> {
+  createStore(): void {
     if (this.storeForm.invalid || this.wizard.loading()) {
       this.storeForm.markAllAsTouched();
       return;
     }
-    this.submitting.set(true);
     const { name, description } = this.storeForm.getRawValue();
-    await this.wizard.createStore({ name, description });
-    this.submitting.set(false);
+    this.wizard.createStore({ name, description });
   }
 
   // ── Paso 3: productos ──────────────────────────────────────────────────────
@@ -167,11 +149,10 @@ export default class CreateStoreComponent implements OnDestroy {
 
   /** Reintenta cargar el catálogo tras un error (R-UX-1); flecha para el `input` de `EmptyState`. */
   readonly retryCatalog = (): void => {
-    this.catalogRequested = true;
     this.wizard.loadCatalog();
   };
 
-  async publish(): Promise<void> {
+  publish(): void {
     const offers: OfferDraft[] = this.productRows.controls
       .filter((row) => row.controls.selected.value && row.controls.margin.valid)
       .map((row) => ({
@@ -179,15 +160,11 @@ export default class CreateStoreComponent implements OnDestroy {
         margin: row.controls.margin.value,
       }));
 
-    this.submitting.set(true);
-    await this.wizard.publishOffers(offers);
-    this.submitting.set(false);
+    this.wizard.publishOffers(offers);
   }
 
-  async skipProducts(): Promise<void> {
-    this.submitting.set(true);
-    await this.wizard.publishOffers([]);
-    this.submitting.set(false);
+  skipProducts(): void {
+    this.wizard.publishOffers([]);
   }
 
   // ── Paso 4: listo ──────────────────────────────────────────────────────────

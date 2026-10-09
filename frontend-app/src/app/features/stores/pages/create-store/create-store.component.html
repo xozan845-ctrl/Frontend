@@ -208,12 +208,8 @@
               ></textarea>
             </div>
 
-            <button
-              type="submit"
-              class="btn btn-primary btn-lg mt-2"
-              [disabled]="wizard.loading() || submitting()"
-            >
-              {{ wizard.loading() || submitting() ? 'Creando tienda…' : 'Crear mi tienda' }}
+            <button type="submit" class="btn btn-primary btn-lg mt-2" [disabled]="wizard.loading()">
+              {{ wizard.loading() ? 'Creando tienda…' : 'Crear mi tienda' }}
             </button>
           </form>
         </section>
@@ -288,15 +284,15 @@
               type="button"
               (click)="publish()"
               class="btn btn-primary btn-lg flex-1"
-              [disabled]="submitting() || wizard.loading() || !hasSelection()"
+              [disabled]="wizard.loading() || !hasSelection()"
             >
-              {{ submitting() || wizard.loading() ? 'Publicando…' : 'Publicar y finalizar' }}
+              {{ wizard.loading() ? 'Publicando…' : 'Publicar y finalizar' }}
             </button>
             <button
               type="button"
               (click)="skipProducts()"
               class="btn btn-secondary btn-lg flex-1"
-              [disabled]="submitting() || wizard.loading()"
+              [disabled]="wizard.loading()"
             >
               Omitir por ahora
             </button>
