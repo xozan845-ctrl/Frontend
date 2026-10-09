@@ -1,0 +1,49 @@
+<section
+  class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+  data-testid="ai-connection-panel"
+>
+  <h2 class="text-lg font-black uppercase tracking-tight text-black dark:text-white">Conexión</h2>
+  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+    Endpoint:
+    <code class="text-xs break-all">{{ endpoint() || 'no configurado' }}</code>
+  </p>
+
+  <form class="mt-4 flex flex-col sm:flex-row gap-3" (submit)="$event.preventDefault(); onSubmit()">
+    <label class="sr-only" for="ai-api-key">API key</label>
+    <input
+      id="ai-api-key"
+      type="password"
+      autocomplete="off"
+      placeholder="API key (si el backend la exige)"
+      [value]="key()"
+      (input)="onInput($event)"
+      class="flex-1 rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+      data-testid="ai-api-key-input"
+    />
+    <button
+      type="submit"
+      class="rounded-xl bg-accent-600 px-5 py-2 text-sm font-bold uppercase tracking-widest text-white hover:bg-accent-500 transition-colors"
+      data-testid="ai-api-key-save"
+    >
+      Guardar
+    </button>
+    @if (hasKey()) {
+      <button
+        type="button"
+        (click)="clear.emit()"
+        class="rounded-xl border border-slate-200 dark:border-surface-700 px-5 py-2 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300"
+        data-testid="ai-api-key-clear"
+      >
+        Olvidar
+      </button>
+    }
+  </form>
+
+  <p class="mt-2 text-xs" [class]="hasKey() ? 'text-emerald-600' : 'text-slate-400'">
+    {{
+      hasKey()
+        ? 'API key configurada en esta sesión.'
+        : 'Sin API key (el backend debe permitir el acceso).'
+    }}
+  </p>
+</section>

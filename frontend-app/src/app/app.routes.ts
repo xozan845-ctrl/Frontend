@@ -27,6 +27,13 @@ export const routes: Routes = [
     path: '',
     loadChildren: () => import('./features/stores/stores.routes').then((m) => m.STORES_ROUTES),
   },
+  {
+    // Feature de scraping con IA: backend independiente (`ai_scraper_executor`).
+    // Se carga lazy con `loadChildren` (R-LZ-1, R-PF-1).
+    path: 'ia',
+    loadChildren: () =>
+      import('./features/ai-scraper/ai-scraper.routes').then((m) => m.AI_SCRAPER_ROUTES),
+  },
   ...ROOT_ROUTES,
   {
     path: 'tienda/:storeId',
