@@ -1,0 +1,133 @@
+<section class="mx-auto max-w-4xl px-4 py-8 space-y-6">
+  <header class="space-y-2">
+    <h1 class="text-3xl font-black uppercase tracking-tight text-black dark:text-white">
+      Radiografía de sitios
+    </h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      Analiza una web para aprender sus selectores y si necesita navegador, o consulta el perfil ya
+      aprendido de un dominio.
+    </p>
+  </header>
+
+  <form
+    class="space-y-3 rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+    [formGroup]="form"
+    (ngSubmit)="run()"
+  >
+    <h2 class="text-lg font-black uppercase tracking-tight text-black dark:text-white">
+      Nueva radiografía
+    </h2>
+    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400" for="rad-url">
+      URL
+    </label>
+    <input
+      id="rad-url"
+      type="url"
+      formControlName="url"
+      placeholder="https://sitio.com"
+      class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+      data-testid="ai-radiography-url"
+    />
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label
+          class="block text-xs font-bold uppercase tracking-widest text-slate-400"
+          for="rad-pages"
+        >
+          Máx. páginas
+        </label>
+        <input
+          id="rad-pages"
+          type="number"
+          formControlName="maxPages"
+          class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+          data-testid="ai-radiography-max-pages"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-xs font-bold uppercase tracking-widest text-slate-400"
+          for="rad-depth"
+        >
+          Máx. profundidad
+        </label>
+        <input
+          id="rad-depth"
+          type="number"
+          formControlName="maxDepth"
+          class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+          data-testid="ai-radiography-max-depth"
+        />
+      </div>
+    </div>
+    <button
+      type="submit"
+      [disabled]="store.running()"
+      class="rounded-xl bg-accent-600 px-6 py-2 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50"
+      data-testid="ai-radiography-run"
+    >
+      {{ store.running() ? 'Analizando…' : 'Analizar' }}
+    </button>
+  </form>
+
+  @if (store.result(); as result) {
+    <section
+      class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+      data-testid="ai-radiography-result"
+    >
+      <p class="text-sm text-slate-700 dark:text-slate-200">
+        Dominio <strong>{{ result.domain }}</strong> · {{ result.discovered }} páginas descubiertas
+      </p>
+      <pre
+        class="mt-3 max-h-64 overflow-auto rounded-xl bg-slate-50 dark:bg-surface-800 p-3 text-xs"
+        >{{ result.radiography | json }}</pre>
+    </section>
+  }
+
+  <form
+    class="space-y-3 rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+    [formGroup]="profileForm"
+    (ngSubmit)="loadProfile()"
+  >
+    <h2 class="text-lg font-black uppercase tracking-tight text-black dark:text-white">
+      Perfil aprendido
+    </h2>
+    <label
+      class="block text-xs font-bold uppercase tracking-widest text-slate-400"
+      for="rad-domain"
+    >
+      Dominio
+    </label>
+    <div class="flex gap-3">
+      <input
+        id="rad-domain"
+        type="text"
+        formControlName="domain"
+        placeholder="sitio.com"
+        class="flex-1 rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+        data-testid="ai-radiography-domain"
+      />
+      <button
+        type="submit"
+        class="rounded-xl border border-slate-200 dark:border-surface-700 px-5 py-2 text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+        data-testid="ai-radiography-profile"
+      >
+        Consultar
+      </button>
+    </div>
+  </form>
+
+  @if (store.profile(); as profile) {
+    <section
+      class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+      data-testid="ai-radiography-profile-result"
+    >
+      <p class="text-sm text-slate-700 dark:text-slate-200">
+        Navegador {{ profile.shouldUseBrowser ? 'recomendado' : 'no necesario' }}
+      </p>
+      <pre
+        class="mt-3 max-h-64 overflow-auto rounded-xl bg-slate-50 dark:bg-surface-800 p-3 text-xs"
+        >{{ profile.recommendedSelectors | json }}</pre>
+    </section>
+  }
+</section>

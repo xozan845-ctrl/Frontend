@@ -44,6 +44,10 @@ export const AI_SCRAPER_ROUTES: Routes = [
         path: 'chat',
         loadComponent: () => import('./pages/ai-chat/ai-chat.component'),
       },
+      {
+        path: 'radiography',
+        loadComponent: () => import('./pages/ai-radiography/ai-radiography.component'),
+      },
     ],
   },
 ];
