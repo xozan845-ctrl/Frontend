@@ -5,12 +5,13 @@ import { CartStore } from '../../state/cart.store';
 import { ProductStore } from '../../../products/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-cart-view',
   standalone: true,
-  imports: [NgOptimizedImage, EmptyStateComponent, AppCurrencyPipe],
+  imports: [NgOptimizedImage, EmptyStateComponent, FocusTrapDirective, AppCurrencyPipe],
   templateUrl: './cart-view.component.html',
 })
 export class CartViewComponent {
@@ -45,6 +46,11 @@ export class CartViewComponent {
   confirmClearCart() {
     this.cartStore.clearCart();
     this.showClearConfirm.set(false);
+  }
+
+  /** Cierra el modal solo al hacer clic en el fondo (no en el diálogo). */
+  onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) this.showClearConfirm.set(false);
   }
 }
 export default CartViewComponent;

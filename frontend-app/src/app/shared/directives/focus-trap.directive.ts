@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   input,
+  output,
 } from '@angular/core';
 
 const FOCUSABLE_SELECTOR = [
@@ -18,10 +19,11 @@ const FOCUSABLE_SELECTOR = [
 ].join(',');
 
 /**
- * Atrapa el foco dentro del elemento anfitrión mientras está activo y lo
- * devuelve al disparador al desactivarse/destruirse (R-AC-3).
+ * Atrapa el foco dentro del elemento anfitrión mientras está activo, lo
+ * devuelve al disparador al desactivarse/destruirse y emite `escape` al pulsar
+ * Escape (R-AC-3).
  *
- * Uso: `[appFocusTrap]="isOpen()"` (por defecto `true`) sobre un contenedor
+ * Uso: `[appFocusTrap]="isOpen()" (escape)="close()"` sobre un contenedor
  * `role="dialog"` con `tabindex="-1"`.
  */
 @Directive({
@@ -30,6 +32,8 @@ const FOCUSABLE_SELECTOR = [
 })
 export class FocusTrapDirective implements OnDestroy {
   readonly appFocusTrap = input<boolean>(true);
+  /** Emite cuando se pulsa Escape mientras el foco está atrapado. */
+  readonly escape = output<void>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private previouslyFocused: HTMLElement | null = null;
@@ -53,7 +57,6 @@ export class FocusTrapDirective implements OnDestroy {
   @HostListener('keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     if (!this.active || event.key !== 'Tab') return;
-
     const focusable = this.focusableElements();
     if (focusable.length === 0) {
       event.preventDefault();
@@ -72,6 +75,11 @@ export class FocusTrapDirective implements OnDestroy {
       event.preventDefault();
       first.focus();
     }
+  }
+
+  @HostListener('keydown.escape')
+  onEscape(): void {
+    if (this.active) this.escape.emit();
   }
 
   private activate(): void {
