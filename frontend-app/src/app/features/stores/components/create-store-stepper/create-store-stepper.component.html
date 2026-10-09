@@ -11,13 +11,13 @@
         [attr.aria-current]="step.id === current() ? 'step' : null"
       >
         @if (step.id < current()) {
-          <i class="fa-solid fa-check"></i>
+          <i class="fa-solid fa-check" aria-hidden="true"></i>
         } @else {
           {{ step.id }}
         }
       </span>
       <span
-        class="text-[10px] font-bold uppercase tracking-widest truncate hidden sm:block"
+        class="text-[10px] font-bold uppercase tracking-widest truncate sr-only sm:not-sr-only sm:block"
         [ngClass]="step.id <= current() ? 'text-slate-900 dark:text-white' : 'text-slate-400'"
         >{{ step.label }}</span
       >

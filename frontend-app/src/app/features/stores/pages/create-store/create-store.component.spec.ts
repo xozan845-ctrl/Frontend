@@ -122,9 +122,11 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.wizard.goToProductsStep();
     fixture.detectChanges();
 
-    expect(
-      (fixture.nativeElement as HTMLElement).querySelector('[data-testid="catalog-loading"]'),
-    ).not.toBeNull();
+    const loading = (fixture.nativeElement as HTMLElement).querySelector(
+      '[data-testid="catalog-loading"]',
+    );
+    expect(loading).not.toBeNull();
+    expect(loading?.getAttribute('role')).toBe('status');
 
     pending.next([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }]);
     pending.complete();

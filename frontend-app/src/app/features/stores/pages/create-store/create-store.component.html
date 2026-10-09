@@ -235,9 +235,11 @@
           @if (wizard.catalogLoading()) {
             <div
               class="flex flex-col gap-3 mb-8"
-              aria-label="Cargando catálogo"
+              role="status"
+              aria-live="polite"
               data-testid="catalog-loading"
             >
+              <span class="sr-only">Cargando catálogo…</span>
               @for (i of [1, 2, 3]; track i) {
                 <app-skeleton-loader height="56px" customClass="rounded-xl" />
               }
@@ -265,7 +267,7 @@
                   <input
                     type="checkbox"
                     class="w-5 h-5 accent-accent-600 shrink-0"
-                    [checked]="rowAt(i).controls.selected.value"
+                    [checked]="productRows.controls[i].controls.selected.value"
                     (change)="toggleRow(i)"
                     [attr.aria-label]="'Publicar ' + option.name"
                     [attr.data-testid]="'product-' + option.id"
@@ -280,7 +282,7 @@
                       type="number"
                       min="0"
                       max="90"
-                      [formControl]="rowAt(i).controls.margin"
+                      [formControl]="productRows.controls[i].controls.margin"
                       class="input w-20 py-2 text-center"
                     />
                     %
