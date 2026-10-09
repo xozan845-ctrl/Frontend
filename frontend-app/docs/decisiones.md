@@ -318,3 +318,22 @@ contexto y consecuencias.
   cada tienda se comparte (`/tienda/<id>`). Cuando el backend exponga un
   directorio público (`GET /api/v1/tiendas`), la raíz podrá poblarse con él sin
   cambiar el resto. Revertir es volver a fijar un `storeId` de configuración.
+
+## ADR-16: Alta de tienda guiada (`/crear-tienda`) con rol vendedor
+
+- **Contexto**: Core Engine permite a un **vendedor** abrir su tienda
+  (`POST /vendedores/tienda`) y publicar productos con margen
+  (`POST /vendedores/productos`), pero el storefront solo permitía comprar. La
+  raíz `/` (entrada multi-tienda) no ofrecía descubrimiento para vendedores.
+- **Decisión**: añadir un **asistente paso a paso** en `/crear-tienda`, público
+  (gestiona la cuenta en el propio flujo). Pasos: **1) Cuenta** de vendedor
+  (registro con `rol: 'vendedor'`, o login), **2) Tienda** (nombre/descripción →
+  `POST /vendedores/tienda`), **3) Productos** (opcional; elegir del catálogo +
+  margen → `POST /vendedores/productos`), **4) Listo** (enlace a la tienda). La
+  raíz `/` gana un CTA **“Crear mi tienda”** con copy que invita al registro.
+- **Consecuencias**: nuevo feature `stores` (`pages/`, `components/`, `state/`
+  con `StoreWizardStore`, `services/`+`repositories/` con puerto
+  `STORE_REPOSITORY`, `adapters/`, `stores.routes.ts`), cableado en
+  `app.config.ts`/`app.routes.ts` (R-AR-1/3/12). `RegisterData` admite `role`
+  (`customer`→`comprador`, `seller`→`vendedor`). El indicador de pasos es
+  presentacional (R-SO-8). Revertir es quitar la ruta y el CTA.
