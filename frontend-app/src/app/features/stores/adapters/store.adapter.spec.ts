@@ -24,6 +24,12 @@ describe('store.adapter', () => {
       ).toEqual({ id: 't-2', vendorId: 'v-2', name: 'Otra', description: 'x' });
     });
 
+    it('debe desenvolver el envelope { data }', () => {
+      expect(
+        adaptStoreFromBackend({ data: { id: 't-9', vendedor_id: 'v-9', nombre: 'Envuelta' } }),
+      ).toEqual({ id: 't-9', vendorId: 'v-9', name: 'Envuelta', description: '' });
+    });
+
     it('debe normalizar el id cuando llega numérico', () => {
       expect(adaptStoreFromBackend({ id: 123, nombre: 'Num' })?.id).toBe('123');
     });

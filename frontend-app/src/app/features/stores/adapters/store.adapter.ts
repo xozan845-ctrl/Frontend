@@ -1,15 +1,19 @@
 import { Store } from '../../products/public-api';
 import { CatalogProductOption } from '../models/store-wizard.model';
 import { BackendProductoCatalogoDTO, BackendTiendaDTO } from '../models/store.dto';
-import { unwrapApiListResponse } from '../../../core/models/api-response.dto';
+import {
+  unwrapApiListResponse,
+  unwrapApiSingleResponse,
+} from '../../../core/models/api-response.dto';
 
 /**
  * Tienda del vendedor (`POST /vendedores/tienda`, `GET /vendedores/me/tienda`).
- * Tolerante a `snake_case`/`camelCase`; `null` si no hay id.
+ * Tolerante a `snake_case`/`camelCase` y al envelope `{ data }`; `null` si no
+ * hay id.
  */
 export function adaptStoreFromBackend(raw: unknown): Store | null {
-  if (!raw || typeof raw !== 'object') return null;
-  const tienda = raw as BackendTiendaDTO;
+  const tienda = unwrapApiSingleResponse<BackendTiendaDTO>(raw);
+  if (!tienda || typeof tienda !== 'object') return null;
   const id = tienda.id;
   if (id === null || id === undefined || id === '') return null;
 
