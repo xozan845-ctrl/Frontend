@@ -300,3 +300,27 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 11 — Módulo `account` (2026-10-09)
+
+- **Alcance:** auditar `account` contra todas las familias de reglas (ciclo de
+  vida, errores, estados, accesibilidad, naming) y cerrar los hallazgos
+  (PRs #98–#100).
+- **Hallazgos corregidos:**
+  - `fix(account)` — suscripciones liberadas con `takeUntilDestroyed` y SEO
+    restaurado en las tres páginas (R-AR-10, R-UX-6).
+  - `fix(account)` — error de contraseña traducido en `auth.service`
+    (`toUserMessage`), skeleton en el detalle y regiones vivas de carga
+    (R-AR-9, R-UX-1, R-AC-7).
+  - `refactor(account)` — iconos `aria-hidden`, `data-testid` y sin funciones en
+    la plantilla (R-AC-1, R-CP-2, R-PF-4).
+- **Resultado:**
+  - ✅ `npm run build` — initial **483.45 kB** (< 500 kB).
+  - ✅ `npm test` — **71 archivos / 425 tests**; cobertura **95.70 / 91.58 / 94.33 / 95.95**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 9/9**.
+  - ✅ CI 6/6 jobs requeridos en verde; release `v1.16.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
