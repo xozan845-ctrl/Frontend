@@ -1,0 +1,116 @@
+<section class="mx-auto max-w-6xl px-4 py-8 space-y-6">
+  <a
+    routerLink="/ia"
+    class="text-xs font-bold uppercase tracking-widest text-accent-600"
+    data-testid="ai-back"
+    >← Volver</a
+  >
+
+  @if (jobsStore.detailLoading() && !jobsStore.selected()) {
+    <p class="text-sm text-slate-400" data-testid="ai-detail-loading">Cargando job…</p>
+  } @else if (jobsStore.detailError() && !jobsStore.selected()) {
+    <div
+      class="rounded-2xl border border-red-200 dark:border-red-900/40 p-4"
+      data-testid="ai-detail-error"
+    >
+      <p class="text-sm text-red-600 dark:text-red-400">{{ jobsStore.detailError() }}</p>
+    </div>
+  } @else if (jobsStore.selected(); as job) {
+    <header
+      class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6 space-y-3"
+    >
+      <div class="flex flex-wrap items-center gap-3">
+        <app-ai-status-badge [status]="job.status" />
+        <span class="font-mono text-xs text-slate-500">{{ job.id }}</span>
+        <span class="text-xs text-slate-400">{{ job.aiProvider }} · {{ job.aiModel ?? '—' }}</span>
+      </div>
+      <h1 class="text-xl font-black text-black dark:text-white break-all">{{ job.url }}</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ job.instruction }}</p>
+      <p class="text-xs text-slate-400">
+        Creado {{ job.createdAt | date: 'medium' }} · Actualizado
+        {{ job.updatedAt | date: 'medium' }}
+      </p>
+      <div class="flex gap-3">
+        @if (jobsStore.isSelectedActive()) {
+          <button
+            type="button"
+            (click)="jobsStore.cancelSelected()"
+            class="rounded-xl border border-slate-200 dark:border-surface-700 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300"
+            data-testid="ai-job-cancel"
+          >
+            Cancelar
+          </button>
+        }
+        @if (job.status === 'FAILED' || job.status === 'TIMEOUT') {
+          <button
+            type="button"
+            (click)="jobsStore.retrySelected()"
+            class="rounded-xl bg-accent-600 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white"
+            data-testid="ai-job-retry"
+          >
+            Reintentar
+          </button>
+        }
+      </div>
+    </header>
+
+    <nav class="flex gap-2" aria-label="Secciones del job">
+      @for (option of ['results', 'execution', 'ai']; track option) {
+        <button
+          type="button"
+          (click)="setTab($any(option))"
+          [class]="
+            tab() === option
+              ? 'rounded-full bg-accent-600 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white'
+              : 'rounded-full border border-slate-200 dark:border-surface-700 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300'
+          "
+          [attr.data-testid]="'ai-tab-' + option"
+        >
+          {{ option }}
+        </button>
+      }
+    </nav>
+
+    <section
+      class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+    >
+      @switch (tab()) {
+        @case ('results') {
+          <app-ai-results-table [items]="jobsStore.results()?.items ?? []" />
+        }
+        @case ('execution') {
+          @if (jobsStore.execution(); as execution) {
+            <div class="space-y-4">
+              <p class="text-xs uppercase tracking-widest text-slate-400">
+                Comandos ({{ execution.commands.length }}) · Páginas ({{ execution.pages.length }})
+                · Errores ({{ execution.errors.length }})
+              </p>
+              @for (error of execution.errors; track $index) {
+                <p class="text-sm text-red-500">{{ error.message }}</p>
+              }
+            </div>
+          } @else {
+            <p class="text-sm text-slate-400">Sin datos de ejecución.</p>
+          }
+        }
+        @case ('ai') {
+          @if (jobsStore.interactions(); as interactions) {
+            <p class="text-xs uppercase tracking-widest text-slate-400">
+              {{ interactions.provider }} · {{ interactions.model ?? '—' }} ·
+              {{ interactions.count }} llamadas
+            </p>
+            <ul class="mt-3 space-y-1 text-sm text-slate-600 dark:text-slate-300">
+              @for (call of interactions.calls; track call.id) {
+                <li>
+                  {{ call.kind }} — {{ call.tokens ?? '—' }} tokens · {{ call.latencyMs ?? '—' }} ms
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="text-sm text-slate-400">Sin llamadas de IA registradas.</p>
+          }
+        }
+      }
+    </section>
+  }
+</section>

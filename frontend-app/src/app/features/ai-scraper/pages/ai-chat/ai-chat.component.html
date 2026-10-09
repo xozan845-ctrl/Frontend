@@ -1,0 +1,122 @@
+<section class="mx-auto max-w-6xl px-4 py-8 grid gap-6 lg:grid-cols-[20rem_1fr]">
+  <aside class="space-y-4">
+    <h1 class="text-xl font-black uppercase tracking-tight text-black dark:text-white">Sesiones</h1>
+
+    <form
+      class="space-y-3 rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-4"
+      [formGroup]="createForm"
+      (ngSubmit)="createSession()"
+    >
+      <label
+        class="block text-xs font-bold uppercase tracking-widest text-slate-400"
+        for="ai-chat-url"
+      >
+        URL a analizar
+      </label>
+      <input
+        id="ai-chat-url"
+        type="url"
+        formControlName="url"
+        placeholder="https://sitio.com"
+        class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-3 py-2 text-sm text-black dark:text-white"
+        data-testid="ai-chat-url"
+      />
+      <label
+        class="block text-xs font-bold uppercase tracking-widest text-slate-400"
+        for="ai-chat-headers"
+      >
+        Headers (opcional, JSON)
+      </label>
+      <textarea
+        id="ai-chat-headers"
+        formControlName="headers"
+        rows="2"
+        placeholder='{"Authorization":"Bearer ..."}'
+        class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-3 py-2 text-xs text-black dark:text-white"
+        data-testid="ai-chat-headers"
+      ></textarea>
+      <button
+        type="submit"
+        [disabled]="store.creating()"
+        class="w-full rounded-xl bg-accent-600 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-50"
+        data-testid="ai-chat-create"
+      >
+        {{ store.creating() ? 'Creando…' : 'Analizar URL' }}
+      </button>
+    </form>
+
+    <ul class="space-y-2" data-testid="ai-chat-sessions">
+      @for (session of store.sessions(); track session.id) {
+        <li>
+          <button
+            type="button"
+            (click)="open(session.id)"
+            class="w-full rounded-2xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-3 text-left hover:border-accent-400"
+          >
+            <span class="block truncate text-sm text-slate-700 dark:text-slate-200">{{
+              session.domain || session.url
+            }}</span>
+            <app-ai-status-badge [status]="session.status" />
+          </button>
+        </li>
+      } @empty {
+        <li class="text-sm text-slate-400">Aún no hay sesiones.</li>
+      }
+    </ul>
+  </aside>
+
+  <main
+    class="flex min-h-[24rem] flex-col rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+  >
+    @if (!store.current()) {
+      <p class="m-auto text-sm text-slate-400" data-testid="ai-chat-empty">
+        Crea una sesión o elige una para conversar.
+      </p>
+    } @else {
+      @if (store.isFailed()) {
+        <div
+          class="mb-4 rounded-2xl border border-red-200 dark:border-red-900/40 p-3"
+          data-testid="ai-chat-failed"
+        >
+          <p class="text-sm text-red-600 dark:text-red-400">
+            La radiografía falló: {{ store.statusError() }}
+          </p>
+        </div>
+      } @else if (!store.isReady()) {
+        <p class="mb-4 text-sm text-slate-400" data-testid="ai-chat-radiography">
+          Analizando la página… el chat se habilitará al terminar.
+        </p>
+      }
+
+      <div class="flex-1 space-y-4 overflow-y-auto" aria-live="polite" data-testid="ai-chat-thread">
+        @for (message of store.messages(); track message.id) {
+          <app-ai-chat-message [message]="message" />
+          @if (message.results && message.results.length > 0) {
+            <app-ai-results-table [items]="message.results" />
+          }
+        }
+      </div>
+
+      <form class="mt-4 flex gap-3" [formGroup]="messageForm" (ngSubmit)="send()">
+        <label class="sr-only" for="ai-chat-instruction">Instrucción</label>
+        <input
+          id="ai-chat-instruction"
+          type="text"
+          formControlName="instruction"
+          [placeholder]="store.canSend() ? 'Escribe una instrucción…' : 'Esperando radiografía…'"
+          [disabled]="!store.canSend()"
+          class="flex-1 rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white disabled:opacity-50"
+          data-testid="ai-chat-instruction"
+        />
+        <button
+          type="submit"
+          [disabled]="!store.canSend()"
+          class="rounded-xl bg-accent-600 px-5 py-2 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50"
+          data-testid="ai-chat-send"
+        >
+          Enviar
+        </button>
+      </form>
+    }
+  </main>
+</section>

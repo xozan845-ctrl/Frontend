@@ -42,6 +42,17 @@
           ></span>
         </a>
 
+        <a
+          routerLink="/ia"
+          routerLinkActive="text-accent-600 dark:text-accent-400"
+          class="relative group text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+        >
+          IA
+          <span
+            class="after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-accent-600 after:transition-all after:duration-300 group-hover:after:w-full after:rounded-full"
+          ></span>
+        </a>
+
         <!-- Theme Toggle -->
         <button
           (click)="toggleTheme()"
@@ -215,6 +226,14 @@
         class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
       >
         Planes
+      </a>
+      <a
+        routerLink="/ia"
+        routerLinkActive="text-accent-600 dark:text-accent-400"
+        (click)="isMobileMenuOpen.set(false)"
+        class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+      >
+        IA
       </a>
 
       <div class="border-t border-slate-100 dark:border-surface-700 pt-6">
