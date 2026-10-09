@@ -361,3 +361,19 @@ contexto y consecuencias.
   dos categorías. **No** se renombran las rutas existentes para no romper los
   enlaces compartidos de tiendas (`/tienda/<id>`) ni el resto de la app.
   Revertir es volver a rutas 100 % en inglés y renombrar todos los enlaces.
+
+## ADR-18: Provisión de infraestructura por feature en rutas lazy
+
+- **Contexto**: `R-AR-3` fija que la composición de puertos→servicios vive en
+  `app.config.ts`. Al cerrar el **presupuesto inicial** (`R-PF-1`) se movió la
+  infraestructura del feature `stores` (puertos `STORE_REPOSITORY`/
+  `CATALOG_REPOSITORY`, sus servicios y `StoreWizardStore`) a los `providers` de
+  su ruta lazy (`loadChildren`), sacándola del bundle inicial. Eso mejora
+  `R-LZ-1`/`R-PF-1`, pero se aparta de la letra de `R-AR-3`.
+- **Decisión**: para features **lazy y autocontenidos** cuya infraestructura no
+  se comparte con el resto de la app, la composición de sus puertos puede vivir
+  en los `providers` de su ruta (`<feature>.routes.ts`), no en `app.config.ts`.
+  Los puertos **transversales** (auth, cart, products) siguen en `app.config.ts`.
+- **Consecuencias**: la infraestructura del feature viaja en su chunk lazy
+  (menor bundle inicial y mejor frontera de feature). Se actualiza `R-AR-3` para
+  reflejarlo. Revertir es volver a declarar esos `provide` en `app.config.ts`.

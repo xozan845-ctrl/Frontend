@@ -81,6 +81,16 @@ export const StoreWizardStore = signalStore(
           patchState(store, { step: 2, error: null });
         },
 
+        /**
+         * Avanza del paso de cuenta al de tienda cuando ya hay sesión de
+         * vendedor; la regla vive en el store, no en el componente (`R-CX-3`).
+         */
+        startForSeller(isSeller: boolean): void {
+          if (isSeller && store.step() === 1) {
+            patchState(store, { step: 2, error: null });
+          }
+        },
+
         /** Avanza al paso de productos y dispara la carga del catálogo (`R-CX-3`). */
         goToProductsStep(): void {
           patchState(store, { step: 3, error: null });

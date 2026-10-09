@@ -85,9 +85,7 @@ export default class CreateStoreComponent implements OnDestroy {
 
     // Con sesión de vendedor, avanza automáticamente del paso de cuenta.
     effect(() => {
-      if (this.isSeller() && this.wizard.step() === 1) {
-        this.wizard.goToStoreStep();
-      }
+      this.wizard.startForSeller(this.isSeller());
     });
 
     // Prepara el formulario de productos cuando llega el catálogo (estado de UI).
