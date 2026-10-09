@@ -274,3 +274,29 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 10 — Módulo `products` (2026-10-09)
+
+- **Alcance:** auditar `products` contra todas las familias de reglas (contrato,
+  store, arquitectura, UX, accesibilidad, cobertura) y cerrar los hallazgos
+  (PRs #92–#95).
+- **Hallazgos corregidos:**
+  - `refactor(products)` — DTOs `BackendOfertaDTO`/`BackendTiendaDTO`, endpoints
+    sin hardcode y errores traducidos del storefront (R-NC-9, R-AR-9/11, R-U-12).
+  - `refactor(products)` — `ProductStore.loadStore` con `rxMethod` (R-ST-5, R-AR-10).
+  - `refactor(products)` — enlace `/shop` corregido, buscador como contenedor
+    (`pages/`), sin `bind` en plantilla, SEO restaurado, buscador con
+    `NgOptimizedImage`, iconos accesibles y `data-testid`
+    (R-DO-1, R-SO-8, R-PF-4/2, R-UX-6, R-AC-1, R-CP-2).
+  - `test(products)` — stores `recently-viewed` y `reviews` al 100%, tolerancia a
+    JSON corrupto y sin `console.error` (R-U-8/10, R-RB-4, R-SE-4).
+- **Resultado:**
+  - ✅ `npm run build` — initial **483.30 kB** (< 500 kB).
+  - ✅ `npm test` — **71 archivos / 419 tests**; cobertura **95.57 / 91.45 / 94.25 / 95.81**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 9/9**.
+  - ✅ CI 6/6 jobs requeridos en verde; release `v1.15.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
