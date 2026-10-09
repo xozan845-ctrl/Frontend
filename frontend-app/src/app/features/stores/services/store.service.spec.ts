@@ -163,4 +163,64 @@ describe('StoreService', () => {
 
     expect(error?.message).toContain('apiUrl no configurado');
   });
+
+  it('debe obtener mi tienda cuando existe', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: unknown;
+
+    service.getMyStore().subscribe((store) => (result = store));
+    httpMock.expectOne('https://api.test/vendedores/me/tienda').flush({
+      id: 't-1',
+      vendedor_id: 'v-1',
+      nombre: 'Mi Tienda',
+      descripcion: 'Demo',
+    });
+
+    expect(result).toEqual({ id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', description: 'Demo' });
+  });
+
+  it('debe traducir un error de getMyStore distinto de 404', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.getMyStore().subscribe({ error: (err: Error) => (error = err) });
+    httpMock
+      .expectOne('https://api.test/vendedores/me/tienda')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo cargar tu tienda.');
+  });
+
+  it('debe simular la tienda y la oferta en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let store: unknown;
+    let offer: unknown = 'pendiente';
+
+    service.getMyStore().subscribe((s) => (store = s));
+    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe(() => (offer = 'ok'));
+    await vi.waitFor(() => {
+      expect(store).toBeDefined();
+      expect(offer).toBe('ok');
+    });
+
+    httpMock.expectNone(() => true);
+  });
+
+  it('debe emitir error en getMyStore y publishOffer cuando no hay apiUrl', () => {
+    environment.apiUrl = '';
+    build();
+    let storeError: Error | undefined;
+    let offerError: Error | undefined;
+
+    service.getMyStore().subscribe({ error: (err: Error) => (storeError = err) });
+    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe({
+      error: (err: Error) => (offerError = err),
+    });
+
+    expect(storeError?.message).toContain('apiUrl no configurado');
+    expect(offerError?.message).toContain('apiUrl no configurado');
+  });
 });
