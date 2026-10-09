@@ -14,6 +14,7 @@ describe('OrderService', () => {
   let httpMock: HttpTestingController;
 
   const originalApiUrl = environment.apiUrl;
+  const originalDataSource = environment.apiConfig.dataSource;
 
   const build = () => {
     TestBed.configureTestingModule({
@@ -27,6 +28,7 @@ describe('OrderService', () => {
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
+    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('debe crear la orden por POST y adaptar la respuesta', () => {
@@ -121,5 +123,51 @@ describe('OrderService', () => {
     service.createOrder(payload).subscribe({ error: (err: Error) => (error = err) });
 
     expect(error?.message).toContain('apiUrl no configurado');
+  });
+
+  it('debe crear la orden desde el carrito del servidor (usar_carrito)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+
+    service.createOrder({ usarCarrito: true }).subscribe();
+    const request = httpMock.expectOne('https://api.test/orders');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ usar_carrito: true });
+    request.flush({ id: 'o-1' });
+  });
+
+  it('debe simular las operaciones de orden en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let created: OrderResponse | undefined;
+    let orders: OrderResponse[] | undefined;
+    let detail: OrderResponse | undefined;
+    let timeline: OrderTimelineEvent[] | undefined;
+
+    service.createOrder(payload).subscribe((o) => (created = o));
+    service.getOrders().subscribe((o) => (orders = o));
+    service.getOrder('o-1').subscribe((o) => (detail = o));
+    service.getTimeline('o-1').subscribe((t) => (timeline = t));
+
+    await vi.waitFor(() => {
+      expect(created).toBeDefined();
+      expect(orders).toEqual([]);
+      expect(detail).toBeDefined();
+      expect(timeline).toEqual([]);
+    });
+    httpMock.expectNone(() => true);
+  });
+
+  it('debe emitir error de consultas sin apiUrl', () => {
+    environment.apiUrl = '';
+    build();
+    const errors: Error[] = [];
+
+    service.getOrders().subscribe({ error: (e: Error) => errors.push(e) });
+    service.getOrder('o-1').subscribe({ error: (e: Error) => errors.push(e) });
+    service.getTimeline('o-1').subscribe({ error: (e: Error) => errors.push(e) });
+
+    expect(errors).toHaveLength(3);
+    errors.forEach((e) => expect(e.message).toContain('apiUrl no configurado'));
   });
 });

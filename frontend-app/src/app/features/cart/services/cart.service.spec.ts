@@ -116,4 +116,69 @@ describe('CartService', () => {
 
     expect(error?.message).toContain('apiUrl no configurado');
   });
+
+  it('debe obtener un carrito vacío en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let result: CartItem[] | undefined;
+
+    service.getCart().subscribe((items) => (result = items));
+
+    await vi.waitFor(() => expect(result).toEqual([]));
+    httpMock.expectNone(() => true);
+  });
+
+  it('debe fusionar la cantidad de un item existente en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let result: CartItem[] | undefined;
+
+    service.addItem('of-9', 1).subscribe();
+    service.addItem('of-9', 2).subscribe((items) => (result = items));
+
+    await vi.waitFor(() => expect(result?.[0].quantity).toBe(3));
+  });
+
+  it('debe actualizar y eliminar items en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let afterUpdate: CartItem[] | undefined;
+    let afterRemove: CartItem[] | undefined;
+
+    service.addItem('of-1', 1).subscribe();
+    service.updateQuantity('of-1', 5).subscribe((items) => (afterUpdate = items));
+    await vi.waitFor(() => expect(afterUpdate?.[0].quantity).toBe(5));
+
+    service.updateQuantity('of-1', 0).subscribe((items) => (afterRemove = items));
+    await vi.waitFor(() => expect(afterRemove).toEqual([]));
+  });
+
+  it('debe eliminar y vaciar el carrito en modo mock', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    build();
+    let afterRemove: CartItem[] | undefined;
+    let afterClear: CartItem[] | undefined;
+
+    service.addItem('of-1', 1).subscribe();
+    service.removeItem('of-1').subscribe((items) => (afterRemove = items));
+    await vi.waitFor(() => expect(afterRemove).toEqual([]));
+
+    service.addItem('of-2', 1).subscribe();
+    service.clearCart().subscribe((items) => (afterClear = items));
+    await vi.waitFor(() => expect(afterClear).toEqual([]));
+  });
+
+  it('debe emitir error de las mutaciones cuando no hay apiUrl', () => {
+    environment.apiUrl = '';
+    build();
+    const errors: Error[] = [];
+
+    service.addItem('of-1', 1).subscribe({ error: (e: Error) => errors.push(e) });
+    service.updateQuantity('of-1', 1).subscribe({ error: (e: Error) => errors.push(e) });
+    service.removeItem('of-1').subscribe({ error: (e: Error) => errors.push(e) });
+    service.clearCart().subscribe({ error: (e: Error) => errors.push(e) });
+
+    expect(errors).toHaveLength(4);
+    errors.forEach((e) => expect(e.message).toContain('apiUrl no configurado'));
+  });
 });

@@ -220,4 +220,82 @@ describe('CartStore', () => {
     store.toggleSidebar(false);
     expect(store.isSidebarOpen()).toBe(false);
   });
+
+  it('invitado: updateQuantity con cantidad 0 elimina el item', () => {
+    const store = setup();
+    store.addItem(product(1), 1);
+
+    store.updateQuantity('1', 0);
+
+    expect(store.items()).toEqual([]);
+  });
+
+  it('invitado: addItem sin cantidad usa 1 y fusiona productos repetidos', () => {
+    const store = setup();
+
+    store.addItem(product(1));
+    store.addItem(product(1), 2);
+
+    expect(store.items()).toHaveLength(1);
+    expect(store.items()[0].quantity).toBe(3);
+  });
+
+  it('debe usar el mensaje por defecto cuando falla el volcado sin mensaje', () => {
+    authenticated = true;
+    repo = {
+      getCart: vi.fn(() => of([])),
+      addItem: vi.fn(() => throwError(() => new Error(''))),
+      updateQuantity: vi.fn(() => of([])),
+      removeItem: vi.fn(() => of([])),
+      clearCart: vi.fn(() => of([])),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: CART_REPOSITORY, useValue: repo },
+        {
+          provide: AuthStore,
+          useValue: {
+            isAuthenticated: () => true,
+            user: () => ({ id: 1, email: 'a@a.com', name: 'A', role: 'comprador' }),
+          },
+        },
+        { provide: NotificationService, useValue: notification },
+      ],
+    });
+    const store = TestBed.inject(CartStore);
+
+    store.mergeLocalCart([{ product: product(1), quantity: 1 }]);
+
+    expect(store.error()).toBe('No se pudo guardar tu carrito.');
+  });
+
+  it('debe registrar el error al volcar el carrito local (mergeLocalCart)', () => {
+    authenticated = true;
+    repo = {
+      getCart: vi.fn(() => of([])),
+      addItem: vi.fn(() => throwError(() => new Error('boom'))),
+      updateQuantity: vi.fn(() => of([])),
+      removeItem: vi.fn(() => of([])),
+      clearCart: vi.fn(() => of([])),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: CART_REPOSITORY, useValue: repo },
+        {
+          provide: AuthStore,
+          useValue: {
+            isAuthenticated: () => true,
+            user: () => ({ id: 1, email: 'a@a.com', name: 'A', role: 'comprador' }),
+          },
+        },
+        { provide: NotificationService, useValue: notification },
+      ],
+    });
+    const store = TestBed.inject(CartStore);
+
+    store.mergeLocalCart([{ product: product(1), quantity: 1 }]);
+
+    expect(store.error()).toBe('boom');
+    expect(notification.showError).toHaveBeenCalled();
+  });
 });
