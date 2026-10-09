@@ -108,4 +108,36 @@ describe('CartViewComponent', () => {
     expect(cartStore.clearCart).toHaveBeenCalledOnce();
     expect(fixture.componentInstance.showClearConfirm()).toBe(false);
   });
+
+  it('debe exponer el modal de vaciado como diálogo accesible', async () => {
+    const fixture = await setup();
+    const clear = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
+    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
+    clear.click();
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const dialog = host.querySelector('[role="dialog"]');
+
+    expect(dialog?.getAttribute('aria-modal')).toBe('true');
+    expect(dialog?.getAttribute('aria-labelledby')).toBe('clear-cart-title');
+    expect(host.querySelector('#clear-cart-title')?.textContent).toContain('¿Vaciar carrito?');
+  });
+
+  it('debe cerrar el modal de vaciado al pulsar Escape', async () => {
+    const fixture = await setup();
+    const clear = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
+    ).find((candidate) => candidate.textContent?.includes('Vaciar carrito'))!;
+    clear.click();
+    fixture.detectChanges();
+
+    const dialog = (fixture.nativeElement as HTMLElement).querySelector('[role="dialog"]')!;
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.showClearConfirm()).toBe(false);
+    expect(cartStore.clearCart).not.toHaveBeenCalled();
+  });
 });

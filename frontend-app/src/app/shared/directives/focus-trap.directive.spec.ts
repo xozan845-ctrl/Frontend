@@ -8,7 +8,7 @@ import { FocusTrapDirective } from './focus-trap.directive';
   template: `
     <button id="outside">fuera</button>
     @if (open()) {
-      <div [appFocusTrap]="true">
+      <div [appFocusTrap]="true" (escape)="escaped.set(true)">
         <button id="first">primero</button>
         <button id="last">último</button>
       </div>
@@ -17,6 +17,7 @@ import { FocusTrapDirective } from './focus-trap.directive';
 })
 class HostComponent {
   readonly open = signal(false);
+  readonly escaped = signal(false);
 }
 
 describe('FocusTrapDirective', () => {
@@ -81,5 +82,15 @@ describe('FocusTrapDirective', () => {
 
     expect(event.defaultPrevented).toBe(true);
     expect(document.activeElement).toBe(last());
+  });
+
+  it('debe emitir escape cuando se pulsa Escape con el foco atrapado', async () => {
+    fixture.componentInstance.open.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    first().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(fixture.componentInstance.escaped()).toBe(true);
   });
 });

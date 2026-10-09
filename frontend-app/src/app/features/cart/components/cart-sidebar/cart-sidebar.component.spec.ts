@@ -74,6 +74,14 @@ describe('CartSidebarComponent', () => {
     expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
   });
 
+  it('debe cerrar el panel al pulsar Escape', () => {
+    const dialog = fixture.nativeElement.querySelector('[role="dialog"]') as HTMLElement;
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
+  });
+
   it('debe navegar a checkout al procesar la orden', () => {
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
