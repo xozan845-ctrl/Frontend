@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SeoService } from '../../../../core/services/seo.service';
 
 /**
  * Entrada raíz de la plataforma **multi-tienda**: no hay una tienda "por
@@ -12,13 +13,18 @@ import { ActivatedRoute, Router } from '@angular/router';
   standalone: true,
   templateUrl: './store-entry.component.html',
 })
-export default class StoreEntryComponent {
+export default class StoreEntryComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly seoService = inject(SeoService);
 
   readonly storeId = signal('');
 
   constructor() {
+    this.seoService.setPage(
+      'Tu tienda',
+      'Plataforma multi-tienda: encuentra tu tienda o crea la tuya en minutos.',
+    );
     const queryStore = this.route.snapshot.queryParamMap.get('tienda');
     if (queryStore) this.goToStore(queryStore);
   }
@@ -35,5 +41,9 @@ export default class StoreEntryComponent {
   /** Abre el asistente para crear una tienda (requiere cuenta de vendedor). */
   goToCreateStore(): void {
     this.router.navigate(['/crear-tienda']);
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 }

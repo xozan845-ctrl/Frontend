@@ -156,6 +156,21 @@
             Este es el nombre y la descripción que verán tus clientes.
           </p>
 
+          @if (wizard.error()) {
+            <div
+              class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 p-4 mb-6 flex items-center justify-between gap-3 text-xs font-bold"
+            >
+              <span>{{ wizard.error() }}</span>
+              <button
+                type="button"
+                (click)="createStore()"
+                class="btn btn-secondary btn-sm shrink-0"
+              >
+                Reintentar
+              </button>
+            </div>
+          }
+
           <form [formGroup]="storeForm" (ngSubmit)="createStore()" class="flex flex-col gap-5">
             <div class="flex flex-col gap-2">
               <label
@@ -216,11 +231,27 @@
           </p>
 
           @if (wizard.catalogLoading()) {
-            <p class="text-sm text-slate-500 py-8 text-center">Cargando catálogo…</p>
+            <div class="flex flex-col gap-3 mb-8" aria-label="Cargando catálogo">
+              @for (i of [1, 2, 3]; track i) {
+                <app-skeleton-loader height="56px" customClass="rounded-xl" />
+              }
+            </div>
+          } @else if (wizard.error()) {
+            <app-empty-state
+              variant="error"
+              icon="fa-solid fa-triangle-exclamation"
+              title="No pudimos cargar el catálogo"
+              [subtitle]="wizard.error()!"
+              actionLabel="Reintentar"
+              [actionClick]="retryCatalog"
+            />
           } @else if (wizard.catalog().length === 0) {
-            <p class="text-sm text-slate-500 py-8 text-center">
-              No hay productos en el catálogo todavía.
-            </p>
+            <app-empty-state
+              variant="empty"
+              icon="fa-solid fa-box-open"
+              title="Aún no hay productos en el catálogo"
+              subtitle="Puedes omitir este paso y publicar tus productos más tarde."
+            />
           } @else {
             <ul class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700 mb-8">
               @for (option of wizard.catalog(); track option.id; let i = $index) {

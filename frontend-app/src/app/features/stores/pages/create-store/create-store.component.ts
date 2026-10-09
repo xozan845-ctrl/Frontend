@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import {
   FormBuilder,
@@ -12,6 +12,8 @@ import { AuthStore } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard.store';
 import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/store-wizard.model';
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
+import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SeoService } from '../../../../core/services/seo.service';
 
 type ProductRow = FormGroup<{
@@ -28,10 +30,17 @@ type ProductRow = FormGroup<{
 @Component({
   selector: 'app-create-store',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CreateStoreStepperComponent, NgClass],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    CreateStoreStepperComponent,
+    EmptyStateComponent,
+    SkeletonLoaderComponent,
+    NgClass,
+  ],
   templateUrl: './create-store.component.html',
 })
-export default class CreateStoreComponent {
+export default class CreateStoreComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   readonly wizard = inject(StoreWizardStore);
   readonly authStore = inject(AuthStore);
@@ -61,6 +70,12 @@ export default class CreateStoreComponent {
 
   // Paso 3 — productos a ofertar (margen por producto, 0–90)
   readonly productRows = this.fb.array<ProductRow>([]);
+  /** Señal de apoyo para derivar `hasSelection` de un `FormArray` (R-PF-4/R-ST-3). */
+  private readonly selectionRevision = signal(0);
+  readonly hasSelection = computed(() => {
+    this.selectionRevision();
+    return this.productRows.controls.some((row) => row.controls.selected.value);
+  });
 
   readonly submitting = signal(false);
   private catalogRequested = false;
@@ -142,6 +157,7 @@ export default class CreateStoreComponent {
   toggleRow(index: number): void {
     const row = this.productRows.at(index);
     row.controls.selected.setValue(!row.controls.selected.value);
+    this.selectionRevision.update((v) => v + 1);
   }
 
   /** Fila tipada del formulario de productos (para la plantilla). */
@@ -149,10 +165,11 @@ export default class CreateStoreComponent {
     return this.productRows.controls[index];
   }
 
-  /** ¿Hay algún producto seleccionado? (método: `FormArray` no es señal). */
-  hasSelection(): boolean {
-    return this.productRows.controls.some((row) => row.controls.selected.value);
-  }
+  /** Reintenta cargar el catálogo tras un error (R-UX-1); flecha para el `input` de `EmptyState`. */
+  readonly retryCatalog = (): void => {
+    this.catalogRequested = true;
+    this.wizard.loadCatalog();
+  };
 
   async publish(): Promise<void> {
     const offers: OfferDraft[] = this.productRows.controls
@@ -183,5 +200,9 @@ export default class CreateStoreComponent {
   invalid(form: FormGroup, field: string): boolean {
     const control = form.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 }
