@@ -154,6 +154,35 @@ describe('AuthService', () => {
     expect(result).toBe(true);
   });
 
+  it('debe traducir el error de cambiar la contraseña', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.changePassword('mala', 'nueva12345').subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/cambiar-contrasena')
+      .flush(
+        { mensaje: 'La contraseña actual es incorrecta.' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(error?.message).toBe('La contraseña actual es incorrecta.');
+  });
+
+  it('debe traducir el error de GET /auth/me con el fallback', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.me().subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/me')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo cargar tu perfil.');
+  });
+
   it('debe emitir un error cuando no hay apiUrl configurada', () => {
     environment.apiUrl = '';
     build();

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import OrderDetailComponent from './order-detail.component';
 import { ORDER_REPOSITORY } from '../../../cart/public-api';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -82,5 +82,17 @@ describe('OrderDetailComponent', () => {
     fixture.destroy();
 
     expect(seo.reset).toHaveBeenCalled();
+  });
+
+  it('debe mostrar el estado de carga como región viva', async () => {
+    orderRepo.getOrder.mockReturnValueOnce(NEVER);
+    const fixture = await setup();
+    fixture.detectChanges();
+
+    const loading = (fixture.nativeElement as HTMLElement).querySelector(
+      '[data-testid="order-loading"]',
+    );
+
+    expect(loading?.getAttribute('role')).toBe('status');
   });
 });

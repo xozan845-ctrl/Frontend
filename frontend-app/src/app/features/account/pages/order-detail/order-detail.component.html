@@ -8,7 +8,11 @@
     </a>
 
     @if (loading()) {
-      <p class="text-sm text-slate-500">Cargando pedido…</p>
+      <div class="flex flex-col gap-4" role="status" aria-live="polite" data-testid="order-loading">
+        <span class="sr-only">Cargando pedido…</span>
+        <app-skeleton-loader height="120px" customClass="rounded-2xl" />
+        <app-skeleton-loader height="80px" customClass="rounded-2xl" />
+      </div>
     } @else if (error()) {
       <app-empty-state
         variant="error"

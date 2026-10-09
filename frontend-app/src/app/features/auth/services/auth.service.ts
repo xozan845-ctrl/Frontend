@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { toUserMessage } from '../../../core/models/api-error';
 import { AuthResponse, LoginCredentials, RegisterData, User } from '../models/auth.model';
 import { adaptAuthResponseFromBackend, adaptUserFromBackend } from '../adapters/auth.adapter';
 import { AuthRepository } from '../repositories/auth.repository';
@@ -92,9 +93,12 @@ export class AuthService implements AuthRepository {
       );
     }
 
-    return this.http
-      .get<unknown>(`${this.apiUrl}/me`)
-      .pipe(map((res) => adaptUserFromBackend(res)));
+    return this.http.get<unknown>(`${this.apiUrl}/me`).pipe(
+      map((res) => adaptUserFromBackend(res)),
+      catchError((error) =>
+        throwError(() => new Error(toUserMessage(error, 'No se pudo cargar tu perfil.'))),
+      ),
+    );
   }
 
   /**
@@ -139,7 +143,12 @@ export class AuthService implements AuthRepository {
         actual: currentPassword,
         nueva: newPassword,
       })
-      .pipe(map(() => true));
+      .pipe(
+        map(() => true),
+        catchError((error) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo cambiar la contraseña.'))),
+        ),
+      );
   }
 
   refresh(refreshToken: string): Observable<AuthResponse> {
