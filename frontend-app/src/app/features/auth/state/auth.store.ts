@@ -183,7 +183,10 @@ export const AuthStore = signalStore(
         const storedRefresh = sessionStorage.getItem(REFRESH_STORAGE_KEY);
         if (storedRefresh) {
           patchState(store, { refreshToken: storedRefresh });
-          void store.refreshTokenOnce();
+          // Diferido: no dispares HTTP durante la construcción del store, o el
+          // authInterceptor re-inyectaría AuthStore y habría dependencia
+          // circular (NG0200). El primer guard también lo restaurará.
+          queueMicrotask(() => void store.refreshTokenOnce());
         }
       } catch (e) {
         console.error('Failed to restore auth session', e);
