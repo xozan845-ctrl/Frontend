@@ -154,4 +154,34 @@ describe('StoreWizardStore', () => {
 
     expect(notification.showError).toHaveBeenCalled();
   });
+
+  it('debe reemplazar el catálogo cuando se recarga sin mutar el anterior', async () => {
+    const wizard = setup();
+    wizard.loadCatalog();
+    await vi.waitFor(() => expect(wizard.catalog()).toHaveLength(1));
+    const previous = wizard.catalog();
+
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(of([{ id: 'p-2', name: 'Mouse', sku: '' }]));
+    wizard.loadCatalog();
+    await vi.waitFor(() => expect(wizard.catalog()[0]?.id).toBe('p-2'));
+
+    expect(wizard.catalog()).not.toBe(previous);
+    expect(previous[0]?.id).toBe('p-1');
+  });
+
+  it('debe usar el mensaje por defecto cuando crear la tienda falla sin mensaje', async () => {
+    const wizard = setup();
+    vi.mocked(repo.createStore).mockReturnValue(throwError(() => new Error('')));
+
+    wizard.createStore({ name: 'X', description: '' });
+    await vi.waitFor(() => expect(wizard.error()).toBe('No se pudo crear la tienda.'));
+  });
+
+  it('debe usar el mensaje por defecto cuando el catálogo falla sin mensaje', async () => {
+    const wizard = setup();
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(throwError(() => new Error('')));
+
+    wizard.loadCatalog();
+    await vi.waitFor(() => expect(wizard.error()).toBe('No se pudo cargar el catálogo.'));
+  });
 });
