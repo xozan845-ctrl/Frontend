@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart.store';
+import { CartUiStore } from '../../state/cart-ui.store';
 import { ProductStore } from '../../../products/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
@@ -24,6 +25,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 })
 export class CartSidebarComponent {
   readonly cartStore = inject(CartStore);
+  readonly cartUiStore = inject(CartUiStore);
   readonly authStore = inject(AuthStore);
   private readonly productStore = inject(ProductStore);
   private router = inject(Router);
@@ -38,25 +40,25 @@ export class CartSidebarComponent {
   };
 
   goToCart() {
-    this.cartStore.toggleSidebar(false);
+    this.cartUiStore.toggleSidebar(false);
     this.router.navigate(['/tienda', this.storeId, 'carrito']);
   }
 
   goToCheckout() {
-    this.cartStore.toggleSidebar(false);
+    this.cartUiStore.toggleSidebar(false);
     this.router.navigate(['/tienda', this.storeId, 'checkout']);
   }
 
   /** Invita al invitado a iniciar sesión y volver al checkout (donde se vuelca el carrito). */
   goToLogin() {
-    this.cartStore.toggleSidebar(false);
+    this.cartUiStore.toggleSidebar(false);
     this.router.navigate(['/login'], {
       queryParams: { returnUrl: `/tienda/${this.storeId}/checkout` },
     });
   }
 
   goToRegister() {
-    this.cartStore.toggleSidebar(false);
+    this.cartUiStore.toggleSidebar(false);
     this.router.navigate(['/register'], {
       queryParams: { returnUrl: `/tienda/${this.storeId}/checkout` },
     });

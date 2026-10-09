@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
 import { CartStore } from '../../state/cart.store';
+import { CartUiStore } from '../../state/cart-ui.store';
 import { ProductStore } from '../../../products/state/product.store';
 import { AuthStore } from '../../../auth/state/auth.store';
 import { Product } from '../../../products/models/product.model';
@@ -23,16 +24,15 @@ describe('CartSidebarComponent', () => {
   const loading = signal(false);
   const error = signal<string | null>(null);
   const cartStore = {
-    isSidebarOpen: () => true,
     items,
     loading,
     error,
     totalPrice: () => 100,
-    toggleSidebar: vi.fn(),
     updateQuantity: vi.fn(),
     removeItem: vi.fn(),
     loadCart: vi.fn(),
   };
+  const cartUiStore = { isSidebarOpen: () => true, toggleSidebar: vi.fn() };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -44,6 +44,7 @@ describe('CartSidebarComponent', () => {
       providers: [
         provideRouter([]),
         { provide: CartStore, useValue: cartStore },
+        { provide: CartUiStore, useValue: cartUiStore },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
         { provide: AuthStore, useValue: { isAuthenticated: () => false } },
       ],
@@ -81,7 +82,7 @@ describe('CartSidebarComponent', () => {
   it('debe cerrar el panel al pulsar cerrar', () => {
     fixture.nativeElement.querySelector('[aria-label="Cerrar"]').click();
 
-    expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
+    expect(cartUiStore.toggleSidebar).toHaveBeenCalledWith(false);
   });
 
   it('debe cerrar el panel al pulsar Escape', () => {
@@ -89,7 +90,7 @@ describe('CartSidebarComponent', () => {
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
-    expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
+    expect(cartUiStore.toggleSidebar).toHaveBeenCalledWith(false);
   });
 
   it('debe mostrar el estado de carga cuando el carrito está cargando y vacío', () => {
@@ -112,7 +113,7 @@ describe('CartSidebarComponent', () => {
 
     button.click();
 
-    expect(cartStore.toggleSidebar).toHaveBeenCalledWith(false);
+    expect(cartUiStore.toggleSidebar).toHaveBeenCalledWith(false);
     expect(navigate).toHaveBeenCalledWith(['/tienda', 'tienda-1', 'checkout']);
   });
 });

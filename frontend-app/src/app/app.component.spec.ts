@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { App } from './app.component';
 import { AUTH_REPOSITORY } from './features/auth/repositories/auth.repository';
 import { PRODUCT_REPOSITORY } from './features/products/repositories/product.repository';
-import { CartStore } from './features/cart/public-api';
+import { CartStore, CartUiStore } from './features/cart/public-api';
 
 const authRepoStub = {
   login: () => of({ user: { id: 1, email: 'a@a.com', name: 'A' }, token: 't' }),
@@ -30,17 +30,16 @@ describe('App', () => {
           provide: CartStore,
           useValue: {
             totalItems: () => 0,
-            isSidebarOpen: () => false,
             items: () => [],
             loading: () => false,
             error: () => null,
             totalPrice: () => 0,
-            toggleSidebar: vi.fn(),
             updateQuantity: vi.fn(),
             removeItem: vi.fn(),
             loadCart: vi.fn(),
           },
         },
+        { provide: CartUiStore, useValue: { isSidebarOpen: () => false, toggleSidebar: vi.fn() } },
       ],
     }).compileComponents();
   });
