@@ -75,8 +75,9 @@
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
                     class="w-11 h-11 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
                     aria-label="Disminuir cantidad"
+                    data-testid="cart-decrease"
                   >
-                    <i class="fa-solid fa-minus text-sm"></i>
+                    <i class="fa-solid fa-minus text-sm" aria-hidden="true"></i>
                   </button>
                   <span
                     class="w-12 text-center font-black text-slate-900 dark:text-white text-sm"
@@ -86,14 +87,16 @@
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity + 1)"
                     class="w-11 h-11 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
                     aria-label="Aumentar cantidad"
+                    data-testid="cart-increase"
                   >
-                    <i class="fa-solid fa-plus text-sm"></i>
+                    <i class="fa-solid fa-plus text-sm" aria-hidden="true"></i>
                   </button>
                 </div>
 
                 <button
                   (click)="cartStore.removeItem(item.product.id)"
                   class="px-4 py-2.5 text-sm font-bold uppercase tracking-widest text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
+                  data-testid="cart-remove"
                 >
                   Eliminar
                 </button>
@@ -174,12 +177,14 @@
           <button
             (click)="checkout()"
             class="w-full bg-accent-600 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            data-testid="cart-checkout"
           >
             Procesar Orden
           </button>
           <button
             (click)="showClearConfirm.set(true)"
             class="w-full border border-slate-200 dark:border-surface-600 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            data-testid="cart-clear"
           >
             Vaciar carrito
           </button>
@@ -223,12 +228,14 @@
         <button
           (click)="showClearConfirm.set(false)"
           class="flex-1 py-3 rounded-xl border border-slate-200 dark:border-surface-600 text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors"
+          data-testid="cart-cancel-clear"
         >
           Cancelar
         </button>
         <button
           (click)="confirmClearCart()"
           class="flex-1 py-3 rounded-xl bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors shadow-md"
+          data-testid="cart-confirm-clear"
         >
           Vaciar
         </button>
