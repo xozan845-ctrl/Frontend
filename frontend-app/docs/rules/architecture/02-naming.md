@@ -30,10 +30,10 @@ almacenamiento y mensajes de commit en `frontend-app/`.
 
 ## Claves y rutas
 
-| ID      | Regla                                                                                                                                                                                                        |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R-NC-11 | **Claves de `localStorage` con prefijo `ecom_`** (`ecom_cart_items`, `ecom_auth_data`, `ecom_wishlist`, `ecom_recently_viewed`); prohibido dispersar claves nuevas sin prefijo (deuda: `theme` → ver AUDIT). |
-| R-NC-12 | **Rutas en `kebab-case` y en inglés técnico** (`/shop`, `/product/:id`, `/checkout/confirmation`, `/wishlist`); la ruta comodín `**` resuelve al `not-found.component`.                                      |
+| ID      | Regla                                                                                                                                                                                                                                                                                                                                     |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R-NC-11 | **Claves de `localStorage` con prefijo `ecom_`** (`ecom_cart_items`, `ecom_auth_data`, `ecom_wishlist`, `ecom_recently_viewed`); prohibido dispersar claves nuevas sin prefijo (deuda: `theme` → ver AUDIT).                                                                                                                              |
+| R-NC-12 | **Rutas en `kebab-case`**; el idioma sigue el tipo de término (ADR-17): términos técnicos consolidados en inglés (`/shop`, `/wishlist`, `/checkout`, `/login`) y sustantivos de dominio en español (`/producto/:id`, `/carrito`, `/cuenta`, `/tienda/:storeId`, `/crear-tienda`); la ruta comodín `**` resuelve al `not-found.component`. |
 
 > `R-NC-1..12` sustituyen la numeración anterior (heredada de NestJS). No se
 > reutilizan IDs: las reglas sobre controladores, DTOs de entrada/salida y

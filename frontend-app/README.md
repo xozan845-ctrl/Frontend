@@ -11,12 +11,14 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 
 ## 🚀 Características Principales
 
-- **Inicio (Home)**: página de bienvenida con promociones y productos destacados.
-- **Catálogo (`/shop`)**: navegación, filtrado por categoría/precio, orden y paginación.
-- **Detalle de Producto (`/product/:id`)**: galería, variantes, reseñas y relacionados.
-- **Carrito (`/cart` → sidebar) y Checkout (`/checkout`)**: flujo de compra con guard de autenticación y confirmación (`/checkout/confirmation`).
-- **Autenticación (`/login`, `/register`)**: formularios reactivos con `AuthStore`.
-- **Lista de Deseos (`/wishlist`)**: favoritos persistidos localmente.
+- **Entrada multi-tienda (`/`)**: busca tu tienda por URL o **crea la tuya** con el asistente (`/crear-tienda`). El storefront es **multi-tienda**: cada tienda vive bajo `/tienda/:storeId` (ADR-15).
+- **Catálogo (`/tienda/:storeId/shop`)**: navegación, filtrado por categoría/precio, orden y paginación.
+- **Detalle de Producto (`/tienda/:storeId/producto/:id`)**: galería, variantes y relacionados.
+- **Carrito y Checkout (`/tienda/:storeId/carrito`, `/tienda/:storeId/checkout` → `/checkout/confirmacion`)**: flujo de compra con guard de autenticación. Carrito **híbrido**: local para invitados y del servidor para compradores (se vuelca al iniciar sesión).
+- **Autenticación (`/login`, `/register`, `/recuperar`)**: formularios reactivos con `AuthStore` y refresco de sesión ante `401`.
+- **Cuenta (`/cuenta`)**: perfil, cambio/recuperación de contraseña y **Mis Pedidos** (`/cuenta/pedidos`, `/cuenta/pedidos/:id`).
+- **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
+- **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
 - **Búsqueda** con autocompletado, **dark mode**, **PWA install banner** y página `404`.
 
@@ -103,11 +105,13 @@ src/
     │   ├── navbar/
     │   └── footer/
     ├── features/                 # Dominios de negocio (clean/hexagonal)
+    │   ├── account/              # pages/ (perfil, pedidos), state, services, repositories, adapters
     │   ├── auth/                 # pages/login, pages/register, state, services, repositories, adapters, guards
     │   ├── cart/                 # pages/cart-view, pages/checkout, pages/confirmation, state, services, repositories, adapters
-    │   ├── home/                 # pages/home, pages/not-found
+    │   ├── home/                 # pages/home, pages/store-entry (raíz multi-tienda), pages/not-found
     │   ├── plans/                # pages/plans
     │   ├── products/             # pages/, components/, state, services, repositories, adapters, models
+    │   ├── stores/               # pages/create-store (asistente), components/, state, services, repositories, adapters, models
     │   └── wishlist/             # pages/wishlist, state
     ├── app.component.ts          # Componente raíz (standalone)
     ├── app.config.ts             # Providers globales (DI de repositorios)

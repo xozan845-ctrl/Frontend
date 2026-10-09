@@ -337,3 +337,27 @@ contexto y consecuencias.
   `app.config.ts`/`app.routes.ts` (R-AR-1/3/12). `RegisterData` admite `role`
   (`customer`→`comprador`, `seller`→`vendedor`). El indicador de pasos es
   presentacional (R-SO-8). Revertir es quitar la ruta y el CTA.
+
+## ADR-17: Idioma de las rutas (términos técnicos en inglés, dominio en español)
+
+- **Contexto**: `R-NC-12` exigía rutas "en inglés técnico" (`/shop`,
+  `/product/:id`, `/checkout/confirmation`), pero el producto es de cara al
+  público hispanohablante (`R-NC-7`: UI, modelos y mensajes en español) y varias
+  rutas ya se habían fijado en español al introducir el storefront multi-tienda
+  (`/tienda/:storeId`, ADR-15), el alta de tienda (`/crear-tienda`, ADR-16) y el
+  área de cuenta (`/cuenta`, `/cuenta/pedidos`). El resultado era un mapa de
+  rutas mixto sin criterio documentado, con `R-NC-12` desactualizada.
+- **Decisión**: las rutas van en **`kebab-case`** y su idioma sigue el tipo de
+  término:
+  - **Términos técnicos consolidados** del comercio electrónico se mantienen en
+    inglés: `/login`, `/register`, `/plans`, `/shop`, `/wishlist`, `/checkout`.
+  - **Sustantivos de dominio** que el usuario hispanohablante identifica mejor en
+    su idioma van en español: `/producto/:id`, `/carrito`,
+    `/checkout/confirmacion`, `/cuenta`, `/cuenta/pedidos`, `/tienda/:storeId`,
+    `/crear-tienda`, `/recuperar`.
+  - La ruta comodín `**` sigue resolviendo al `not-found.component`.
+- **Consecuencias**: se actualiza `R-NC-12` para reflejar el criterio (con
+  respaldo de este ADR, `R-DO-2`); las rutas nuevas deben encajar en una de las
+  dos categorías. **No** se renombran las rutas existentes para no romper los
+  enlaces compartidos de tiendas (`/tienda/<id>`) ni el resto de la app.
+  Revertir es volver a rutas 100 % en inglés y renombrar todos los enlaces.

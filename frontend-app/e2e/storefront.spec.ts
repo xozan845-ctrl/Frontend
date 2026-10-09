@@ -128,7 +128,7 @@ test('R-E-8: una ruta inexistente muestra el 404', async ({ page }) => {
   await expect(page.getByText('404 - Página no encontrada')).toBeVisible();
 });
 
-test('R-E-9: se puede crear una tienda paso a paso', async ({ page }) => {
+test('R-E-15: se puede crear una tienda paso a paso', async ({ page }) => {
   await open(page, '/crear-tienda');
 
   // Paso 1 · cuenta de vendedor
@@ -141,11 +141,11 @@ test('R-E-9: se puede crear una tienda paso a paso', async ({ page }) => {
   // Paso 2 · datos de la tienda
   await expect(page.getByRole('heading', { name: 'Describe tu tienda' })).toBeVisible();
   await page.locator('#store-name').fill('Mi Tienda');
-  await page.getByRole('button', { name: 'Crear mi tienda' }).click();
+  await page.getByTestId('create-store-submit').click();
 
   // Paso 3 · productos (omitir)
   await expect(page.getByRole('heading', { name: 'Publica tus primeros productos' })).toBeVisible();
-  await page.getByRole('button', { name: 'Omitir por ahora' }).click();
+  await page.getByTestId('skip-products').click();
 
   // Paso 4 · listo
   await expect(page.getByText('¡Tu tienda está lista!')).toBeVisible();
