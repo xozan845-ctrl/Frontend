@@ -247,3 +247,30 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 9 — Módulo `cart` (2026-10-09)
+
+- **Alcance:** auditar `cart` contra todas las familias de reglas (contrato,
+  accesibilidad, cobertura, store, componentes, naming, arquitectura,
+  rendimiento, seguridad, UX) y cerrar los hallazgos (PRs #84–#89).
+- **Hallazgos corregidos:**
+  - `fix(cart,a11y)` — diálogos con `role`/`aria-modal`/focus trap y cierre con
+    Escape; iconos decorativos (R-AC-3, R-AC-1).
+  - `feat(cart)` — estados de carga/error con reintento y SEO (R-UX-1, R-UX-6).
+  - `refactor(cart)` — DTOs, envelope `{ data }` y fixture/contrato del adapter
+    (R-NC-9, R-C-1, R-C-8, R-COV-2).
+  - `test(cart)` — cobertura de la lógica crítica ≥ 80% (R-QA-1).
+  - `refactor(cart)` — `rxMethod`, `CartUiStore`, persistencia en `withHooks`,
+    endpoints y errores traducidos (R-ST-5/6/7, R-AR-9/10/11, R-U-6).
+  - `refactor(cart,app)` — drawer como contenedor diferido (`@defer`) y
+    `data-testid` (R-AR-6, R-LZ-1, R-SO-8, R-PF-4, R-CP-2).
+- **Resultado:**
+  - ✅ `npm run build` — initial **485.16 kB** (< 500 kB).
+  - ✅ `npm test` — **71 archivos / 410 tests**; cobertura **93.81 / 90.55 / 93.47 / 93.92**.
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅; `npm audit` 0; **E2E 9/9**.
+  - ✅ CI 6/6 jobs requeridos en verde; release `v1.14.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
