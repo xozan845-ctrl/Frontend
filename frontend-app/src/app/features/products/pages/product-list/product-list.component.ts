@@ -3,6 +3,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
+  OnDestroy,
   signal,
   effect,
   computed,
@@ -16,7 +17,7 @@ import { WishlistStore } from '../../../wishlist/public-api';
 import { ReviewsStore } from '../../state/reviews.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { SearchAutocompleteComponent } from '../../components/search-autocomplete/search-autocomplete.component';
+import { SearchAutocompleteComponent } from '../search-autocomplete/search-autocomplete.component';
 import { QuickViewModalComponent } from '../../components/quick-view-modal/quick-view-modal.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { ScrollRevealDirective } from '../../../../shared/directives/scroll-reveal.directive';
@@ -36,7 +37,7 @@ import { Product } from '../../models/product.model';
   ],
   templateUrl: './product-list.component.html',
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
   private readonly wishlistStore = inject(WishlistStore);
@@ -114,6 +115,10 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.seoService.reset();
+  }
+
   onCategoryChange(cat: string) {
     this.productStore.setSelectedCategory(cat);
   }
@@ -138,13 +143,13 @@ export class ProductListComponent implements OnInit {
     this.quickViewProduct.set(product);
   }
 
-  retryLoad() {
+  retryLoad = (): void => {
     this.productStore.reload();
-  }
+  };
 
-  clearFilters() {
+  clearFilters = (): void => {
     this.productStore.clearFilters();
-  }
+  };
 
   goToPage(page: number) {
     this.productStore.setPage(page);

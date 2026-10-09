@@ -59,6 +59,9 @@ export class ProductDetailComponent implements OnDestroy {
   readonly storeId = input<string>('');
   readonly id = input<string>('');
 
+  /** Catálogo de la tienda activa (para el enlace "Retornar a la Tienda"). */
+  readonly shopRoute = computed(() => `/tienda/${this.storeId()}/shop`);
+
   showReviewForm = signal(false);
   selectedRating = signal(0);
   reviewSubmitted = signal(false);

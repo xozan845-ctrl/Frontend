@@ -67,6 +67,7 @@
         >
         <select
           id="sort-select"
+          data-testid="sort-select"
           [value]="sortOption()"
           (change)="onSortChange($event)"
           class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-4 py-2.5 pr-8 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all cursor-pointer appearance-none"
@@ -98,6 +99,7 @@
           step="1"
           class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           aria-label="Precio mínimo"
+          data-testid="price-min"
         />
         <span class="text-slate-300 dark:text-surface-600 text-xs">—</span>
         <input
@@ -109,6 +111,7 @@
           step="1"
           class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           aria-label="Precio máximo"
+          data-testid="price-max"
         />
       </div>
 
@@ -144,7 +147,7 @@
       title="Error de Sistema"
       [subtitle]="productStore.error() ?? 'No se pudo cargar el inventario'"
       actionLabel="Reintentar"
-      [actionClick]="retryLoad.bind(this)"
+      [actionClick]="retryLoad"
     />
   } @else if (filteredProducts().length === 0) {
     <app-empty-state
@@ -153,7 +156,7 @@
       title="Sin Resultados"
       subtitle="No se encontraron productos con esos filtros. Intenta con otros términos o categorías."
       actionLabel="Limpiar Filtros"
-      [actionClick]="clearFilters.bind(this)"
+      [actionClick]="clearFilters"
     />
   } @else {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-20">
@@ -187,8 +190,9 @@
             [disabled]="currentPage() === 1"
             class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
             aria-label="Página anterior"
+            data-testid="page-prev"
           >
-            <i class="fa-solid fa-chevron-left"></i>
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
           </button>
           @for (page of pageNumbers(); track page) {
             @if (page === -1) {
@@ -230,8 +234,9 @@
             [disabled]="currentPage() === totalPages()"
             class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
             aria-label="Página siguiente"
+            data-testid="page-next"
           >
-            <i class="fa-solid fa-chevron-right"></i>
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
           </button>
         </nav>
       </div>
