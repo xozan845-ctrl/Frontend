@@ -2,6 +2,7 @@
 export type { CartItem } from './models/cart.model';
 export type { OrderResponse, OrderItem, OrderTimelineEvent } from './models/order.model';
 export { CartStore } from './state/cart.store';
+export { CartUiStore } from './state/cart-ui.store';
 export { OrderStore } from './state/order.store';
 export { ORDER_REPOSITORY, type OrderRepository } from './repositories/order.repository';
 export { CART_REPOSITORY, type CartRepository } from './repositories/cart.repository';

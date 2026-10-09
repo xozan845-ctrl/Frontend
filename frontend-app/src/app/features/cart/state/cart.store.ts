@@ -7,8 +7,9 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
-import { Observable, forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { EMPTY, Observable, forkJoin, pipe } from 'rxjs';
+import { switchMap, tap, catchError } from 'rxjs/operators';
 import type { Product } from '../../products/public-api';
 import { CartItem } from '../models/cart.model';
 import { CART_REPOSITORY } from '../repositories/cart.repository';
@@ -19,14 +20,12 @@ export interface CartState {
   items: CartItem[];
   loading: boolean;
   error: string | null;
-  isSidebarOpen: boolean;
 }
 
 const initialState: CartState = {
   items: [],
   loading: false,
   error: null,
-  isSidebarOpen: false,
 };
 
 /** Carrito del invitado: persiste en `localStorage` hasta que inicia sesión. */
@@ -67,18 +66,25 @@ function mergeItem(items: CartItem[], product: Product, quantity: number): CartI
   return [...items, { product, quantity }];
 }
 
+/** Redondea a 2 decimales para no arrastrar error de coma flotante (`R-U-6`). */
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
 /**
  * Carrito **híbrido**: el invitado usa un carrito local (persistido en
  * `localStorage`) y, al iniciar sesión, se **vuelca** al carrito del servidor
  * (`/carrito`, rol comprador). Con sesión, la fuente de verdad es el servidor
- * (R-AR-5, RN-05).
+ * (R-AR-5, RN-05). El HTTP se orquesta con `rxMethod` (`R-ST-5`) y la
+ * persistencia local vive en `withHooks` (`R-ST-7`).
  */
 export const CartStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ items }) => ({
     totalItems: () => items().reduce((acc, item) => acc + item.quantity, 0),
-    totalPrice: () => items().reduce((acc, item) => acc + item.product.price * item.quantity, 0),
+    totalPrice: () =>
+      round2(items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)),
   })),
   withMethods(
     (
@@ -93,34 +99,38 @@ export const CartStore = signalStore(
         authStore.isAuthenticated() && authStore.user()?.role === 'comprador';
 
       /** Ejecuta una operación del carrito del servidor y refresca el estado. */
-      const runServer = (request$: Observable<CartItem[]>, successMessage?: string): void => {
-        patchState(store, { loading: true, error: null });
-        request$.subscribe({
-          next: (items) => {
-            patchState(store, { items, loading: false });
-            if (successMessage) notificationService.showSuccess(successMessage);
-          },
-          error: (err: Error) => {
-            const message = err.message || 'No se pudo actualizar el carrito.';
-            patchState(store, { loading: false, error: message });
-            notificationService.showError(message);
-          },
-        });
-      };
+      const runServer = rxMethod<{ request$: Observable<CartItem[]>; successMessage?: string }>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(({ request$, successMessage }) =>
+            request$.pipe(
+              tap((items) => {
+                patchState(store, { items, loading: false });
+                if (successMessage) notificationService.showSuccess(successMessage);
+              }),
+              catchError((err: Error) => {
+                const message = err.message || 'No se pudo actualizar el carrito.';
+                patchState(store, { loading: false, error: message });
+                notificationService.showError(message);
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
+      );
 
       const setLocal = (items: CartItem[]): void => {
         patchState(store, { items });
-        writeLocalCart(items);
       };
 
       return {
         /** Carga el carrito: del servidor con sesión, o el local del invitado. */
         loadCart() {
           if (!useServerCart()) {
-            patchState(store, { items: readLocalCart() });
+            if (store.items().length === 0) patchState(store, { items: readLocalCart() });
             return;
           }
-          runServer(cartRepo.getCart());
+          runServer({ request$: cartRepo.getCart() });
         },
         addItem(product: Product, quantity = 1) {
           if (!useServerCart()) {
@@ -130,7 +140,7 @@ export const CartStore = signalStore(
             );
             return;
           }
-          runServer(cartRepo.addItem(String(product.id), quantity));
+          runServer({ request$: cartRepo.addItem(String(product.id), quantity) });
         },
         updateQuantity(productId: string | number, quantity: number) {
           if (!useServerCart()) {
@@ -145,7 +155,7 @@ export const CartStore = signalStore(
             setLocal(items);
             return;
           }
-          runServer(cartRepo.updateQuantity(String(productId), quantity));
+          runServer({ request$: cartRepo.updateQuantity(String(productId), quantity) });
         },
         removeItem(productId: string | number) {
           if (!useServerCart()) {
@@ -153,14 +163,17 @@ export const CartStore = signalStore(
             notificationService.showInfo('Producto eliminado del carrito');
             return;
           }
-          runServer(cartRepo.removeItem(String(productId)), 'Producto eliminado del carrito');
+          runServer({
+            request$: cartRepo.removeItem(String(productId)),
+            successMessage: 'Producto eliminado del carrito',
+          });
         },
         clearCart() {
           if (!useServerCart()) {
             setLocal([]);
             return;
           }
-          runServer(cartRepo.clearCart());
+          runServer({ request$: cartRepo.clearCart() });
         },
         /** Limpia el estado local sin llamar al backend (la orden ya vació el carrito). */
         reset() {
@@ -168,44 +181,56 @@ export const CartStore = signalStore(
           patchState(store, { items: [], loading: false, error: null });
         },
         /** Vuelca el carrito del invitado al servidor (al iniciar sesión). */
-        mergeLocalCart(local: CartItem[]) {
-          if (local.length === 0) {
-            runServer(cartRepo.getCart());
-            return;
-          }
-          patchState(store, { loading: true, error: null });
-          forkJoin(local.map((item) => cartRepo.addItem(String(item.product.id), item.quantity)))
-            .pipe(switchMap(() => cartRepo.getCart()))
-            .subscribe({
-              next: (items) => {
-                clearLocalCart();
-                patchState(store, { items, loading: false });
-                notificationService.showSuccess('Hemos guardado los productos de tu carrito.');
-              },
-              error: (err: Error) => {
-                const message = err.message || 'No se pudo guardar tu carrito.';
-                patchState(store, { loading: false, error: message });
-                notificationService.showError(message);
-              },
-            });
-        },
-        toggleSidebar(isOpen?: boolean) {
-          patchState(store, {
-            isSidebarOpen: isOpen !== undefined ? isOpen : !store.isSidebarOpen(),
-          });
-        },
+        mergeLocalCart: rxMethod<CartItem[]>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap((local) =>
+              (local.length === 0
+                ? cartRepo.getCart()
+                : forkJoin(
+                    local.map((item) => cartRepo.addItem(String(item.product.id), item.quantity)),
+                  ).pipe(switchMap(() => cartRepo.getCart()))
+              ).pipe(
+                tap((items) => {
+                  if (local.length > 0) clearLocalCart();
+                  patchState(store, { items, loading: false });
+                  if (local.length > 0) {
+                    notificationService.showSuccess('Hemos guardado los productos de tu carrito.');
+                  }
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'No se pudo guardar tu carrito.';
+                  patchState(store, { loading: false, error: message });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              ),
+            ),
+          ),
+        ),
       };
     },
   ),
   withHooks({
     onInit(store, authStore = inject(AuthStore)) {
-      // Invitado: carga el carrito local. Al iniciar sesión: vuelca el local.
+      // Hidrata el carrito local de forma síncrona (R-ST-7).
+      patchState(store, { items: readLocalCart() });
+
+      // Al iniciar sesión como comprador, vuelca el carrito local al servidor.
       effect(() => {
         if (authStore.isAuthenticated() && authStore.user()?.role === 'comprador') {
           store.mergeLocalCart(readLocalCart());
-        } else {
-          patchState(store, { items: readLocalCart() });
         }
+      });
+
+      // Persistencia local centralizada y tolerante (R-ST-7). El comprador usa el
+      // servidor, así que no se persiste.
+      effect(() => {
+        const items = store.items();
+        const useServer = authStore.isAuthenticated() && authStore.user()?.role === 'comprador';
+        if (useServer) return;
+        if (items.length === 0) clearLocalCart();
+        else writeLocalCart(items);
       });
     },
   }),

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore } from '../../features/auth/public-api';
-import { CartStore } from '../../features/cart/public-api';
+import { CartStore, CartUiStore } from '../../features/cart/public-api';
 import { ProductStore } from '../../features/products/public-api';
 import { WishlistStore } from '../../features/wishlist/public-api';
 import { StoreConfigService } from '../../core/services/store-config.service';
@@ -16,6 +16,7 @@ import { StoreConfigService } from '../../core/services/store-config.service';
 export class Navbar implements OnInit {
   readonly authStore = inject(AuthStore);
   readonly cartStore = inject(CartStore);
+  readonly cartUiStore = inject(CartUiStore);
   readonly wishlistStore = inject(WishlistStore);
   readonly productStore = inject(ProductStore);
   private readonly storeConfig = inject(StoreConfigService);

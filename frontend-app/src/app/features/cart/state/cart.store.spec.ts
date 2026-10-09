@@ -61,7 +61,7 @@ describe('CartStore', () => {
   afterEach(() => localStorage.clear());
 
   // ── Invitado (carrito local) ────────────────────────────────────────────────
-  it('invitado: addItem es local, persiste y muestra el mensaje para registrarse', () => {
+  it('invitado: addItem es local, persiste y muestra el mensaje para registrarse', async () => {
     const store = setup();
 
     store.addItem(product(1, 50), 2);
@@ -71,7 +71,9 @@ describe('CartStore', () => {
     expect(store.totalPrice()).toBe(100);
     expect(repo.addItem).not.toHaveBeenCalled();
     expect(notification.showInfo).toHaveBeenCalled();
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toHaveLength(1);
+    await vi.waitFor(() =>
+      expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toHaveLength(1),
+    );
   });
 
   it('invitado: carga el carrito local al iniciar', async () => {
@@ -209,16 +211,6 @@ describe('CartStore', () => {
 
     expect(store.error()).toBe('boom');
     expect(notification.showError).toHaveBeenCalled();
-  });
-
-  it('debe alternar el sidebar y aceptar un valor explícito', () => {
-    const store = setup();
-
-    store.toggleSidebar();
-    expect(store.isSidebarOpen()).toBe(true);
-
-    store.toggleSidebar(false);
-    expect(store.isSidebarOpen()).toBe(false);
   });
 
   it('invitado: updateQuantity con cantidad 0 elimina el item', () => {
