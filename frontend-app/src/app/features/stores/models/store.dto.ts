@@ -9,6 +9,8 @@ export interface BackendTiendaDTO {
   vendorId?: string | number | null;
   nombre?: string;
   descripcion?: string;
+  /** Fecha de creación ISO 8601 UTC (no consumida hoy; parte del contrato). */
+  creado_en?: string;
 }
 
 /** DTO de un producto del catálogo global (`GET /catalog/productos`, `R-NC-9`). */

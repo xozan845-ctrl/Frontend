@@ -43,4 +43,28 @@ describe('toUserMessage', () => {
 
     expect(message).toBe('fallback');
   });
+
+  it('debe preferir el mensaje del backend cuando viene en el cuerpo', () => {
+    const message = toUserMessage(
+      new HttpErrorResponse({
+        status: 400,
+        error: {
+          codigo: 'NOMBRE_INVALIDO',
+          mensaje: 'El nombre de la tienda debe tener entre 2 y 100 caracteres.',
+        },
+      }),
+      'fallback',
+    );
+
+    expect(message).toBe('El nombre de la tienda debe tener entre 2 y 100 caracteres.');
+  });
+
+  it('debe usar el mapeo por código cuando el mensaje del backend está vacío', () => {
+    const message = toUserMessage(
+      new HttpErrorResponse({ status: 409, error: { codigo: 'CONFLICTO', mensaje: '   ' } }),
+      'fallback',
+    );
+
+    expect(message).toBe('Ya tienes una tienda creada.');
+  });
 });
