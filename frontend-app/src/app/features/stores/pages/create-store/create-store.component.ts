@@ -142,11 +142,6 @@ export default class CreateStoreComponent implements OnDestroy {
     this.selectionRevision.update((v) => v + 1);
   }
 
-  /** Fila tipada del formulario de productos (para la plantilla). */
-  rowAt(index: number): ProductRow {
-    return this.productRows.controls[index];
-  }
-
   /** Reintenta cargar el catálogo tras un error (R-UX-1); flecha para el `input` de `EmptyState`. */
   readonly retryCatalog = (): void => {
     this.wizard.loadCatalog();

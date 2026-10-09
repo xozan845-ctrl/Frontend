@@ -31,4 +31,24 @@ describe('CreateStoreStepperComponent', () => {
       (fixture.nativeElement as HTMLElement).querySelector('[aria-current="step"]'),
     ).toBeNull();
   });
+
+  it('debe exponer el nombre de cada paso en el árbol de accesibilidad', async () => {
+    const fixture = await setup(1);
+    const steps = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+        '[data-testid^="step-"]',
+      ),
+    );
+    const labels = ['Cuenta', 'Tienda', 'Productos', 'Listo'];
+
+    expect(steps).toHaveLength(4);
+    steps.forEach((step, index) => expect(step.textContent).toContain(labels[index]));
+  });
+
+  it('debe marcar el icono de los pasos completados como decorativo', async () => {
+    const fixture = await setup(3);
+    const icon = (fixture.nativeElement as HTMLElement).querySelector('i.fa-check');
+
+    expect(icon?.getAttribute('aria-hidden')).toBe('true');
+  });
 });
