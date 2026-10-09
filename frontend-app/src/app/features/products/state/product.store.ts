@@ -1,6 +1,8 @@
 import { inject } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
-import { firstValueFrom } from 'rxjs';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { EMPTY, pipe } from 'rxjs';
+import { switchMap, tap, catchError } from 'rxjs/operators';
 import { Product } from '../models/product.model';
 import { Store } from '../models/store.model';
 import { PRODUCT_REPOSITORY } from '../repositories/product.repository';
@@ -102,70 +104,79 @@ export const ProductStore = signalStore(
       store,
       productRepo = inject(PRODUCT_REPOSITORY),
       notificationService = inject(NotificationService),
-    ) => ({
+    ) => {
       /**
-       * Carga la tienda y sus ofertas. Devuelve una promesa para que el resolver
-       * de ruta espere antes de activar la página (multi-tienda por URL).
+       * Carga la tienda y sus ofertas (`R-ST-5`). El resolver de ruta la dispara
+       * antes de activar las páginas; estas muestran su estado de carga.
        */
-      async loadStore(storeId: string): Promise<void> {
-        patchState(store, { loading: true, error: null });
-        try {
-          const { store: tienda, products } = await firstValueFrom(
-            productRepo.getStorefront(storeId),
-          );
+      const loadStore = rxMethod<string>(
+        pipe(
+          tap((storeId) => patchState(store, { loading: true, error: null, storeId })),
+          switchMap((storeId) =>
+            productRepo.getStorefront(storeId).pipe(
+              tap(({ store: tienda, products }) =>
+                patchState(store, {
+                  store: tienda,
+                  storeId,
+                  products,
+                  loading: false,
+                  currentPage: 1,
+                }),
+              ),
+              catchError((err: Error) => {
+                const message = err.message || 'Error al cargar la tienda';
+                patchState(store, { store: null, products: [], error: message, loading: false });
+                notificationService.showError(message);
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
+      );
+
+      return {
+        loadStore,
+        /** Selecciona un producto ya cargado del storefront (sin volver a pedirlo). */
+        selectProduct(id: string | number) {
+          const found = store.products().find((p) => String(p.id) === String(id)) ?? null;
+          patchState(store, { selectedProduct: found });
+        },
+        clearSelectedProduct() {
+          patchState(store, { selectedProduct: null });
+        },
+        setSelectedCategory(selectedCategory: string) {
+          patchState(store, { selectedCategory, currentPage: 1 });
+        },
+        setPriceMin(priceMin: number | null) {
+          patchState(store, { priceMin, currentPage: 1 });
+        },
+        setPriceMax(priceMax: number | null) {
+          patchState(store, { priceMax, currentPage: 1 });
+        },
+        setSortOption(sortOption: string) {
+          patchState(store, { sortOption });
+        },
+        setPage(page: number) {
+          const clampedPage = Math.max(1, Math.min(page, store.totalPages()));
+          patchState(store, { currentPage: clampedPage });
+        },
+        clearFilters() {
           patchState(store, {
-            store: tienda,
-            storeId,
-            products,
-            loading: false,
+            selectedCategory: 'All',
+            priceMin: null,
+            priceMax: null,
+            sortOption: 'default',
             currentPage: 1,
           });
-        } catch (err) {
-          const message = (err as Error).message || 'Error al cargar la tienda';
-          patchState(store, { store: null, storeId, products: [], error: message, loading: false });
-          notificationService.showError(message);
-        }
-      },
-      /** Selecciona un producto ya cargado del storefront (sin volver a pedirlo). */
-      selectProduct(id: string | number) {
-        const found = store.products().find((p) => String(p.id) === String(id)) ?? null;
-        patchState(store, { selectedProduct: found });
-      },
-      clearSelectedProduct() {
-        patchState(store, { selectedProduct: null });
-      },
-      setSelectedCategory(selectedCategory: string) {
-        patchState(store, { selectedCategory, currentPage: 1 });
-      },
-      setPriceMin(priceMin: number | null) {
-        patchState(store, { priceMin, currentPage: 1 });
-      },
-      setPriceMax(priceMax: number | null) {
-        patchState(store, { priceMax, currentPage: 1 });
-      },
-      setSortOption(sortOption: string) {
-        patchState(store, { sortOption });
-      },
-      setPage(page: number) {
-        const clampedPage = Math.max(1, Math.min(page, store.totalPages()));
-        patchState(store, { currentPage: clampedPage });
-      },
-      clearFilters() {
-        patchState(store, {
-          selectedCategory: 'All',
-          priceMin: null,
-          priceMax: null,
-          sortOption: 'default',
-          currentPage: 1,
-        });
-      },
-    }),
+        },
+      };
+    },
   ),
   withMethods((store) => ({
     /** Recarga el storefront actual (reintentos). */
-    reload(): Promise<void> {
+    reload(): void {
       const id = store.storeId();
-      return id ? store.loadStore(id) : Promise.resolve();
+      if (id) store.loadStore(id);
     },
   })),
 );
