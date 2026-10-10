@@ -44,5 +44,9 @@ export class RuntimeConfigService {
     if (config.apiUrl) {
       environment.apiUrl = config.apiUrl;
     }
+
+    if (config.aiScraperUrl) {
+      environment.aiScraperUrl = config.aiScraperUrl;
+    }
   }
 }
