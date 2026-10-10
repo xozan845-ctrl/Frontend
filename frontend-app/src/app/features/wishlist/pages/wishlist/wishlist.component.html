@@ -7,7 +7,7 @@
       <div
         class="inline-block bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 shadow-sm border border-red-100 dark:border-red-800"
       >
-        <i class="fa-solid fa-heart mr-1"></i> Lista de Deseos
+        <i class="fa-solid fa-heart mr-1" aria-hidden="true"></i> Lista de Deseos
       </div>
       <h1
         class="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading leading-none"
@@ -26,6 +26,7 @@
         <button
           (click)="clearAll()"
           class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg"
+          data-testid="wishlist-clear-all"
         >
           Limpiar Todo
         </button>
@@ -71,6 +72,7 @@
               (click)="removeFromWishlist(item.product.id)"
               class="absolute top-3 right-3 w-9 h-9 bg-white dark:bg-surface-800 rounded-full shadow-md flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:scale-110 transition-all border border-red-100 dark:border-red-800"
               aria-label="Quitar de favoritos"
+              data-testid="wishlist-remove-heart"
             >
               <i class="fa-solid fa-heart text-sm"></i>
             </button>
@@ -80,6 +82,7 @@
               (click)="openQuickView(item.product)"
               class="absolute top-3 right-14 w-9 h-9 bg-white dark:bg-surface-800 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:scale-110 transition-all border border-slate-200 dark:border-surface-600"
               aria-label="Vista rápida"
+              data-testid="wishlist-quick-view"
             >
               <i class="fa-regular fa-eye text-sm"></i>
             </button>
@@ -126,6 +129,7 @@
                 <button
                   (click)="addToCart(item.product)"
                   class="flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-accent-600 text-white hover:bg-accent-700 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                data-testid="wishlist-add-cart"
                 >
                   Añadir al Carrito
                 </button>
