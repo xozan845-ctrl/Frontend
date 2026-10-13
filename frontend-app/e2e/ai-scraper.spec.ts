@@ -3,38 +3,8 @@ import { test as base, expect, type Page } from '@playwright/test';
 // Feature de IA: el backend `ai_scraper_executor` se mockea por completo con
 // `page.route('**/ai-api/**')` (R-E-12, suite hermética). En el entorno `e2e`,
 // `environment.aiScraperUrl` es `/ai-api` (mismo origen).
-
-const JOB = {
-  id: 'job-e2e',
-  url: 'https://tienda.example/',
-  instruction: 'Obtén los productos',
-  status: 'COMPLETED',
-  aiProvider: 'openrouter',
-  aiModel: 'openrouter/free',
-  createdAt: '2026-10-09T10:00:00.000Z',
-  updatedAt: '2026-10-09T10:02:00.000Z',
-  limits: null,
-};
-
-const METRICS = {
-  instance: 'api-e2e',
-  uptimeSec: 10,
-  store: 'memory',
-  queue: 'memory',
-  pendingJobs: 0,
-  stats: {
-    jobsTotal: 1,
-    jobsByStatus: { COMPLETED: 1 },
-    resultsTotal: 1,
-    pagesTotal: 1,
-    commandsTotal: 1,
-    commandsRecovered: 0,
-    aiCallsTotal: 1,
-    aiTokensTotal: 100,
-  },
-  aiRecoveryRate: 0,
-  distributed: {},
-};
+// El dashboard de IA es mínimo: solo muestra el panel de conexión; el alta de
+// jobs y su supervisión viven en el chat de sesiones.
 
 // R-E-9: cero errores o warnings de consola durante el flujo.
 const test = base.extend<{ consoleIssues: string[] }>({
@@ -55,24 +25,15 @@ const test = base.extend<{ consoleIssues: string[] }>({
 });
 
 async function mockAiBackend(page: Page): Promise<void> {
-  await page.route('**/ai-api/**', (route) => {
-    const url = route.request().url();
-    if (url.includes('/metrics')) return route.fulfill({ json: METRICS });
-    if (url.includes('/health')) {
-      return route.fulfill({ json: { status: 'ok', service: 'api', time: '', checks: {} } });
-    }
-    if (url.includes('/jobs')) return route.fulfill({ json: { items: [JOB], nextCursor: null } });
-    return route.fulfill({ json: {} });
-  });
+  await page.route('**/ai-api/**', (route) => route.fulfill({ json: {} }));
 }
 
-test('R-E-16: el dashboard de IA lista los jobs del backend', async ({ page }) => {
+test('R-E-16: el dashboard de IA muestra el panel de conexión', async ({ page }) => {
   await mockAiBackend(page);
   await page.goto('/ia', { waitUntil: 'domcontentloaded' });
 
-  await expect(page.getByTestId('ai-jobs-table')).toBeVisible();
-  await expect(page.getByText('https://tienda.example/')).toBeVisible();
-  await expect(page.getByTestId('ai-metrics-cards')).toBeVisible();
+  await expect(page.getByTestId('ai-connection-panel')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Panel de extracción' })).toBeVisible();
 });
 
 test('R-E-17: el enlace de IA del navbar abre el feature', async ({ page }) => {
