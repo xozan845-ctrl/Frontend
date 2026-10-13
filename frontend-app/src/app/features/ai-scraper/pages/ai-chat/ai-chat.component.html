@@ -258,26 +258,45 @@
       <div class="flex flex-1 flex-col p-6">
         @if (store.isFailed()) {
           <div
-            class="mb-4 rounded-2xl border border-red-200 p-3 dark:border-red-900/40"
+            class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/10"
             data-testid="ai-chat-failed"
           >
-            <p class="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+            <p class="flex items-center gap-2 text-sm font-medium text-red-700 dark:text-red-400">
               <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
               La radiografía falló: {{ store.statusError() }}
             </p>
           </div>
         } @else if (!store.isReady()) {
-          <p
-            class="mb-4 flex items-center gap-2 text-sm text-slate-400"
+          <div
+            class="mb-6 rounded-2xl border border-slate-100 bg-white p-5 dark:border-surface-700 dark:bg-surface-900"
             data-testid="ai-chat-radiography"
           >
-            <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
-            Analizando la página… el chat se habilitará al terminar.
-          </p>
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-9 w-9 place-items-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400"
+                aria-hidden="true"
+              >
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+              </span>
+              <div>
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-100">
+                  Analizando el sitio
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Leo la estructura de {{ store.current()?.domain }} para preparar la conversación.
+                </p>
+              </div>
+            </div>
+            <div
+              class="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-surface-700"
+            >
+              <div class="h-full w-1/3 animate-pulse rounded-full bg-accent-600"></div>
+            </div>
+          </div>
         }
 
         <div
-          class="flex-1 space-y-4 overflow-y-auto"
+          class="flex-1 space-y-6 overflow-y-auto"
           aria-live="polite"
           data-testid="ai-chat-thread"
         >
@@ -289,24 +308,34 @@
           }
         </div>
 
-        <form class="mt-4 flex gap-3" [formGroup]="messageForm" (ngSubmit)="send()">
+        <form
+          class="mt-6 flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-1.5 shadow-sm focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-900"
+          [formGroup]="messageForm"
+          (ngSubmit)="send()"
+        >
+          <i class="fa-solid fa-plus text-slate-300 dark:text-surface-500" aria-hidden="true"></i>
           <label class="sr-only" for="ai-chat-instruction">Instrucción</label>
           <input
             id="ai-chat-instruction"
             type="text"
             formControlName="instruction"
-            [placeholder]="store.canSend() ? 'Escribe una instrucción…' : 'Esperando radiografía…'"
+            [placeholder]="
+              store.canSend()
+                ? 'Pregunta sobre estos datos o pide otra extracción…'
+                : 'Esperando a que termine la radiografía…'
+            "
             [disabled]="!store.canSend()"
-            class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-black outline-hidden focus:border-accent-500 disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
+            class="flex-1 bg-transparent py-2 text-sm text-slate-800 outline-hidden placeholder:text-slate-400 disabled:opacity-50 dark:text-slate-100"
             data-testid="ai-chat-instruction"
           />
           <button
             type="submit"
             [disabled]="!store.canSend()"
-            class="rounded-xl bg-accent-600 px-5 py-2 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+            aria-label="Enviar instrucción"
+            class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-600 text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
             data-testid="ai-chat-send"
           >
-            Enviar
+            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
           </button>
         </form>
       </div>
