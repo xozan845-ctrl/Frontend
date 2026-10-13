@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiSessionStore } from '../../state/ai-session.store';
@@ -131,6 +131,17 @@ export default class AiChatComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.seo.setPage('Chat de scraping', 'Conversa con la IA para extraer datos de una web.');
+    // Habilita/deshabilita la instrucción según el estado del chat gestionando el
+    // `FormControl` (no el atributo `disabled`), evitando el warning de Angular
+    // al usar `disabled` sobre un control reactivo.
+    effect(() => {
+      const control = this.messageForm.controls.instruction;
+      if (this.store.canSend()) {
+        if (control.disabled) control.enable({ emitEvent: false });
+      } else if (control.enabled) {
+        control.disable({ emitEvent: false });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -178,7 +189,7 @@ export default class AiChatComponent implements OnInit, OnDestroy {
   }
 
   send(): void {
-    if (this.messageForm.invalid) {
+    if (!this.store.canSend() || this.messageForm.invalid) {
       this.messageForm.markAllAsTouched();
       return;
     }
