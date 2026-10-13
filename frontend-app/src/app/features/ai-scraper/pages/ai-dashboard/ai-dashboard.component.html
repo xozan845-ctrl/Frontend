@@ -1,15 +1,30 @@
-<section class="mx-auto max-w-6xl px-4 py-8 space-y-8">
-  <header class="space-y-2">
-    <h1 class="text-3xl font-black uppercase tracking-tight text-black dark:text-white">
+<section class="mx-auto max-w-6xl space-y-8 px-4 py-8">
+  <header class="space-y-3">
+    <p class="text-[10px] font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400">
       Scraping con IA
+    </p>
+    <h1 class="font-heading text-3xl font-black tracking-tight text-black dark:text-white">
+      Panel de extracción
     </h1>
-    <p class="text-sm text-slate-500 dark:text-slate-400">
+    <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">
       La IA es el cerebro; el motor hace el scraping. Crea un job, sigue su estado y revisa los
       datos extraídos con su trazabilidad.
     </p>
-    <nav class="flex gap-3 pt-2 text-xs font-bold uppercase tracking-widest">
-      <a routerLink="/ia/chat" class="text-accent-600">Chat de sesiones</a>
-      <a routerLink="/ia/radiography" class="text-accent-600">Radiografía</a>
+    <nav class="flex flex-wrap gap-2 pt-1">
+      <a
+        routerLink="/ia/chat"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:text-slate-300 dark:hover:text-accent-400"
+      >
+        <i class="fa-solid fa-comments" aria-hidden="true"></i>
+        Chat de sesiones
+      </a>
+      <a
+        routerLink="/ia/radiography"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:text-slate-300 dark:hover:text-accent-400"
+      >
+        <i class="fa-solid fa-radar" aria-hidden="true"></i>
+        Radiografía
+      </a>
     </nav>
   </header>
 
@@ -23,11 +38,14 @@
   <app-ai-metrics-cards [metrics]="metricsStore.metrics()" />
 
   <section
-    class="rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+    class="rounded-3xl border border-slate-100 bg-white p-6 dark:border-surface-700 dark:bg-surface-900"
   >
-    <h2 class="text-lg font-black uppercase tracking-tight text-black dark:text-white">
+    <h2 class="font-heading text-lg font-black uppercase tracking-tight text-black dark:text-white">
       Nuevo job
     </h2>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      Indica la URL y qué datos quieres extraer.
+    </p>
     <form
       class="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
       [formGroup]="form"
@@ -39,7 +57,7 @@
         type="url"
         formControlName="url"
         placeholder="https://sitio.com"
-        class="rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+        class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
         data-testid="ai-job-url"
       />
       <label class="sr-only" for="ai-instruction">Instrucción</label>
@@ -48,13 +66,13 @@
         type="text"
         formControlName="instruction"
         placeholder="Obtén los productos con nombre, precio e imagen"
-        class="rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white"
+        class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
         data-testid="ai-job-instruction"
       />
       <button
         type="submit"
         [disabled]="jobsStore.creating()"
-        class="rounded-xl bg-accent-600 px-6 py-2 text-sm font-bold uppercase tracking-widest text-white hover:bg-accent-500 disabled:opacity-50 transition-colors"
+        class="rounded-xl bg-accent-600 px-6 py-2.5 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
         data-testid="ai-job-submit"
       >
         {{ jobsStore.creating() ? 'Creando…' : 'Ejecutar' }}
@@ -70,7 +88,9 @@
 
   <section class="space-y-4">
     <div class="flex flex-wrap items-center gap-2">
-      <h2 class="mr-2 text-lg font-black uppercase tracking-tight text-black dark:text-white">
+      <h2
+        class="mr-2 font-heading text-lg font-black uppercase tracking-tight text-black dark:text-white"
+      >
         Jobs
       </h2>
       @for (option of statusOptions; track option) {
@@ -79,8 +99,8 @@
           (click)="jobsStore.setStatusFilter(option)"
           [class]="
             jobsStore.statusFilter() === option
-              ? 'rounded-full bg-accent-600 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white'
-              : 'rounded-full border border-slate-200 dark:border-surface-700 px-3 py-1 text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300'
+              ? 'rounded-full bg-accent-600 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-white'
+              : 'rounded-full border border-slate-200 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:text-slate-300 dark:hover:text-accent-400'
           "
           [attr.data-testid]="'ai-filter-' + option"
         >
@@ -93,14 +113,14 @@
       <p class="text-sm text-slate-400" data-testid="ai-jobs-loading">Cargando jobs…</p>
     } @else if (jobsStore.error()) {
       <div
-        class="rounded-2xl border border-red-200 dark:border-red-900/40 p-4"
+        class="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/10"
         data-testid="ai-jobs-error"
       >
-        <p class="text-sm text-red-600 dark:text-red-400">{{ jobsStore.error() }}</p>
+        <p class="text-sm text-red-700 dark:text-red-400">{{ jobsStore.error() }}</p>
         <button
           type="button"
           (click)="jobsStore.loadJobs()"
-          class="mt-2 text-xs font-bold uppercase tracking-widest text-accent-600"
+          class="mt-2 text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
         >
           Reintentar
         </button>
@@ -110,41 +130,48 @@
         No hay jobs todavía. Crea el primero arriba.
       </p>
     } @else {
-      <div class="overflow-x-auto" data-testid="ai-jobs-table">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="text-left text-[11px] uppercase tracking-widest text-slate-400">
-              <th class="py-2 pr-4">ID</th>
-              <th class="py-2 pr-4">URL</th>
-              <th class="py-2 pr-4">Estado</th>
-              <th class="py-2 pr-4">Proveedor</th>
-              <th class="py-2 pr-4">Creado</th>
-              <th class="py-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (job of jobsStore.filtered(); track job.id) {
-              <tr class="border-t border-slate-100 dark:border-surface-800">
-                <td class="py-2 pr-4 font-mono text-xs text-slate-500">{{ job.id }}</td>
-                <td class="py-2 pr-4 text-slate-700 dark:text-slate-200 max-w-[18rem] truncate">
-                  {{ job.url }}
-                </td>
-                <td class="py-2 pr-4"><app-ai-status-badge [status]="job.status" /></td>
-                <td class="py-2 pr-4 text-xs text-slate-500">{{ job.aiProvider }}</td>
-                <td class="py-2 pr-4 text-xs text-slate-500">
-                  {{ job.createdAt | date: 'short' }}
-                </td>
-                <td class="py-2">
-                  <a
-                    [routerLink]="['/ia/jobs', job.id]"
-                    class="text-xs font-bold uppercase tracking-widest text-accent-600"
-                    >ver</a
-                  >
-                </td>
+      <div
+        class="overflow-hidden rounded-2xl border border-slate-100 bg-white dark:border-surface-700 dark:bg-surface-900"
+        data-testid="ai-jobs-table"
+      >
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr
+                class="bg-slate-50 text-left text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:bg-surface-800"
+              >
+                <th class="px-4 py-2.5">ID</th>
+                <th class="px-4 py-2.5">URL</th>
+                <th class="px-4 py-2.5">Estado</th>
+                <th class="px-4 py-2.5">Proveedor</th>
+                <th class="px-4 py-2.5">Creado</th>
+                <th class="px-4 py-2.5"></th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (job of jobsStore.filtered(); track job.id) {
+                <tr class="border-t border-slate-100 dark:border-surface-800">
+                  <td class="px-4 py-2.5 font-mono text-xs text-slate-500">{{ job.id }}</td>
+                  <td class="max-w-[18rem] truncate px-4 py-2.5 text-slate-700 dark:text-slate-200">
+                    {{ job.url }}
+                  </td>
+                  <td class="px-4 py-2.5"><app-ai-status-badge [status]="job.status" /></td>
+                  <td class="px-4 py-2.5 text-xs text-slate-500">{{ job.aiProvider }}</td>
+                  <td class="px-4 py-2.5 text-xs text-slate-500">
+                    {{ job.createdAt | date: 'short' }}
+                  </td>
+                  <td class="px-4 py-2.5 text-right">
+                    <a
+                      [routerLink]="['/ia/jobs', job.id]"
+                      class="text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
+                      >ver</a
+                    >
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     }
   </section>
