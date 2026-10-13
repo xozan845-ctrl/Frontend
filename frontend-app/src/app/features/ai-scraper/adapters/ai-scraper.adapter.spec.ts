@@ -1,16 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
-  adaptHealthFromBackend,
   adaptJobExecutionFromBackend,
   adaptJobFromBackend,
   adaptJobInteractionsFromBackend,
   adaptJobListFromBackend,
   adaptJobResultsFromBackend,
   adaptJobStatusFromBackend,
-  adaptLearnedProfileFromBackend,
   adaptLimitsFromBackend,
-  adaptMetricsFromBackend,
-  adaptRadiographyFromBackend,
   adaptResultItemFromBackend,
   adaptSendMessageFromBackend,
   adaptSessionDetailFromBackend,
@@ -22,16 +18,12 @@ import {
 } from './ai-scraper.adapter';
 import { isAiJobActive, isAiJobTerminal } from '../models/ai-job.model';
 import {
-  BACKEND_HEALTH,
   BACKEND_INTERACTIONS,
   BACKEND_JOB_CAMEL,
   BACKEND_JOB_EXECUTION,
   BACKEND_JOB_LIST,
   BACKEND_JOB_RESULTS,
   BACKEND_JOB_SNAKE,
-  BACKEND_LEARNED_PROFILE,
-  BACKEND_METRICS,
-  BACKEND_RADIOGRAPHY,
   BACKEND_SEND_MESSAGE,
   BACKEND_SESSION,
   BACKEND_SESSION_DETAIL,
@@ -213,41 +205,6 @@ describe('adaptSendMessageFromBackend', () => {
   });
 });
 
-describe('adaptRadiographyFromBackend', () => {
-  it('debe normalizar el resultado de la radiografía', () => {
-    expect(adaptRadiographyFromBackend(BACKEND_RADIOGRAPHY)).toMatchObject({
-      domain: 'tienda.example',
-      profileId: 'prof-1',
-      discovered: 12,
-    });
-  });
-});
-
-describe('adaptLearnedProfileFromBackend', () => {
-  it('debe normalizar selectores y recomendación de navegador', () => {
-    expect(adaptLearnedProfileFromBackend(BACKEND_LEARNED_PROFILE)).toMatchObject({
-      shouldUseBrowser: true,
-    });
-  });
-});
-
-describe('adaptMetricsFromBackend', () => {
-  it('debe normalizar stats, pendientes y contadores distribuidos', () => {
-    const metrics = adaptMetricsFromBackend(BACKEND_METRICS);
-    expect(metrics.pendingJobs).toBe(2);
-    expect(metrics.stats.jobsByStatus['COMPLETED']).toBe(7);
-    expect(metrics.distributed['jobs_created_total']).toBe(10);
-  });
-});
-
-describe('adaptHealthFromBackend', () => {
-  it('debe normalizar el health y sus checks', () => {
-    const health = adaptHealthFromBackend(BACKEND_HEALTH);
-    expect(health.status).toBe('ok');
-    expect(health.checks['store']).toBe('prisma');
-  });
-});
-
 describe('isAiJobTerminal / isAiJobActive', () => {
   it('debe reconocer los estados terminales y activos', () => {
     expect(isAiJobTerminal('COMPLETED')).toBe(true);
@@ -348,36 +305,5 @@ describe('adaptación tolerante a variantes y datos corruptos (R-RB-1)', () => {
     const sent = adaptSendMessageFromBackend({ job_id: 'j', message: { role: 'assistant' } });
     expect(sent?.jobId).toBe('j');
     expect(sent?.jobStatus).toBe('QUEUED');
-  });
-
-  it('debe normalizar radiografía con profile_id y vacíos por defecto', () => {
-    expect(adaptRadiographyFromBackend({ profile_id: 'p' }).profileId).toBe('p');
-    expect(adaptRadiographyFromBackend(null).discovered).toBe(0);
-  });
-
-  it('debe normalizar el perfil aprendido con snake_case y por defecto false', () => {
-    expect(adaptLearnedProfileFromBackend({ should_use_browser: 'true' }).shouldUseBrowser).toBe(
-      true,
-    );
-    expect(adaptLearnedProfileFromBackend({}).shouldUseBrowser).toBe(false);
-  });
-
-  it('debe normalizar métricas con snake_case y sin distribuidos', () => {
-    const metrics = adaptMetricsFromBackend({
-      pending_jobs: '4',
-      uptime_sec: 10,
-      ai_recovery_rate: 0.5,
-      stats: { jobs_total: 5 },
-    });
-    expect(metrics.pendingJobs).toBe(4);
-    expect(metrics.uptimeSec).toBe(10);
-    expect(metrics.stats.jobsTotal).toBe(5);
-    expect(metrics.distributed).toEqual({});
-  });
-
-  it('debe normalizar health sin checks', () => {
-    const health = adaptHealthFromBackend({ status: 'ok' });
-    expect(health.checks).toEqual({});
-    expect(health.service).toBe('');
   });
 });

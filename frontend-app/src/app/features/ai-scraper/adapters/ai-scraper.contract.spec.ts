@@ -3,14 +3,12 @@ import {
   adaptJobFromBackend,
   adaptJobListFromBackend,
   adaptJobResultsFromBackend,
-  adaptMetricsFromBackend,
   adaptSessionDetailFromBackend,
 } from './ai-scraper.adapter';
 import {
   BACKEND_JOB_CAMEL,
   BACKEND_JOB_LIST,
   BACKEND_JOB_RESULTS,
-  BACKEND_METRICS,
   BACKEND_SESSION_DETAIL,
 } from './fixtures/ai-scraper.fixture';
 
@@ -51,11 +49,5 @@ describe('contrato con ai_scraper_executor', () => {
     const detail = adaptSessionDetailFromBackend(BACKEND_SESSION_DETAIL);
     expect(detail?.messages[0]).toHaveProperty('role');
     expect(detail?.messages[0]).toHaveProperty('content');
-  });
-
-  it('debe normalizar las métricas del backend a contadores numéricos', () => {
-    const metrics = adaptMetricsFromBackend(BACKEND_METRICS);
-    expect(typeof metrics.stats.jobsTotal).toBe('number');
-    expect(typeof metrics.pendingJobs).toBe('number');
   });
 });

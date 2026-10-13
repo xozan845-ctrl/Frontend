@@ -410,3 +410,22 @@ contexto y consecuencias.
 - **Consecuencias**: la infraestructura del feature viaja en su chunk lazy
   (menor bundle inicial y mejor frontera de feature). Se actualiza `R-AR-3` para
   reflejarlo. Revertir es volver a declarar esos `provide` en `app.config.ts`.
+
+## ADR-19: Retiro de la radiografía y las métricas del frontend de IA
+
+- **Fecha**: 2026-10-13
+- **Estado**: Aceptado
+- **Contexto**: el feature `ai-scraper` (ADR-18) exponía en `/ia` un panel de
+  conexión, la supervisión de **jobs** y el chat de **sesiones**, más una página
+  de **radiografía/memoria** y **métricas/salud**. Al pasar el chat a ser la
+  superficie principal, el dashboard quedó reducido al panel de conexión y la
+  radiografía y las métricas perdieron su punto de entrada, quedando sin uso.
+- **Decisión**: retirar del frontend el **feature de radiografía** (página
+  `/ia/radiography`, store, servicio, puerto y modelos) y el **vertical de
+  métricas/salud** (store, servicio, puerto, modelos/DTO, funciones del adapter,
+  fixtures y sus specs), junto con su cableado en rutas y constantes. Esto
+  **reduce** los alcances declarados en ADR-18.
+- **Consecuencias**: menos superficie y menos código muerto; el backend
+  `ai_scraper_executor` conserva esos endpoints (el frontend solo deja de
+  consumirlos). Revertir es recuperar los archivos del historial de git. La
+  radiografía **del flujo de sesión** (estado `RADIOGRAPHY`) **se mantiene**.
