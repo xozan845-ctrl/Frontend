@@ -1,32 +1,73 @@
 @if (items().length > 0) {
-  <div class="overflow-x-auto" data-testid="ai-results-table">
-    <table class="w-full text-sm">
-      <thead>
-        <tr class="text-left text-[11px] uppercase tracking-widest text-slate-400">
-          @for (column of columns(); track column) {
-            <th class="py-2 pr-4">{{ column }}</th>
-          }
-          <th class="py-2 pr-4">origen</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of items(); track $index) {
-          <tr class="border-t border-slate-100 dark:border-surface-800">
+  <div
+    class="overflow-hidden rounded-2xl border border-slate-100 bg-white dark:border-surface-700 dark:bg-surface-900"
+    data-testid="ai-results-table"
+  >
+    <div
+      class="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-surface-700"
+    >
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300">
+        Resultados
+      </p>
+      <span
+        class="rounded-full bg-accent-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-accent-600 dark:bg-accent-900/30 dark:text-accent-400"
+      >
+        {{ items().length }} registros
+      </span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr
+            class="bg-slate-50 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:bg-surface-800"
+          >
             @for (column of columns(); track column) {
-              <td class="py-2 pr-4 text-slate-700 dark:text-slate-200">
-                {{ display(item, column) }}
-              </td>
+              <th class="px-4 py-2 font-bold">{{ column }}</th>
             }
-            <td class="py-2 pr-4 text-xs text-slate-400 truncate max-w-[16rem]">
-              {{ source(item) }}
-            </td>
+            <th class="px-4 py-2 font-bold">origen</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (item of items(); track $index) {
+            <tr class="border-t border-slate-100 dark:border-surface-800">
+              @for (column of columns(); track column) {
+                <td class="px-4 py-2.5 text-slate-700 dark:text-slate-200">
+                  {{ display(item, column) }}
+                </td>
+              }
+              <td class="max-w-[16rem] truncate px-4 py-2.5 text-xs">
+                @if (item._source?.url) {
+                  <a
+                    [href]="item._source!.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-accent-600 hover:underline dark:text-accent-400"
+                  >
+                    {{ source(item) }}
+                  </a>
+                } @else {
+                  <span class="text-slate-400">{{ source(item) }}</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      class="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-2.5 text-[11px] text-slate-400 dark:border-surface-700"
+    >
+      <span>{{ items().length }} registros · {{ columns().length }} campos</span>
+      <span>origen por registro</span>
+    </div>
   </div>
 } @else {
-  <p class="text-sm text-slate-400" data-testid="ai-results-empty">
+  <div
+    class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400 dark:border-surface-700"
+    data-testid="ai-results-empty"
+  >
     Este job todavía no tiene resultados.
-  </p>
+  </div>
 }
