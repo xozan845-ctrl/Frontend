@@ -7,8 +7,8 @@
       Panel de extracción
     </h1>
     <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-      La IA es el cerebro; el motor hace el scraping. Crea un job, sigue su estado y revisa los
-      datos extraídos con su trazabilidad.
+      Configura el endpoint y la API key del backend de IA. Para ejecutar jobs y revisar los datos,
+      abre el chat de sesiones.
     </p>
     <nav class="flex flex-wrap gap-2 pt-1">
       <a
@@ -17,13 +17,6 @@
       >
         <i class="fa-solid fa-comments" aria-hidden="true"></i>
         Chat de sesiones
-      </a>
-      <a
-        routerLink="/ia/radiography"
-        class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:text-slate-300 dark:hover:text-accent-400"
-      >
-        <i class="fa-solid fa-radar" aria-hidden="true"></i>
-        Radiografía
       </a>
     </nav>
   </header>
@@ -34,145 +27,4 @@
     (save)="saveKey($event)"
     (clear)="clearKey()"
   />
-
-  <app-ai-metrics-cards [metrics]="metricsStore.metrics()" />
-
-  <section
-    class="rounded-3xl border border-slate-100 bg-white p-6 dark:border-surface-700 dark:bg-surface-900"
-  >
-    <h2 class="font-heading text-lg font-black uppercase tracking-tight text-black dark:text-white">
-      Nuevo job
-    </h2>
-    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-      Indica la URL y qué datos quieres extraer.
-    </p>
-    <form
-      class="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
-      [formGroup]="form"
-      (ngSubmit)="submit()"
-    >
-      <label class="sr-only" for="ai-url">URL</label>
-      <input
-        id="ai-url"
-        type="url"
-        formControlName="url"
-        placeholder="https://sitio.com"
-        class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
-        data-testid="ai-job-url"
-      />
-      <label class="sr-only" for="ai-instruction">Instrucción</label>
-      <input
-        id="ai-instruction"
-        type="text"
-        formControlName="instruction"
-        placeholder="Obtén los productos con nombre, precio e imagen"
-        class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
-        data-testid="ai-job-instruction"
-      />
-      <button
-        type="submit"
-        [disabled]="jobsStore.creating()"
-        class="rounded-xl bg-accent-600 px-6 py-2.5 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
-        data-testid="ai-job-submit"
-      >
-        {{ jobsStore.creating() ? 'Creando…' : 'Ejecutar' }}
-      </button>
-    </form>
-    @if (form.controls.url.touched && form.controls.url.invalid) {
-      <p class="mt-2 text-xs text-red-500">Introduce una URL válida (http/https).</p>
-    }
-    @if (form.controls.instruction.touched && form.controls.instruction.invalid) {
-      <p class="mt-2 text-xs text-red-500">La instrucción debe tener al menos 3 caracteres.</p>
-    }
-  </section>
-
-  <section class="space-y-4">
-    <div class="flex flex-wrap items-center gap-2">
-      <h2
-        class="mr-2 font-heading text-lg font-black uppercase tracking-tight text-black dark:text-white"
-      >
-        Jobs
-      </h2>
-      @for (option of statusOptions; track option) {
-        <button
-          type="button"
-          (click)="jobsStore.setStatusFilter(option)"
-          [class]="
-            jobsStore.statusFilter() === option
-              ? 'rounded-full bg-accent-600 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-white'
-              : 'rounded-full border border-slate-200 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:text-slate-300 dark:hover:text-accent-400'
-          "
-          [attr.data-testid]="'ai-filter-' + option"
-        >
-          {{ option }}
-        </button>
-      }
-    </div>
-
-    @if (jobsStore.loading()) {
-      <p class="text-sm text-slate-400" data-testid="ai-jobs-loading">Cargando jobs…</p>
-    } @else if (jobsStore.error()) {
-      <div
-        class="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/10"
-        data-testid="ai-jobs-error"
-      >
-        <p class="text-sm text-red-700 dark:text-red-400">{{ jobsStore.error() }}</p>
-        <button
-          type="button"
-          (click)="jobsStore.loadJobs()"
-          class="mt-2 text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
-        >
-          Reintentar
-        </button>
-      </div>
-    } @else if (jobsStore.filtered().length === 0) {
-      <p class="text-sm text-slate-400" data-testid="ai-jobs-empty">
-        No hay jobs todavía. Crea el primero arriba.
-      </p>
-    } @else {
-      <div
-        class="overflow-hidden rounded-2xl border border-slate-100 bg-white dark:border-surface-700 dark:bg-surface-900"
-        data-testid="ai-jobs-table"
-      >
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr
-                class="bg-slate-50 text-left text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:bg-surface-800"
-              >
-                <th class="px-4 py-2.5">ID</th>
-                <th class="px-4 py-2.5">URL</th>
-                <th class="px-4 py-2.5">Estado</th>
-                <th class="px-4 py-2.5">Proveedor</th>
-                <th class="px-4 py-2.5">Creado</th>
-                <th class="px-4 py-2.5"></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (job of jobsStore.filtered(); track job.id) {
-                <tr class="border-t border-slate-100 dark:border-surface-800">
-                  <td class="px-4 py-2.5 font-mono text-xs text-slate-500">{{ job.id }}</td>
-                  <td class="max-w-[18rem] truncate px-4 py-2.5 text-slate-700 dark:text-slate-200">
-                    {{ job.url }}
-                  </td>
-                  <td class="px-4 py-2.5"><app-ai-status-badge [status]="job.status" /></td>
-                  <td class="px-4 py-2.5 text-xs text-slate-500">{{ job.aiProvider }}</td>
-                  <td class="px-4 py-2.5 text-xs text-slate-500">
-                    {{ job.createdAt | date: 'short' }}
-                  </td>
-                  <td class="px-4 py-2.5 text-right">
-                    <a
-                      [routerLink]="['/ia/jobs', job.id]"
-                      class="text-xs font-bold uppercase tracking-widest text-accent-600 dark:text-accent-400"
-                      >ver</a
-                    >
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-    }
-  </section>
 </section>
