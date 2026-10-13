@@ -4,11 +4,8 @@
  * los parámetros de la integración.
  */
 export const AI_SCRAPER_ENDPOINTS = {
-  health: '/health',
   jobs: '/jobs',
   sessions: '/sessions',
-  radiography: '/radiography',
-  metrics: '/metrics',
 } as const;
 
 /** Cabecera de autenticación del backend (opcional según despliegue). */

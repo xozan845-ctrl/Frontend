@@ -22,8 +22,6 @@ import {
   AiSessionStatusResponse,
   AiSendMessageResult,
 } from '../models/ai-session.model';
-import { AiLearnedProfile, AiRadiographyResult } from '../models/ai-radiography.model';
-import { AiHealth, AiMetrics, AiStoreStats } from '../models/ai-metrics.model';
 import {
   BackendJobCommandDTO,
   BackendJobDTO,
@@ -42,12 +40,6 @@ import {
   BackendSessionProfileDTO,
   BackendSessionStatusDTO,
 } from '../models/ai-session.dto';
-import { BackendLearnedProfileDTO, BackendRadiographyDTO } from '../models/ai-radiography.dto';
-import {
-  BackendHealthDTO,
-  BackendMetricsDTO,
-  BackendStoreStatsDTO,
-} from '../models/ai-metrics.dto';
 
 // --- Helpers de estrechamiento (R-NC-10: `unknown` + narrowing, sin `any`) ---
 
@@ -97,17 +89,6 @@ function asBoolean(value: unknown): boolean | null {
   if (value === 'true') return true;
   if (value === 'false') return false;
   return null;
-}
-
-function numberMap(value: unknown): Record<string, number> {
-  const record = asRecord(value);
-  if (!record) return {};
-  const out: Record<string, number> = {};
-  for (const [key, raw] of Object.entries(record)) {
-    const num = asNumber(raw);
-    if (num !== null) out[key] = num;
-  }
-  return out;
 }
 
 // --- Estados ---
@@ -399,74 +380,5 @@ export function adaptSendMessageFromBackend(response: unknown): AiSendMessageRes
     message: adaptSessionMessageFromBackend(dto.message),
     jobId,
     jobStatus: jobStatus ? adaptJobStatusFromBackend(jobStatus) : 'QUEUED',
-  };
-}
-
-// --- Radiografía / memoria ---
-
-export function adaptRadiographyFromBackend(response: unknown): AiRadiographyResult {
-  const dto = (asRecord(response) ?? {}) as BackendRadiographyDTO;
-  return {
-    domain: firstString(dto.domain) ?? '',
-    profileId: firstString(dto.profileId, dto.profile_id) ?? '',
-    discovered: firstNumber(dto.discovered) ?? 0,
-    radiography: dto.radiography ?? null,
-  };
-}
-
-export function adaptLearnedProfileFromBackend(response: unknown): AiLearnedProfile {
-  const dto = (asRecord(response) ?? {}) as BackendLearnedProfileDTO;
-  return {
-    shouldUseBrowser: asBoolean(dto.shouldUseBrowser ?? dto.should_use_browser) ?? false,
-    recommendedSelectors: dto.recommendedSelectors ?? dto.recommended_selectors ?? null,
-    profile: dto.profile ?? null,
-  };
-}
-
-// --- Métricas / salud ---
-
-function adaptStoreStatsFromBackend(raw: unknown): AiStoreStats {
-  const dto = (asRecord(raw) ?? {}) as BackendStoreStatsDTO;
-  return {
-    jobsTotal: firstNumber(dto.jobsTotal, dto.jobs_total) ?? 0,
-    jobsByStatus: numberMap(dto.jobsByStatus ?? dto.jobs_by_status),
-    resultsTotal: firstNumber(dto.resultsTotal, dto.results_total) ?? 0,
-    pagesTotal: firstNumber(dto.pagesTotal, dto.pages_total) ?? 0,
-    commandsTotal: firstNumber(dto.commandsTotal, dto.commands_total) ?? 0,
-    commandsRecovered: firstNumber(dto.commandsRecovered, dto.commands_recovered) ?? 0,
-    aiCallsTotal: firstNumber(dto.aiCallsTotal, dto.ai_calls_total) ?? 0,
-    aiTokensTotal: firstNumber(dto.aiTokensTotal, dto.ai_tokens_total) ?? 0,
-  };
-}
-
-export function adaptMetricsFromBackend(response: unknown): AiMetrics {
-  const dto = (asRecord(response) ?? {}) as BackendMetricsDTO;
-  return {
-    instance: firstString(dto.instance) ?? '',
-    uptimeSec: firstNumber(dto.uptimeSec, dto.uptime_sec) ?? 0,
-    store: firstString(dto.store) ?? '',
-    queue: firstString(dto.queue) ?? '',
-    pendingJobs: firstNumber(dto.pendingJobs, dto.pending_jobs) ?? 0,
-    stats: adaptStoreStatsFromBackend(dto.stats),
-    aiRecoveryRate: firstNumber(dto.aiRecoveryRate, dto.ai_recovery_rate) ?? 0,
-    distributed: numberMap(dto.distributed),
-  };
-}
-
-export function adaptHealthFromBackend(response: unknown): AiHealth {
-  const dto = (asRecord(response) ?? {}) as BackendHealthDTO;
-  const checksRecord = asRecord(dto.checks);
-  const checks: Record<string, string> = {};
-  if (checksRecord) {
-    for (const [key, value] of Object.entries(checksRecord)) {
-      const str = asString(value);
-      if (str !== null) checks[key] = str;
-    }
-  }
-  return {
-    status: firstString(dto.status) ?? 'unknown',
-    service: firstString(dto.service) ?? '',
-    time: firstString(dto.time) ?? '',
-    checks,
   };
 }

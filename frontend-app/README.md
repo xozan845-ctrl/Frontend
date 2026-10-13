@@ -21,7 +21,7 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 - **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
 - **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
-- **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs**, **chat** por sesión (URL → radiografía → instrucciones → resultados), radiografía/memoria y métricas.
+- **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs** y **chat** por sesión (URL → radiografía → instrucciones → resultados).
 - **Búsqueda** con autocompletado, **dark mode**, **PWA install banner** y página `404`.
 
 ---
