@@ -4,11 +4,27 @@ import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiChatComponent from './ai-chat.component';
 import { AiSessionStore } from '../../state/ai-session.store';
-import { AiSessionDetail } from '../../models/ai-session.model';
+import { AiSession, AiSessionDetail } from '../../models/ai-session.model';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function session(partial: Partial<AiSession>): AiSession {
+  const now = new Date().toISOString();
+  return {
+    id: 's1',
+    url: 'https://sitio.test/',
+    domain: 'sitio.test',
+    status: 'READY',
+    error: null,
+    createdAt: now,
+    updatedAt: now,
+    ...partial,
+  };
+}
 
 function sessionStoreFake() {
   return {
-    sessions: signal([]),
+    sessions: signal<AiSession[]>([]),
     creating: signal(false),
     current: signal<AiSessionDetail | null>(null),
     status: signal<string | null>(null),
@@ -78,5 +94,46 @@ describe('AiChatComponent', () => {
     fixture.componentInstance.messageForm.setValue({ instruction: 'obtén los productos' });
     fixture.componentInstance.send();
     expect(store.sendMessage).toHaveBeenCalledWith('obtén los productos');
+  });
+
+  it('debe filtrar el historial por el término de búsqueda', () => {
+    store.sessions.set([
+      session({ id: '1', domain: 'libreria.test', url: 'https://libreria.test/' }),
+      session({ id: '2', domain: 'cafeterias.test', url: 'https://cafeterias.test/' }),
+    ]);
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.search.set('caf');
+    expect(fixture.componentInstance.filteredSessions().map((s) => s.id)).toEqual(['2']);
+  });
+
+  it('debe agrupar las conversaciones por antigüedad', () => {
+    const now = Date.now();
+    store.sessions.set([
+      session({ id: 'hoy', createdAt: new Date(now).toISOString() }),
+      session({ id: 'semana', createdAt: new Date(now - 3 * DAY_MS).toISOString() }),
+      session({ id: 'vieja', createdAt: new Date(now - 30 * DAY_MS).toISOString() }),
+    ]);
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    const groups = fixture.componentInstance.sessionGroups();
+    expect(groups.map((g) => g.label)).toEqual(['Hoy', 'Últimos 7 días', 'Anteriores']);
+    expect(groups.map((g) => g.items.map((s) => s.id))).toEqual([['hoy'], ['semana'], ['vieja']]);
+  });
+
+  it('debe rellenar la URL cuando se elige una sugerencia', () => {
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.applySuggestion('https://books.toscrape.com/');
+    expect(fixture.componentInstance.createForm.controls.url.value).toBe(
+      'https://books.toscrape.com/',
+    );
+  });
+
+  it('debe reiniciar la conversación activa al pulsar nueva conversación', () => {
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.newConversation();
+    expect(store.clearCurrent).toHaveBeenCalled();
   });
 });

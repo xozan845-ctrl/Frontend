@@ -1,122 +1,315 @@
-<section class="mx-auto max-w-6xl px-4 py-8 grid gap-6 lg:grid-cols-[20rem_1fr]">
-  <aside class="space-y-4">
-    <h1 class="text-xl font-black uppercase tracking-tight text-black dark:text-white">Sesiones</h1>
-
-    <form
-      class="space-y-3 rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-4"
-      [formGroup]="createForm"
-      (ngSubmit)="createSession()"
-    >
-      <label
-        class="block text-xs font-bold uppercase tracking-widest text-slate-400"
-        for="ai-chat-url"
-      >
-        URL a analizar
-      </label>
-      <input
-        id="ai-chat-url"
-        type="url"
-        formControlName="url"
-        placeholder="https://sitio.com"
-        class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-3 py-2 text-sm text-black dark:text-white"
-        data-testid="ai-chat-url"
-      />
-      <label
-        class="block text-xs font-bold uppercase tracking-widest text-slate-400"
-        for="ai-chat-headers"
-      >
-        Headers (opcional, JSON)
-      </label>
-      <textarea
-        id="ai-chat-headers"
-        formControlName="headers"
-        rows="2"
-        placeholder='{"Authorization":"Bearer ..."}'
-        class="w-full rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-3 py-2 text-xs text-black dark:text-white"
-        data-testid="ai-chat-headers"
-      ></textarea>
-      <button
-        type="submit"
-        [disabled]="store.creating()"
-        class="w-full rounded-xl bg-accent-600 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-50"
-        data-testid="ai-chat-create"
-      >
-        {{ store.creating() ? 'Creando…' : 'Analizar URL' }}
-      </button>
-    </form>
-
-    <ul class="space-y-2" data-testid="ai-chat-sessions">
-      @for (session of store.sessions(); track session.id) {
-        <li>
-          <button
-            type="button"
-            (click)="open(session.id)"
-            class="w-full rounded-2xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-3 text-left hover:border-accent-400"
-          >
-            <span class="block truncate text-sm text-slate-700 dark:text-slate-200">{{
-              session.domain || session.url
-            }}</span>
-            <app-ai-status-badge [status]="session.status" />
-          </button>
-        </li>
-      } @empty {
-        <li class="text-sm text-slate-400">Aún no hay sesiones.</li>
-      }
-    </ul>
-  </aside>
-
-  <main
-    class="flex min-h-[24rem] flex-col rounded-3xl border border-slate-100 dark:border-surface-800 bg-white dark:bg-surface-900 p-6"
+<section class="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col lg:flex-row">
+  <!-- Panel lateral del módulo -->
+  <aside
+    class="flex w-full flex-col gap-5 border-b border-slate-200 bg-slate-50 p-5 dark:border-surface-700 dark:bg-surface-800 lg:w-72 lg:shrink-0 lg:border-b-0 lg:border-r"
   >
-    @if (!store.current()) {
-      <p class="m-auto text-sm text-slate-400" data-testid="ai-chat-empty">
-        Crea una sesión o elige una para conversar.
-      </p>
-    } @else {
-      @if (store.isFailed()) {
-        <div
-          class="mb-4 rounded-2xl border border-red-200 dark:border-red-900/40 p-3"
-          data-testid="ai-chat-failed"
+    <!-- Marca -->
+    <div class="flex items-center gap-3">
+      <span
+        class="grid h-9 w-9 place-items-center rounded-xl bg-black text-sm text-white dark:bg-white dark:text-black"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-spider"></i>
+      </span>
+      <div class="min-w-0">
+        <p
+          class="font-heading text-sm font-black uppercase tracking-tight text-black dark:text-white"
         >
-          <p class="text-sm text-red-600 dark:text-red-400">
-            La radiografía falló: {{ store.statusError() }}
+          Scraper AI
+        </p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Explora la web</p>
+      </div>
+    </div>
+
+    <!-- Nueva conversación -->
+    <button
+      type="button"
+      (click)="newConversation()"
+      class="flex w-full items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-700 shadow-sm transition-colors hover:border-accent-400 hover:text-accent-600 dark:border-surface-700 dark:bg-surface-900 dark:text-slate-200 dark:hover:text-accent-400"
+      data-testid="ai-chat-new"
+    >
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      Nueva conversación
+    </button>
+
+    <!-- Buscador de conversaciones -->
+    <div
+      class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-900"
+    >
+      <i class="fa-solid fa-magnifying-glass text-xs text-slate-400" aria-hidden="true"></i>
+      <label class="sr-only" for="ai-chat-search">Buscar conversaciones</label>
+      <input
+        id="ai-chat-search"
+        type="search"
+        [value]="search()"
+        (input)="onSearch($event)"
+        placeholder="Buscar conversaciones"
+        class="w-full bg-transparent py-2.5 text-sm text-slate-800 outline-hidden placeholder:text-slate-400 dark:text-slate-100"
+        data-testid="ai-chat-search"
+      />
+    </div>
+
+    <!-- Historial de conversaciones -->
+    <nav class="flex-1 overflow-y-auto" aria-label="Conversaciones" data-testid="ai-chat-sessions">
+      @for (group of sessionGroups(); track group.label) {
+        <div class="mb-4">
+          <p class="mb-2 px-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            {{ group.label }}
           </p>
+          <ul class="space-y-1">
+            @for (session of group.items; track session.id) {
+              <li>
+                <button
+                  type="button"
+                  (click)="open(session.id)"
+                  [attr.aria-current]="store.current()?.id === session.id ? 'true' : null"
+                  class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-slate-100 dark:hover:bg-surface-700"
+                  [class]="
+                    store.current()?.id === session.id ? 'bg-accent-50 dark:bg-surface-700' : ''
+                  "
+                >
+                  <i class="fa-regular fa-message text-slate-400" aria-hidden="true"></i>
+                  <span
+                    class="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200"
+                    >{{ session.domain || session.url }}</span
+                  >
+                  <app-ai-status-badge [status]="session.status" />
+                </button>
+              </li>
+            }
+          </ul>
         </div>
-      } @else if (!store.isReady()) {
-        <p class="mb-4 text-sm text-slate-400" data-testid="ai-chat-radiography">
-          Analizando la página… el chat se habilitará al terminar.
+      } @empty {
+        <p class="px-1 text-sm text-slate-400" data-testid="ai-chat-sessions-empty">
+          Tus sitios conectados aparecerán aquí.
         </p>
       }
+    </nav>
 
-      <div class="flex-1 space-y-4 overflow-y-auto" aria-live="polite" data-testid="ai-chat-thread">
-        @for (message of store.messages(); track message.id) {
-          <app-ai-chat-message [message]="message" />
-          @if (message.results && message.results.length > 0) {
-            <app-ai-results-table [items]="message.results" />
-          }
-        }
-      </div>
-
-      <form class="mt-4 flex gap-3" [formGroup]="messageForm" (ngSubmit)="send()">
-        <label class="sr-only" for="ai-chat-instruction">Instrucción</label>
-        <input
-          id="ai-chat-instruction"
-          type="text"
-          formControlName="instruction"
-          [placeholder]="store.canSend() ? 'Escribe una instrucción…' : 'Esperando radiografía…'"
-          [disabled]="!store.canSend()"
-          class="flex-1 rounded-xl border border-slate-200 dark:border-surface-700 bg-slate-50 dark:bg-surface-800 px-4 py-2 text-sm text-black dark:text-white disabled:opacity-50"
-          data-testid="ai-chat-instruction"
-        />
-        <button
-          type="submit"
-          [disabled]="!store.canSend()"
-          class="rounded-xl bg-accent-600 px-5 py-2 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50"
-          data-testid="ai-chat-send"
+    <!-- Ajustes y ayuda -->
+    <div class="space-y-1 border-t border-slate-200 pt-3 dark:border-surface-700">
+      <a
+        routerLink="/ia"
+        class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-surface-700"
+      >
+        <i class="fa-solid fa-plug-circle-bolt text-slate-400" aria-hidden="true"></i>
+        Ajustes de conexión
+      </a>
+      <details class="group">
+        <summary
+          class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-surface-700 [&::-webkit-details-marker]:hidden"
         >
-          Enviar
-        </button>
-      </form>
+          <i class="fa-solid fa-circle-question text-slate-400" aria-hidden="true"></i>
+          Ayuda y buenas prácticas
+          <i
+            class="fa-solid fa-chevron-down ml-auto text-[10px] text-slate-400 transition-transform group-open:rotate-180"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="mt-1 space-y-1 px-3 pb-1 text-xs text-slate-500 dark:text-slate-400">
+          <li>Usa páginas públicas y respeta sus permisos.</li>
+          <li>No envíes credenciales que no te pertenezcan.</li>
+          <li>Revisa el origen de cada dato extraído.</li>
+        </ul>
+      </details>
+    </div>
+  </aside>
+
+  <!-- Área principal -->
+  <main class="flex min-w-0 flex-1 flex-col">
+    <header
+      class="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4 dark:border-surface-700"
+    >
+      <p class="truncate text-sm font-medium text-slate-600 dark:text-slate-300">
+        {{ store.current()?.domain || 'Nueva conversación' }}
+      </p>
+    </header>
+
+    @if (!store.current()) {
+      <!-- Estado vacío -->
+      <div
+        class="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-12"
+        data-testid="ai-chat-empty"
+      >
+        <div class="w-full max-w-2xl text-center">
+          <span
+            class="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-accent-50 text-2xl text-accent-600 dark:bg-accent-900/30 dark:text-accent-400"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-spider"></i>
+          </span>
+          <h1
+            class="font-heading text-3xl font-black tracking-tight text-black dark:text-white sm:text-4xl"
+          >
+            De una web a una conversación.
+          </h1>
+          <p class="mx-auto mt-3 max-w-lg text-sm text-slate-500 dark:text-slate-400">
+            Comparte un enlace. Yo organizo los datos y tú haces las preguntas.
+          </p>
+        </div>
+
+        <div
+          class="w-full max-w-2xl rounded-3xl border border-slate-100 bg-white p-6 shadow-sm dark:border-surface-700 dark:bg-surface-900"
+        >
+          <div class="flex items-center gap-2">
+            <span
+              class="grid h-6 w-6 place-items-center rounded-lg bg-black text-[10px] text-white dark:bg-white dark:text-black"
+              aria-hidden="true"
+            >
+              <i class="fa-solid fa-spider"></i>
+            </span>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400"
+              >Scraper AI</span
+            >
+          </div>
+          <h2 class="mt-3 font-heading text-xl font-bold tracking-tight text-black dark:text-white">
+            ¿Qué página te gustaría explorar?
+          </h2>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Pásame la URL: analizaré el sitio y después podrás pedirme los datos que necesitas.
+          </p>
+
+          <form class="mt-5" [formGroup]="createForm" (ngSubmit)="createSession()">
+            <label class="sr-only" for="ai-chat-url">URL a analizar</label>
+            <div
+              class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800"
+            >
+              <i class="fa-solid fa-link text-xs text-slate-400" aria-hidden="true"></i>
+              <input
+                id="ai-chat-url"
+                type="url"
+                formControlName="url"
+                placeholder="https://sitio.com"
+                class="w-full bg-transparent py-3 text-sm text-slate-800 outline-hidden placeholder:text-slate-400 dark:text-slate-100"
+                data-testid="ai-chat-url"
+              />
+            </div>
+            @if (createForm.controls.url.touched && createForm.controls.url.invalid) {
+              <p class="mt-2 text-xs text-red-500">Introduce una URL válida (http/https).</p>
+            }
+
+            <details class="mt-3">
+              <summary
+                class="cursor-pointer text-[11px] font-bold uppercase tracking-widest text-slate-400"
+              >
+                Opciones avanzadas
+              </summary>
+              <label class="sr-only" for="ai-chat-headers">Headers en JSON</label>
+              <textarea
+                id="ai-chat-headers"
+                formControlName="headers"
+                rows="2"
+                placeholder='{"Authorization":"Bearer ..."}'
+                class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700 outline-hidden focus:border-accent-500 dark:border-surface-700 dark:bg-surface-800 dark:text-slate-200"
+                data-testid="ai-chat-headers"
+              ></textarea>
+            </details>
+
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <span class="text-[11px] text-slate-400"
+                >El sitio se analiza con una radiografía inicial.</span
+              >
+              <button
+                type="submit"
+                [disabled]="store.creating()"
+                class="inline-flex items-center gap-2 rounded-xl bg-accent-600 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+                data-testid="ai-chat-create"
+              >
+                {{ store.creating() ? 'Preparando…' : 'Conectar sitio' }}
+                <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="w-full max-w-2xl">
+          <p class="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Puedes empezar por aquí
+          </p>
+          <div class="grid gap-3 sm:grid-cols-3">
+            @for (suggestion of suggestions; track suggestion.id) {
+              <button
+                type="button"
+                (click)="applySuggestion(suggestion.url)"
+                class="rounded-2xl border border-slate-100 bg-white p-4 text-left transition-colors hover:border-accent-400 dark:border-surface-700 dark:bg-surface-900 dark:hover:border-accent-500"
+                [attr.data-testid]="'ai-chat-suggestion-' + suggestion.id"
+              >
+                <i
+                  [class]="suggestion.icon + ' text-accent-600 dark:text-accent-400'"
+                  aria-hidden="true"
+                ></i>
+                <p class="mt-3 text-sm font-bold text-slate-800 dark:text-slate-100">
+                  {{ suggestion.title }}
+                </p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ suggestion.description }}
+                </p>
+              </button>
+            }
+          </div>
+          <p class="mt-4 flex items-center justify-center gap-2 text-center text-xs text-slate-400">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            Usa páginas públicas y respeta los permisos del sitio.
+          </p>
+        </div>
+      </div>
+    } @else {
+      <!-- Conversación activa -->
+      <div class="flex flex-1 flex-col p-6">
+        @if (store.isFailed()) {
+          <div
+            class="mb-4 rounded-2xl border border-red-200 p-3 dark:border-red-900/40"
+            data-testid="ai-chat-failed"
+          >
+            <p class="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+              La radiografía falló: {{ store.statusError() }}
+            </p>
+          </div>
+        } @else if (!store.isReady()) {
+          <p
+            class="mb-4 flex items-center gap-2 text-sm text-slate-400"
+            data-testid="ai-chat-radiography"
+          >
+            <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
+            Analizando la página… el chat se habilitará al terminar.
+          </p>
+        }
+
+        <div
+          class="flex-1 space-y-4 overflow-y-auto"
+          aria-live="polite"
+          data-testid="ai-chat-thread"
+        >
+          @for (message of store.messages(); track message.id) {
+            <app-ai-chat-message [message]="message" />
+            @if (message.results && message.results.length > 0) {
+              <app-ai-results-table [items]="message.results" />
+            }
+          }
+        </div>
+
+        <form class="mt-4 flex gap-3" [formGroup]="messageForm" (ngSubmit)="send()">
+          <label class="sr-only" for="ai-chat-instruction">Instrucción</label>
+          <input
+            id="ai-chat-instruction"
+            type="text"
+            formControlName="instruction"
+            [placeholder]="store.canSend() ? 'Escribe una instrucción…' : 'Esperando radiografía…'"
+            [disabled]="!store.canSend()"
+            class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-black outline-hidden focus:border-accent-500 disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:text-white"
+            data-testid="ai-chat-instruction"
+          />
+          <button
+            type="submit"
+            [disabled]="!store.canSend()"
+            class="rounded-xl bg-accent-600 px-5 py-2 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+            data-testid="ai-chat-send"
+          >
+            Enviar
+          </button>
+        </form>
+      </div>
     }
   </main>
 </section>
