@@ -89,11 +89,25 @@ describe('AiChatComponent', () => {
   });
 
   it('debe enviar la instrucción cuando el formulario es válido', () => {
+    store.canSend.set(true);
     const fixture = TestBed.createComponent(AiChatComponent);
     fixture.detectChanges();
     fixture.componentInstance.messageForm.setValue({ instruction: 'obtén los productos' });
     fixture.componentInstance.send();
     expect(store.sendMessage).toHaveBeenCalledWith('obtén los productos');
+  });
+
+  it('debe deshabilitar la instrucción cuando el chat no está listo', () => {
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.messageForm.controls.instruction.disabled).toBe(true);
+  });
+
+  it('debe habilitar la instrucción cuando el chat está listo', () => {
+    store.canSend.set(true);
+    const fixture = TestBed.createComponent(AiChatComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.messageForm.controls.instruction.enabled).toBe(true);
   });
 
   it('debe filtrar el historial por el término de búsqueda', () => {
