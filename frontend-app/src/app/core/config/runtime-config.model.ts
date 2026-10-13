@@ -11,4 +11,6 @@
 export interface RuntimeConfig {
   /** URL base del API (gateway de Core Engine). */
   apiUrl?: string;
+  /** URL base del backend de IA `ai_scraper_executor` (ADR-18). */
+  aiScraperUrl?: string;
 }
