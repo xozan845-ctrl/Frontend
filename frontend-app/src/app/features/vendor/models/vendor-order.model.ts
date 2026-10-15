@@ -59,10 +59,11 @@ export interface OrderDraftLine {
 /** Información general del pedido en el borrador. */
 export interface OrderDraftInfo {
   storeId: string;
+  /** Nombre de la tienda para el panel "Información del pedido" (solo display). */
+  storeName: string;
   /** Fecha del pedido en formato `yyyy-mm-dd` (input date). */
   date: string;
   deliveryMethod: DeliveryMethod;
-  notes: string;
 }
 
 /** Borrador del pedido en curso (POS). */
