@@ -1,0 +1,129 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="dashboard-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Inicio
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        El resumen de tu tienda: ventas de hoy, trabajo por atender y pedidos recientes.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="orders.loading()"
+      data-testid="refresh-dashboard"
+      (click)="orders.refresh()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="orders.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de hoy">
+    <div class="card flex items-center gap-4 p-5" data-testid="kpi-sold">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-lg text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-sack-dollar"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Vendido hoy</p>
+        <p
+          class="font-heading text-xl font-black tracking-tight tabular-nums text-slate-900 dark:text-white"
+        >
+          {{ orders.todayKpis().soldToday | appCurrency }}
+        </p>
+      </div>
+    </div>
+
+    <div class="card flex items-center gap-4 p-5" data-testid="kpi-orders-today">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-accent-50 text-lg text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-receipt"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pedidos hoy</p>
+        <p
+          class="font-heading text-xl font-black tracking-tight tabular-nums text-slate-900 dark:text-white"
+        >
+          {{ orders.todayKpis().ordersToday }}
+        </p>
+      </div>
+    </div>
+
+    <div class="card flex items-center gap-4 p-5" data-testid="kpi-pending">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-lg text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-hourglass-half"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pendientes</p>
+        <p
+          class="font-heading text-xl font-black tracking-tight tabular-nums text-slate-900 dark:text-white"
+        >
+          {{ orders.todayKpis().pending }}
+        </p>
+      </div>
+    </div>
+
+    <div class="card flex items-center gap-4 p-5" data-testid="kpi-in-progress">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-lg text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-truck-fast"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">En proceso</p>
+        <p
+          class="font-heading text-xl font-black tracking-tight tabular-nums text-slate-900 dark:text-white"
+        >
+          {{ orders.todayKpis().inProgress }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="dashboard-actions-title">
+    <h2
+      id="dashboard-actions-title"
+      class="font-heading text-lg font-black tracking-tight uppercase"
+    >
+      Accesos rápidos
+    </h2>
+    <div class="flex flex-wrap gap-3">
+      <a routerLink="/vendedor/ventas/nuevo" class="btn btn-primary" data-testid="quick-new-order">
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nuevo pedido
+      </a>
+      <a routerLink="/vendedor/pedidos" class="btn btn-secondary" data-testid="quick-orders">
+        <i class="fa-solid fa-receipt text-xs" aria-hidden="true"></i>
+        Ver pedidos
+      </a>
+      <a routerLink="/vendedor/clientes" class="btn btn-secondary" data-testid="quick-clients">
+        <i class="fa-solid fa-user-group text-xs" aria-hidden="true"></i>
+        Clientes
+      </a>
+    </div>
+  </section>
+
+  <app-recent-orders-table
+    [orders]="recentOrders()"
+    [loading]="orders.loading()"
+    [error]="orders.error()"
+    [lastUpdatedAt]="orders.lastUpdatedAt()"
+    (retry)="orders.loadOrders()"
+  />
+</div>

@@ -58,6 +58,36 @@ describe('VendorOrdersStore', () => {
     expect(repo.listOrders).toHaveBeenCalledTimes(1);
   });
 
+  it('debe derivar los KPIs del inicio con el día local y sin cancelados', async () => {
+    const now = new Date();
+    const atDay = (daysAgo: number, hours: number): string =>
+      new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo, hours).toISOString();
+    const orders: VendorOrder[] = [
+      { ...order, id: 'PED-1', status: 'en_proceso', total: 1000, createdAt: atDay(0, 9) },
+      { ...order, id: 'PED-2', status: 'cancelado', total: 500, createdAt: atDay(0, 10) },
+      { ...order, id: 'PED-3', status: 'pendiente', total: 700, createdAt: atDay(1, 9) },
+      { ...order, id: 'PED-4', status: 'pendiente', total: 300, createdAt: '' },
+    ];
+    const store = setup();
+    vi.mocked(repo.listOrders).mockReturnValue(of(orders));
+
+    store.loadOrders();
+    await vi.waitFor(() => expect(store.orders()).toHaveLength(4));
+
+    expect(store.todayKpis()).toEqual({
+      soldToday: 1000,
+      ordersToday: 2,
+      pending: 2,
+      inProgress: 1,
+    });
+  });
+
+  it('debe dejar los KPIs del inicio en cero sin pedidos cargados', () => {
+    const store = setup();
+
+    expect(store.todayKpis()).toEqual({ soldToday: 0, ordersToday: 0, pending: 0, inProgress: 0 });
+  });
+
   it('debe guardar la lista vacía cuando no hay pedidos', async () => {
     const store = setup();
     vi.mocked(repo.listOrders).mockReturnValue(of([]));
