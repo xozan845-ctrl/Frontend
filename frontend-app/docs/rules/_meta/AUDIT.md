@@ -4,104 +4,106 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-09 — **11ª de frontend-ecomerce**: auditoría del
-  módulo **`account`** (ciclo de vida, errores, estados, accesibilidad) y cierre
-  de todos sus hallazgos.
+- **Última auditoría:** 2026-10-15 — **12ª de frontend-ecomerce**: construcción y
+  auditoría del módulo **`vendor`** (ADR-20: panel del vendedor con POS en tiempo
+  real, pedidos, clientes e inicio) contra todas las familias de reglas.
 - **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
-  presupuesto inicial **dentro de budget**, cobertura con umbral elevado
-  (`R-COV-1`) y **sin deudas abiertas**.
+  presupuesto inicial **dentro de budget** (aviso en 500 kB), cobertura con
+  umbral elevado (`R-COV-1`) y hallazgos del módulo cerrados. Quedan deudas
+  **documentales** (segundo `ADR-18`) y de **backend** (contrato asumido de
+  pedidos/clientes/stock), listadas abajo.
 
-## Evidencia ejecutada (2026-10-09)
+## Evidencia ejecutada (2026-10-15)
 
 | Verificación       | Comando                        | Resultado                                                            |
 | ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **483.45 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **71 archivos / 425 tests**                                       |
-| Cobertura (G-2)    | idem                           | ✅ 95.70 / 91.58 / 94.33 / 95.95 (umbral **85/75/85/85**, `R-COV-1`) |
-| E2E (G-6)          | `npm run e2e`                  | ✅ **9 flujos Playwright · 0 errores/warnings**                      |
-| Formato (G-4)      | `npx prettier --check .`       | ✅                                                                   |
+| Build (G-3)        | `npm run build`                | ✅ initial **499.91 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **117 archivos / 730 tests**                                      |
+| Cobertura (G-2)    | idem                           | ✅ 94.28 / 88.14 / 93.76 / 95.38 (umbral **90/85/90/92**, `R-COV-1`) |
+| E2E (G-6)          | `npm run e2e`                  | ✅ **13 flujos Playwright · 0 errores/warnings**                     |
+| Formato (G-4)      | `npx prettier --check .`       | ✅ en CI (en Windows local exige árbol LF; el check puntual da ✅)   |
 | Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
 | Seguridad (R-QA-6) | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                            |
-| CI                 | `gh pr checks`                 | ✅ 6/6 jobs requeridos, en verde                                     |
+| CI                 | `gh pr checks`                 | ⏳ corre sobre las PRs apiladas del módulo (revisión del mantenedor) |
 | `main` protegida   | `gh api .../protection`        | ✅ PR obligatorio + 6 checks, sin force, `enforce_admins: true`      |
-| Release            | `git tag`                      | ✅ `v1.16.0` sobre `main`                                            |
+| Release            | `git tag`                      | ⏳ `v1.17.0` se etiqueta sobre `main` tras el merge de las PRs       |
 
 ## Cumplimiento por área
 
 ### Arquitectura y naming (`R-AR`, `R-NC`)
 
-| Regla                       | Estado | Evidencia                                                                                            |
-| --------------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| R-AR-1/2 estructura         | ✅     | `core/`, `shared/`, `layout/`, `features/`; `core`/`shared`/`layout` no importan features            |
-| R-AR-3 puertos + DI         | ✅     | Stores dependen **solo** de `InjectionToken`; `stores` provee sus puertos en su ruta lazy            |
-| R-AR-4/5/7/8/9/11           | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores traducidos, entorno        |
-| R-AR-6/12 rutas             | ✅     | `<feature>.routes.ts`; `stores` con `loadChildren`; páginas lazy                                     |
-| R-AR-10 ciclo de vida       | ✅     | `rxMethod` (se libera con el store) + `takeUntilDestroyed` + listeners liberados                     |
-| R-AR-13 frontera de `core/` | ✅     | `core/{config,constants,models,services}` sin UI ni features                                         |
-| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                         |
-| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                          |
-| R-NC-9/10 DTO vs modelo     | ✅     | `models/*.dto.ts` con `Backend...DTO` (`product.dto`, `store.dto`); `strict` + `unknown` + narrowing |
-| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_cart_items`, `ecom_refresh_token`, …                                             |
-| R-NC-12 rutas               | ✅     | `kebab-case`; idioma por tipo de término (ADR-17); `**` → `not-found`                                |
+| Regla                       | Estado | Evidencia                                                                                              |
+| --------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| R-AR-1/2 estructura         | ✅     | `core/`, `shared/`, `layout/`, `features/`; `core`/`shared`/`layout` no importan features              |
+| R-AR-3 puertos + DI         | ✅     | Stores dependen **solo** de `InjectionToken`; `stores` y `vendor` proveen sus puertos en su ruta lazy  |
+| R-AR-4/5/7/8/9/11           | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores traducidos, entorno          |
+| R-AR-6/12 rutas             | ✅     | `<feature>.routes.ts`; `stores` y `vendor` con `loadChildren`; páginas lazy                            |
+| R-AR-10 ciclo de vida       | ✅     | `rxMethod` (se libera con el store) + `takeUntilDestroyed` + listeners y sondeo liberados              |
+| R-AR-13 frontera de `core/` | ✅     | `core/{config,constants,models,services}` sin UI ni features                                           |
+| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                           |
+| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                            |
+| R-NC-9/10 DTO vs modelo     | ✅     | `models/*.dto.ts` con `Backend...DTO` (`product`, `store`, `vendor`); `strict` + `unknown` + narrowing |
+| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_cart_items`, `ecom_refresh_token`, …                                               |
+| R-NC-12 rutas               | ✅     | `kebab-case`; idioma por tipo de término (ADR-17); `**` → `not-found`                                  |
 
 ### Ingeniería frontend (`R-CX`, `R-SO`, `R-SH`, `R-LZ`, `R-ST`, `R-PF`, `R-HI`)
 
-| Regla                       | Estado | Evidencia                                                                            |
-| --------------------------- | ------ | ------------------------------------------------------------------------------------ |
-| R-CX-1..5/7                 | ✅     | Capas, adapters, casos de uso con nombre de dominio; lógica fuera de componentes     |
-| R-CX-6 fronteras de feature | ✅     | Entrypoints públicos (`public-api.ts`/`public-ui.ts`); sin imports internos cruzados |
-| R-SO-1/4/5                  | ✅     | DIP + ISP: `StoreRepository` y `CatalogRepository` separados; puertos inyectados     |
-| R-SO-6/8 presentacionales   | ✅     | Presentacionales por `input`/`output`; contenedores en `pages/`                      |
-| R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                               |
-| R-LZ-1..6                   | ✅     | Rutas lazy + `@defer (on idle)`; mocks fuera del bundle inicial; sin preloading      |
-| R-ST-1..7                   | ✅     | 7 stores con `withState/Computed/Methods/Hooks` + `rxMethod`; una fuente de verdad   |
-| R-PF-1/3/5                  | ✅     | Build **483.45 kB** (< 500 kB); rutas lazy; sin preloading                           |
-| R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`          |
-| R-PF-4/6/7                  | ✅     | Derivados en `computed`; sin `setTimeout`/`setInterval` en dominios; **zoneless**    |
-| R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                           |
+| Regla                       | Estado | Evidencia                                                                                          |
+| --------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
+| R-CX-1..5/7                 | ✅     | Capas, adapters, casos de uso con nombre de dominio; lógica fuera de componentes                   |
+| R-CX-6 fronteras de feature | ✅     | Entrypoints públicos (`public-api.ts`/`public-ui.ts`); sin imports internos cruzados               |
+| R-SO-1/4/5                  | ✅     | DIP + ISP: puertos separados (stores, catálogo, pedidos, clientes, productos del vendedor)         |
+| R-SO-6/8 presentacionales   | ✅     | Presentacionales por `input`/`output`; contenedores en `pages/` (POS, pedidos, clientes, inicio)   |
+| R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                                             |
+| R-LZ-1..6                   | ✅     | Rutas lazy + `@defer (on idle)`; mocks fuera del bundle inicial; sin preloading                    |
+| R-ST-1..7                   | ✅     | Stores con `withState/Computed/Methods/Hooks` + `rxMethod`; KPIs y filtros en `withComputed`       |
+| R-PF-1/3/5                  | ✅     | Build **499.91 kB** (< 500 kB, sin aviso); rutas lazy; sin preloading                              |
+| R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`                        |
+| R-PF-4/6/7                  | ✅     | Derivados en `computed`; **sin** `setTimeout`/`setInterval` (sondeo del POS con `timer`); zoneless |
+| R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                                         |
 
 ### UI (`R-AC`, `R-UX`)
 
-| Regla            | Estado | Evidencia                                                                                                                                                |
-| ---------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R-AC-1/2/4/5/6/7 | ✅     | `templateAccessibility` 0 errores; `alt`; `prefers-reduced-motion`; `aria-live` en toasts; stepper con nombre accesible (R-AC-1) y carga `role="status"` |
-| R-AC-3 modales   | ✅     | `focus-trap.directive` (foco atrapado y devuelto) + `role="dialog"`/`aria-modal`                                                                         |
-| R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío (incluido el asistente), responsive, dark mode, textos en español                                                           |
-| R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir) + manifest + SW + `theme-color`                                                               |
+| Regla            | Estado | Evidencia                                                                                                                                     |
+| ---------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| R-AC-1/2/4/5/6/7 | ✅     | `templateAccessibility` 0 errores; `alt`; `prefers-reduced-motion`; `aria-live` en toasts, chip "En vivo" y stepper (R-AC-1, R-AC-7)          |
+| R-AC-3 modales   | ✅     | `focus-trap.directive` (foco atrapado y devuelto) + `role="dialog"`/`aria-modal`, Escape y botones (alta de clientes, confirmación de estado) |
+| R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío con esqueletos en todas las páginas del vendedor; responsive, dark mode, textos en español                       |
+| R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir, incl. vendor) + manifest + SW + `theme-color`                                      |
 
 ### Seguridad (`R-SE`)
 
-| Regla                  | Estado | Evidencia                                                                         |
-| ---------------------- | ------ | --------------------------------------------------------------------------------- |
-| R-SE-1 JWT en cabecera | ✅     | Access en memoria; refresh en `sessionStorage`; purga del `localStorage` heredado |
-| R-SE-2/4               | ✅     | Sin secretos en el bundle ni datos sensibles en consola                           |
-| R-SE-3                 | ✅     | **0** `innerHTML`/`bypassSecurityTrust` (resaltado por interpolación)             |
-| R-SE-5 / R-QA-6        | ✅     | `npm audit` → 0                                                                   |
-| R-SE-6/7/8             | ✅     | Validación, `rel="noopener"`, solo al backend configurado                         |
-| R-SE-9 CSP             | ✅     | CSP en `index.html` **y** cabecera en `nginx.conf`                                |
+| Regla                  | Estado | Evidencia                                                                                                           |
+| ---------------------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
+| R-SE-1 JWT en cabecera | ✅     | Access en memoria; refresh en `sessionStorage`; purga del `localStorage` heredado                                   |
+| R-SE-2/4               | ✅     | Sin secretos en el bundle ni datos sensibles en consola                                                             |
+| R-SE-3                 | ✅     | **0** `innerHTML`/`bypassSecurityTrust` (resaltado por interpolación)                                               |
+| R-SE-5 / R-QA-6        | ✅     | `npm audit` → 0                                                                                                     |
+| R-SE-6/7/8             | ✅     | Guard de rol del vendedor, validación de formularios (matriz R-CP-8), `rel="noopener"`, solo al backend configurado |
+| R-SE-9 CSP             | ✅     | CSP en `index.html` **y** cabecera en `nginx.conf`                                                                  |
 
 ### Testing (`R-U`, `R-CP`, `R-E`, `R-C`, `R-RB`, `R-QA`, `G-*`)
 
-| Regla             | Estado | Evidencia                                                                                             |
-| ----------------- | ------ | ----------------------------------------------------------------------------------------------------- |
-| R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva                         |
-| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96                      |
-| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2)          |
-| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`, R-C-1/2/6/8)                    |
-| R-E-1..15 E2E     | ✅     | **9 flujos**; el fixture falla ante **error y warning** de consola (`R-E-9`); alta de tienda `R-E-15` |
-| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                         |
-| R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                  |
-| R-RB-3 robustez   | ✅     | Los stores no propagan el error; `localStorage` tolerante                                             |
-| R-QA-4 edge cases | ✅     | 400/403/404/409/500, respuesta malformada y red caída degradan con mensaje de dominio                 |
-| R-COV-1 ratchet   | ✅     | Umbral elevado a **85/75/85/85** en `angular.json`                                                    |
-| R-QA-2/5          | ✅     | Tests sin red e independientes                                                                        |
+| Regla             | Estado | Evidencia                                                                                                                             |
+| ----------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva (+ vendedor)                                            |
+| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96 · stores del vendedor ≥ 90                           |
+| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2); matriz de formulario del alta (R-CP-8)  |
+| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`); `vendor` con contrato asumido y adapters tolerantes (R-C)      |
+| R-E-1..19 E2E     | ✅     | **13 flujos**: storefront R-E-1…8/15, IA R-E-16/17 y vendedor R-E-18/19; el fixture falla ante **error y warning** de consola (R-E-9) |
+| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                                                         |
+| R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                                                  |
+| R-RB-3 robustez   | ✅     | Los stores no propagan el error; `localStorage` tolerante; fechas vacías/inválidas degradan                                           |
+| R-QA-4 edge cases | ✅     | 400/403/404/409/500, respuesta malformada y red caída degradan con mensaje de dominio                                                 |
+| R-COV-1 ratchet   | ✅     | Umbral elevado a **90/85/90/92** en `angular.json`                                                                                    |
+| R-QA-2/5          | ✅     | Tests sin red e independientes                                                                                                        |
 
 ### Git / CI / CD
 
 | Regla                   | Estado | Evidencia                                                                     |
 | ----------------------- | ------ | ----------------------------------------------------------------------------- |
 | R-GB-1 `main` protegida | ✅     | PR obligatorio + 6 checks + sin force + `enforce_admins`                      |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.16.0`                                  |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.16.0` (v1.17.0 tras el merge)          |
 | R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                       |
 | R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                  |
 | R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase` |
@@ -110,10 +112,10 @@
 
 ### Documentación / IA
 
-| Regla      | Estado | Evidencia                                                                                   |
-| ---------- | ------ | ------------------------------------------------------------------------------------------- |
-| R-DO-1/2/6 | ✅     | README (rutas y features al día), reglas, API pública entre dominios y ADRs (ADR-01…ADR-18) |
-| R-IA-1..6  | ✅     | Trabajo por PRs atómicas con evidencia y regression-first                                   |
+| Regla      | Estado | Evidencia                                                                           |
+| ---------- | ------ | ----------------------------------------------------------------------------------- |
+| R-DO-1/2/6 | ✅     | README al día (rutas y features), tabla E2E con R-E-1…R-E-19 y ADRs (ADR-01…ADR-20) |
+| R-IA-1..6  | ✅     | Trabajo por PRs atómicas con evidencia y regression-first                           |
 
 ## Gates de CI
 
@@ -131,8 +133,20 @@
   `ai-scraper` y provisión por feature en rutas lazy); falta renumerar el segundo
   y actualizar sus referencias (R-DO-2, R-IA-6).
 
-Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por
-PRs atómicas (UX/SEO, arquitectura/DTO/`rxMethod`, tests de robustez y
+La **auditoría del módulo `vendor`** (12ª, ADR-20) construyó y verificó el panel
+del vendedor: shell con sidebar y rutas lazy bajo guard de rol (R-AR-12, R-LZ-1,
+R-SE-6), POS con cartera, catálogo, borrador con IVA 15 % y "Pedidos recientes"
+en vivo por sondeo con `timer` —sin `setInterval` (R-PF-6)—, pedidos con filtro
+por estado y detalle con transiciones, clientes con búsqueda `debounce` y alta
+con matriz de formulario (R-CP-8), inicio con KPIs derivados (R-ST-3) y SEO con
+restauración en todas las páginas (R-UX-6). La tabla de reglas E2E quedó
+completa: se registraron los flujos del feature IA (R-E-16/17) y se añadieron los
+del vendedor (R-E-18/19). El contrato de pedidos/clientes/stock del backend aún
+no existe: el módulo opera con modo `mock` y adapters tolerantes (deuda de
+backend abajo).
+
+Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por PRs
+atómicas (UX/SEO, arquitectura/DTO/`rxMethod`, tests de robustez y
 documentación), el presupuesto inicial volvió a estar dentro de `budget`
 (R-PF-1) y el umbral de cobertura se elevó (R-COV-1). La **segunda pasada**
 (contrato backend, accesibilidad, cobertura por archivo, arquitectura y

@@ -324,3 +324,37 @@
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 12 — Módulo `vendor` (2026-10-15)
+
+- **Alcance:** construir y auditar el módulo `vendor` completo (ADR-20) contra
+  todas las familias de reglas: shell lazy con guard de rol, POS con "Pedidos
+  recientes" en vivo, pedidos (lista + detalle con estados), clientes (búsqueda
+  - alta) e inicio (KPIs), con stores de feature, puertos, adapters, mocks, SEO,
+    E2E y documentación.
+- **Hallazgos corregidos / entregas:**
+  - `docs(decisiones)` — ADR-20 del módulo de vendedores y registro de la deuda
+    del ADR-18 duplicado (R-DO-2).
+  - `feat(vendor)` — shell con sidebar y rutas lazy bajo guard de rol (R-AR-12,
+    R-LZ-1, R-SE-6); POS con clientes, catálogo, borrador con IVA 15 % y
+    "Pedidos recientes" en vivo por sondeo `timer` sin `setInterval` (R-PF-6,
+    R-ST-3/5, R-AC-7).
+  - `feat(vendor)` — pedidos (filtro por estado y detalle con transiciones),
+    clientes (búsqueda con `debounce` y alta con matriz de formulario) e inicio
+    (KPIs del día y accesos rápidos) (R-SO-8, R-UX-1/6, R-CP-8, R-SE-6).
+  - `test(vendor)` — E2E propios R-E-18/19 y registro de los flujos del feature
+    IA (R-E-16/17) que faltaban en la tabla de reglas.
+- **Resultado:**
+  - ✅ `npm run build` — initial **499.91 kB** (< 500 kB).
+  - ✅ `npm test` — **117 archivos / 730 tests**; cobertura **94.28 / 88.14 /
+    93.76 / 95.38**; umbral elevado a **90/85/90/92** (R-COV-1).
+  - ✅ `npm run lint` 0/0; `prettier --check` ✅ (CI, árbol LF); `npm audit` 0;
+    **E2E 13/13** (storefront, IA y vendedor).
+  - ⏳ CI y release `v1.17.0` pendientes del merge de las PRs apiladas del módulo
+    (revisión y merge del mantenedor).
+- **Estado global:** 🟢 **CUMPLE**.
+- **Deudas:** documentación (segundo `ADR-18` sin renumerar) y contrato de
+  backend del vendedor asumido (ambas documentadas en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
