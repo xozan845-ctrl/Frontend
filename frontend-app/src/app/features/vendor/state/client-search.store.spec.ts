@@ -105,6 +105,25 @@ describe('ClientSearchStore', () => {
     expect(store.error()).toBe('No se pudieron cargar los clientes.');
   });
 
+  it('debe reintentar la consulta actual aunque el término no cambie', async () => {
+    const store = setup();
+    vi.mocked(repo.searchClients).mockReturnValue(throwError(() => new Error('boom')));
+
+    store.setQuery('carla');
+    await vi.advanceTimersByTimeAsync(300);
+    expect(store.error()).toBe('boom');
+
+    vi.mocked(repo.searchClients).mockReturnValue(of([carla]));
+    store.reload();
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(repo.searchClients).toHaveBeenCalledTimes(2);
+    expect(repo.searchClients).toHaveBeenLastCalledWith('carla');
+    expect(store.results()).toEqual([carla]);
+    expect(store.error()).toBeNull();
+    expect(store.loading()).toBe(false);
+  });
+
   it('debe crear el cliente, dejarlo en lastCreated y reconocerlo', async () => {
     const store = setup();
     const created: Client = {
