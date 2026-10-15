@@ -9,6 +9,9 @@ export const VENDOR_POLL_INTERVAL_MS = 15000;
 /** Espera simulada del modo `mock` para que la UI muestre sus estados de carga. */
 export const VENDOR_MOCK_DELAY_MS = 350;
 
+/** `debounce` del buscador de clientes del POS (`R-PF-6`). */
+export const CLIENT_SEARCH_DEBOUNCE_MS = 300;
+
 /** Clave del borrador del pedido en `localStorage` (`R-ST-7`, `R-NC-11`). */
 export const VENDOR_DRAFT_STORAGE_KEY = 'ecom_vendor_order_draft';
 
