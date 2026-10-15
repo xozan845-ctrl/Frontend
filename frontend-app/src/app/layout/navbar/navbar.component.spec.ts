@@ -1,10 +1,14 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { Navbar } from './navbar.component';
 import { AUTH_REPOSITORY } from '../../features/auth/repositories/auth.repository';
 import { PRODUCT_REPOSITORY } from '../../features/products/repositories/product.repository';
+import { AuthStore } from '../../features/auth/public-api';
+import type { User } from '../../features/auth/public-api';
 import { CartStore, CartUiStore } from '../../features/cart/public-api';
 
 const authRepoStub = {
@@ -20,7 +24,17 @@ describe('Navbar', () => {
   let component: Navbar;
   let fixture: ComponentFixture<Navbar>;
 
+  // El store real expone señales (`R-ST-1`); el doble también para que el CD
+  // reaccione a los cambios de rol (Angular 22 zoneless).
+  const currentUser = signal<User | null>(null);
+  const authStoreStub = {
+    user: currentUser.asReadonly(),
+    isAuthenticated: () => currentUser() !== null,
+    logout: vi.fn(),
+  };
+
   beforeEach(async () => {
+    currentUser.set(null);
     sessionStorage.clear();
     await TestBed.configureTestingModule({
       imports: [Navbar],
@@ -28,6 +42,7 @@ describe('Navbar', () => {
         provideRouter([]),
         { provide: AUTH_REPOSITORY, useValue: authRepoStub },
         { provide: PRODUCT_REPOSITORY, useValue: productRepoStub },
+        { provide: AuthStore, useValue: authStoreStub },
         { provide: CartStore, useValue: { totalItems: () => 0 } },
         { provide: CartUiStore, useValue: { toggleSidebar: vi.fn() } },
       ],
@@ -40,5 +55,26 @@ describe('Navbar', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debe enlazar al panel del vendedor solo con rol vendedor', async () => {
+    currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
+    fixture.detectChanges();
+
+    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'));
+    expect(desktop.nativeElement.getAttribute('href')).toBe('/vendedor/inicio');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
+    ).toBeTruthy();
+  });
+
+  it('no debe enlazar al panel del vendedor sin rol vendedor', async () => {
+    currentUser.set({ id: 2, name: 'Cami', email: 'c@c.com', role: 'comprador' });
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeFalsy();
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
+    ).toBeFalsy();
   });
 });

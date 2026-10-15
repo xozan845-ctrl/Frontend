@@ -34,6 +34,13 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/ai-scraper/ai-scraper.routes').then((m) => m.AI_SCRAPER_ROUTES),
   },
+  {
+    // Panel del vendedor (ADR-20): POS con pedidos en tiempo real. Se carga lazy
+    // con `loadChildren` para que ni sus stores ni el POS viajen en el bundle
+    // inicial (R-LZ-1, R-PF-1).
+    path: 'vendedor',
+    loadChildren: () => import('./features/vendor/vendor.routes').then((m) => m.VENDOR_ROUTES),
+  },
   ...ROOT_ROUTES,
   {
     path: 'tienda/:storeId',

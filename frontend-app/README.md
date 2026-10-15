@@ -19,6 +19,7 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 - **Autenticación (`/login`, `/register`, `/recuperar`)**: formularios reactivos con `AuthStore` y refresco de sesión ante `401`.
 - **Cuenta (`/cuenta`)**: perfil, cambio/recuperación de contraseña y **Mis Pedidos** (`/cuenta/pedidos`, `/cuenta/pedidos/:id`).
 - **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
+- **Panel del vendedor (`/vendedor`, ADR-20)**: superficie de trabajo del vendedor con sidebar propio (Inicio, Productos, Clientes, Ventas, Pedidos, Inventario, Reportes, Ajustes y Ayuda); visible para cuentas de rol vendedor y con las secciones sin lanzar en estado "En construcción".
 - **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
 - **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs** y **chat** por sesión (URL → radiografía → instrucciones → resultados).
@@ -123,6 +124,7 @@ src/
     │   ├── plans/                # pages/plans
     │   ├── products/             # pages/, components/, state, services, repositories, adapters, models
     │   ├── stores/               # pages/create-store (asistente), components/, state, services, repositories, adapters, models
+    │   ├── vendor/               # panel del vendedor (ADR-20): shell + sidebar lazy, pages (POS, pedidos, clientes), components, state, services, repositories, adapters, models
     │   └── wishlist/             # pages/wishlist, state
     ├── app.component.ts          # Componente raíz (standalone)
     ├── app.config.ts             # Providers globales (DI de repositorios)
