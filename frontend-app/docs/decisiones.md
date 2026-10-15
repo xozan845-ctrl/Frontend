@@ -429,3 +429,40 @@ contexto y consecuencias.
   `ai_scraper_executor` conserva esos endpoints (el frontend solo deja de
   consumirlos). Revertir es recuperar los archivos del historial de git. La
   radiografía **del flujo de sesión** (estado `RADIOGRAPHY`) **se mantiene**.
+
+## ADR-20: Módulo de vendedores (panel POS con pedidos en tiempo real)
+
+- **Fecha**: 2026-10-15
+- **Estado**: Aceptado
+- **Contexto**: el frontend ya cubre el alta de tienda (ADR-16) y el storefront
+  multi-tienda (ADR-15), pero **no** existe una superficie de trabajo del
+  **vendedor**: registrar pedidos con steppers de cantidad, consultar pedidos
+  recientes con su estado y gestionar clientes. Core Engine tampoco expone los
+  endpoints de pedidos/clientes/stock del vendedor, así que el contrato se
+  asume en el frontend con adapters tolerantes y modo `mock` mientras llega el
+  backend.
+- **Decisión**: crear el feature **`vendor`** (`features/vendor/`) como extensión
+  del módulo de tienda, con su mismo lenguaje visual (tokens `surface`/`accent`,
+  Outfit/Plus Jakarta Sans, animaciones existentes, dark mode, `appCurrency`):
+  - **Rutas** `/vendedor` (lazy vía `loadChildren`, guard de rol `vendedor`) con
+    hijas `inicio`, `ventas/nuevo`, `pedidos`, `pedidos/:id` y `clientes`; las
+    secciones sin fase (inventario, reportes, ajustes, ayuda) se muestran con
+    estado "En construcción" en lugar de enlaces muertos (R-UX-1).
+  - **Estado** por signal stores de feature provistos en la ruta (patrón
+    ADR-18): `OrderDraftStore` (borrador del pedido con IVA **15 %**
+    parametrizable —`VENDOR_TAX_RATE`— y persistencia en `localStorage`
+    `ecom_vendor_order_draft`) y `VendorOrdersStore` (recientes, listado,
+    detalle y cambio de estado).
+  - **Tiempo real por polling reactivo** (`timer` + `rxMethod`, nunca
+    `setInterval`, R-PF-6) cada **15 s**, pausado con la pestaña oculta; SSE/WS
+    queda como opción futura y requeriría un ADR nuevo.
+  - **Contrato asumido** con adapters tolerantes + fixtures de contrato (R-C-8)
+    y modo `mock` (mismo patrón que `stores`); los endpoints reales son deuda
+    del backend.
+  - "Generar cotización" se muestra **deshabilitado** hasta su fase propia
+    (fuera de alcance).
+- **Consecuencias**: nueva superficie **100 % lazy** (sin coste en el bundle
+  inicial); el navbar gana el enlace `VENDEDOR` para cuentas de vendedor. Toda
+  la lógica se prueba por la matriz de capas (adapters y contrato, servicios,
+  stores y componentes) y se agregan flujos E2E del panel. Revertir es retirar
+  la ruta `/vendedor`, el enlace del navbar y el feature.
