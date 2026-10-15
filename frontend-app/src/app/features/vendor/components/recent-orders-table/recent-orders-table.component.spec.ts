@@ -90,4 +90,24 @@ describe('RecentOrdersTableComponent', () => {
     expect(host.querySelector('[data-testid="recent-orders-empty"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="view-all-orders"]')).not.toBeNull();
   });
+
+  it('debe mostrar el indicador "en vivo" con la hora de actualización', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('[data-testid="orders-live"]')).toBeNull();
+    expect(host.querySelector('[data-testid="orders-updated-at"]')).toBeNull();
+
+    fixture.componentRef.setInput('live', true);
+    fixture.componentRef.setInput('lastUpdatedAt', Date.now());
+    fixture.detectChanges();
+
+    expect(host.querySelector('[data-testid="orders-live"]')?.textContent).toContain('En vivo');
+    expect(host.querySelector('[data-testid="orders-live"]')?.getAttribute('aria-live')).toBe(
+      'polite',
+    );
+    expect(host.querySelector('[data-testid="orders-updated-at"]')?.textContent).toContain(
+      'Actualizado',
+    );
+  });
 });

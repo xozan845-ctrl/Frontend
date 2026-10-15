@@ -6,6 +6,7 @@ import {
   VendorOrderRepository,
 } from '../repositories/vendor-order.repository';
 import { NotificationService } from '../../../core/services/notification.service';
+import { VENDOR_POLL_INTERVAL_MS } from '../constants/vendor.constants';
 import { VendorOrder } from '../models/vendor-order.model';
 
 const order: VendorOrder = {
@@ -121,5 +122,73 @@ describe('VendorOrdersStore', () => {
     expect(store.lastUpdatedAt()).not.toBeNull();
     expect(store.lastUpdatedAt()).toBeGreaterThanOrEqual(firstUpdate ?? 0);
     expect(store.error()).toBeNull();
+  });
+
+  it('debe sondear con timer y detenerse al salir del modo "en vivo"', async () => {
+    vi.useFakeTimers();
+    try {
+      const store = setup();
+      store.startPolling();
+
+      expect(store.live()).toBe(true);
+      // La primera carga del sondeo es la visible e inmediata.
+      await vi.advanceTimersByTimeAsync(0);
+      expect(repo.listOrders).toHaveBeenCalledTimes(1);
+
+      await vi.advanceTimersByTimeAsync(VENDOR_POLL_INTERVAL_MS);
+      expect(repo.listOrders).toHaveBeenCalledTimes(2);
+
+      store.stopPolling();
+      expect(store.live()).toBe(false);
+      await vi.advanceTimersByTimeAsync(VENDOR_POLL_INTERVAL_MS * 2);
+      expect(repo.listOrders).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('no debe duplicar el sondeo si ya está activo', async () => {
+    vi.useFakeTimers();
+    try {
+      const store = setup();
+      store.startPolling();
+      store.startPolling();
+
+      await vi.advanceTimersByTimeAsync(0);
+      expect(repo.listOrders).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(VENDOR_POLL_INTERVAL_MS);
+      expect(repo.listOrders).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('debe pausar el sondeo con la pestaña oculta y refrescar al volver', async () => {
+    vi.useFakeTimers();
+    const visibility = (state: 'visible' | 'hidden') => {
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => state,
+      });
+    };
+    try {
+      visibility('visible');
+      const store = setup();
+      store.startPolling();
+      await vi.advanceTimersByTimeAsync(VENDOR_POLL_INTERVAL_MS);
+      expect(repo.listOrders).toHaveBeenCalledTimes(2);
+
+      visibility('hidden');
+      await vi.advanceTimersByTimeAsync(VENDOR_POLL_INTERVAL_MS);
+      expect(repo.listOrders).toHaveBeenCalledTimes(2);
+
+      visibility('visible');
+      document.dispatchEvent(new Event('visibilitychange'));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(repo.listOrders).toHaveBeenCalledTimes(3);
+    } finally {
+      visibility('visible');
+      vi.useRealTimers();
+    }
   });
 });

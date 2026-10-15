@@ -3,18 +3,44 @@
   data-testid="recent-orders"
   aria-labelledby="recent-orders-title"
 >
-  <header class="flex items-center justify-between gap-3">
-    <h2 id="recent-orders-title" class="font-heading text-lg font-black tracking-tight uppercase">
-      Pedidos recientes
-    </h2>
-    <a
-      routerLink="/vendedor/pedidos"
-      class="text-xs font-black tracking-widest text-accent-600 uppercase transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
-      data-testid="view-all-orders"
-    >
-      Ver todos
-      <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
-    </a>
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <h2 id="recent-orders-title" class="font-heading text-lg font-black tracking-tight uppercase">
+        Pedidos recientes
+      </h2>
+      @if (live()) {
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-800 uppercase dark:bg-emerald-900/40 dark:text-emerald-300"
+          role="status"
+          aria-live="polite"
+          data-testid="orders-live"
+        >
+          <span
+            class="h-1.5 w-1.5 rounded-full bg-current motion-safe:animate-pulse"
+            aria-hidden="true"
+          ></span>
+          En vivo
+        </span>
+      }
+    </div>
+    <div class="flex items-center gap-3">
+      @if (lastUpdatedAt()) {
+        <span
+          class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+          data-testid="orders-updated-at"
+        >
+          {{ updatedLabel() }}
+        </span>
+      }
+      <a
+        routerLink="/vendedor/pedidos"
+        class="text-xs font-black tracking-widest text-accent-600 uppercase transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+        data-testid="view-all-orders"
+      >
+        Ver todos
+        <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+      </a>
+    </div>
   </header>
 
   @if (loading()) {
