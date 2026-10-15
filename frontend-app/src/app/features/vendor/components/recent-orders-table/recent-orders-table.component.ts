@@ -26,9 +26,10 @@ export function formatOrderTime(timestamp: number): string {
 }
 
 /**
- * Tabla "Pedidos recientes" del POS (presentacional, `R-SO-8`): pedidos con
- * estado, total y fecha, más estados de carga, error y vacío (`R-UX-1`). El
- * contenedor decide cuántos pedidos pasar y refresca el indicador "en vivo".
+ * Tabla de pedidos del panel (presentacional, `R-SO-8`): pedidos con estado,
+ * total y fecha, más estados de carga, error y vacío (`R-UX-1`). Se reutiliza
+ * en "Pedidos recientes" del POS y en la lista completa (título, enlace
+ * "Ver todos" y textos de vacío parametrizables); cada fila enlaza al detalle.
  */
 @Component({
   selector: 'app-recent-orders-table',
@@ -44,6 +45,11 @@ export class RecentOrdersTableComponent {
   readonly live = input(false);
   /** Marca de tiempo (ms) de la última actualización lograda. */
   readonly lastUpdatedAt = input<number | null>(null);
+  readonly title = input('Pedidos recientes');
+  /** Muestra el enlace "Ver todos" (se oculta ya en la lista completa). */
+  readonly showViewAll = input(true);
+  readonly emptyTitle = input('Aún no hay pedidos');
+  readonly emptySubtitle = input('Los pedidos que registres aparecerán aquí.');
   readonly retry = output<void>();
 
   protected readonly retryClick = (): void => this.retry.emit();

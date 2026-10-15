@@ -1,12 +1,19 @@
-import { DestroyRef, inject } from '@angular/core';
+import { DestroyRef, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withHooks,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, fromEvent, pipe, timer } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../core/services/notification.service';
 import { VENDOR_POLL_INTERVAL_MS } from '../constants/vendor.constants';
-import { VendorOrder } from '../models/vendor-order.model';
+import { OrderStatus, VendorOrder } from '../models/vendor-order.model';
 import { VENDOR_ORDER_REPOSITORY } from '../repositories/vendor-order.repository';
 
 export interface VendorOrdersState {
@@ -17,6 +24,8 @@ export interface VendorOrdersState {
   lastUpdatedAt: number | null;
   /** Modo "en vivo": sondeo activo que se pausa con la pestaña oculta. */
   live: boolean;
+  /** Filtro por estado de la lista completa; `null` equivale a "Todas". */
+  statusFilter: OrderStatus | null;
 }
 
 const initialState: VendorOrdersState = {
@@ -25,6 +34,7 @@ const initialState: VendorOrdersState = {
   error: null,
   lastUpdatedAt: null,
   live: false,
+  statusFilter: null,
 };
 
 /** ¿La pestaña está oculta? Con la pestaña oculta el sondeo no consulta (`R-PF-3`). */
@@ -33,14 +43,35 @@ function isDocumentHidden(): boolean {
 }
 
 /**
- * Pedidos del vendedor: "Pedidos recientes" del POS y, más adelante, la lista
- * completa (`R-ST-1`). Store de feature (no `root`) con recarga por puerto y
- * `rxMethod` (`R-ST-5`); el modo "en vivo" sondea cada `VENDOR_POLL_INTERVAL_MS`
- * con `timer` —sin `setInterval` (`R-PF-6`)—, se pausa con la pestaña oculta y
- * se libera con el store (`R-AR-10`).
+ * Pedidos del vendedor: "Pedidos recientes" del POS y la lista completa con
+ * filtro por estado (`R-ST-1`). Store de feature (no `root`) con recarga por
+ * puerto y `rxMethod` (`R-ST-5`); el modo "en vivo" sondea cada
+ * `VENDOR_POLL_INTERVAL_MS` con `timer` —sin `setInterval` (`R-PF-6`)—, se
+ * pausa con la pestaña oculta y se libera con el store (`R-AR-10`). Los
+ * derivados de la lista (filtro y conteos) viven en `withComputed` (`R-ST-3`).
  */
 export const VendorOrdersStore = signalStore(
   withState(initialState),
+  withComputed((store) => ({
+    /** Lista filtrada por estado para la página "Pedidos" (`R-SO-8`). */
+    filteredOrders: computed(() => {
+      const status = store.statusFilter();
+      return status ? store.orders().filter((order) => order.status === status) : store.orders();
+    }),
+    /** Conteo por estado para los chips del filtro. */
+    statusCounts: computed(() => {
+      const counts: Record<OrderStatus, number> = {
+        pendiente: 0,
+        en_proceso: 0,
+        completado: 0,
+        cancelado: 0,
+      };
+      for (const order of store.orders()) {
+        counts[order.status] += 1;
+      }
+      return counts;
+    }),
+  })),
   withMethods(
     (
       store,
@@ -104,6 +135,11 @@ export const VendorOrdersStore = signalStore(
       return {
         loadOrders,
         refresh,
+
+        /** Aplica el filtro por estado de la lista (`null` = "Todas"). */
+        setStatusFilter(status: OrderStatus | null): void {
+          patchState(store, { statusFilter: status });
+        },
 
         /** Arranca el modo "en vivo": primera carga visible y refresco por intervalo. */
         startPolling(): void {

@@ -57,11 +57,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'pedidos',
-        ...comingSoonRoute(
-          'Pedidos',
-          'La lista completa de pedidos con su estado y detalle.',
-          'fa-solid fa-receipt',
-        ),
+        loadComponent: () => import('./pages/orders/orders.component'),
       },
       {
         path: 'pedidos/:id',
