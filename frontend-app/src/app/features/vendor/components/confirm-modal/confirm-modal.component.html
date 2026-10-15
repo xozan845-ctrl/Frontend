@@ -1,0 +1,48 @@
+@if (open()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" data-testid="confirm-modal">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+      aria-describedby="confirm-modal-message"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismissed.emit()"
+      data-testid="confirm-dialog"
+    >
+      <h2
+        id="confirm-modal-title"
+        class="font-heading text-lg font-black tracking-tight text-slate-900 uppercase dark:text-white"
+      >
+        {{ title() }}
+      </h2>
+      <p id="confirm-modal-message" class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        {{ message() }}
+      </p>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="working()"
+          data-testid="confirm-cancel"
+          (click)="dismissed.emit()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [class]="tone() === 'danger' ? 'btn btn-danger' : 'btn btn-primary'"
+          [disabled]="working()"
+          data-testid="confirm-accept"
+          (click)="confirm()"
+        >
+          {{ working() ? 'Procesando…' : confirmLabel() }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

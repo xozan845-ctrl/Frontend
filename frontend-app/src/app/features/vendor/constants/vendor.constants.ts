@@ -22,3 +22,22 @@ export const ORDER_STATUS_LABELS: Readonly<Record<OrderStatus, string>> = {
   completado: 'Completado',
   cancelado: 'Cancelado',
 };
+
+/**
+ * Transiciones válidas de estado del pedido (`R-RB-3`): los estados finales
+ * (`completado`, `cancelado`) no vuelven atrás. Si el backend define otro
+ * flujo, se ajusta aquí y en un ADR menor.
+ */
+export const ORDER_STATUS_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>> = {
+  pendiente: ['en_proceso', 'cancelado'],
+  en_proceso: ['completado', 'cancelado'],
+  completado: [],
+  cancelado: [],
+};
+
+/** Acción humana por estado destino para el detalle del pedido (`R-UX-4`). */
+export const ORDER_STATUS_ACTIONS: Readonly<Partial<Record<OrderStatus, string>>> = {
+  en_proceso: 'Marcar en proceso',
+  completado: 'Marcar completado',
+  cancelado: 'Cancelar pedido',
+};

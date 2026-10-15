@@ -61,11 +61,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'pedidos/:id',
-        ...comingSoonRoute(
-          'Detalle del pedido',
-          'Las líneas, totales y estado de cada pedido.',
-          'fa-solid fa-file-invoice',
-        ),
+        loadComponent: () => import('./pages/order-detail/order-detail.component'),
       },
       {
         path: 'clientes',

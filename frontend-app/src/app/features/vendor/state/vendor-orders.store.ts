@@ -1,4 +1,4 @@
-import { DestroyRef, computed, inject } from '@angular/core';
+import { DestroyRef, computed, inject, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   patchState,
@@ -26,6 +26,12 @@ export interface VendorOrdersState {
   live: boolean;
   /** Filtro por estado de la lista completa; `null` equivale a "Todas". */
   statusFilter: OrderStatus | null;
+  /** Pedido abierto en la página de detalle (`pedidos/:id`). */
+  selectedOrder: VendorOrder | null;
+  selectedLoading: boolean;
+  selectedError: string | null;
+  /** Cambio de estado en curso; deshabilita las acciones del detalle. */
+  updatingStatus: boolean;
 }
 
 const initialState: VendorOrdersState = {
@@ -35,6 +41,10 @@ const initialState: VendorOrdersState = {
   lastUpdatedAt: null,
   live: false,
   statusFilter: null,
+  selectedOrder: null,
+  selectedLoading: false,
+  selectedError: null,
+  updatingStatus: false,
 };
 
 /** ¿La pestaña está oculta? Con la pestaña oculta el sondeo no consulta (`R-PF-3`). */
@@ -43,12 +53,13 @@ function isDocumentHidden(): boolean {
 }
 
 /**
- * Pedidos del vendedor: "Pedidos recientes" del POS y la lista completa con
- * filtro por estado (`R-ST-1`). Store de feature (no `root`) con recarga por
- * puerto y `rxMethod` (`R-ST-5`); el modo "en vivo" sondea cada
- * `VENDOR_POLL_INTERVAL_MS` con `timer` —sin `setInterval` (`R-PF-6`)—, se
- * pausa con la pestaña oculta y se libera con el store (`R-AR-10`). Los
- * derivados de la lista (filtro y conteos) viven en `withComputed` (`R-ST-3`).
+ * Pedidos del vendedor: tabla del POS y de la lista completa, filtro por
+ * estado, detalle con cambio de estado (`R-ST-1`, `R-RB-3`). Store de feature
+ * (no `root`) con recarga por puerto y `rxMethod` (`R-ST-5`); el modo "en
+ * vivo" sondea cada `VENDOR_POLL_INTERVAL_MS` con `timer` —sin `setInterval`
+ * (`R-PF-6`)—, se pausa con la pestaña oculta y se libera con el store
+ * (`R-AR-10`). Los derivados de la lista (filtro y conteos) viven en
+ * `withComputed` (`R-ST-3`).
  */
 export const VendorOrdersStore = signalStore(
   withState(initialState),
@@ -132,13 +143,89 @@ export const VendorOrdersStore = signalStore(
         ),
       );
 
+      /** Carga el pedido del detalle y lo refleja en la lista si ya estaba. */
+      const loadOrder = rxMethod<string>(
+        pipe(
+          tap(() => patchState(store, { selectedLoading: true, selectedError: null })),
+          switchMap((id) =>
+            orderRepo.getOrder(id).pipe(
+              tap((order) =>
+                patchState(store, {
+                  selectedOrder: order,
+                  selectedLoading: false,
+                  // Lectura sin rastreo: el pipe puede correr dentro de un
+                  // contexto reactivo (señal del parámetro de ruta).
+                  orders: untracked(() => store.orders()).map((item) =>
+                    item.id === order.id ? order : item,
+                  ),
+                }),
+              ),
+              catchError((err: Error) => {
+                const message = err.message || 'No se pudo cargar el pedido.';
+                patchState(store, { selectedLoading: false, selectedError: message });
+                notificationService.showError(message);
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
+      );
+
+      /**
+       * Cambia el estado del pedido abierto (`R-RB-3`): exige un pedido
+       * seleccionado, refleja el resultado en detalle y lista, y avisa.
+       */
+      const updateStatus = rxMethod<OrderStatus>(
+        pipe(
+          tap(() => patchState(store, { updatingStatus: true, selectedError: null })),
+          switchMap((status) => {
+            const id = untracked(() => store.selectedOrder())?.id;
+            if (!id) {
+              patchState(store, { updatingStatus: false });
+              return EMPTY;
+            }
+            return orderRepo.updateStatus(id, status).pipe(
+              tap((order) => {
+                patchState(store, {
+                  selectedOrder: order,
+                  updatingStatus: false,
+                  orders: untracked(() => store.orders()).map((item) =>
+                    item.id === order.id ? order : item,
+                  ),
+                  lastUpdatedAt: Date.now(),
+                });
+                notificationService.showSuccess(`Pedido ${order.id} actualizado.`);
+              }),
+              catchError((err: Error) => {
+                const message = err.message || 'No se pudo actualizar el estado del pedido.';
+                patchState(store, { updatingStatus: false, selectedError: message });
+                notificationService.showError(message);
+                return EMPTY;
+              }),
+            );
+          }),
+        ),
+      );
+
       return {
         loadOrders,
         refresh,
+        loadOrder,
+        updateStatus,
 
         /** Aplica el filtro por estado de la lista (`null` = "Todas"). */
         setStatusFilter(status: OrderStatus | null): void {
           patchState(store, { statusFilter: status });
+        },
+
+        /** Limpia el detalle al salir de la página (`R-AR-10`). */
+        clearSelectedOrder(): void {
+          patchState(store, {
+            selectedOrder: null,
+            selectedLoading: false,
+            selectedError: null,
+            updatingStatus: false,
+          });
         },
 
         /** Arranca el modo "en vivo": primera carga visible y refresco por intervalo. */
