@@ -56,6 +56,32 @@ describe('RecentOrdersTableComponent', () => {
     );
   });
 
+  it('debe enlazar cada pedido con su detalle', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('[data-testid="order-link-PED-000125"]')?.getAttribute('href')).toBe(
+      '/vendedor/pedidos/PED-000125',
+    );
+  });
+
+  it('debe parametrizar título, enlace y vacío para reutilizarse como lista completa', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+
+    fixture.componentRef.setInput('title', 'Pedidos registrados');
+    fixture.componentRef.setInput('showViewAll', false);
+    fixture.componentRef.setInput('emptyTitle', 'Sin pedidos con este estado');
+    fixture.componentRef.setInput('emptySubtitle', 'Prueba con otro filtro.');
+    fixture.componentRef.setInput('orders', []);
+    fixture.detectChanges();
+
+    expect(host.querySelector('h2')?.textContent).toContain('Pedidos registrados');
+    expect(host.querySelector('[data-testid="view-all-orders"]')).toBeNull();
+    expect(host.textContent).toContain('Sin pedidos con este estado');
+    expect(host.textContent).toContain('Prueba con otro filtro.');
+  });
+
   it('debe mostrar "—" cuando la fecha del pedido no es válida', () => {
     expect(formatOrderDate('')).toBe('—');
     expect(formatOrderDate('no-es-fecha')).toBe('—');

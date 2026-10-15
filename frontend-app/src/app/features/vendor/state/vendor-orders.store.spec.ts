@@ -124,6 +124,36 @@ describe('VendorOrdersStore', () => {
     expect(store.error()).toBeNull();
   });
 
+  it('debe derivar la lista filtrada y el conteo por estado', async () => {
+    const store = setup();
+    const mixed: VendorOrder[] = [
+      { ...order, id: 'PED-000127', status: 'pendiente' },
+      { ...order, id: 'PED-000126', status: 'en_proceso' },
+      { ...order, id: 'PED-000125', status: 'en_proceso' },
+      { ...order, id: 'PED-000124', status: 'completado' },
+      { ...order, id: 'PED-000123', status: 'cancelado' },
+    ];
+    vi.mocked(repo.listOrders).mockReturnValue(of(mixed));
+
+    store.loadOrders();
+    await vi.waitFor(() => expect(store.orders()).toHaveLength(5));
+
+    expect(store.statusFilter()).toBeNull();
+    expect(store.filteredOrders()).toHaveLength(5);
+    expect(store.statusCounts()).toEqual({
+      pendiente: 1,
+      en_proceso: 2,
+      completado: 1,
+      cancelado: 1,
+    });
+
+    store.setStatusFilter('en_proceso');
+    expect(store.filteredOrders().map((item) => item.id)).toEqual(['PED-000126', 'PED-000125']);
+
+    store.setStatusFilter(null);
+    expect(store.filteredOrders()).toHaveLength(5);
+  });
+
   it('debe sondear con timer y detenerse al salir del modo "en vivo"', async () => {
     vi.useFakeTimers();
     try {
