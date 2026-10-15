@@ -1,7 +1,7 @@
-import { inject } from '@angular/core';
+import { inject, untracked } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, pipe } from 'rxjs';
+import { EMPTY, Observable, pipe } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -35,9 +35,9 @@ const initialState: ClientSearchState = {
 };
 
 /**
- * Buscador de la cartera de clientes del POS: término con `debounce`, resultados
- * y alta rápida (`R-PF-6`, `R-ST-5`). Store de feature compartido por el
- * `client-picker` del POS y la página de clientes.
+ * Buscador de la cartera de clientes del POS: término con `debounce`, resultados,
+ * reintento explícito y alta rápida (`R-PF-6`, `R-ST-5`). Store de feature
+ * compartido por el `client-picker` del POS y la página de clientes.
  */
 export const ClientSearchStore = signalStore(
   withState(initialState),
@@ -47,23 +47,33 @@ export const ClientSearchStore = signalStore(
       clientRepo = inject(CLIENT_REPOSITORY),
       notificationService = inject(NotificationService),
     ) => {
+      /** Consulta de cartera compartida por la búsqueda con `debounce` y el reintento. */
+      const fetchResults = (query: string): Observable<Client[]> =>
+        clientRepo.searchClients(query).pipe(
+          tap((results) => patchState(store, { results, loading: false })),
+          catchError((err: Error) => {
+            const message = err.message || 'No se pudieron cargar los clientes.';
+            patchState(store, { loading: false, error: message, results: [] });
+            notificationService.showError(message);
+            return EMPTY;
+          }),
+        );
+
       const search = rxMethod<string>(
         pipe(
           map((query) => query.trim()),
           debounceTime(CLIENT_SEARCH_DEBOUNCE_MS),
           distinctUntilChanged(),
           tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((query) =>
-            clientRepo.searchClients(query).pipe(
-              tap((results) => patchState(store, { results, loading: false })),
-              catchError((err: Error) => {
-                const message = err.message || 'No se pudieron cargar los clientes.';
-                patchState(store, { loading: false, error: message, results: [] });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
-            ),
-          ),
+          switchMap((query) => fetchResults(query)),
+        ),
+      );
+
+      /** Reintento explícito: repite la consulta actual aunque el término no cambie. */
+      const reloadSearch = rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(() => fetchResults(untracked(() => store.query()).trim())),
         ),
       );
 
@@ -79,6 +89,11 @@ export const ClientSearchStore = signalStore(
           search('');
         },
 
+        /** Repite la consulta actual sin esperar al `debounce` (reintento tras error). */
+        reload(): void {
+          reloadSearch();
+        },
+
         /** Alta rápida de cliente; el creado queda en `lastCreated` para seleccionarlo. */
         createClient: rxMethod<CreateClientPayload>(
           pipe(
@@ -89,7 +104,11 @@ export const ClientSearchStore = signalStore(
                   patchState(store, {
                     creating: false,
                     lastCreated: client,
-                    results: [client, ...store.results().filter((item) => item.id !== client.id)],
+                    // Lectura sin rastreo: el pipe puede correr en contexto reactivo.
+                    results: [
+                      client,
+                      ...untracked(() => store.results()).filter((item) => item.id !== client.id),
+                    ],
                   });
                   notificationService.showSuccess(`Cliente ${client.name} creado.`);
                 }),
