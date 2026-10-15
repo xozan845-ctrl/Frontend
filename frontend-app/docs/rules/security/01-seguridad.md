@@ -22,10 +22,9 @@ datos de entrada.
   **XSS es la amenaza principal** (no hay `HttpOnly` que proteja). Se compensa con
   access token de vida corta **en memoria**, refresh **rotativo y revocable** por
   `jti`, CSP estricta y minimización de terceros (`R-SE-9`).
-- **Deuda actual (`R-SE-1`)**: `AuthStore` guarda `{ user, token }` en
-  `localStorage` bajo `ecom_auth_data`. Registrado en AUDIT como deuda:
-  al implementar la sesión, mover el **access token a memoria** y separar el
-  **refresh token** persistido.
+- **`R-SE-1` (ADR-10, deuda cerrada)**: el **access token** vive en memoria y el
+  **refresh token** se persiste de forma rotativa en `sessionStorage`; el
+  `localStorage` heredado (`ecom_auth_data`) se purga al arrancar.
 - El interceptor de auth (`auth.interceptor.ts`) ya añade `Authorization: Bearer`
   cuando `authType: 'bearer'` y soporta `withCredentials`; esa es la ruta de
   `R-SE-1`. Las cookies quedan descartadas por decisión.

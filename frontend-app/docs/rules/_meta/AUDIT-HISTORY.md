@@ -236,7 +236,8 @@
     inmutabilidad del store (R-QA-1, R-U-8).
   - `fix(stores)` — nombre accesible del stepper, región viva de carga y sin
     funciones en la plantilla (R-AC-1/7, R-PF-4).
-  - `refactor(stores,home)` — regla del vendedor al store, **ADR-18** + R-AR-3,
+  - `refactor(stores,home)` — regla del vendedor al store, **ADR-18** (hoy
+    `ADR-21`) + R-AR-3,
     endpoints sin hardcode y validación del id de tienda (R-CX-3, R-AR-3/11,
     R-SE-6).
 - **Resultado:**
@@ -335,8 +336,9 @@
   - alta) e inicio (KPIs), con stores de feature, puertos, adapters, mocks, SEO,
     E2E y documentación.
 - **Hallazgos corregidos / entregas:**
-  - `docs(decisiones)` — ADR-20 del módulo de vendedores y registro de la deuda
-    del ADR-18 duplicado (R-DO-2).
+  - `docs(decisiones)` — ADR-20 del módulo de vendedores; el `ADR-18` duplicado
+    (provisión lazy) se renumeró a **`ADR-21`** con todas sus referencias al día,
+    cerrando la deuda documental (R-DO-2).
   - `feat(vendor)` — shell con sidebar y rutas lazy bajo guard de rol (R-AR-12,
     R-LZ-1, R-SE-6); POS con clientes, catálogo, borrador con IVA 15 % y
     "Pedidos recientes" en vivo por sondeo `timer` sin `setInterval` (R-PF-6,
@@ -355,6 +357,5 @@
   - ⏳ CI y release `v1.17.0` pendientes del merge de las PRs apiladas del módulo
     (revisión y merge del mantenedor).
 - **Estado global:** 🟢 **CUMPLE**.
-- **Deudas:** documentación (segundo `ADR-18` sin renumerar) y contrato de
-  backend del vendedor asumido (ambas documentadas en `AUDIT.md`).
+- **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).

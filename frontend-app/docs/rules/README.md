@@ -44,19 +44,19 @@ rules/
 
 ## Áreas
 
-| Área             | Estado                                | Índice                                                 | Contenido                                                                                                                                                                                                                    |
-| ---------------- | ------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `architecture/`  | ✅ **activa**                         | [`architecture/README.md`](./architecture/README.md)   | Capas `core/shared/layout/features` (ADR-12), dirección de dependencias, puertos + `InjectionToken` (DIP), adapters/ACL, estado con NgRx Signals, rutas por feature, formularios reactivos, naming Angular (IDs `R-AR/R-NC`) |
-| `frontend/`      | ✅ **activa**                         | [`frontend/README.md`](./frontend/README.md)           | Ingeniería Angular: clean/hexagonal (`R-CX`), SOLID/SRP y **Smart/Dumb** (`R-SO`), código compartido (`R-SH`), carga diferida (`R-LZ`), hidratación incremental (`R-HI`), signal store (`R-ST`) y rendimiento (`R-PF`)       |
-| `ui/`            | ✅ **activa** (sin auditar)           | [`ui/README.md`](./ui/README.md)                       | Presentación: accesibilidad (`R-AC`) y experiencia/diseño — estados, responsive, dark mode, design tokens, SEO/PWA (`R-UX`)                                                                                                  |
-| `security/`      | ✅ **activa** (sin auditar)           | [`security/README.md`](./security/README.md)           | Sesión y almacenamiento, sanitización/XSS, secretos y configuración pública, dependencias, validación de entrada (IDs `R-SE`)                                                                                                |
-| `test/`          | ✅ **activa** ⚠️ cobertura incipiente | [`test/README.md`](./test/README.md)                   | Reglas de testing: unit puro, componentes, E2E, contrato, robustez, cobertura y QA gates (IDs `R-U/R-CP/R-E/R-C/…/G-*`)                                                                                                      |
-| `git/`           | ✅ **activa** (sin auditar)           | [`git/README.md`](./git/README.md)                     | Flujo **trunk-based**: `main` protegida, ramas cortas, tags semver, `git add`, `git commit -m`, `git push` y `gh pr` (IDs `R-GB/R-GA/R-GC/R-GP/R-PR`)                                                                        |
-| `ci/`            | ✅ **activa** (implementada)          | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. Implementada en `.github/workflows/ci.yml` (6 jobs) (IDs `R-CI/R-EN`)                                                                                               |
-| `cd/`            | ✅ **activa** (contrato)              | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Dockploy** (mismo VPS que Core Engine): build estático, environment `produccion`, smoke y rollback (IDs `R-CD`)                                                                                 |
-| `ai/`            | ✅ **activa** (nueva)                 | [`ai/README.md`](./ai/README.md)                       | Reglas obligatorias para IAs: contexto, atomicidad, uso de tools y apego al workflow (IDs `R-IA`)                                                                                                                            |
-| `documentation/` | ✅ **activa** (nueva)                 | [`documentation/README.md`](./documentation/README.md) | Documentación como código: READMEs, ADRs, variables de entorno y comentarios (IDs `R-DO`)                                                                                                                                    |
-| `_meta/`         | ⚠️ **no normativo**                   | [`_meta/README.md`](./_meta/README.md)                 | Derivados: checklist, snapshots de auditoría, histórico                                                                                                                                                                      |
+| Área             | Estado                       | Índice                                                 | Contenido                                                                                                                                                                                                                    |
+| ---------------- | ---------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture/`  | ✅ **activa**                | [`architecture/README.md`](./architecture/README.md)   | Capas `core/shared/layout/features` (ADR-12), dirección de dependencias, puertos + `InjectionToken` (DIP), adapters/ACL, estado con NgRx Signals, rutas por feature, formularios reactivos, naming Angular (IDs `R-AR/R-NC`) |
+| `frontend/`      | ✅ **activa**                | [`frontend/README.md`](./frontend/README.md)           | Ingeniería Angular: clean/hexagonal (`R-CX`), SOLID/SRP y **Smart/Dumb** (`R-SO`), código compartido (`R-SH`), carga diferida (`R-LZ`), hidratación incremental (`R-HI`), signal store (`R-ST`) y rendimiento (`R-PF`)       |
+| `ui/`            | ✅ **activa** (sin auditar)  | [`ui/README.md`](./ui/README.md)                       | Presentación: accesibilidad (`R-AC`) y experiencia/diseño — estados, responsive, dark mode, design tokens, SEO/PWA (`R-UX`)                                                                                                  |
+| `security/`      | ✅ **activa** (sin auditar)  | [`security/README.md`](./security/README.md)           | Sesión y almacenamiento, sanitización/XSS, secretos y configuración pública, dependencias, validación de entrada (IDs `R-SE`)                                                                                                |
+| `test/`          | ✅ **activa**                | [`test/README.md`](./test/README.md)                   | Reglas de testing: unit puro, componentes, E2E, contrato, robustez, cobertura y QA gates (IDs `R-U/R-CP/R-E/R-C/…/G-*`)                                                                                                      |
+| `git/`           | ✅ **activa** (sin auditar)  | [`git/README.md`](./git/README.md)                     | Flujo **trunk-based**: `main` protegida, ramas cortas, tags semver, `git add`, `git commit -m`, `git push` y `gh pr` (IDs `R-GB/R-GA/R-GC/R-GP/R-PR`)                                                                        |
+| `ci/`            | ✅ **activa** (implementada) | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. Implementada en `.github/workflows/ci.yml` (6 jobs) (IDs `R-CI/R-EN`)                                                                                               |
+| `cd/`            | ✅ **activa** (contrato)     | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Dockploy** (mismo VPS que Core Engine): build estático, environment `produccion`, smoke y rollback (IDs `R-CD`)                                                                                 |
+| `ai/`            | ✅ **activa** (nueva)        | [`ai/README.md`](./ai/README.md)                       | Reglas obligatorias para IAs: contexto, atomicidad, uso de tools y apego al workflow (IDs `R-IA`)                                                                                                                            |
+| `documentation/` | ✅ **activa** (nueva)        | [`documentation/README.md`](./documentation/README.md) | Documentación como código: READMEs, ADRs, variables de entorno y comentarios (IDs `R-DO`)                                                                                                                                    |
+| `_meta/`         | ⚠️ **no normativo**          | [`_meta/README.md`](./_meta/README.md)                 | Derivados: checklist, snapshots de auditoría, histórico                                                                                                                                                                      |
 
 ## Convenciones globales (aplican a todas las áreas)
 
@@ -80,13 +80,14 @@ El área `test/` es el ejemplo canónico al que apuntan las demás.
 
 ## Estado actual (resumen)
 
-El repo tiene **51 archivos / 254 tests**, cobertura global 94/92/95/94, CI en
-**6 jobs** (`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 13
-flujos** (Playwright) y pipeline de despliegue (Docker + nginx + CSP). La
+El repo tiene **117 archivos / 730 tests**, cobertura global
+94.28 / 88.14 / 93.76 / 95.38, CI en **6 jobs**
+(`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 13 flujos**
+(Playwright) y pipeline de despliegue (Docker + nginx + CSP). La
 **estructura enterprise** (`core/ · shared/ · layout/ · features/`) está
-**aceptada (ADR-12) y en migración**; el estado vigente y las deudas abiertas
-viven en [`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`); aquí solo se describe
-el punto fijo.
+**aceptada (ADR-12) y en migración**; el estado vigente (y las deudas abiertas,
+hoy ninguna) vive en [`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`); aquí solo
+se describe el punto fijo.
 
 ## Decisión de flujo
 

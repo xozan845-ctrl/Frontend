@@ -16,5 +16,4 @@ contratos y reglas del proyecto.
 
 - El historial de la rama de la IA refleja un delta atómico (`git log --oneline`).
 - En el PR aparece la tabla de "reglas consultadas".
-- `npm run build` y (cuando exista config) `npm test` son exigibles en todos sus
-  PRs (`R-GC-5`).
+- `npm run build` y `npm test` son exigibles en todos sus PRs (`R-GC-5`).
