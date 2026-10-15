@@ -197,7 +197,9 @@ export class AuthService implements AuthRepository {
         id: Math.floor(Math.random() * 1000),
         email: credentials.email,
         name: name.charAt(0).toUpperCase() + name.slice(1),
-        role: 'comprador',
+        // Convención E2E (`R-E-12`): un correo que empieza con `vendedor`
+        // entra con rol vendedor para probar el panel sin backend (ADR-20).
+        role: credentials.email.startsWith('vendedor') ? 'vendedor' : 'comprador',
       };
       return of({
         user: mockUser,

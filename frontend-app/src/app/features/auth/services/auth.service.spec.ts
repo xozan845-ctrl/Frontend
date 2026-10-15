@@ -273,6 +273,20 @@ describe('AuthService', () => {
 
       expect(result?.user.email).toBe('ana@tienda.com');
       expect(result?.token).toContain('mock-jwt');
+      expect(result?.user.role).toBe('comprador');
+    });
+
+    it('debe autenticar con rol vendedor con el correo de convención E2E', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service
+        .login({ email: 'vendedor@tienda.test', password: 'secreto1' })
+        .subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.email).toBe('vendedor@tienda.test');
+      expect(result?.user.role).toBe('vendedor');
     });
 
     it('debe rechazar en mock cuando la contraseña es corta', () => {
