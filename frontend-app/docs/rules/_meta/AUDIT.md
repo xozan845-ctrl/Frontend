@@ -127,7 +127,11 @@
 
 ## Deudas abiertas
 
-Ninguna. Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por
+- **Documentación**: `docs/decisiones.md` tiene **dos `ADR-18`** (integración de
+  `ai-scraper` y provisión por feature en rutas lazy); falta renumerar el segundo
+  y actualizar sus referencias (R-DO-2, R-IA-6).
+
+Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por
 PRs atómicas (UX/SEO, arquitectura/DTO/`rxMethod`, tests de robustez y
 documentación), el presupuesto inicial volvió a estar dentro de `budget`
 (R-PF-1) y el umbral de cobertura se elevó (R-COV-1). La **segunda pasada**
@@ -162,6 +166,9 @@ los stores secundarios al 100% (R-U-8, R-RB-4).
 
 - Core Engine **no** expone un directorio público `GET /tiendas`, por lo que la
   raíz `/` es una entrada por URL (ADR-15).
+- Core Engine **no** expone aún los endpoints de pedidos, clientes ni stock del
+  vendedor; el feature `vendor` (ADR-20) consume un contrato asumido con modo
+  `mock` mientras tanto.
 - Los productos del catálogo **no** traen imágenes; se usa una imagen de
   fallback.
 - CORS debe permitir el origen del frontend en producción (config de despliegue).
