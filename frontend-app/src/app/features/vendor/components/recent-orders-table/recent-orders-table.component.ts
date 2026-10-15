@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
@@ -18,6 +18,13 @@ export function formatOrderDate(iso: string): string {
   }).format(date);
 }
 
+/** Hora corta de la última actualización del listado (modo "en vivo"). */
+export function formatOrderTime(timestamp: number): string {
+  return new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' }).format(
+    new Date(timestamp),
+  );
+}
+
 /**
  * Tabla "Pedidos recientes" del POS (presentacional, `R-SO-8`): pedidos con
  * estado, total y fecha, más estados de carga, error y vacío (`R-UX-1`). El
@@ -33,9 +40,17 @@ export class RecentOrdersTableComponent {
   readonly orders = input.required<VendorOrder[]>();
   readonly loading = input(false);
   readonly error = input<string | null>(null);
+  /** Modo "en vivo" activo: la lista se refresca sola (`R-PF-3`). */
+  readonly live = input(false);
+  /** Marca de tiempo (ms) de la última actualización lograda. */
+  readonly lastUpdatedAt = input<number | null>(null);
   readonly retry = output<void>();
 
   protected readonly retryClick = (): void => this.retry.emit();
+  protected readonly updatedLabel = computed(() => {
+    const updated = this.lastUpdatedAt();
+    return updated ? `Actualizado ${formatOrderTime(updated)}` : '';
+  });
 
   protected formatDate(iso: string): string {
     return formatOrderDate(iso);

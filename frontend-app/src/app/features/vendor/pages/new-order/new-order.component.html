@@ -88,6 +88,8 @@
       [orders]="recentOrders()"
       [loading]="orders.loading()"
       [error]="orders.error()"
+      [live]="orders.live()"
+      [lastUpdatedAt]="orders.lastUpdatedAt()"
       (retry)="orders.loadOrders()"
     />
   </div>

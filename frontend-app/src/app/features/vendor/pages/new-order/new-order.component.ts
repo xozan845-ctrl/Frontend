@@ -61,7 +61,7 @@ export default class NewOrderComponent implements OnDestroy {
     );
 
     this.catalog.loadProducts();
-    this.orders.loadOrders();
+    this.orders.startPolling();
     this.clients.loadInitial();
 
     // Tras registrar un pedido, refresca los recientes sin esperar al polling.
@@ -83,6 +83,7 @@ export default class NewOrderComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.orders.stopPolling();
     this.seoService.reset();
   }
 
