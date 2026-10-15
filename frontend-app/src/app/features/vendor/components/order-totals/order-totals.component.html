@@ -1,0 +1,55 @@
+<dl class="flex flex-col gap-2 text-sm" data-testid="order-totals">
+  <div class="flex items-center justify-between gap-3">
+    <dt class="text-slate-500 dark:text-slate-400">Subtotal</dt>
+    <dd class="font-bold tabular-nums text-slate-900 dark:text-white" data-testid="totals-subtotal">
+      {{ subtotal() | appCurrency }}
+    </dd>
+  </div>
+
+  <div class="flex items-center justify-between gap-3">
+    <dt class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+      <label for="order-discount">Descuento (%)</label>
+      <input
+        id="order-discount"
+        type="number"
+        min="0"
+        max="100"
+        step="1"
+        inputmode="numeric"
+        class="w-16 rounded-lg border border-slate-200 bg-white px-2 py-1 text-center text-xs font-bold tabular-nums text-slate-900 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:border-surface-600 dark:bg-surface-800 dark:text-white"
+        [value]="discountPercent()"
+        data-testid="discount-input"
+        (input)="onDiscountInput($event)"
+      />
+    </dt>
+    <dd
+      class="font-bold tabular-nums text-emerald-600 dark:text-emerald-400"
+      data-testid="totals-discount"
+    >
+      −{{ discountAmount() | appCurrency }}
+    </dd>
+  </div>
+
+  <div class="flex items-center justify-between gap-3">
+    <dt class="text-slate-500 dark:text-slate-400">{{ taxLabel() }}</dt>
+    <dd class="font-bold tabular-nums text-slate-900 dark:text-white" data-testid="totals-tax">
+      {{ taxAmount() | appCurrency }}
+    </dd>
+  </div>
+
+  <div
+    class="mt-1 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-surface-700"
+  >
+    <dt
+      class="font-heading text-base font-black tracking-tight text-slate-900 uppercase dark:text-white"
+    >
+      Total
+    </dt>
+    <dd
+      class="font-heading text-xl font-black tabular-nums text-accent-600 dark:text-accent-400"
+      data-testid="totals-total"
+    >
+      {{ total() | appCurrency }}
+    </dd>
+  </div>
+</dl>

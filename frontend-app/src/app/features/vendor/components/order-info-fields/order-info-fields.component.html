@@ -1,0 +1,86 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="order-info-fields"
+  aria-labelledby="order-info-title"
+>
+  <h2 id="order-info-title" class="font-heading text-lg font-black tracking-tight uppercase">
+    Información del pedido
+  </h2>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Tienda</span>
+    <span
+      class="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 dark:bg-surface-800 dark:text-slate-200"
+      data-testid="store-label"
+    >
+      <i
+        class="fa-solid fa-store text-xs text-accent-600 dark:text-accent-400"
+        aria-hidden="true"
+      ></i>
+      {{ storeLabel() }}
+    </span>
+  </div>
+
+  <form [formGroup]="form" class="grid gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label for="order-date" class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+        >Fecha</label
+      >
+      <input
+        id="order-date"
+        type="date"
+        formControlName="date"
+        class="input"
+        [class.input-error]="isDateInvalid()"
+        data-testid="order-date"
+      />
+      @if (isDateInvalid()) {
+        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">
+          Elige una fecha
+        </span>
+      }
+    </div>
+
+    <fieldset class="flex flex-col gap-2">
+      <legend class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+        Método de entrega
+      </legend>
+      <div class="flex flex-wrap gap-2">
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            formControlName="deliveryMethod"
+            value="retiro_tienda"
+            class="peer sr-only"
+            data-testid="delivery-pickup"
+          />
+          <span
+            [class]="deliveryClasses(delivery() === 'retiro_tienda')"
+            class="peer-focus-visible:ring-2 peer-focus-visible:ring-accent-500"
+            data-testid="delivery-pickup-pill"
+          >
+            <i class="fa-solid fa-shop text-xs" aria-hidden="true"></i>
+            Retiro en tienda
+          </span>
+        </label>
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            formControlName="deliveryMethod"
+            value="envio_domicilio"
+            class="peer sr-only"
+            data-testid="delivery-shipping"
+          />
+          <span
+            [class]="deliveryClasses(delivery() === 'envio_domicilio')"
+            class="peer-focus-visible:ring-2 peer-focus-visible:ring-accent-500"
+            data-testid="delivery-shipping-pill"
+          >
+            <i class="fa-solid fa-truck text-xs" aria-hidden="true"></i>
+            Envío a domicilio
+          </span>
+        </label>
+      </div>
+    </fieldset>
+  </form>
+</section>

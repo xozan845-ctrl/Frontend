@@ -1,0 +1,93 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="recent-orders"
+  aria-labelledby="recent-orders-title"
+>
+  <header class="flex items-center justify-between gap-3">
+    <h2 id="recent-orders-title" class="font-heading text-lg font-black tracking-tight uppercase">
+      Pedidos recientes
+    </h2>
+    <a
+      routerLink="/vendedor/pedidos"
+      class="text-xs font-black tracking-widest text-accent-600 uppercase transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+      data-testid="view-all-orders"
+    >
+      Ver todos
+      <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+    </a>
+  </header>
+
+  @if (loading()) {
+    <div class="flex flex-col gap-2" role="status" aria-live="polite">
+      <span class="sr-only">Cargando pedidos recientes…</span>
+      <app-skeleton-loader height="40px" customClass="rounded-xl" />
+      <app-skeleton-loader height="40px" customClass="rounded-xl" />
+      <app-skeleton-loader height="40px" customClass="rounded-xl" />
+    </div>
+  } @else if (error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/10"
+      data-testid="recent-orders-error"
+    >
+      <p class="text-xs font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        data-testid="retry-orders"
+        (click)="retryClick()"
+      >
+        Reintentar
+      </button>
+    </div>
+  } @else if (orders().length === 0) {
+    <div
+      class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-surface-600"
+      data-testid="recent-orders-empty"
+    >
+      <i
+        class="fa-solid fa-receipt text-2xl text-slate-300 dark:text-surface-600"
+        aria-hidden="true"
+      ></i>
+      <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Aún no hay pedidos</p>
+      <p class="text-xs text-slate-400 dark:text-slate-500">
+        Los pedidos que registres aparecerán aquí.
+      </p>
+    </div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead>
+          <tr
+            class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+          >
+            <th scope="col" class="py-2 pr-3 font-bold">Pedido</th>
+            <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
+            <th scope="col" class="py-2 pr-3 font-bold">Total</th>
+            <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+            <th scope="col" class="py-2 font-bold">Fecha</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50 dark:divide-surface-800">
+          @for (order of orders(); track order.id) {
+            <tr
+              class="transition-colors hover:bg-slate-50/70 dark:hover:bg-surface-800/60"
+              data-testid="recent-order-row"
+            >
+              <td class="py-3 pr-3 font-mono text-xs font-bold text-slate-900 dark:text-white">
+                {{ order.id }}
+              </td>
+              <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">{{ order.clientName }}</td>
+              <td class="py-3 pr-3 font-bold tabular-nums text-slate-900 dark:text-white">
+                {{ order.total | appCurrency }}
+              </td>
+              <td class="py-3 pr-3"><app-order-status-badge [status]="order.status" /></td>
+              <td class="py-3 text-xs text-slate-500 dark:text-slate-400" data-testid="order-date">
+                {{ formatDate(order.createdAt) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
