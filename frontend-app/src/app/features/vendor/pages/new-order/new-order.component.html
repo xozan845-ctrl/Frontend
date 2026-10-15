@@ -1,0 +1,102 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="new-order-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/vendedor/inicio" class="transition-colors hover:text-accent-600">
+          Ventas
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Nuevo pedido</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Nuevo pedido
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Arma el pedido del cliente y regístralo en tu tienda.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      data-testid="goto-recent-orders"
+      (click)="scrollToRecentOrders()"
+    >
+      <i class="fa-solid fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+      Pedidos recientes
+    </button>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <app-client-picker
+      [selected]="draft.client()"
+      [results]="clients.results()"
+      [query]="clients.query()"
+      [loading]="clients.loading()"
+      [error]="clients.error()"
+      (queryChange)="clients.setQuery($event)"
+      (clientSelected)="selectClient($event)"
+      (clearSelection)="clearClient()"
+      (createRequested)="isClientModalOpen.set(true)"
+      (retry)="clients.loadInitial()"
+    />
+    <app-order-info-fields [info]="draft.info()" (infoChange)="updateOrderInfo($event)" />
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+    <div class="flex min-w-0 flex-col gap-6">
+      <app-product-pick-grid
+        [products]="catalog.filteredProducts()"
+        [categories]="catalog.categories()"
+        [query]="catalog.query()"
+        [category]="catalog.category()"
+        [loading]="catalog.loading()"
+        [error]="catalog.error()"
+        (queryChange)="catalog.setQuery($event)"
+        (categoryChange)="catalog.setCategory($event)"
+        (add)="draft.addLine($event)"
+        (retry)="catalog.loadProducts()"
+      />
+    </div>
+
+    <aside class="min-w-0 xl:sticky xl:top-6 xl:self-start">
+      <app-order-draft-panel
+        [lines]="draft.lines()"
+        [subtotal]="draft.subtotal()"
+        [discountPercent]="draft.discountPercent()"
+        [discountAmount]="draft.discountAmount()"
+        [taxAmount]="draft.taxAmount()"
+        [total]="draft.total()"
+        [observations]="draft.observations()"
+        [submitting]="draft.submitting()"
+        (quantityChange)="draft.updateQuantity($event.productId, $event.quantity)"
+        (removeLine)="draft.removeLine($event)"
+        (discountChange)="draft.setDiscountPercent($event)"
+        (observationsChange)="draft.setObservations($event)"
+        (registerOrder)="submitOrder()"
+        (saveDraft)="draft.saveDraft()"
+      />
+    </aside>
+  </div>
+
+  <div #recentOrdersSection id="pedidos-recientes" class="scroll-mt-6">
+    <app-recent-orders-table
+      [orders]="recentOrders()"
+      [loading]="orders.loading()"
+      [error]="orders.error()"
+      (retry)="orders.loadOrders()"
+    />
+  </div>
+
+  <app-create-client-modal
+    [open]="isClientModalOpen()"
+    [creating]="clients.creating()"
+    [error]="clients.error()"
+    (submitClient)="createClient($event)"
+    (dismiss)="isClientModalOpen.set(false)"
+  />
+</div>

@@ -1,0 +1,52 @@
+<article
+  class="card group flex flex-col overflow-hidden"
+  [attr.data-testid]="'product-card-' + product().id"
+>
+  <div class="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-surface-800">
+    @if (product().imageUrl) {
+      <img
+        [ngSrc]="product().imageUrl"
+        fill
+        sizes="(min-width: 1280px) 20vw, (min-width: 640px) 30vw, 45vw"
+        class="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+        [alt]="product().name"
+      />
+    } @else {
+      <div class="flex h-full w-full items-center justify-center" aria-hidden="true">
+        <i class="fa-solid fa-bottle-droplet text-4xl text-slate-300 dark:text-surface-600"></i>
+      </div>
+    }
+    <span
+      class="absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase"
+      [class]="stockClasses()"
+      data-testid="stock-chip"
+    >
+      {{ product().inStock ? 'En stock' : 'Agotado' }}
+    </span>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-1 p-3">
+    <h3 class="line-clamp-2 text-sm leading-snug font-bold text-slate-900 dark:text-white">
+      {{ product().name }}
+    </h3>
+    <p class="truncate text-xs text-slate-500 dark:text-slate-400">
+      {{ product().sku || 'Sin código' }}
+    </p>
+    <div class="mt-auto flex items-center justify-between gap-2 pt-2">
+      <span class="font-heading text-base font-black text-slate-900 dark:text-white">
+        {{ product().price | appCurrency }}
+      </span>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        [disabled]="!product().inStock"
+        [attr.aria-label]="'Agregar ' + product().name + ' al pedido'"
+        data-testid="add-product"
+        (click)="add.emit(product())"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Agregar
+      </button>
+    </div>
+  </div>
+</article>

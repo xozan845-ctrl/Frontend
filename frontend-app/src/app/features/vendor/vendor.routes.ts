@@ -1,5 +1,15 @@
 import { Route, Routes } from '@angular/router';
 import { vendorGuard } from './guards/vendor.guard';
+import { CLIENT_REPOSITORY } from './repositories/client.repository';
+import { VENDOR_ORDER_REPOSITORY } from './repositories/vendor-order.repository';
+import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.repository';
+import { ClientService } from './services/client.service';
+import { VendorOrderService } from './services/vendor-order.service';
+import { VendorProductService } from './services/vendor-product.service';
+import { ClientSearchStore } from './state/client-search.store';
+import { OrderDraftStore } from './state/order-draft.store';
+import { VendorCatalogStore } from './state/vendor-catalog.store';
+import { VendorOrdersStore } from './state/vendor-orders.store';
 
 /** Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO (`R-UX-6`). */
 const comingSoonRoute = (title: string, description: string, icon: string): Route => ({
@@ -13,13 +23,24 @@ const comingSoonRoute = (title: string, description: string, icon: string): Rout
  * parte del bundle inicial. El guard exige rol `vendedor` (`R-SE-6`) y las
  * secciones sin fase responden con una página "En construcción" (`R-UX-1`) en
  * lugar de enlaces muertos. Los datos de cada sección llegan por `data` con
- * `withComponentInputBinding`.
+ * `withComponentInputBinding`. Los stores del POS (borrador, catálogo, clientes
+ * y pedidos) se proveen a nivel de shell (`R-AR-5`) para que sobrevivan a la
+ * navegación entre secciones y se liberen al salir del panel.
  */
 export const VENDOR_ROUTES: Routes = [
   {
     path: '',
     canActivate: [vendorGuard],
     loadComponent: () => import('./pages/vendor-shell/vendor-shell.component'),
+    providers: [
+      { provide: VENDOR_ORDER_REPOSITORY, useClass: VendorOrderService },
+      { provide: CLIENT_REPOSITORY, useClass: ClientService },
+      { provide: VENDOR_PRODUCT_REPOSITORY, useClass: VendorProductService },
+      OrderDraftStore,
+      VendorOrdersStore,
+      ClientSearchStore,
+      VendorCatalogStore,
+    ],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
@@ -32,11 +53,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'ventas/nuevo',
-        ...comingSoonRoute(
-          'Nuevo pedido',
-          'El punto de venta para registrar los pedidos de tus clientes.',
-          'fa-solid fa-cart-shopping',
-        ),
+        loadComponent: () => import('./pages/new-order/new-order.component'),
       },
       {
         path: 'pedidos',

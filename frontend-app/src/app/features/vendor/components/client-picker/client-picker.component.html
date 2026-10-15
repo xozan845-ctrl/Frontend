@@ -1,0 +1,124 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="client-picker"
+  aria-labelledby="client-picker-title"
+>
+  <header class="flex items-center justify-between gap-3">
+    <h2 id="client-picker-title" class="font-heading text-lg font-black tracking-tight uppercase">
+      Cliente
+    </h2>
+    <button
+      type="button"
+      class="btn btn-secondary btn-sm"
+      data-testid="new-client"
+      (click)="createRequested.emit()"
+    >
+      <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
+      Nuevo cliente
+    </button>
+  </header>
+
+  @if (selected(); as client) {
+    <div
+      class="flex items-center gap-3 rounded-2xl border border-accent-200 bg-accent-50 p-3 motion-safe:animate-fade-in dark:border-accent-800 dark:bg-accent-900/20"
+      data-testid="selected-client"
+    >
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-600 font-heading text-sm font-black text-white"
+        aria-hidden="true"
+        >{{ initials(client.name) }}</span
+      >
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-bold text-slate-900 dark:text-white">{{ client.name }}</p>
+        <p class="truncate text-xs text-slate-500 dark:text-slate-400">
+          {{ client.code || 'Sin código' }} · {{ client.phone || 'Sin teléfono' }}
+        </p>
+      </div>
+      <button
+        type="button"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:outline-hidden dark:hover:bg-red-900/20"
+        [attr.aria-label]="'Quitar cliente ' + client.name"
+        data-testid="clear-client"
+        (click)="clearSelection.emit()"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-1">
+      <label for="client-search" class="sr-only">Buscar cliente</label>
+      <div class="relative">
+        <i
+          class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-slate-400"
+          aria-hidden="true"
+        ></i>
+        <input
+          id="client-search"
+          type="search"
+          class="input pl-9"
+          placeholder="Buscar por nombre, código o teléfono…"
+          [value]="query()"
+          data-testid="client-search"
+          (input)="onQueryInput($event)"
+        />
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="flex flex-col gap-2" role="status" aria-live="polite">
+        <span class="sr-only">Buscando clientes…</span>
+        <app-skeleton-loader height="56px" customClass="rounded-xl" />
+        <app-skeleton-loader height="56px" customClass="rounded-xl" />
+      </div>
+    } @else if (error(); as message) {
+      <div
+        class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/10"
+        data-testid="clients-error"
+      >
+        <p class="text-xs font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm self-start"
+          data-testid="retry-clients"
+          (click)="retryClick()"
+        >
+          Reintentar
+        </button>
+      </div>
+    } @else if (results().length === 0) {
+      <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="clients-empty">
+        No encontramos clientes con ese término. Puedes crear uno nuevo.
+      </p>
+    } @else {
+      <ul
+        class="flex max-h-64 flex-col gap-1 motion-safe:animate-fade-in overflow-y-auto"
+        data-testid="client-results"
+      >
+        @for (client of results(); track client.id) {
+          <li>
+            <button
+              type="button"
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:bg-surface-800"
+              [attr.data-testid]="'client-option-' + client.id"
+              (click)="clientSelected.emit(client)"
+            >
+              <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 font-heading text-xs font-black text-slate-600 dark:bg-surface-700 dark:text-slate-200"
+                aria-hidden="true"
+                >{{ initials(client.name) }}</span
+              >
+              <span class="min-w-0 flex-1">
+                <span class="block truncate text-sm font-bold text-slate-900 dark:text-white">{{
+                  client.name
+                }}</span>
+                <span class="block truncate text-xs text-slate-500 dark:text-slate-400">
+                  {{ client.code || 'Sin código' }} · {{ client.phone || 'Sin teléfono' }}
+                </span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

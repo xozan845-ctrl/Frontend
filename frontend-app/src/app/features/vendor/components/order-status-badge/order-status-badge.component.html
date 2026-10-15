@@ -1,0 +1,8 @@
+<span
+  class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest"
+  [class]="badgeClasses()"
+  data-testid="order-status-badge"
+>
+  <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true"></span>
+  {{ label() }}
+</span>

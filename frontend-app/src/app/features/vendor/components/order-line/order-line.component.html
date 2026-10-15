@@ -1,0 +1,33 @@
+<li class="flex items-center gap-3 py-3" [attr.data-testid]="'draft-line-' + line().product.id">
+  <div class="min-w-0 flex-1">
+    <p class="truncate text-sm font-bold text-slate-900 dark:text-white">
+      {{ line().product.name }}
+    </p>
+    <p class="truncate text-xs text-slate-500 dark:text-slate-400">
+      {{ line().product.sku || 'Sin código' }} · {{ line().product.price | appCurrency }}
+    </p>
+  </div>
+
+  <app-quantity-stepper
+    [value]="line().quantity"
+    [label]="line().product.name"
+    (valueChange)="quantityChange.emit($event)"
+  />
+
+  <span
+    class="w-20 shrink-0 text-right text-sm font-black tabular-nums text-slate-900 dark:text-white"
+    data-testid="line-total"
+  >
+    {{ lineTotal() | appCurrency }}
+  </span>
+
+  <button
+    type="button"
+    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:outline-hidden dark:hover:bg-red-900/20"
+    [attr.aria-label]="'Quitar ' + line().product.name + ' del pedido'"
+    data-testid="remove-line"
+    (click)="remove.emit()"
+  >
+    <i class="fa-solid fa-trash-can text-xs" aria-hidden="true"></i>
+  </button>
+</li>

@@ -1,0 +1,106 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="order-draft-panel"
+  aria-labelledby="draft-title"
+>
+  <header class="flex items-center justify-between gap-3">
+    <h2 id="draft-title" class="font-heading text-lg font-black tracking-tight uppercase">
+      Pedido actual
+    </h2>
+    <span
+      class="rounded-full bg-accent-100 px-2.5 py-1 text-[10px] font-bold tracking-widest text-accent-700 uppercase dark:bg-accent-900/30 dark:text-accent-400"
+      data-testid="draft-count"
+    >
+      {{ countLabel() }}
+    </span>
+  </header>
+
+  @if (isEmpty()) {
+    <div
+      class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-surface-600"
+      data-testid="draft-empty"
+    >
+      <i
+        class="fa-solid fa-basket-shopping text-2xl text-slate-300 dark:text-surface-600"
+        aria-hidden="true"
+      ></i>
+      <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Aún no agregaste productos</p>
+      <p class="text-xs text-slate-400 dark:text-slate-500">
+        Elige productos del catálogo para armar el pedido.
+      </p>
+    </div>
+  } @else {
+    <ul
+      class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+      data-testid="draft-lines"
+    >
+      @for (line of lines(); track line.product.id) {
+        <app-order-line
+          [line]="line"
+          (quantityChange)="quantityChange.emit({ productId: line.product.id, quantity: $event })"
+          (remove)="removeLine.emit(line.product.id)"
+        />
+      }
+    </ul>
+  }
+
+  <app-order-totals
+    [subtotal]="subtotal()"
+    [discountPercent]="discountPercent()"
+    [discountAmount]="discountAmount()"
+    [taxAmount]="taxAmount()"
+    [total]="total()"
+    (discountChange)="discountChange.emit($event)"
+  />
+
+  <div class="flex flex-col gap-2">
+    <label
+      for="draft-observations"
+      class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+      >Observaciones</label
+    >
+    <textarea
+      id="draft-observations"
+      rows="2"
+      class="input resize-none"
+      placeholder="Notas para la entrega (opcional)"
+      [value]="observations()"
+      data-testid="observations-input"
+      (input)="onObservationsInput($event)"
+    ></textarea>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <button
+      type="button"
+      class="btn btn-primary btn-lg w-full"
+      [disabled]="submitDisabled()"
+      data-testid="submit-order"
+      (click)="registerOrder.emit()"
+    >
+      <i class="fa-solid fa-circle-check text-xs" aria-hidden="true"></i>
+      {{ submitting() ? 'Registrando…' : 'Registrar pedido' }}
+    </button>
+    <div class="grid grid-cols-2 gap-2">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="isEmpty()"
+        data-testid="save-draft"
+        (click)="saveDraft.emit()"
+      >
+        Guardar borrador
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        disabled
+        title="Disponible en una próxima versión"
+        data-testid="quote-draft"
+      >
+        Generar cotización
+      </button>
+    </div>
+    <p class="sr-only">Generar cotización estará disponible en una próxima versión.</p>
+  </div>
+</section>
