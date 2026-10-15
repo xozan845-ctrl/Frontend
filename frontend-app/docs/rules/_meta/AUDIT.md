@@ -16,18 +16,18 @@
 
 ## Evidencia ejecutada (2026-10-15)
 
-| Verificación       | Comando                        | Resultado                                                            |
-| ------------------ | ------------------------------ | -------------------------------------------------------------------- |
-| Build (G-3)        | `npm run build`                | ✅ initial **499.91 kB** (< 500 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **117 archivos / 730 tests**                                      |
-| Cobertura (G-2)    | idem                           | ✅ 94.28 / 88.14 / 93.76 / 95.38 (umbral **90/85/90/92**, `R-COV-1`) |
-| E2E (G-6)          | `npm run e2e`                  | ✅ **13 flujos Playwright · 0 errores/warnings**                     |
-| Formato (G-4)      | `npx prettier --check .`       | ✅ en CI (en Windows local exige árbol LF; el check puntual da ✅)   |
-| Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)          |
-| Seguridad (R-QA-6) | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                            |
-| CI                 | `gh pr checks`                 | ⏳ corre sobre las PRs apiladas del módulo (revisión del mantenedor) |
-| `main` protegida   | `gh api .../protection`        | ✅ PR obligatorio + 6 checks, sin force, `enforce_admins: true`      |
-| Release            | `git tag`                      | ⏳ `v1.17.0` se etiqueta sobre `main` tras el merge de las PRs       |
+| Verificación       | Comando                        | Resultado                                                                              |
+| ------------------ | ------------------------------ | -------------------------------------------------------------------------------------- |
+| Build (G-3)        | `npm run build`                | ✅ initial **499.91 kB** (< 500 kB) · SW generado (`ngsw-worker.js`)                   |
+| Tests (G-1)        | `npm test -- --watch=false`    | ✅ **117 archivos / 730 tests**                                                        |
+| Cobertura (G-2)    | idem                           | ✅ 94.28 / 88.14 / 93.76 / 95.38 (umbral **90/85/90/92**, `R-COV-1`)                   |
+| E2E (G-6)          | `npm run e2e`                  | ✅ **13 flujos Playwright · 0 errores/warnings**                                       |
+| Formato (G-4)      | `npx prettier --check .`       | ✅ en CI (en Windows local exige árbol LF; el check puntual da ✅)                     |
+| Lint (G-5)         | `npm run lint`                 | ✅ **0 errores / 0 warnings** (con `templateAccessibility`)                            |
+| Seguridad (R-QA-6) | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                                              |
+| CI                 | `gh pr checks`                 | ✅ 6/6 en verde en las PRs apiladas y en `main` tras el merge (run `38815291248`)      |
+| `main` protegida   | `gh api .../protection`        | ✅ PR obligatorio + 6 checks, sin force, `enforce_admins: true`                        |
+| Release            | `git tag`                      | ⏳ `v1.17.0` queda pendiente de etiquetar sobre `main` (paso del mantenedor, `R-CD-3`) |
 
 ## Cumplimiento por área
 
