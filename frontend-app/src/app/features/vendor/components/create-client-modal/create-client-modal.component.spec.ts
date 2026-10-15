@@ -64,6 +64,59 @@ describe('CreateClientModalComponent', () => {
     expect(host.textContent).toContain('Escribe al menos 2 caracteres');
   });
 
+  it('no debe emitir con correo inválido y debe señalarlo', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+    let submitted = 0;
+    fixture.componentInstance.submitClient.subscribe(() => submitted++);
+
+    const name = host.querySelector('[data-testid="client-name"]') as HTMLInputElement;
+    name.value = 'Salón Vero';
+    name.dispatchEvent(new Event('input'));
+    const email = host.querySelector('[data-testid="client-email"]') as HTMLInputElement;
+    email.value = 'correo-invalido';
+    email.dispatchEvent(new Event('input'));
+
+    (host.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(submitted).toBe(0);
+    expect((host.querySelector('[data-testid="client-email"]') as HTMLElement).className).toContain(
+      'input-error',
+    );
+    expect(host.textContent).toContain('Correo inválido');
+
+    email.value = 'hola@vero.com';
+    email.dispatchEvent(new Event('input'));
+    (host.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(submitted).toBe(1);
+  });
+
+  it('debe respetar el mínimo del nombre en el límite', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
+    let submitted = 0;
+    fixture.componentInstance.submitClient.subscribe(() => submitted++);
+    const name = host.querySelector('[data-testid="client-name"]') as HTMLInputElement;
+
+    name.value = 'A';
+    name.dispatchEvent(new Event('input'));
+    (host.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(submitted).toBe(0);
+    expect(host.textContent).toContain('Escribe al menos 2 caracteres');
+
+    name.value = 'Ana';
+    name.dispatchEvent(new Event('input'));
+    (host.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(submitted).toBe(1);
+  });
+
   it('debe cerrar con la X, con Cancelar y con Escape', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
