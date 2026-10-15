@@ -65,11 +65,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'clientes',
-        ...comingSoonRoute(
-          'Clientes',
-          'Tu cartera de clientes con búsqueda y alta.',
-          'fa-solid fa-user-group',
-        ),
+        loadComponent: () => import('./pages/clients/clients.component'),
       },
       {
         path: 'productos',
