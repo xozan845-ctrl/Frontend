@@ -154,6 +154,90 @@ describe('VendorOrdersStore', () => {
     expect(store.filteredOrders()).toHaveLength(5);
   });
 
+  it('debe cargar el detalle y reflejarlo en la lista', async () => {
+    const store = setup();
+    store.loadOrders();
+    await vi.waitFor(() => expect(store.orders()).toHaveLength(1));
+
+    const detailed: VendorOrder = { ...order, clientName: 'Carla López (detalle)' };
+    vi.mocked(repo.getOrder).mockReturnValue(of(detailed));
+    store.loadOrder('PED-000125');
+    await vi.waitFor(() => expect(store.selectedOrder()).toEqual(detailed));
+
+    expect(store.selectedLoading()).toBe(false);
+    expect(store.orders()[0].clientName).toBe('Carla López (detalle)');
+  });
+
+  it('debe exponer el error del detalle con aviso y mensaje por defecto', async () => {
+    const store = setup();
+    vi.mocked(repo.getOrder).mockReturnValue(throwError(() => new Error('sin conexión')));
+
+    store.loadOrder('PED-000404');
+    await vi.waitFor(() => expect(store.selectedError()).toBe('sin conexión'));
+
+    expect(store.selectedLoading()).toBe(false);
+    expect(notification.showError).toHaveBeenCalledWith('sin conexión');
+
+    vi.mocked(repo.getOrder).mockReturnValue(throwError(() => new Error('')));
+    store.loadOrder('PED-000404');
+    await vi.waitFor(() => expect(store.selectedError()).toBe('No se pudo cargar el pedido.'));
+  });
+
+  it('debe cambiar el estado del pedido abierto y actualizar la lista', async () => {
+    const store = setup();
+    store.loadOrder('PED-000125');
+    await vi.waitFor(() => expect(store.selectedOrder()).not.toBeNull());
+
+    const updated: VendorOrder = { ...order, status: 'completado' };
+    vi.mocked(repo.updateStatus).mockReturnValue(of(updated));
+
+    store.updateStatus('completado');
+    await vi.waitFor(() => expect(store.selectedOrder()?.status).toBe('completado'));
+
+    expect(repo.updateStatus).toHaveBeenCalledWith('PED-000125', 'completado');
+    expect(store.updatingStatus()).toBe(false);
+    expect(notification.showSuccess).toHaveBeenCalledWith('Pedido PED-000125 actualizado.');
+  });
+
+  it('debe conservar el estado y avisar cuando falla el cambio', async () => {
+    const store = setup();
+    store.loadOrder('PED-000125');
+    await vi.waitFor(() => expect(store.selectedOrder()).not.toBeNull());
+    notification.showError.mockClear();
+
+    vi.mocked(repo.updateStatus).mockReturnValue(throwError(() => new Error('conflicto')));
+    store.updateStatus('cancelado');
+    await vi.waitFor(() => expect(store.selectedError()).toBe('conflicto'));
+
+    expect(store.selectedOrder()?.status).toBe('en_proceso');
+    expect(store.updatingStatus()).toBe(false);
+    expect(notification.showError).toHaveBeenCalledWith('conflicto');
+
+    vi.mocked(repo.updateStatus).mockReturnValue(throwError(() => new Error('')));
+    store.updateStatus('cancelado');
+    await vi.waitFor(() =>
+      expect(store.selectedError()).toBe('No se pudo actualizar el estado del pedido.'),
+    );
+  });
+
+  it('no debe llamar al backend sin pedido seleccionado y debe limpiar el detalle', async () => {
+    const store = setup();
+
+    store.updateStatus('completado');
+    await Promise.resolve();
+
+    expect(repo.updateStatus).not.toHaveBeenCalled();
+    expect(store.updatingStatus()).toBe(false);
+
+    store.loadOrder('PED-000125');
+    await vi.waitFor(() => expect(store.selectedOrder()).not.toBeNull());
+
+    store.clearSelectedOrder();
+    expect(store.selectedOrder()).toBeNull();
+    expect(store.selectedError()).toBeNull();
+    expect(store.selectedLoading()).toBe(false);
+  });
+
   it('debe sondear con timer y detenerse al salir del modo "en vivo"', async () => {
     vi.useFakeTimers();
     try {
