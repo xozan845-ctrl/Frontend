@@ -45,11 +45,7 @@ export const VENDOR_ROUTES: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
         path: 'inicio',
-        ...comingSoonRoute(
-          'Inicio',
-          'El resumen de tu tienda: ventas del día y pedidos recientes.',
-          'fa-solid fa-house',
-        ),
+        loadComponent: () => import('./pages/dashboard/dashboard.component'),
       },
       {
         path: 'ventas/nuevo',

@@ -61,6 +61,30 @@ function isDocumentHidden(): boolean {
  * (`R-AR-10`). Los derivados de la lista (filtro y conteos) viven en
  * `withComputed` (`R-ST-3`).
  */
+
+/** KPIs del inicio del panel: venta de hoy y trabajo por atender. */
+export interface VendorTodayKpis {
+  /** Suma de los pedidos creados hoy, sin contar cancelados. */
+  soldToday: number;
+  /** Pedidos creados hoy (cualquier estado). */
+  ordersToday: number;
+  /** Pedidos pendientes por atender (histórico cargado). */
+  pending: number;
+  /** Pedidos en proceso (histórico cargado). */
+  inProgress: number;
+}
+
+/** ¿La marca ISO cae en el día local de `today`? (vacía o inválida → false). */
+function isSameLocalDay(iso: string, today: Date): boolean {
+  if (!iso) return false;
+  const date = new Date(iso);
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
 export const VendorOrdersStore = signalStore(
   withState(initialState),
   withComputed((store) => ({
@@ -81,6 +105,23 @@ export const VendorOrdersStore = signalStore(
         counts[order.status] += 1;
       }
       return counts;
+    }),
+    /** KPIs del inicio: vendido hoy (sin cancelados) y trabajo por atender. */
+    todayKpis: computed<VendorTodayKpis>(() => {
+      const today = new Date();
+      let soldToday = 0;
+      let ordersToday = 0;
+      let pending = 0;
+      let inProgress = 0;
+      for (const order of store.orders()) {
+        if (order.status === 'pendiente') pending += 1;
+        if (order.status === 'en_proceso') inProgress += 1;
+        if (isSameLocalDay(order.createdAt, today)) {
+          ordersToday += 1;
+          if (order.status !== 'cancelado') soldToday += order.total;
+        }
+      }
+      return { soldToday, ordersToday, pending, inProgress };
     }),
   })),
   withMethods(
