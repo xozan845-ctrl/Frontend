@@ -9,9 +9,10 @@
   real, pedidos, clientes e inicio) contra todas las familias de reglas.
 - **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
   presupuesto inicial **dentro de budget** (aviso en 500 kB), cobertura con
-  umbral elevado (`R-COV-1`) y hallazgos del módulo cerrados. Quedan deudas
-  **documentales** (segundo `ADR-18`) y de **backend** (contrato asumido de
-  pedidos/clientes/stock), listadas abajo.
+  umbral elevado (`R-COV-1`), hallazgos del módulo cerrados y **sin deudas
+  abiertas**: el `ADR-18` duplicado quedó renumerado (`ADR-21`) y la frontera
+  del backend (contrato asumido de pedidos/clientes/stock) sigue documentada
+  abajo.
 
 ## Evidencia ejecutada (2026-10-15)
 
@@ -114,7 +115,7 @@
 
 | Regla      | Estado | Evidencia                                                                           |
 | ---------- | ------ | ----------------------------------------------------------------------------------- |
-| R-DO-1/2/6 | ✅     | README al día (rutas y features), tabla E2E con R-E-1…R-E-19 y ADRs (ADR-01…ADR-20) |
+| R-DO-1/2/6 | ✅     | README al día (rutas y features), tabla E2E con R-E-1…R-E-19 y ADRs (ADR-01…ADR-21) |
 | R-IA-1..6  | ✅     | Trabajo por PRs atómicas con evidencia y regression-first                           |
 
 ## Gates de CI
@@ -129,9 +130,10 @@
 
 ## Deudas abiertas
 
-- **Documentación**: `docs/decisiones.md` tiene **dos `ADR-18`** (integración de
-  `ai-scraper` y provisión por feature en rutas lazy); falta renumerar el segundo
-  y actualizar sus referencias (R-DO-2, R-IA-6).
+- **Ninguna.** El segundo `ADR-18` (provisión de infraestructura por feature en
+  rutas lazy) quedó renumerado a **`ADR-21`** —primer número libre tras
+  `ADR-20`, sin tocar los ADRs que ya tenían referencias— y todas sus menciones
+  quedaron al día (R-DO-2, R-IA-6).
 
 La **auditoría del módulo `vendor`** (12ª, ADR-20) construyó y verificó el panel
 del vendedor: shell con sidebar y rutas lazy bajo guard de rol (R-AR-12, R-LZ-1,
@@ -142,8 +144,8 @@ con matriz de formulario (R-CP-8), inicio con KPIs derivados (R-ST-3) y SEO con
 restauración en todas las páginas (R-UX-6). La tabla de reglas E2E quedó
 completa: se registraron los flujos del feature IA (R-E-16/17) y se añadieron los
 del vendedor (R-E-18/19). El contrato de pedidos/clientes/stock del backend aún
-no existe: el módulo opera con modo `mock` y adapters tolerantes (deuda de
-backend abajo).
+no existe: el módulo opera con modo `mock` y adapters tolerantes (frontera del
+backend, abajo).
 
 Los hallazgos de la auditoría del módulo `stores` quedaron cerrados por PRs
 atómicas (UX/SEO, arquitectura/DTO/`rxMethod`, tests de robustez y
@@ -153,7 +155,7 @@ documentación), el presupuesto inicial volvió a estar dentro de `budget`
 validación de entrada) también cerró todos sus hallazgos: envelope `{ data }` y
 `mensaje` del backend (R-C-1/2), fixture de contrato de `stores` (R-C-8), ramas
 del servicio al 95% (R-QA-1), nombre accesible del stepper y región viva de carga
-(R-AC-1/7) y **ADR-18** para la provisión por feature (R-AR-3).
+(R-AC-1/7) y **ADR-21** para la provisión por feature (R-AR-3).
 
 La **auditoría del módulo `cart`** (9ª) cerró sus 18 hallazgos: diálogos
 accesibles con Escape (R-AC-3), estados de carga/error y SEO (R-UX-1/6), DTOs +
@@ -176,7 +178,7 @@ oferta/tienda y errores traducidos (R-NC-9, R-AR-9), `loadStore` con `rxMethod`
 `NgOptimizedImage` (R-PF-2), iconos accesibles y `data-testid` (R-AC-1, R-CP-2) y
 los stores secundarios al 100% (R-U-8, R-RB-4).
 
-### Deudas de backend (fuera del alcance del frontend)
+### Frontera del backend (fuera del alcance del frontend)
 
 - Core Engine **no** expone un directorio público `GET /tiendas`, por lo que la
   raíz `/` es una entrada por URL (ADR-15).

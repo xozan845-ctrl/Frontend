@@ -5,8 +5,8 @@ del proyecto origen (donde un test validaba la implementación bugueada en vez d
 requisito) y se mantiene: **el test valida el requisito, no la implementación**.
 
 El stack de pruebas es **Vitest** con `@angular/build:unit-test` y **Angular
-TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
-(51 archivos / 254 tests) y las deudas están en
+TestBed**. Las capas de esta área son el estándar exigible; el estado vigente
+(**117 archivos / 730 tests**) vive en
 [`../_meta/AUDIT.md`](../_meta/AUDIT.md).
 
 ## Archivos
@@ -15,7 +15,7 @@ TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
 | ---------------------------- | ---------------------------------------------------------------------------- |
 | `01-reglas-unit.md`          | Unit puro: adapters, utilidades, stores, servicios HTTP, guards/interceptors |
 | `02-reglas-componentes.md`   | Componentes con TestBed (formularios, eventos, inputs, outputs)              |
-| `03-reglas-e2e.md`           | E2E de flujos críticos en navegador real (Playwright, cuando exista)         |
+| `03-reglas-e2e.md`           | E2E de flujos críticos en navegador real (Playwright)                        |
 | `04-reglas-contrato.md`      | Contrato con el API del backend (shapes, envelopes, fechas)                  |
 | `05-reglas-robustez.md`      | Regression-first, robustez de entradas y anti-flakiness                      |
 | `06-estandares-cobertura.md` | Matriz de capas, umbrales de cobertura y gates de CI (`G-*`)                 |
@@ -32,7 +32,7 @@ TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
 | `R0`      | —     | `README.md`                  | Principio rector           |
 | `R-U-*`   | 1–14  | `01-reglas-unit.md`          | Unit puro                  |
 | `R-CP-*`  | 1–8   | `02-reglas-componentes.md`   | Componentes con TestBed    |
-| `R-E-*`   | 1–14  | `03-reglas-e2e.md`           | E2E                        |
+| `R-E-*`   | 1–19  | `03-reglas-e2e.md`           | E2E                        |
 | `R-C-*`   | 1–8   | `04-reglas-contrato.md`      | Contrato con el backend    |
 | `R-REG-*` | 1–3   | `05-reglas-robustez.md`      | Regression-first           |
 | `R-RB-*`  | 1–4   | `05-reglas-robustez.md`      | Robustez de entradas       |
@@ -85,21 +85,16 @@ TestBed**. Las capas de esta área es el estándar exigible; el estado vigente
 
 ```bash
 npm test                       # suite unit + componentes (Vitest vía Angular)
-npm test -- --coverage         # con cobertura (cuando R-COV-4 esté configurado)
+npm test -- --coverage         # con cobertura (R-COV-4; umbral en angular.json)
 npm run build                  # G-3: compilación + typecheck + budgets
 npx prettier --check .         # G-4: formato
 npx eslint .                   # G-5: lint
 npm audit --audit-level=high   # R-QA-6: security gate
 ```
 
-## Pendientes (deuda abierta)
+## Pendientes
 
-El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`).
-Deudas abiertas destacadas:
-
-- **Cobertura crítica**: el umbral global pasa, pero `auth.store`/`auth.service`
-  y `product.service` siguen por debajo del 80 % de líneas/ramas (`R-QA-1`).
-- **Capa de componentes**: formularios y componentes con lógica (`checkout`,
-  `product-detail`, `search-autocomplete`, `cart-sidebar`, …) sin spec (`R-CP-1`).
-- **Capa de contrato**: sin fixtures de respuesta del backend versionados
-  (`R-C-8`).
+El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`):
+**sin deudas abiertas** (12ª auditoría). Los pendientes históricos —cobertura
+crítica (`R-QA-1`), specs de los componentes con lógica (`R-CP-1`) y fixtures de
+contrato versionados (`R-C-8`)— quedaron cerrados.

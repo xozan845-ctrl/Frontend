@@ -16,5 +16,5 @@ y metadatos.
 
 - `R-UX-1` está implementado en `products` (`skeleton-loader`, `empty-state`) y
   debe replicarse en toda vista nueva que consuma API.
-- La app incluye banner PWA (`pwa-install-banner`); publicar un manifiesto y
-  service worker real es deuda de `R-UX-6` registrada en AUDIT.
+- La app incluye banner PWA (`pwa-install-banner`), manifiesto y service worker
+  real, cumpliendo `R-UX-6`.

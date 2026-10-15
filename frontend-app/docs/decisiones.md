@@ -42,8 +42,8 @@ contexto y consecuencias.
 - **Consecuencias**: se reutiliza la operación existente; el frontend y el
   backend mantienen **proyectos separados** (no se mezclan servicios/entornos) y
   el frontend no comparte red interna con los servicios del backend. El
-  `Dockerfile`/`nginx.conf` y la configuración de Dockploy son deuda del primer
-  PR de despliegue (`R-CD-*`).
+  `Dockerfile`/`nginx.conf` y la configuración de Dockploy quedaron a cargo del
+  primer PR de despliegue (`R-CD-*`, ya entregado).
 
 ---
 
@@ -83,11 +83,12 @@ contexto y consecuencias.
 
 ---
 
-## ADR-05: Estado de cliente en `localStorage` (y deuda del token)
+## ADR-05: Estado de cliente en `localStorage` (token: deuda cerrada por ADR-10)
 
 - **Fecha**: 2026-10-06
-- **Estado**: Aceptado con deuda (el token de sesión queda **superseded por
-  ADR-10**: access en memoria + refresh en `sessionStorage`)
+- **Estado**: **Superseded por ADR-10** — la deuda del token quedó **cerrada**:
+  access en memoria + refresh rotativo en `sessionStorage` + purga del
+  `localStorage` heredado.
 - **Contexto**: carrito, wishlist, tema, reseñas y "vistos recientemente" deben
   persistir entre sesiones sin backend. El `AuthStore` también persiste
   `{ user, token }`.
@@ -95,8 +96,8 @@ contexto y consecuencias.
   sensible**; el token de sesión **no debería** persistir ahí (`R-SE-1`), pero se
   mantiene de forma temporal por compatibilidad con la implementación actual.
 - **Consecuencias**: carrito/wishlist funcionan sin cuenta. La persistencia del
-  token es **deuda de seguridad** registrada en `AUDIT.md`; el próximo cambio de
-  sesión debe mover el token a memoria/cookie `HttpOnly` (`R-SE-1`).
+  token quedó registrada como deuda de seguridad en `AUDIT.md` y **ADR-10 la
+  cerró** (`R-SE-1`).
 
 ---
 
@@ -395,22 +396,6 @@ contexto y consecuencias.
   frontend por CORS. Revertir es quitar la ruta `/ia`, el enlace del navbar y el
   feature; el resto del storefront no se toca.
 
-## ADR-18: Provisión de infraestructura por feature en rutas lazy
-
-- **Contexto**: `R-AR-3` fija que la composición de puertos→servicios vive en
-  `app.config.ts`. Al cerrar el **presupuesto inicial** (`R-PF-1`) se movió la
-  infraestructura del feature `stores` (puertos `STORE_REPOSITORY`/
-  `CATALOG_REPOSITORY`, sus servicios y `StoreWizardStore`) a los `providers` de
-  su ruta lazy (`loadChildren`), sacándola del bundle inicial. Eso mejora
-  `R-LZ-1`/`R-PF-1`, pero se aparta de la letra de `R-AR-3`.
-- **Decisión**: para features **lazy y autocontenidos** cuya infraestructura no
-  se comparte con el resto de la app, la composición de sus puertos puede vivir
-  en los `providers` de su ruta (`<feature>.routes.ts`), no en `app.config.ts`.
-  Los puertos **transversales** (auth, cart, products) siguen en `app.config.ts`.
-- **Consecuencias**: la infraestructura del feature viaja en su chunk lazy
-  (menor bundle inicial y mejor frontera de feature). Se actualiza `R-AR-3` para
-  reflejarlo. Revertir es volver a declarar esos `provide` en `app.config.ts`.
-
 ## ADR-19: Retiro de la radiografía y las métricas del frontend de IA
 
 - **Fecha**: 2026-10-13
@@ -449,7 +434,7 @@ contexto y consecuencias.
     secciones sin fase (inventario, reportes, ajustes, ayuda) se muestran con
     estado "En construcción" en lugar de enlaces muertos (R-UX-1).
   - **Estado** por signal stores de feature provistos en la ruta (patrón
-    ADR-18): `OrderDraftStore` (borrador del pedido con IVA **15 %**
+    ADR-21): `OrderDraftStore` (borrador del pedido con IVA **15 %**
     parametrizable —`VENDOR_TAX_RATE`— y persistencia en `localStorage`
     `ecom_vendor_order_draft`) y `VendorOrdersStore` (recientes, listado,
     detalle y cambio de estado).
@@ -457,8 +442,8 @@ contexto y consecuencias.
     `setInterval`, R-PF-6) cada **15 s**, pausado con la pestaña oculta; SSE/WS
     queda como opción futura y requeriría un ADR nuevo.
   - **Contrato asumido** con adapters tolerantes + fixtures de contrato (R-C-8)
-    y modo `mock` (mismo patrón que `stores`); los endpoints reales son deuda
-    del backend.
+    y modo `mock` (mismo patrón que `stores`); los endpoints reales quedan como
+    frontera del backend (aún no expuestos).
   - "Generar cotización" se muestra **deshabilitado** hasta su fase propia
     (fuera de alcance).
 - **Consecuencias**: nueva superficie **100 % lazy** (sin coste en el bundle
@@ -466,3 +451,23 @@ contexto y consecuencias.
   la lógica se prueba por la matriz de capas (adapters y contrato, servicios,
   stores y componentes) y se agregan flujos E2E del panel. Revertir es retirar
   la ruta `/vendedor`, el enlace del navbar y el feature.
+
+## ADR-21: Provisión de infraestructura por feature en rutas lazy
+
+- **Contexto**: `R-AR-3` fija que la composición de puertos→servicios vive en
+  `app.config.ts`. Al cerrar el **presupuesto inicial** (`R-PF-1`) se movió la
+  infraestructura del feature `stores` (puertos `STORE_REPOSITORY`/
+  `CATALOG_REPOSITORY`, sus servicios y `StoreWizardStore`) a los `providers` de
+  su ruta lazy (`loadChildren`), sacándola del bundle inicial. Eso mejora
+  `R-LZ-1`/`R-PF-1`, pero se aparta de la letra de `R-AR-3`.
+- **Decisión**: para features **lazy y autocontenidos** cuya infraestructura no
+  se comparte con el resto de la app, la composición de sus puertos puede vivir
+  en los `providers` de su ruta (`<feature>.routes.ts`), no en `app.config.ts`.
+  Los puertos **transversales** (auth, cart, products) siguen en `app.config.ts`.
+- **Consecuencias**: la infraestructura del feature viaja en su chunk lazy
+  (menor bundle inicial y mejor frontera de feature). Se actualiza `R-AR-3` para
+  reflejarlo. Revertir es volver a declarar esos `provide` en `app.config.ts`.
+- **Nota de numeración**: este ADR se registró originalmente como un segundo
+  `ADR-18`; al cerrar la deuda documental (12ª auditoría) se renumeró a
+  **`ADR-21`** —primer número libre tras `ADR-20`— sin tocar `ADR-19`/`ADR-20`,
+  que ya tenían referencias (R-DO-2).

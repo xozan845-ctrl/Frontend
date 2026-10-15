@@ -146,7 +146,7 @@ features se detallan en
 
 - **Reglas del proyecto** (punto fijo): [`docs/rules/README.md`](./docs/rules/README.md).
 - **Decisiones de arquitectura**: [`docs/decisiones.md`](./docs/decisiones.md).
-- **Estado y deudas** (auditoría): [`docs/rules/_meta/AUDIT.md`](./docs/rules/_meta/AUDIT.md).
+- **Estado y evidencias** (auditoría): [`docs/rules/_meta/AUDIT.md`](./docs/rules/_meta/AUDIT.md).
 - **Despliegue en Dockploy**: [`docs/dockploy-setup.md`](./docs/dockploy-setup.md).
 
 ---

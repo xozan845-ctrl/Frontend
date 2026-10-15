@@ -1,6 +1,6 @@
 /**
  * DTOs asumidos del backend del vendedor (Core Engine, `R-C-1`/`R-C-5`): el
- * shape real no existe aún (deuda de backend, ADR-20). Estos tipos documentan
+ * shape real no existe aún (frontera del backend, ADR-20). Estos tipos documentan
  * lo que los adapters toleran: `snake_case`/`camelCase`, ids numéricos o
  * string, precios como número o string decimal y fechas ISO 8601.
  */
