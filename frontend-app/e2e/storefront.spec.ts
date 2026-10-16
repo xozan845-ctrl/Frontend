@@ -152,6 +152,8 @@ test('R-E-15: se puede crear una tienda paso a paso', async ({ page }) => {
 });
 
 test('R-E-20: la raíz lleva a la tienda y al asistente de alta', async ({ page }) => {
+  // regression: 126 — `/` quedaba vacío porque la ruta lazy con path vacío de
+  // `stores` resolvía antes que `ROOT_ROUTES`.
   await open(page, '/');
 
   // Buscador: un identificador válido resuelve el catálogo de esa tienda.
