@@ -21,6 +21,10 @@ export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
   ...ACCOUNT_ROUTES,
+  // La entrada raíz (`/`) debe ir **antes** que las rutas lazy con path vacío:
+  // si no, `stores` captura la URL vacía con un match sin componente (el outlet
+  // queda en blanco, sin error) y `ROOT_ROUTES` nunca se llega a evaluar.
+  ...ROOT_ROUTES,
   {
     // `stores` se carga con `loadChildren` para no arrastrar su infraestructura
     // (puertos, servicios y store del asistente) al bundle inicial (R-LZ-1, R-PF-1).
@@ -41,7 +45,6 @@ export const routes: Routes = [
     path: 'vendedor',
     loadChildren: () => import('./features/vendor/vendor.routes').then((m) => m.VENDOR_ROUTES),
   },
-  ...ROOT_ROUTES,
   {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
