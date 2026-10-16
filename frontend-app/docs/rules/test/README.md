@@ -32,7 +32,7 @@ TestBed**. Las capas de esta área son el estándar exigible; el estado vigente
 | `R0`      | —     | `README.md`                  | Principio rector           |
 | `R-U-*`   | 1–14  | `01-reglas-unit.md`          | Unit puro                  |
 | `R-CP-*`  | 1–8   | `02-reglas-componentes.md`   | Componentes con TestBed    |
-| `R-E-*`   | 1–19  | `03-reglas-e2e.md`           | E2E                        |
+| `R-E-*`   | 1–20  | `03-reglas-e2e.md`           | E2E                        |
 | `R-C-*`   | 1–8   | `04-reglas-contrato.md`      | Contrato con el backend    |
 | `R-REG-*` | 1–3   | `05-reglas-robustez.md`      | Regression-first           |
 | `R-RB-*`  | 1–4   | `05-reglas-robustez.md`      | Robustez de entradas       |
