@@ -150,3 +150,20 @@ test('R-E-15: se puede crear una tienda paso a paso', async ({ page }) => {
   // Paso 4 · listo
   await expect(page.getByText('¡Tu tienda está lista!')).toBeVisible();
 });
+
+test('R-E-20: la raíz lleva a la tienda y al asistente de alta', async ({ page }) => {
+  await open(page, '/');
+
+  // Buscador: un identificador válido resuelve el catálogo de esa tienda.
+  await expect(page.getByRole('heading', { name: 'Elige tu tienda' })).toBeVisible();
+  await page.locator('#storeId').fill('tienda-demo');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await page.waitForURL(/\/tienda\/tienda-demo\/shop/, { timeout: 30_000 });
+  await expect(page.locator('app-product-card').first()).toBeVisible({ timeout: 30_000 });
+
+  // Alta: el botón abre el asistente público de creación de tienda.
+  await open(page, '/');
+  await page.getByRole('button', { name: 'Crear mi tienda' }).click();
+  await expect(page).toHaveURL(/\/crear-tienda/);
+  await expect(page.getByRole('heading', { name: 'Crea tu cuenta de vendedor' })).toBeVisible();
+});
