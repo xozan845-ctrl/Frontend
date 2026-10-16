@@ -85,19 +85,19 @@
 
 ### Testing (`R-U`, `R-CP`, `R-E`, `R-C`, `R-RB`, `R-QA`, `G-*`)
 
-| Regla             | Estado | Evidencia                                                                                                                             |
-| ----------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva (+ vendedor)                                            |
-| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96 · stores del vendedor ≥ 90                           |
-| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2); matriz de formulario del alta (R-CP-8)  |
-| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`); `vendor` con contrato asumido y adapters tolerantes (R-C)      |
-| R-E-1..19 E2E     | ✅     | **13 flujos**: storefront R-E-1…8/15, IA R-E-16/17 y vendedor R-E-18/19; el fixture falla ante **error y warning** de consola (R-E-9) |
-| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                                                         |
-| R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                                                  |
-| R-RB-3 robustez   | ✅     | Los stores no propagan el error; `localStorage` tolerante; fechas vacías/inválidas degradan                                           |
-| R-QA-4 edge cases | ✅     | 400/403/404/409/500, respuesta malformada y red caída degradan con mensaje de dominio                                                 |
-| R-COV-1 ratchet   | ✅     | Umbral elevado a **90/85/90/92** en `angular.json`                                                                                    |
-| R-QA-2/5          | ✅     | Tests sin red e independientes                                                                                                        |
+| Regla             | Estado | Evidencia                                                                                                                                |
+| ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva (+ vendedor)                                               |
+| R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96 · stores del vendedor ≥ 90                              |
+| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2); matriz de formulario del alta (R-CP-8)     |
+| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`); `vendor` con contrato asumido y adapters tolerantes (R-C)         |
+| R-E-1..20 E2E     | ✅     | **14 flujos**: storefront R-E-1…8/15/20, IA R-E-16/17 y vendedor R-E-18/19; el fixture falla ante **error y warning** de consola (R-E-9) |
+| R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                                                            |
+| R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                                                     |
+| R-RB-3 robustez   | ✅     | Los stores no propagan el error; `localStorage` tolerante; fechas vacías/inválidas degradan                                              |
+| R-QA-4 edge cases | ✅     | 400/403/404/409/500, respuesta malformada y red caída degradan con mensaje de dominio                                                    |
+| R-COV-1 ratchet   | ✅     | Umbral elevado a **90/85/90/92** en `angular.json`                                                                                       |
+| R-QA-2/5          | ✅     | Tests sin red e independientes                                                                                                           |
 
 ### Git / CI / CD
 
@@ -115,7 +115,7 @@
 
 | Regla      | Estado | Evidencia                                                                           |
 | ---------- | ------ | ----------------------------------------------------------------------------------- |
-| R-DO-1/2/6 | ✅     | README al día (rutas y features), tabla E2E con R-E-1…R-E-19 y ADRs (ADR-01…ADR-21) |
+| R-DO-1/2/6 | ✅     | README al día (rutas y features), tabla E2E con R-E-1…R-E-20 y ADRs (ADR-01…ADR-21) |
 | R-IA-1..6  | ✅     | Trabajo por PRs atómicas con evidencia y regression-first                           |
 
 ## Gates de CI
