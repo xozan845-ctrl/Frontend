@@ -10,7 +10,6 @@ describe('ClientService', () => {
   let httpMock: HttpTestingController;
 
   const originalApiUrl = environment.apiUrl;
-  const originalDataSource = environment.apiConfig.dataSource;
 
   const build = () => {
     TestBed.configureTestingModule({
@@ -23,12 +22,10 @@ describe('ClientService', () => {
   beforeEach(() => {
     TestBed.resetTestingModule();
     environment.apiUrl = 'https://api.test';
-    environment.apiConfig.dataSource = 'api';
   });
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
-    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('debe buscar clientes con el término (GET /vendedores/clientes?q=)', () => {
@@ -92,7 +89,7 @@ describe('ClientService', () => {
     expect(error?.message).toBe('No se pudieron cargar los clientes.');
   });
 
-  it('debe exigir apiUrl configurada fuera del modo mock', () => {
+  it('debe exigir apiUrl configurada cuando el entorno no define backend', () => {
     environment.apiUrl = '';
     build();
     const errors: string[] = [];
@@ -104,35 +101,5 @@ describe('ClientService', () => {
 
     expect(errors).toHaveLength(2);
     expect(errors.every((message) => message.includes('apiUrl no configurado'))).toBe(true);
-  });
-
-  it('debe simular la búsqueda (tolerante a acentos) y el alta en modo mock', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-
-    let all: Client[] | undefined;
-    service.searchClients('').subscribe((result) => (all = result));
-    await vi.waitFor(() => expect(all).toBeDefined());
-    expect(all).toHaveLength(3);
-
-    let accented: Client[] | undefined;
-    service.searchClients('estetica').subscribe((result) => (accented = result));
-    await vi.waitFor(() => expect(accented).toBeDefined());
-    expect(accented?.[0].name).toBe('Estética Bella');
-
-    let byCode: Client[] | undefined;
-    service.searchClients('CL-00124').subscribe((result) => (byCode = result));
-    await vi.waitFor(() => expect(byCode).toBeDefined());
-    expect(byCode?.[0].name).toBe('Distribuidora Kemuel');
-
-    let created: Client | undefined;
-    service
-      .createClient({ name: 'Salón Vero', phone: '+505 7000 8000', email: 'vero@correo.com' })
-      .subscribe((result) => (created = result));
-    await vi.waitFor(() => expect(created).toBeDefined());
-    expect(created?.id).toBe('vc-126');
-    expect(created?.code).toBe('CL-00126');
-
-    httpMock.expectNone(() => true);
   });
 });

@@ -1,7 +1,8 @@
 import { test as base, expect, type Page } from '@playwright/test';
+import { mockApi } from './api-mock';
 
-// El storefront es multi-tienda: todo vive bajo `/tienda/:storeId`. El modo
-// `mock` (config `e2e`) devuelve una tienda y sus productos fijos.
+// El storefront es multi-tienda: todo vive bajo `/tienda/:storeId`. En el
+// entorno `e2e` la API se responde con los fixtures de `api-mock.ts` (R-E-12).
 const STORE = '/tienda/tienda-demo';
 
 // Las páginas cargan imágenes externas (Unsplash) que pueden tardar; esperamos a
@@ -19,7 +20,15 @@ const login = async (page: Page, returnUrl = `${STORE}/shop`) => {
 
 // R-E-9: cero errores o warnings de consola durante el flujo. El fixture es
 // `auto`, así que aplica a todas las pruebas y falla ante cualquier warning.
-const test = base.extend<{ consoleIssues: string[] }>({
+// `apiMock` (también `auto`) instala los fixtures del API antes de navegar.
+const test = base.extend<{ consoleIssues: string[]; apiMock: void }>({
+  apiMock: [
+    async ({ page }, use) => {
+      await mockApi(page);
+      await use();
+    },
+    { auto: true },
+  ],
   consoleIssues: [
     async ({ page }, use) => {
       const issues: string[] = [];
@@ -42,7 +51,7 @@ test('R-E-1: el catálogo de la tienda carga productos y filtra por categoría',
   await open(page, `${STORE}/shop`);
 
   const cards = page.locator('app-product-card');
-  // El mock del frontend tiene 6 productos: 3 Electronics, 2 Fitness, 1 Accessories.
+  // Las ofertas del fixture son 6: 3 Electronics, 2 Fitness, 1 Accessories.
   await expect(cards).toHaveCount(6);
   await expect(cards.filter({ hasText: /fitness|accessories/i })).toHaveCount(3);
 

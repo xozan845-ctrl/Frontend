@@ -4,14 +4,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ProductService } from './product.service';
 import { Storefront } from '../repositories/product.repository';
 import { environment } from '../../../../environments/environment';
-import { MOCK_PRODUCTS, MOCK_STORE } from '../mocks/product.mock';
 
 describe('ProductService', () => {
   let service: ProductService;
   let httpMock: HttpTestingController;
 
   const originalApiUrl = environment.apiUrl;
-  const originalDataSource = environment.apiConfig.dataSource;
 
   const build = () => {
     TestBed.configureTestingModule({
@@ -27,7 +25,6 @@ describe('ProductService', () => {
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
-    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('debe pedir el storefront de la tienda y adaptar tienda + ofertas', () => {
@@ -130,18 +127,6 @@ describe('ProductService', () => {
     storefront.flush({ mensaje: 'Tienda no encontrada' }, { status: 404, statusText: 'Not Found' });
 
     expect(error?.message).toBe('Tienda no encontrada');
-  });
-
-  it('debe usar los mocks cuando dataSource es mock', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-    let result: Storefront | undefined;
-
-    service.getStorefront('cualquiera').subscribe((storefront) => (result = storefront));
-
-    await vi.waitFor(() => expect(result).toBeDefined());
-    expect(result?.store).toEqual(MOCK_STORE);
-    expect(result?.products).toEqual(MOCK_PRODUCTS);
   });
 
   it('debe emitir un error cuando no hay apiUrl configurada', () => {

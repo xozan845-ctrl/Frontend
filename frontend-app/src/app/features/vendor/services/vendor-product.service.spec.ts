@@ -3,14 +3,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { VendorProductService } from './vendor-product.service';
 import { environment } from '../../../../environments/environment';
-import { VendorProduct } from '../models/vendor-order.model';
 
 describe('VendorProductService', () => {
   let service: VendorProductService;
   let httpMock: HttpTestingController;
 
   const originalApiUrl = environment.apiUrl;
-  const originalDataSource = environment.apiConfig.dataSource;
 
   const build = () => {
     TestBed.configureTestingModule({
@@ -23,12 +21,10 @@ describe('VendorProductService', () => {
   beforeEach(() => {
     TestBed.resetTestingModule();
     environment.apiUrl = 'https://api.test';
-    environment.apiConfig.dataSource = 'api';
   });
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
-    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('debe listar el catálogo del vendedor normalizado (GET /vendedores/me/productos)', () => {
@@ -69,7 +65,7 @@ describe('VendorProductService', () => {
     expect(error?.message).toBe('No se pudo cargar tu catálogo.');
   });
 
-  it('debe exigir apiUrl configurada fuera del modo mock', () => {
+  it('debe exigir apiUrl configurada cuando el entorno no define backend', () => {
     environment.apiUrl = '';
     build();
     let error: Error | undefined;
@@ -77,18 +73,5 @@ describe('VendorProductService', () => {
     service.listVendorProducts().subscribe({ error: (err: Error) => (error = err) });
 
     expect(error?.message).toContain('apiUrl no configurado');
-  });
-
-  it('debe devolver el catálogo demo en modo mock sin tocar la red', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-    let products: VendorProduct[] | undefined;
-
-    service.listVendorProducts().subscribe((result) => (products = result));
-    await vi.waitFor(() => expect(products).toBeDefined());
-
-    expect(products?.length).toBeGreaterThanOrEqual(5);
-    expect(products?.some((product) => !product.inStock)).toBe(true);
-    httpMock.expectNone(() => true);
   });
 });
