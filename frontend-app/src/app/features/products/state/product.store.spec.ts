@@ -2,8 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { ProductStore } from './product.store';
 import { Product } from '../models/product.model';
+import { Store } from '../models/store.model';
 import { PRODUCT_REPOSITORY, ProductRepository } from '../repositories/product.repository';
-import { MOCK_STORE } from '../mocks/product.mock';
+
+const TIENDA: Store = {
+  id: 'tienda-1',
+  vendorId: 'vendedor-1',
+  name: 'Tienda de prueba',
+  description: '',
+};
 
 const makeProduct = (id: number, category: string, price: number): Product => ({
   id,
@@ -20,7 +27,7 @@ describe('ProductStore', () => {
 
   const setup = (products: Product[]) => {
     repo = {
-      getStorefront: vi.fn(() => of({ store: MOCK_STORE, products })),
+      getStorefront: vi.fn(() => of({ store: TIENDA, products })),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: PRODUCT_REPOSITORY, useValue: repo }],
@@ -36,7 +43,7 @@ describe('ProductStore', () => {
     await store.loadStore('tienda-1');
 
     expect(store.products()).toHaveLength(2);
-    expect(store.store()).toEqual(MOCK_STORE);
+    expect(store.store()).toEqual(TIENDA);
     expect(store.storeId()).toBe('tienda-1');
     expect(store.loading()).toBe(false);
     expect(store.error()).toBeNull();
@@ -145,7 +152,7 @@ describe('ProductStore', () => {
     const products = [makeProduct(1, 'Audio', 100)];
     repo = {
       getStorefront: vi.fn(() =>
-        shouldFail ? throwError(() => new Error('boom')) : of({ store: MOCK_STORE, products }),
+        shouldFail ? throwError(() => new Error('boom')) : of({ store: TIENDA, products }),
       ),
     };
     TestBed.configureTestingModule({

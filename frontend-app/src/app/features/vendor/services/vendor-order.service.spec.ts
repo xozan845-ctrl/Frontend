@@ -10,7 +10,6 @@ describe('VendorOrderService', () => {
   let httpMock: HttpTestingController;
 
   const originalApiUrl = environment.apiUrl;
-  const originalDataSource = environment.apiConfig.dataSource;
 
   /** Un pedido de 2 × vp-1 (180) + 1 × vp-2 (220) + 3 × vp-3 (195) = 1165 → 1339.75 con IVA. */
   const payload: CreateOrderPayload = {
@@ -38,12 +37,10 @@ describe('VendorOrderService', () => {
   beforeEach(() => {
     TestBed.resetTestingModule();
     environment.apiUrl = 'https://api.test';
-    environment.apiConfig.dataSource = 'api';
   });
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
-    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('debe listar los pedidos normalizados (GET /vendedores/pedidos)', () => {
@@ -168,7 +165,7 @@ describe('VendorOrderService', () => {
     ]);
   });
 
-  it('debe exigir apiUrl configurada fuera del modo mock', () => {
+  it('debe exigir apiUrl configurada cuando el entorno no define backend', () => {
     environment.apiUrl = '';
     build();
     const errors: string[] = [];
@@ -182,86 +179,5 @@ describe('VendorOrderService', () => {
 
     expect(errors).toHaveLength(4);
     expect(errors.every((message) => message.includes('apiUrl no configurado'))).toBe(true);
-  });
-
-  it('debe simular el listado en modo mock sin tocar la red', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-    let orders: VendorOrder[] | undefined;
-
-    service.listOrders().subscribe((result) => (orders = result));
-    await vi.waitFor(() => expect(orders).toBeDefined());
-
-    expect(orders?.length).toBeGreaterThanOrEqual(4);
-    expect(orders?.[0].id).toBe('PED-000125');
-    httpMock.expectNone(() => true);
-  });
-
-  it('debe simular el registro, el detalle y el cambio de estado coherentes en modo mock', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-
-    let created: VendorOrder | undefined;
-    service.createOrder(payload).subscribe((order) => (created = order));
-    await vi.waitFor(() => expect(created).toBeDefined());
-
-    expect(created?.id).toBe('PED-000126');
-    expect(created?.clientName).toBe('Carla López');
-    expect(created?.status).toBe('pendiente');
-    expect(created?.total).toBe(1339.75);
-
-    let updated: VendorOrder | undefined;
-    service.updateStatus('PED-000126', 'completado').subscribe((order) => (updated = order));
-    await vi.waitFor(() => expect(updated).toBeDefined());
-    expect(updated?.status).toBe('completado');
-
-    let detail: VendorOrder | undefined;
-    service.getOrder('PED-000126').subscribe((order) => (detail = order));
-    await vi.waitFor(() => expect(detail).toBeDefined());
-    expect(detail?.status).toBe('completado');
-
-    let listed: VendorOrder[] | undefined;
-    service.listOrders().subscribe((orders) => (listed = orders));
-    await vi.waitFor(() => expect(listed).toBeDefined());
-    expect(listed?.[0].id).toBe('PED-000126');
-    httpMock.expectNone(() => true);
-  });
-
-  it('debe sanear los bordes del payload en modo mock (descuento, cliente y producto)', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-
-    let created: VendorOrder | undefined;
-    service
-      .createOrder({
-        ...payload,
-        clientId: null,
-        discountPercent: 150,
-        items: [{ productId: 'vp-inexistente', quantity: 1 }],
-      })
-      .subscribe((order) => (created = order));
-    await vi.waitFor(() => expect(created).toBeDefined());
-
-    expect(created?.clientName).toBe('Cliente ocasional');
-    expect(created?.clientId).toBeNull();
-    expect(created?.total).toBe(0);
-    expect(created?.lines[0]).toMatchObject({ name: 'Producto', sku: '', unitPrice: 0 });
-  });
-
-  it('debe fallar en modo mock con un pedido inexistente', async () => {
-    environment.apiConfig.dataSource = 'mock';
-    build();
-
-    let detailError: Error | undefined;
-    service.getOrder('PED-999999').subscribe({ error: (err: Error) => (detailError = err) });
-    let statusError: Error | undefined;
-    service
-      .updateStatus('PED-999999', 'completado')
-      .subscribe({ error: (err: Error) => (statusError = err) });
-
-    await vi.waitFor(() => expect(detailError).toBeDefined());
-    await vi.waitFor(() => expect(statusError).toBeDefined());
-    expect(detailError?.message).toBe('No se encontró el pedido.');
-    expect(statusError?.message).toBe('No se encontró el pedido.');
   });
 });

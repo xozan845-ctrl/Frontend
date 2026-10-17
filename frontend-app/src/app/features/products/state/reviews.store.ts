@@ -2,7 +2,6 @@ import { inject, effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Review } from '../models/review.model';
 import { NotificationService } from '../../../core/services/notification.service';
-import { MOCK_REVIEWS } from '../mocks/reviews.mock';
 
 export interface ReviewsState {
   reviews: Review[];
@@ -37,21 +36,17 @@ export const ReviewsStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      // Load reviews from localStorage on startup, fallback to mock reviews
+      // Las reseñas viven solo en localStorage; sin datos guardados, arranca vacío.
       try {
         const stored = localStorage.getItem(REVIEWS_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          // Solo se acepta un arreglo no vacío (R-RB-4).
-          patchState(store, {
-            reviews: Array.isArray(parsed) && parsed.length > 0 ? parsed : MOCK_REVIEWS,
-          });
-        } else {
-          patchState(store, { reviews: MOCK_REVIEWS });
-        }
+        const parsed = stored ? JSON.parse(stored) : null;
+        // Solo se acepta un arreglo no vacío (R-RB-4).
+        patchState(store, {
+          reviews: Array.isArray(parsed) && parsed.length > 0 ? parsed : [],
+        });
       } catch {
-        // JSON corrupto o storage no disponible: se usan las de ejemplo (R-RB-4).
-        patchState(store, { reviews: MOCK_REVIEWS });
+        // JSON corrupto o storage no disponible: se arranca sin reseñas (R-RB-4).
+        patchState(store, { reviews: [] });
       }
 
       // Sync reviews to localStorage

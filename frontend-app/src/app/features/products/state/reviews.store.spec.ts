@@ -1,6 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 import { ReviewsStore } from './reviews.store';
-import { MOCK_REVIEWS } from '../mocks/reviews.mock';
+import { Review } from '../models/review.model';
+
+/** Reseñas controladas del spec: producto 1 con 5 y 4 estrellas (promedio 4.5). */
+const RESENAS: Review[] = [
+  {
+    id: 'r-1',
+    productId: 1,
+    authorName: 'Ana',
+    rating: 5,
+    comment: 'Excelente',
+    date: '2026-01-02T10:00:00Z',
+  },
+  {
+    id: 'r-2',
+    productId: 1,
+    authorName: 'Luis',
+    rating: 4,
+    comment: 'Muy bueno',
+    date: '2026-01-03T10:00:00Z',
+  },
+];
 
 describe('ReviewsStore', () => {
   beforeEach(() => {
@@ -10,18 +30,19 @@ describe('ReviewsStore', () => {
 
   afterEach(() => localStorage.clear());
 
-  it('debe cargar las reseñas de ejemplo cuando no hay nada guardado', () => {
+  it('debe iniciar sin reseñas cuando no hay nada guardado', () => {
     const store = TestBed.inject(ReviewsStore);
 
-    expect(store.reviews()).toEqual(MOCK_REVIEWS);
+    expect(store.reviews()).toEqual([]);
   });
 
   it('debe obtener las reseñas de un producto', () => {
+    localStorage.setItem('ecom_reviews', JSON.stringify(RESENAS));
     const store = TestBed.inject(ReviewsStore);
 
     const reviews = store.getReviewsByProductId(1);
 
-    expect(reviews.length).toBeGreaterThan(0);
+    expect(reviews).toHaveLength(2);
     expect(reviews.every((review) => String(review.productId) === '1')).toBe(true);
   });
 
@@ -32,21 +53,18 @@ describe('ReviewsStore', () => {
   });
 
   it('debe calcular el promedio redondeado a un decimal', () => {
+    localStorage.setItem('ecom_reviews', JSON.stringify(RESENAS));
     const store = TestBed.inject(ReviewsStore);
 
-    const average = store.getAverageRating(1);
-
-    expect(average).toBeGreaterThan(0);
-    expect(average).toBeLessThanOrEqual(5);
+    expect(store.getAverageRating(1)).toBe(4.5);
   });
 
   it('debe agregar una reseña con id y fecha autogenerados', () => {
     const store = TestBed.inject(ReviewsStore);
-    const before = store.reviews().length;
 
     store.addReview({ productId: 2, authorName: 'Ana', rating: 4, comment: 'Muy bueno' });
 
-    expect(store.reviews()).toHaveLength(before + 1);
+    expect(store.reviews()).toHaveLength(1);
     const added = store.reviews().at(-1)!;
     expect(added.authorName).toBe('Ana');
     expect(added.id).toMatch(/^r-/);
@@ -54,21 +72,11 @@ describe('ReviewsStore', () => {
   });
 
   it('debe restaurar las reseñas guardadas en localStorage', () => {
-    const saved = [
-      {
-        id: 'r-1',
-        productId: 9,
-        authorName: 'Ana',
-        rating: 5,
-        comment: 'x',
-        date: '2026-01-01',
-      },
-    ];
-    localStorage.setItem('ecom_reviews', JSON.stringify(saved));
+    localStorage.setItem('ecom_reviews', JSON.stringify(RESENAS));
 
     const store = TestBed.inject(ReviewsStore);
 
-    expect(store.reviews()).toEqual(saved);
+    expect(store.reviews()).toEqual(RESENAS);
   });
 
   it('debe persistir las reseñas en localStorage', async () => {
@@ -82,19 +90,19 @@ describe('ReviewsStore', () => {
     });
   });
 
-  it('debe usar las reseñas de ejemplo cuando el localStorage está corrupto', () => {
+  it('debe iniciar sin reseñas cuando el localStorage está corrupto', () => {
     localStorage.setItem('ecom_reviews', '{no-json');
 
     const store = TestBed.inject(ReviewsStore);
 
-    expect(store.reviews()).toEqual(MOCK_REVIEWS);
+    expect(store.reviews()).toEqual([]);
   });
 
-  it('debe usar las reseñas de ejemplo cuando el localStorage no es un arreglo', () => {
+  it('debe iniciar sin reseñas cuando el localStorage no es un arreglo', () => {
     localStorage.setItem('ecom_reviews', '{"no":"array"}');
 
     const store = TestBed.inject(ReviewsStore);
 
-    expect(store.reviews()).toEqual(MOCK_REVIEWS);
+    expect(store.reviews()).toEqual([]);
   });
 });

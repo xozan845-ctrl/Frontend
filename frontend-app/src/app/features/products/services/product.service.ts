@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError, forkJoin, from } from 'rxjs';
+import { Observable, of, throwError, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { toUserMessage } from '../../../core/models/api-error';
@@ -24,14 +24,6 @@ export class ProductService implements ProductRepository {
    * forma **best-effort**: si el catálogo falla, el storefront sigue cargando.
    */
   getStorefront(storeId: string): Observable<Storefront> {
-    if (environment.apiConfig?.dataSource === 'mock') {
-      // Los datos de prueba se cargan con un `import()` dinámico: no forman
-      // parte del bundle inicial en producción (R-PF-1).
-      return from(import('../mocks/product.mock')).pipe(
-        map(({ MOCK_STORE, MOCK_PRODUCTS }) => ({ store: MOCK_STORE, products: MOCK_PRODUCTS })),
-      );
-    }
-
     if (!environment.apiUrl) {
       return throwError(
         () =>

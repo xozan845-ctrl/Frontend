@@ -1,7 +1,8 @@
 import { test as base, expect, type Page } from '@playwright/test';
+import { mockApi } from './api-mock';
 
-// Panel del vendedor (ADR-20): vive bajo `/vendedor/*` y en el modo `mock`
-// (config `e2e`) opera con la cartera, el catálogo y los pedidos demo.
+// Panel del vendedor (ADR-20): vive bajo `/vendedor/*`; en el entorno `e2e` la
+// cartera, el catálogo y los pedidos salen de los fixtures de `api-mock.ts`.
 const login = async (page: Page, returnUrl: string) => {
   await page.goto(`/login?returnUrl=${encodeURIComponent(returnUrl)}`, {
     waitUntil: 'domcontentloaded',
@@ -15,7 +16,15 @@ const login = async (page: Page, returnUrl: string) => {
 
 // R-E-9: cero errores o warnings de consola durante el flujo. El fixture es
 // `auto`, así que aplica a todas las pruebas y falla ante cualquier warning.
-const test = base.extend<{ consoleIssues: string[] }>({
+// `apiMock` (también `auto`) instala los fixtures del API antes de navegar.
+const test = base.extend<{ consoleIssues: string[]; apiMock: void }>({
+  apiMock: [
+    async ({ page }, use) => {
+      await mockApi(page);
+      await use();
+    },
+    { auto: true },
+  ],
   consoleIssues: [
     async ({ page }, use) => {
       const issues: string[] = [];
@@ -41,11 +50,11 @@ test('R-E-18: el vendedor crea un pedido y lo ve en recientes', async ({ page })
   await login(page, '/vendedor/ventas/nuevo');
   await expect(page.getByTestId('new-order-page')).toBeVisible();
 
-  // Cliente de la cartera demo.
+  // Cliente de la cartera del fixture.
   await page.getByTestId('client-option-vc-1').click();
   await expect(page.getByTestId('selected-client')).toContainText('Carla López');
 
-  // Dos productos en stock (el sexto producto del mock está agotado).
+  // Dos productos en stock (el sexto producto del fixture está agotado).
   const addButtons = page.locator('[data-testid="add-product"]:not([disabled])');
   await addButtons.nth(0).click();
   await addButtons.nth(1).click();
@@ -56,7 +65,7 @@ test('R-E-18: el vendedor crea un pedido y lo ve en recientes', async ({ page })
   await firstLine.getByTestId('stepper-plus').click();
   await expect(firstLine.getByTestId('stepper-value')).toHaveText('2');
 
-  // Registro del pedido (mock: el siguiente id es PED-000126).
+  // Registro del pedido (el fixture devuelve PED-000126 como siguiente id).
   await page.getByTestId('submit-order').click();
 
   await expect(page.getByTestId('order-link-PED-000126')).toBeVisible();
@@ -71,7 +80,7 @@ test('R-E-19: la lista de pedidos filtra por estado y el detalle carga', async (
   await login(page, '/vendedor/pedidos');
   await expect(page.getByTestId('orders-page')).toBeVisible();
 
-  // Lista completa del mock (4 pedidos demo).
+  // Lista completa del fixture (4 pedidos demo).
   await expect(page.locator('[data-testid="recent-order-row"]')).toHaveCount(4);
 
   // Filtro por estado con conteo.
