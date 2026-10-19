@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { LoginFormComponent } from './login-form.component';
 import { AuthStore } from '../../state/auth.store';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -15,11 +15,15 @@ describe('LoginFormComponent', () => {
   };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
 
-  const setup = async () => {
+  const setup = async (query: Record<string, string> = {}) => {
     await TestBed.configureTestingModule({
       imports: [LoginFormComponent],
       providers: [
         provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap(query) } },
+        },
         { provide: AuthStore, useValue: authStore },
         { provide: SeoService, useValue: seo },
       ],
@@ -80,5 +84,25 @@ describe('LoginFormComponent', () => {
     email.markAsTouched();
 
     expect(fixture.componentInstance.isFieldInvalid('email')).toBe(true);
+  });
+
+  // ADR-22: llegada desde el panel → aviso y alta con rol vendedor.
+  it('debe ofrecer el alta de vendedor cuando llega del panel', async () => {
+    const fixture = await setup({ returnUrl: '/vendedor/inicio' });
+
+    const notice = fixture.nativeElement.querySelector('[data-testid="vendor-intent-notice"]');
+    expect(notice.textContent).toContain('cuenta de vendedor');
+    expect(notice.querySelector('a').getAttribute('href')).toContain('rol=seller');
+    expect(fixture.componentInstance.registerQueryParams).toEqual({
+      returnUrl: '/vendedor/inicio',
+      rol: 'seller',
+    });
+  });
+
+  it('no debe ofrecer el alta de vendedor cuando el origen no es el panel', async () => {
+    const fixture = await setup({ returnUrl: '/checkout' });
+
+    expect(fixture.nativeElement.querySelector('[data-testid="vendor-intent-notice"]')).toBeFalsy();
+    expect(fixture.componentInstance.registerQueryParams).toEqual({});
   });
 });
