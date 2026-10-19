@@ -85,6 +85,28 @@ describe('AuthService', () => {
     request.flush({ token: 'jwt', user: { id: 3, name: 'Vendedor', email: 'v@tienda.test' } });
   });
 
+  it('debe registrar como vendedor cuando el rol es biller (facturador, ADR-24)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+
+    service
+      .register({
+        email: 'f@tienda.test',
+        password: 'secreto123',
+        name: 'Facturador',
+        role: 'biller',
+      })
+      .subscribe();
+    const request = httpMock.expectOne('https://api.test/auth/registro');
+    expect(request.request.body).toEqual({
+      nombre: 'Facturador',
+      correo: 'f@tienda.test',
+      contrasena: 'secreto123',
+      rol: 'vendedor',
+    });
+    request.flush({ token: 'jwt', user: { id: 4, name: 'Facturador', email: 'f@tienda.test' } });
+  });
+
   it('debe cerrar sesión enviando el refresh_token (revoca solo esa sesión)', () => {
     environment.apiUrl = 'https://api.test';
     build();

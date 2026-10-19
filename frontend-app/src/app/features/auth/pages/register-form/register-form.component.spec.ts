@@ -109,4 +109,36 @@ describe('RegisterFormComponent', () => {
 
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Vendedor');
   });
+
+  // ADR-24: el alta pedida desde el header de facturación crea cuenta de facturador.
+  it('debe registrar como facturador cuando el alta llega de facturación', async () => {
+    const fixture = await setup({ rol: 'biller', returnUrl: '/facturacion/nueva' });
+    fixture.componentInstance.registerForm.setValue({
+      name: 'Fabi',
+      email: 'fabi@tienda.com',
+      password: 'secreto1',
+    });
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(authStore.register).toHaveBeenCalledWith({
+      name: 'Fabi',
+      email: 'fabi@tienda.com',
+      password: 'secreto1',
+      role: 'biller',
+    });
+  });
+
+  it('debe titular y avisar del alta de facturador', async () => {
+    const fixture = await setup({ rol: 'biller', returnUrl: '/facturacion/nueva' });
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('h2')?.textContent).toContain('Facturador');
+    expect(host.querySelector('[data-testid="billing-intent-notice"]')?.textContent).toContain(
+      'cuenta de facturador',
+    );
+    expect(seo.setPage).toHaveBeenCalledWith('Cuenta de facturador', expect.any(String));
+  });
 });
