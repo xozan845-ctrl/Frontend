@@ -89,4 +89,26 @@ describe('Navbar', () => {
       fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
     ).toBeTruthy();
   });
+
+  // ADR-24: sin sesión, Facturación abre el alta de cuenta de facturador.
+  it('debe enlazar facturación al alta de facturador sin sesión', async () => {
+    currentUser.set(null);
+    fixture.detectChanges();
+
+    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'));
+    expect(desktop.nativeElement.getAttribute('href')).toBe(
+      '/register?rol=biller&returnUrl=%2Ffacturacion%2Fnueva',
+    );
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="navbar-billing-link-mobile"]')),
+    ).toBeTruthy();
+  });
+
+  it('debe llevar facturación directo al módulo cuando hay sesión', async () => {
+    currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
+    fixture.detectChanges();
+
+    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'));
+    expect(desktop.nativeElement.getAttribute('href')).toBe('/facturacion/nueva');
+  });
 });
