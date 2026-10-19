@@ -1,0 +1,46 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="billing-invoices-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Facturación</span>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Facturas</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Facturas
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Filtra por estado y abre cualquier factura para ver su comprobante.
+      </p>
+    </div>
+    <a
+      routerLink="/facturacion/nueva"
+      class="btn btn-primary self-start sm:self-auto"
+      data-testid="billing-new-invoice-link"
+    >
+      <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+      Nueva factura
+    </a>
+  </header>
+
+  <app-invoice-filters-chips
+    [statuses]="statuses"
+    [counts]="counts()"
+    [total]="invoices.length"
+    [selected]="statusFilter()"
+    (selectedChange)="setFilter($event)"
+  />
+
+  <app-invoice-list-table
+    title="Facturas registradas"
+    [invoices]="filteredInvoices()"
+    [showViewAll]="false"
+    [emptyTitle]="emptyTitle()"
+    [emptySubtitle]="emptySubtitle()"
+  />
+</div>

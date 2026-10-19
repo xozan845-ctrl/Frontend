@@ -46,6 +46,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/vendor/vendor.routes').then((m) => m.VENDOR_ROUTES),
   },
   {
+    // Facturación (ADR-23): extensión visual del panel del vendedor. Se carga
+    // lazy para no arrastrar sus páginas al bundle inicial (R-LZ-1, R-PF-1).
+    path: 'facturacion',
+    loadChildren: () => import('./features/billing/billing.routes').then((m) => m.BILLING_ROUTES),
+  },
+  {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
     children: [...HOME_ROUTES, ...PRODUCTS_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],
