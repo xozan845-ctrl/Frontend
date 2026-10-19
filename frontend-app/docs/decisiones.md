@@ -494,3 +494,38 @@ contexto y consecuencias.
   en el registro real). `ADR-20` mantiene su decisión sobre guard y rutas; esta
   decisión sustituye únicamente su consecuencia sobre la visibilidad del enlace.
   Revertir es restaurar la condición de rol en las dos variantes del enlace.
+
+## ADR-23: Módulo de facturación visual (feature independiente)
+
+- **Fecha**: 2026-10-19
+- **Estado**: Aceptado — **fase visual** (la lógica de emisión queda para una
+  fase posterior)
+- **Contexto**: el panel del vendedor (ADR-20) ya cubre pedidos, clientes y POS,
+  pero no existe una superficie de **facturación**. El diseño de referencia es
+  el mismo lenguaje visual del POS de la tienda (sidebar oscuro, cards, chips,
+  panel de totales), por lo que conviene extenderlo sin duplicar la lógica de
+  pedidos. Se pidió expresamente construir **primero la parte visual**.
+- **Decisión**: crear el feature **`features/billing/`** como módulo
+  independiente, cargado de forma perezosa desde `app.routes.ts` bajo
+  `/facturacion` (R-AR-12, R-LZ-1):
+  - **Rutas**: `/facturacion/nueva` (POS de facturación), `/facturacion/facturas`
+    (listado con filtro por estado) y `/facturacion/facturas/:id` (detalle
+    imprimible). `''` redirige a `nueva`.
+  - **Shell propio** (`pages/billing-shell/`) con sidebar oscuro que replica el
+    del vendedor, marca la sección activa y muestra las secciones sin fase como
+    "Pronto" (R-UX-1). El sidebar del vendedor gana el enlace **Facturación**.
+  - **Presentación pura**: componentes _dumb_ con `input`/`output` (R-SO-8),
+    páginas contenedoras con estado local de UI, fixtures en
+    `adapters/fixtures/billing.fixture.ts` y cálculo de totales como función
+    pura (`calculateInvoiceTotals`, IVA 15 %).
+  - **Alcance visual**: cliente, información (fecha y condición de pago),
+    catálogo con stock y panel "Factura actual" con totales, listado filtrable y
+    comprobante con `@media print`. Las acciones de emisión y guardado muestran
+    un aviso de "vista de diseño" en lugar de llamar al backend.
+- **Consecuencias**: el feature no incluye todavía puertos, servicios HTTP,
+  stores ni guard de rol; la ruta es navegable para revisar el diseño y se
+  protegerá con el guard de vendedor al conectar la lógica (R-SE-6). El bundle
+  inicial no crece (todo el módulo viaja en chunks lazy) y el módulo se prueba
+  con specs de componentes/páginas y sus fixtures (R-CP-1, R-CP-2). Revertir es
+  retirar la ruta `/facturacion`, el enlace del sidebar del vendedor y el
+  feature.
