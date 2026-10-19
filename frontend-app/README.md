@@ -20,6 +20,7 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 - **Cuenta (`/cuenta`)**: perfil, cambio/recuperación de contraseña y **Mis Pedidos** (`/cuenta/pedidos`, `/cuenta/pedidos/:id`).
 - **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
 - **Panel del vendedor (`/vendedor`, ADR-20)**: superficie de trabajo del vendedor con sidebar propio; visible para cuentas de rol vendedor. Lanzadas: **Inicio** (KPIs del día y accesos rápidos, `/vendedor/inicio`), **Nuevo pedido** (POS con clientes, catálogo y "Pedidos recientes" en vivo por sondeo, `/vendedor/ventas/nuevo`), **Pedidos** (lista con filtro por estado y detalle con cambio de estado, `/vendedor/pedidos`) y **Clientes** (búsqueda por nombre/código/teléfono y alta rápida, `/vendedor/clientes`); el resto (Productos, Inventario, Reportes, Ajustes, Ayuda) en estado "En construcción".
+- **Facturación (`/facturacion`, ADR-23)**: módulo visual de facturación con shell propio (sidebar oscuro), **Nueva factura** (cliente, información, catálogo y panel de la factura actual con IVA 15 %), **Facturas** (listado con filtro por estado) y **detalle imprimible** del comprobante. En esta fase usa datos de presentación; la lógica de emisión llega con los stores y puertos del feature.
 - **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
 - **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs** y **chat** por sesión (URL → radiografía → instrucciones → resultados).
@@ -120,6 +121,7 @@ src/
     │   ├── ai-scraper/           # pages/ (dashboard, detalle, chat), components/, state, services, repositories, adapters, models
     │   ├── auth/                 # pages/login, pages/register, state, services, repositories, adapters, guards
     │   ├── cart/                 # pages/cart-view, pages/checkout, pages/confirmation, state, services, repositories, adapters
+    │   ├── billing/              # facturación (ADR-23): shell + sidebar lazy, pages (nueva factura, facturas, detalle), components, models, adapters/fixtures
     │   ├── home/                 # pages/home, pages/store-entry (raíz multi-tienda), pages/not-found
     │   ├── plans/                # pages/plans
     │   ├── products/             # pages/, components/, state, services, repositories, adapters, models
