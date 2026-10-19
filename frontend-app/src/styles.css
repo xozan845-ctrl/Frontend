@@ -139,6 +139,13 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 
+@media print {
+  app-navbar,
+  app-footer {
+    display: none !important;
+  }
+}
+
 /* Minimalist Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
