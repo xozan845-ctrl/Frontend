@@ -471,3 +471,26 @@ contexto y consecuencias.
   `ADR-18`; al cerrar la deuda documental (12ª auditoría) se renumeró a
   **`ADR-21`** —primer número libre tras `ADR-20`— sin tocar `ADR-19`/`ADR-20`,
   que ya tenían referencias (R-DO-2).
+
+## ADR-22: Acceso visible al panel de vendedor (enlace siempre visible + alta guiada)
+
+- **Fecha**: 2026-10-19
+- **Estado**: Aceptado
+- **Contexto**: ADR-20 añadió el enlace `VENDEDOR` al navbar **solo para cuentas
+  de vendedor**. Un comprador o un visitante anónimo no encontraba ninguna
+  entrada al panel desde la interfaz, aunque el `vendorGuard` ya resuelve el
+  acceso (anónimo → `/login`, comprador → `/crear-tienda`) y el alta de tienda
+  permite crear la cuenta de vendedor (ADR-16). El módulo quedaba indescubrible.
+- **Decisión**: el enlace "Vendedor" del navbar (desktop y móvil) se muestra
+  **siempre** y apunta a `/vendedor/inicio`; el `vendorGuard` sigue siendo la
+  única autoridad de acceso. El login detecta la intención de vendedor (cuando
+  `returnUrl` vive bajo `/vendedor`) y ofrece el alta con rol vendedor
+  (`/register?rol=seller`, que el registro traduce a `role: 'seller'`), de modo
+  que un visitante sin cuenta crea una cuenta de vendedor y entra al panel en un
+  solo recorrido.
+- **Consecuencias**: el navbar deja de depender del rol para el enlace y el
+  recorrido se cubre con E2E (`R-E-21`). El contrato del alta
+  (`RegisterData.role`) se reutiliza sin cambios de backend (`rol: 'vendedor'`
+  en el registro real). `ADR-20` mantiene su decisión sobre guard y rutas; esta
+  decisión sustituye únicamente su consecuencia sobre la visibilidad del enlace.
+  Revertir es restaurar la condición de rol en las dos variantes del enlace.
