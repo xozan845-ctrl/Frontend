@@ -1,0 +1,160 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="billing-catalog-card"
+  aria-labelledby="billing-catalog-title"
+>
+  <header class="flex flex-col gap-3">
+    <div class="flex items-center justify-between gap-3">
+      <h2
+        id="billing-catalog-title"
+        class="font-heading text-lg font-black tracking-tight uppercase"
+      >
+        Catálogo
+      </h2>
+      <span
+        class="text-xs font-bold text-slate-500 dark:text-slate-400"
+        data-testid="billing-products-count"
+      >
+        {{ products().length }} {{ products().length === 1 ? 'producto' : 'productos' }}
+      </span>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="billing-product-search" class="sr-only">Buscar producto</label>
+      <div class="relative">
+        <i
+          class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-slate-400"
+          aria-hidden="true"
+        ></i>
+        <input
+          id="billing-product-search"
+          type="search"
+          class="input pl-9"
+          placeholder="Buscar por nombre o código…"
+          [value]="query()"
+          data-testid="billing-product-search"
+          (input)="onQueryInput($event)"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoría">
+      <button
+        type="button"
+        [class]="categoryClasses(category() === null)"
+        data-testid="billing-category-all"
+        (click)="categoryChange.emit(null)"
+      >
+        Todas
+      </button>
+      @for (item of categories(); track item) {
+        <button
+          type="button"
+          [class]="categoryClasses(category() === item)"
+          [attr.data-testid]="'billing-category-' + item"
+          (click)="categoryChange.emit(item)"
+        >
+          {{ item }}
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div
+      class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="sr-only">Cargando catálogo…</span>
+      @for (item of [1, 2, 3, 4]; track item) {
+        <app-skeleton-loader height="220px" customClass="rounded-2xl" />
+      }
+    </div>
+  } @else if (error(); as message) {
+    <app-empty-state
+      variant="error"
+      icon="fa-solid fa-triangle-exclamation"
+      title="No pudimos cargar tu catálogo"
+      [subtitle]="message"
+      actionLabel="Reintentar"
+      [actionClick]="retryClick"
+    />
+  } @else if (products().length === 0) {
+    @if (hasFilters()) {
+      <app-empty-state
+        variant="no-results"
+        icon="fa-solid fa-magnifying-glass"
+        title="Sin coincidencias"
+        subtitle="Prueba con otro término de búsqueda o cambia de categoría."
+      />
+    } @else {
+      <app-empty-state
+        variant="empty"
+        icon="fa-solid fa-box-open"
+        title="Aún no tienes productos"
+        subtitle="Publica productos desde tu tienda para facturarlos aquí."
+      />
+    }
+  } @else {
+    <ul
+      class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4"
+      data-testid="billing-product-grid"
+    >
+      @for (product of products(); track product.id) {
+        <li class="motion-safe:animate-fade-in">
+          <article
+            class="card group flex flex-col overflow-hidden"
+            [attr.data-testid]="'billing-product-card-' + product.id"
+          >
+            <div
+              class="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-surface-800"
+            >
+              <div class="flex h-full w-full items-center justify-center" aria-hidden="true">
+                <i
+                  class="fa-solid fa-bottle-droplet text-4xl text-slate-300 dark:text-surface-600"
+                ></i>
+              </div>
+              <span
+                class="absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase"
+                [class]="stockClasses(product.inStock)"
+                data-testid="billing-stock-chip"
+              >
+                {{ product.inStock ? 'En stock' : 'Agotado' }}
+              </span>
+            </div>
+
+            <div class="flex flex-1 flex-col gap-1 p-3">
+              <h3
+                class="line-clamp-2 text-sm leading-snug font-bold text-slate-900 dark:text-white"
+              >
+                {{ product.name }}
+              </h3>
+              <p class="truncate text-xs text-slate-500 dark:text-slate-400">
+                {{ product.sku }}
+              </p>
+              <div
+                class="mt-auto flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <span class="font-heading text-base font-black text-slate-900 dark:text-white">
+                  {{ product.price | appCurrency }}
+                </span>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm w-full disabled:opacity-40 sm:w-auto"
+                  [disabled]="!product.inStock"
+                  [attr.aria-label]="'Agregar ' + product.name + ' a la factura'"
+                  data-testid="billing-add-product"
+                  (click)="add.emit(product)"
+                >
+                  <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </article>
+        </li>
+      }
+    </ul>
+  }
+</section>
