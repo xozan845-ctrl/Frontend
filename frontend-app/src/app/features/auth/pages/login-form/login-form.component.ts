@@ -17,6 +17,15 @@ export class LoginFormComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly seoService = inject(SeoService);
 
+  /** Origen pedido por el guard (p. ej. `/vendedor/inicio`). */
+  private readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '';
+  /** Intención de vendedor (ADR-22): la llegada viene del panel de vendedor. */
+  readonly isVendorIntent = /^\/vendedor(\/|$)/.test(this.returnUrl);
+  /** Parámetros del alta: conservan el origen y piden la cuenta de vendedor. */
+  readonly registerQueryParams: Record<string, string> = this.isVendorIntent
+    ? { returnUrl: this.returnUrl, rol: 'seller' }
+    : {};
+
   readonly loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],

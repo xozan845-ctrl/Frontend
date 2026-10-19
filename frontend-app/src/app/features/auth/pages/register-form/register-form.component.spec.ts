@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { RegisterFormComponent } from './register-form.component';
 import { AuthStore } from '../../state/auth.store';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -15,11 +15,15 @@ describe('RegisterFormComponent', () => {
   };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
 
-  const setup = async () => {
+  const setup = async (query: Record<string, string> = {}) => {
     await TestBed.configureTestingModule({
       imports: [RegisterFormComponent],
       providers: [
         provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap(query) } },
+        },
         { provide: AuthStore, useValue: authStore },
         { provide: SeoService, useValue: seo },
       ],
@@ -77,5 +81,32 @@ describe('RegisterFormComponent', () => {
       email: 'ana@tienda.com',
       password: 'secreto1',
     });
+  });
+
+  // ADR-22: el alta pedida desde el panel crea una cuenta de vendedor.
+  it('debe registrar como vendedor cuando el alta llega del panel', async () => {
+    const fixture = await setup({ rol: 'seller', returnUrl: '/vendedor/inicio' });
+    fixture.componentInstance.registerForm.setValue({
+      name: 'Vera',
+      email: 'vera@tienda.com',
+      password: 'secreto1',
+    });
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(authStore.register).toHaveBeenCalledWith({
+      name: 'Vera',
+      email: 'vera@tienda.com',
+      password: 'secreto1',
+      role: 'seller',
+    });
+  });
+
+  it('debe titular el alta de vendedor cuando el alta llega del panel', async () => {
+    const fixture = await setup({ rol: 'seller', returnUrl: '/vendedor/inicio' });
+
+    expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Vendedor');
   });
 });

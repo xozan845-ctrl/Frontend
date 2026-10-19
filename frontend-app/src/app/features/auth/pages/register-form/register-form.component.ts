@@ -16,6 +16,8 @@ export class RegisterFormComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly seoService = inject(SeoService);
+  /** Alta pedida desde el funnel de vendedor (`rol=seller`, ADR-22). */
+  readonly isSellerIntent = this.route.snapshot.queryParamMap.get('rol') === 'seller';
 
   readonly registerForm = this.fb.group({
     name: ['', Validators.required],
@@ -26,7 +28,12 @@ export class RegisterFormComponent implements OnDestroy {
   showPassword = signal(false);
 
   constructor() {
-    this.seoService.setPage('Crear cuenta', 'Regístrate en Quantum Store.');
+    this.seoService.setPage(
+      this.isSellerIntent ? 'Cuenta de vendedor' : 'Crear cuenta',
+      this.isSellerIntent
+        ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
+        : 'Regístrate en Quantum Store.',
+    );
 
     effect(() => {
       if (this.authStore.isAuthenticated()) {
@@ -55,7 +62,12 @@ export class RegisterFormComponent implements OnDestroy {
     if (this.registerForm.valid) {
       const { name, email, password } = this.registerForm.value;
       if (name && email && password) {
-        this.authStore.register({ name, email, password });
+        this.authStore.register({
+          name,
+          email,
+          password,
+          ...(this.isSellerIntent ? { role: 'seller' as const } : {}),
+        });
       }
     }
   }
