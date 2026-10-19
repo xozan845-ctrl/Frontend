@@ -23,6 +23,7 @@ Las suites viven en `e2e/storefront.spec.ts` (tienda) y `e2e/vendor.spec.ts`
 | R-E-18 | **POS del vendedor**: un vendedor autenticado registra un pedido (cliente de la cartera, dos productos y stepper de cantidad) y lo ve al instante en "Pedidos recientes".  | vendedor   |
 | R-E-19 | **Pedidos del vendedor**: la lista filtra por estado con conteo y el detalle del pedido carga con sus líneas.                                                              | vendedor   |
 | R-E-20 | **Entrada multi-tienda**: la raíz (`/`) sin tienda en la URL muestra el buscador de tienda y el acceso al asistente de alta; un identificador válido resuelve el catálogo. | navegación |
+| R-E-21 | **Acceso al panel de vendedor**: el enlace "Vendedor" del navbar es visible sin sesión y guía al alta (login → cuenta de vendedor) hasta entrar al panel.                  | vendedor   |
 
 ## Calidad de ejecución
 
@@ -38,6 +39,6 @@ Las suites viven en `e2e/storefront.spec.ts` (tienda) y `e2e/vendor.spec.ts`
 ## Mínimo aceptable por release
 
 - Suite E2E ejecutando `R-E-1` … `R-E-8`, `R-E-15`, `R-E-16`, `R-E-17`, `R-E-18`,
-  `R-E-19` y `R-E-20` con pass rate 100%.
+  `R-E-19`, `R-E-20` y `R-E-21` con pass rate 100%.
 - Si un flujo crítico no puede automatizarse, se registra en `AUDIT.md` como
   deuda con responsable y fecha.
