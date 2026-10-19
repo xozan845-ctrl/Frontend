@@ -97,3 +97,27 @@ test('R-E-19: la lista de pedidos filtra por estado y el detalle carga', async (
   await expect(page.getByRole('heading', { name: 'Pedido PED-000123' })).toBeVisible();
   await expect(page.locator('[data-testid="detail-line"]')).toHaveCount(2);
 });
+
+// R-E-21: el enlace "Vendedor" es visible sin sesión y guía del navbar al alta
+// de vendedor (login → cuenta de vendedor) hasta entrar al panel (ADR-22).
+test('R-E-21: el enlace de vendedor guía del navbar al alta y al panel', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  // Visible sin sesión: redirige al login conservando el destino.
+  await page.getByTestId('navbar-vendor-link').click();
+  await expect(page).toHaveURL(/\/login\?returnUrl=%2Fvendedor%2Finicio/);
+
+  // El login ofrece crear la cuenta de vendedor.
+  await expect(page.getByTestId('vendor-intent-notice')).toBeVisible();
+  await page.getByRole('link', { name: 'Crea tu cuenta de vendedor' }).click();
+  await expect(page).toHaveURL(/\/register\?.*rol=seller/);
+
+  // Alta de vendedor: el mock (R-E-12) registra el rol y vuelve al panel.
+  await page.locator('#name').fill('Vera Vendedora');
+  await page.locator('#email').fill('vendedor.nuevo@tienda.test');
+  await page.locator('#password').fill('secreto1');
+  await page.getByRole('button', { name: 'Registrar Cuenta' }).click();
+
+  await expect(page).toHaveURL(/\/vendedor\/inicio/);
+  await expect(page.getByTestId('dashboard-page')).toBeVisible();
+});
