@@ -57,8 +57,9 @@ describe('Navbar', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debe enlazar al panel del vendedor solo con rol vendedor', async () => {
-    currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
+  // ADR-22: el enlace es visible siempre; el `vendorGuard` decide el acceso.
+  it('debe mostrar el enlace al panel del vendedor sin sesión', async () => {
+    currentUser.set(null);
     fixture.detectChanges();
 
     const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'));
@@ -68,13 +69,24 @@ describe('Navbar', () => {
     ).toBeTruthy();
   });
 
-  it('no debe enlazar al panel del vendedor sin rol vendedor', async () => {
+  it('debe mostrar el enlace al panel del vendedor con rol comprador', async () => {
     currentUser.set({ id: 2, name: 'Cami', email: 'c@c.com', role: 'comprador' });
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeFalsy();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeTruthy();
     expect(
       fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
-    ).toBeFalsy();
+    ).toBeTruthy();
+  });
+
+  it('debe mostrar el enlace al panel del vendedor con rol vendedor', async () => {
+    currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
+    fixture.detectChanges();
+
+    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'));
+    expect(desktop.nativeElement.getAttribute('href')).toBe('/vendedor/inicio');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
+    ).toBeTruthy();
   });
 });
