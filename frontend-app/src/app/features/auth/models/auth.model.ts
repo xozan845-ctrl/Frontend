@@ -21,6 +21,10 @@ export interface RegisterData {
   email: string;
   password: string;
   name: string;
-  /** Rol registrable: comprador (por defecto) o vendedor (para crear tienda). */
-  role?: 'customer' | 'seller';
+  /**
+   * Rol registrable: comprador (por defecto), vendedor (para crear tienda) o
+   * facturador (cuenta de facturación; se registra como vendedor hasta que el
+   * backend exponga un rol propio, ADR-24).
+   */
+  role?: 'customer' | 'seller' | 'biller';
 }

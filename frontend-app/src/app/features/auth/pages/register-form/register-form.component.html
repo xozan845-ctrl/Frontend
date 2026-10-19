@@ -7,11 +7,20 @@
     <h2
       class="text-4xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading mb-1 leading-none"
     >
-      {{ isSellerIntent ? 'Vendedor' : 'Registro' }}
+      {{ heading }}
     </h2>
     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-10">
-      {{ isSellerIntent ? 'Crear cuenta de vendedor' : 'Crear nueva cuenta' }}
+      {{ subheading }}
     </p>
+
+    @if (isBillerIntent) {
+      <div
+        data-testid="billing-intent-notice"
+        class="bg-accent-600/10 border border-accent-600/30 dark:border-accent-500/40 rounded-xl p-4 mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+      >
+        <p>Crea tu cuenta de facturador para emitir facturas desde tu tienda.</p>
+      </div>
+    }
 
     @if (authStore.error()) {
       <div

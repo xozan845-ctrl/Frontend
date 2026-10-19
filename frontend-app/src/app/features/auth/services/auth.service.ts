@@ -58,7 +58,10 @@ export class AuthService implements AuthRepository {
         nombre: userData.name,
         correo: userData.email,
         contrasena: userData.password,
-        rol: userData.role === 'seller' ? 'vendedor' : 'comprador',
+        // El backend solo distingue comprador/vendedor. La cuenta de facturador
+        // se registra como vendedor (con acceso a facturación) hasta que exista
+        // un rol propio (ADR-24).
+        rol: userData.role === 'seller' || userData.role === 'biller' ? 'vendedor' : 'comprador',
       })
       .pipe(
         map((res) => adaptAuthResponseFromBackend(res, userData.email)),
@@ -218,7 +221,7 @@ export class AuthService implements AuthRepository {
       id: Math.floor(Math.random() * 1000),
       email: userData.email,
       name: userData.name,
-      role: userData.role === 'seller' ? 'vendedor' : 'comprador',
+      role: userData.role === 'seller' || userData.role === 'biller' ? 'vendedor' : 'comprador',
     };
     return of({
       user: mockUser,

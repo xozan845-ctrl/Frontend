@@ -18,6 +18,25 @@ export class RegisterFormComponent implements OnDestroy {
   private readonly seoService = inject(SeoService);
   /** Alta pedida desde el funnel de vendedor (`rol=seller`, ADR-22). */
   readonly isSellerIntent = this.route.snapshot.queryParamMap.get('rol') === 'seller';
+  /** Alta pedida desde el acceso de facturación (`rol=biller`, ADR-24). */
+  readonly isBillerIntent = this.route.snapshot.queryParamMap.get('rol') === 'biller';
+  /** Título y subtítulo según la intención del alta. */
+  readonly heading = this.isBillerIntent
+    ? 'Facturador'
+    : this.isSellerIntent
+      ? 'Vendedor'
+      : 'Registro';
+  readonly subheading = this.isBillerIntent
+    ? 'Crear cuenta de facturador'
+    : this.isSellerIntent
+      ? 'Crear cuenta de vendedor'
+      : 'Crear nueva cuenta';
+  /** Rol que se envía al registrar según el origen del alta. */
+  private readonly roleToRegister: 'seller' | 'biller' | undefined = this.isBillerIntent
+    ? 'biller'
+    : this.isSellerIntent
+      ? 'seller'
+      : undefined;
 
   readonly registerForm = this.fb.group({
     name: ['', Validators.required],
@@ -29,10 +48,16 @@ export class RegisterFormComponent implements OnDestroy {
 
   constructor() {
     this.seoService.setPage(
-      this.isSellerIntent ? 'Cuenta de vendedor' : 'Crear cuenta',
-      this.isSellerIntent
-        ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
-        : 'Regístrate en Quantum Store.',
+      this.isBillerIntent
+        ? 'Cuenta de facturador'
+        : this.isSellerIntent
+          ? 'Cuenta de vendedor'
+          : 'Crear cuenta',
+      this.isBillerIntent
+        ? 'Crea tu cuenta de facturador para emitir facturas desde tu tienda.'
+        : this.isSellerIntent
+          ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
+          : 'Regístrate en Quantum Store.',
     );
 
     effect(() => {
@@ -42,10 +67,15 @@ export class RegisterFormComponent implements OnDestroy {
     });
   }
 
-  /** Vuelve a la ruta protegida de origen (`returnUrl`) o a la entrada raíz. */
+  /** Vuelve a la ruta protegida de origen (`returnUrl`) o al destino de la intención. */
   private redirectAfterAuth(): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
+    const fallback = this.isBillerIntent
+      ? '/facturacion/nueva'
+      : this.isSellerIntent
+        ? '/crear-tienda'
+        : '/';
+    const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : fallback;
     this.router.navigateByUrl(safeUrl);
   }
 
@@ -66,7 +96,7 @@ export class RegisterFormComponent implements OnDestroy {
           name,
           email,
           password,
-          ...(this.isSellerIntent ? { role: 'seller' as const } : {}),
+          ...(this.roleToRegister ? { role: this.roleToRegister } : {}),
         });
       }
     }
