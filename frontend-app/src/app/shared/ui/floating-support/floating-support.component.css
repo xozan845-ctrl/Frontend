@@ -1,0 +1,6 @@
+/* El botón de soporte no forma parte de ningún comprobante impreso. */
+@media print {
+  :host {
+    display: none !important;
+  }
+}

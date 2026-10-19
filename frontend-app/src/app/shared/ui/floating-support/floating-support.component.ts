@@ -5,6 +5,7 @@ import { COMPANY_INFO } from '../../../core/constants/company.constants';
   selector: 'app-floating-support',
   standalone: true,
   templateUrl: './floating-support.component.html',
+  styleUrl: './floating-support.component.css',
 })
 export class FloatingSupportComponent {
   readonly companyInfo = COMPANY_INFO;
