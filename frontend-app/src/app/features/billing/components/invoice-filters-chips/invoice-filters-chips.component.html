@@ -1,0 +1,25 @@
+<div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar facturas por estado">
+  <button
+    type="button"
+    [class]="chipClasses(selected() === null)"
+    data-testid="billing-filter-all"
+    (click)="selectedChange.emit(null)"
+  >
+    Todas
+    <span class="opacity-70" data-testid="billing-count-all">({{ total() }})</span>
+  </button>
+
+  @for (status of statuses(); track status) {
+    <button
+      type="button"
+      [class]="chipClasses(selected() === status)"
+      [attr.data-testid]="'billing-filter-' + status"
+      (click)="selectedChange.emit(status)"
+    >
+      {{ labels[status] }}
+      <span class="opacity-70" [attr.data-testid]="'billing-count-' + status">
+        ({{ counts()[status] }})
+      </span>
+    </button>
+  }
+</div>

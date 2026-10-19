@@ -1,0 +1,84 @@
+<section
+  class="card flex flex-col gap-4 p-5"
+  data-testid="billing-info-card"
+  aria-labelledby="billing-info-title"
+>
+  <h2 id="billing-info-title" class="font-heading text-lg font-black tracking-tight uppercase">
+    Información de la factura
+  </h2>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Tienda</span>
+    <span
+      class="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 dark:bg-surface-800 dark:text-slate-200"
+      data-testid="billing-store-label"
+    >
+      <i
+        class="fa-solid fa-store text-xs text-accent-600 dark:text-accent-400"
+        aria-hidden="true"
+      ></i>
+      {{ storeLabel() }}
+    </span>
+  </div>
+
+  <form [formGroup]="form" class="grid gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label
+        for="billing-invoice-date"
+        class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+        >Fecha</label
+      >
+      <input
+        id="billing-invoice-date"
+        type="date"
+        formControlName="date"
+        class="input"
+        [class.input-error]="isDateInvalid()"
+        data-testid="billing-invoice-date"
+      />
+      @if (isDateInvalid()) {
+        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">
+          Elige una fecha
+        </span>
+      }
+    </div>
+
+    <fieldset class="flex flex-col gap-2">
+      <legend class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+        Condición de pago
+      </legend>
+      <div class="flex flex-col gap-2">
+        @for (term of terms; track term) {
+          <label class="cursor-pointer">
+            <input
+              type="radio"
+              formControlName="paymentTerm"
+              [value]="term"
+              class="peer sr-only"
+              [attr.data-testid]="'billing-payment-' + term"
+            />
+            <span
+              [class]="termClasses(paymentTerm() === term)"
+              class="peer-focus-visible:ring-2 peer-focus-visible:ring-accent-500"
+              [attr.data-testid]="'billing-payment-' + term + '-pill'"
+            >
+              <i
+                class="text-xs"
+                [class]="term === 'contado' ? 'fa-solid fa-money-bill-wave' : 'fa-solid fa-clock'"
+                aria-hidden="true"
+              ></i>
+              {{ termLabels[term] }}
+            </span>
+          </label>
+        }
+      </div>
+      <p class="text-[11px] text-slate-400 dark:text-slate-500" data-testid="billing-term-hint">
+        @if (isCredit()) {
+          La factura vence 30 días después de la emisión.
+        } @else {
+          El pago se registra al momento de emitir la factura.
+        }
+      </p>
+    </fieldset>
+  </form>
+</section>
