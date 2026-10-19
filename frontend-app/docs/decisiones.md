@@ -529,3 +529,30 @@ contexto y consecuencias.
   con specs de componentes/páginas y sus fixtures (R-CP-1, R-CP-2). Revertir es
   retirar la ruta `/facturacion`, el enlace del sidebar del vendedor y el
   feature.
+
+## ADR-24: Acceso a facturación desde el header y alta de cuenta de facturador
+
+- **Fecha**: 2026-10-19
+- **Estado**: Aceptado
+- **Contexto**: el módulo de facturación (ADR-23) solo era accesible por URL o
+  desde el sidebar del vendedor. Se necesita una entrada visible en el **header**
+  y un recorrido de alta específico para una **cuenta de facturador**. Core
+  Engine solo distingue los roles `comprador` y `vendedor`; no existe aún un rol
+  `facturador` en el contrato del backend.
+- **Decisión**:
+  - El navbar (desktop y móvil) añade el enlace **Facturación**. Sin sesión
+    apunta a `/register?rol=biller&returnUrl=/facturacion/nueva`; con sesión
+    apunta directo a `/facturacion/nueva`.
+  - `RegisterData.role` admite `biller`. El servicio de autenticación lo envía
+    al backend como `rol: 'vendedor'` (una cuenta de facturador es una cuenta de
+    vendedor con acceso a facturación) hasta que exista un rol propio en el
+    contrato.
+  - El formulario de registro reconoce `rol=biller`, muestra el título
+    **Facturador**, un aviso de contexto y, tras autenticarse, vuelve al
+    `returnUrl` (o a `/facturacion/nueva` si no viene).
+- **Consecuencias**: el alta funciona con el contrato actual del backend sin
+  cambios de API; el rol `facturador` queda como etiqueta de producto y se
+  podrá separar cuando el backend lo exponga (solo cambia el mapeo del payload).
+  La ruta de facturación sigue sin guard en la fase visual; al conectar la lógica
+  se protegerá con un guard que acepte vendedor/facturador (R-SE-6). Revertir es
+  quitar el enlace del navbar y la intención `biller` del formulario.
