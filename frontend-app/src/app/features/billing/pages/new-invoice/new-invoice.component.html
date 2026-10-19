@@ -1,0 +1,107 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="billing-new-invoice-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/facturacion/facturas" class="transition-colors hover:text-accent-600">
+          Facturación
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Nueva factura</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Nueva factura
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Arma la factura del cliente y emítela desde tu tienda.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      data-testid="billing-goto-recent-invoices"
+      (click)="scrollToRecentInvoices()"
+    >
+      <i class="fa-solid fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+      Facturas recientes
+    </button>
+  </header>
+
+  @if (notice(); as current) {
+    <div
+      [class]="noticeClasses(current.tone)"
+      role="status"
+      aria-live="polite"
+      data-testid="billing-notice"
+    >
+      <span>{{ current.text }}</span>
+      <button
+        type="button"
+        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-current/70 transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-current focus-visible:outline-hidden dark:hover:bg-white/10"
+        aria-label="Cerrar aviso"
+        data-testid="billing-dismiss-notice"
+        (click)="notice.set(null)"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+  }
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <app-client-search-card
+      [selected]="selectedClient()"
+      [results]="filteredClients()"
+      [query]="clientQuery()"
+      (queryChange)="setClientQuery($event)"
+      (clientSelected)="selectClient($event)"
+      (clearSelection)="clearClient()"
+      (createRequested)="requestNewClient()"
+    />
+    <app-invoice-info-card [info]="info()" (infoChange)="updateInfo($event)" />
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+    <div class="flex min-w-0 flex-col gap-6">
+      <app-catalog-picker-card
+        [products]="filteredProducts()"
+        [categories]="categories()"
+        [query]="catalogQuery()"
+        [category]="category()"
+        (queryChange)="setCatalogQuery($event)"
+        (categoryChange)="setCategory($event)"
+        (add)="addProduct($event)"
+      />
+    </div>
+
+    <aside class="min-w-0 xl:sticky xl:top-6 xl:self-start">
+      <app-invoice-draft-panel
+        [lines]="lines()"
+        [subtotal]="totals().subtotal"
+        [discountPercent]="discountPercent()"
+        [discountAmount]="totals().discountAmount"
+        [taxAmount]="totals().taxAmount"
+        [total]="totals().total"
+        [notes]="notes()"
+        (quantityChange)="updateQuantity($event)"
+        (removeLine)="removeLine($event)"
+        (discountChange)="setDiscount($event)"
+        (notesChange)="setNotes($event)"
+        (emitInvoice)="emitInvoice()"
+        (saveDraft)="saveDraft()"
+      />
+    </aside>
+  </div>
+
+  <div #recentInvoicesSection id="facturas-recientes" class="scroll-mt-6">
+    <app-invoice-list-table
+      title="Facturas recientes"
+      [invoices]="recentInvoices"
+      [emptyTitle]="'Aún no hay facturas'"
+      [emptySubtitle]="'Las facturas que emitas aparecerán aquí.'"
+    />
+  </div>
+</div>
