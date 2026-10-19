@@ -7,10 +7,10 @@
     <h2
       class="text-4xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading mb-1 leading-none"
     >
-      Registro
+      {{ isSellerIntent ? 'Vendedor' : 'Registro' }}
     </h2>
     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-10">
-      Crear nueva cuenta
+      {{ isSellerIntent ? 'Crear cuenta de vendedor' : 'Crear nueva cuenta' }}
     </p>
 
     @if (authStore.error()) {

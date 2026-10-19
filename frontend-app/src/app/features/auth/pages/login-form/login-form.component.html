@@ -27,6 +27,21 @@
       </div>
     }
 
+    @if (isVendorIntent) {
+      <div
+        data-testid="vendor-intent-notice"
+        class="bg-accent-600/10 border border-accent-600/30 dark:border-accent-500/40 rounded-xl p-4 mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+      >
+        <p>El panel de vendedor requiere una cuenta de vendedor.</p>
+        <a
+          [routerLink]="['/register']"
+          [queryParams]="registerQueryParams"
+          class="text-accent-600 dark:text-accent-400 underline hover:no-underline transition-colors"
+          >Crea tu cuenta de vendedor</a
+        >
+      </div>
+    }
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
         <label for="email" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
@@ -106,7 +121,8 @@
     >
       ¿No tienes una cuenta?
       <a
-        routerLink="/register"
+        [routerLink]="['/register']"
+        [queryParams]="registerQueryParams"
         class="text-slate-900 dark:text-white hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-black"
         >Regístrate aquí</a
       >
