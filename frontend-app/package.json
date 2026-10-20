@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "deploy": "npm run build && firebase deploy --only hosting",
+    "deploy:preview": "npm run build && firebase hosting:channel:deploy staging --expires 30d",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "eslint .",
