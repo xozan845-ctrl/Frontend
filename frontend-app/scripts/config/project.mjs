@@ -93,3 +93,20 @@ export const HARDCODED_URL_ALLOWLIST = [/^https:\/\/wa\.me\//, /^https:\/\/www\.
 
 /** Prefijos de imports externos permitidos en `models/` (R-CX-4: dominio puro). */
 export const MODEL_ALLOWED_EXTERNAL = [];
+
+/**
+ * Carpetas de capa donde una unidad lógica con ≥ 2 archivos debe vivir en su
+ * propia subcarpeta `<unidad>/` (R-AR-14).
+ */
+export const UNIT_LAYERS = new Set([
+  'state',
+  'services',
+  'repositories',
+  'adapters',
+  'guards',
+  'interceptors',
+  'resolvers',
+]);
+
+/** Mínimo de archivos de una unidad para exigir subcarpeta (R-AR-14). */
+export const MIN_UNIT_FILES = 2;

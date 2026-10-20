@@ -6,7 +6,7 @@
  * Las claves (`key`) son estables: identifican el hallazgo, no su posición.
  */
 import { existsSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { appRoot, resolveInApp } from '../../engine/lib/paths.mjs';
 import { readText, walkFiles } from '../../engine/lib/fs.mjs';
 import {
@@ -25,8 +25,10 @@ import {
   FEATURE_ROOT_FILES,
   HARDCODED_URL_ALLOWLIST,
   HTTP_CLIENT_ALLOWED,
+  MIN_UNIT_FILES,
   ROUTES_FILE,
   TYPE_DECLARATION_FILE_PATTERNS,
+  UNIT_LAYERS,
 } from '../../config/project.mjs';
 
 const srcRoot = resolveInApp(APP_SRC_DIR);
@@ -237,8 +239,7 @@ export function findLayerViolations() {
   return findings;
 }
 
-/** Hallazgos de configuración hardcodeada (R-AR-11). */
-export function findHardcodedConfig() {
+/** Hallazgos de configuración hardcodeada (R-AR-11). */ export function findHardcodedConfig() {
   const findings = [];
   const scannedLayers = new Set(['services', 'state', 'pages', 'components']);
 
@@ -274,6 +275,48 @@ export function findHardcodedConfig() {
         line: 0,
         detail: 'usa environment.apiUrl directamente en presentación',
         key: `${rel}|R-AR-11|environment.apiUrl`,
+      });
+    }
+  }
+
+  return findings;
+}
+
+/**
+ * Hallazgos de R-AR-14: una unidad lógica con ≥ 2 archivos debe vivir en su
+ * propia subcarpeta `<unidad>/` dentro de las carpetas de capa.
+ */
+export function findPackagingViolations() {
+  const findings = [];
+  const byDirectory = new Map();
+
+  for (const file of listTs()) {
+    const directory = dirname(file);
+    const files = byDirectory.get(directory) ?? [];
+    files.push(file);
+    byDirectory.set(directory, files);
+  }
+
+  for (const [directory, files] of byDirectory) {
+    if (!UNIT_LAYERS.has(basename(directory))) continue;
+
+    const directoryRel = toRel(directory);
+    const units = new Map();
+    for (const file of files) {
+      const unit = basename(file).split('.')[0];
+      const unitFiles = units.get(unit) ?? [];
+      unitFiles.push(file);
+      units.set(unit, unitFiles);
+    }
+
+    for (const [unit, unitFiles] of units) {
+      if (unitFiles.length < MIN_UNIT_FILES) continue;
+      findings.push({
+        rule: 'R-AR-14',
+        file: directoryRel,
+        line: 0,
+        detail: `unidad '${unit}' (${unitFiles.length} archivos) debe vivir en ${directoryRel}/${unit}/`,
+        key: `${directoryRel}/${unit}`,
       });
     }
   }

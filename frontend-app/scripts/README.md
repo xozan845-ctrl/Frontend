@@ -17,12 +17,13 @@ que son verificables por máquina.
 
 ## Qué vigila
 
-| Suite                 | Reglas                                         | Qué comprueba                                                                                      |
-| --------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `architecture-types`  | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                           |
-| `architecture-layers` | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
-| `architecture-config` | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
-| `docs-structure`      | `R-DO-1/2`                                     | Manifiesto de suites, estructura de `docs/rules`, unicidad de IDs y enlaces.                       |
+| Suite                    | Reglas                                         | Qué comprueba                                                                                      |
+| ------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                           |
+| `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
+| `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
+| `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
+| `docs-structure`         | `R-DO-1/2`                                     | Manifiesto de suites, estructura de `docs/rules`, unicidad de IDs y enlaces.                       |
 
 ### Modelo de capas
 
@@ -59,6 +60,10 @@ Reglas concretas que impone `architecture-layers`:
 - Otro feature sólo se importa por `public-api.ts` / `public-ui.ts`.
 - `HttpClient` sólo se inyecta en `*.service.ts` o `interceptors/`.
 - `core/` y `shared/` no importan `features/`; `layout/` sólo por `public-api.ts`/`public-ui.ts`.
+- **Empaquetado por unidad** (`R-AR-14`): en `state/`, `services/`, `repositories/`,
+  `adapters/`, `guards/`, `interceptors/` y `resolvers/`, una unidad con ≥ 2
+  archivos vive en `<unidad>/` (p. ej. `state/ai-jobs/ai-jobs.store.ts`). Evita
+  carpetas planas de N lógicas × M archivos.
 
 ## Arquitectura
 
@@ -169,6 +174,7 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura ejecutable: **13/239 IDs** de regla con check. La deuda arquitectónica
-aceptada vive en `config/baseline.mjs` (46 tipos + 18 dependencias + 3 URLs) y se
-quema de forma incremental; no se añaden entradas para ocultar violaciones nuevas.
+Cobertura ejecutable: **14/240 IDs** de regla con check. La deuda arquitectónica
+aceptada vive en `config/baseline.mjs` (41 unidades de empaquetado pendientes de
+agrupar) y se quema de forma incremental; no se añaden entradas para ocultar
+violaciones nuevas.
