@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiJobDetailComponent from './ai-job-detail.component';
-import { AiJobsStore } from '../../state/ai-jobs.store';
+import { AiJobsStore } from '../../state/ai-jobs/ai-jobs.store';
 import { AiJob } from '../../models/ai-job.model';
 
 const JOB: AiJob = {

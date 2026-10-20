@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { AiConnectionStore } from '../state/ai-connection.store';
+import { AiConnectionStore } from '../state/ai-connection/ai-connection.store';
 import { AI_SCRAPER_API_KEY_HEADER } from '../constants/ai-scraper.constants';
 
 /**

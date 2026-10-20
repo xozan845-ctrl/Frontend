@@ -11,15 +11,15 @@ import {
   takeWhile,
   tap,
 } from 'rxjs/operators';
-import { AiCreateSessionInput, isAiSessionSettled } from '../models/ai-session.model';
-import { isAiJobActive } from '../models/ai-job.model';
-import { AI_SESSION_REPOSITORY } from '../repositories/ai-session.repository';
-import { AI_JOB_REPOSITORY } from '../repositories/ai-job.repository';
-import { NotificationService } from '../../../core/services/notification.service';
+import { AiCreateSessionInput, isAiSessionSettled } from '../../models/ai-session.model';
+import { isAiJobActive } from '../../models/ai-job.model';
+import { AI_SESSION_REPOSITORY } from '../../repositories/ai-session.repository';
+import { AI_JOB_REPOSITORY } from '../../repositories/ai-job.repository';
+import { NotificationService } from '../../../../core/services/notification.service';
 import {
   AI_SCRAPER_POLL_MAX_ATTEMPTS,
   AI_SCRAPER_POLL_MS,
-} from '../constants/ai-scraper.constants';
+} from '../../constants/ai-scraper.constants';
 import type { AiSessionState } from './ai-session.state';
 
 const initialState: AiSessionState = {

@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 import { AiJobsStore } from './ai-jobs.store';
-import { AI_JOB_REPOSITORY } from '../repositories/ai-job.repository';
-import { NotificationService } from '../../../core/services/notification.service';
-import { AiJob } from '../models/ai-job.model';
-import { BACKEND_JOB_CAMEL } from '../adapters/fixtures/ai-scraper.fixture';
+import { AI_JOB_REPOSITORY } from '../../repositories/ai-job.repository';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { AiJob } from '../../models/ai-job.model';
+import { BACKEND_JOB_CAMEL } from '../../adapters/fixtures/ai-scraper.fixture';
 
 const BASE_JOB: AiJob = {
   id: 'job-1',

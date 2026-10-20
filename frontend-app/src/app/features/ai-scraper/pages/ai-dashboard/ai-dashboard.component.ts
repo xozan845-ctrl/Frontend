@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AiConnectionStore } from '../../state/ai-connection.store';
+import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AiConnectionPanelComponent } from '../../components/ai-connection-panel/ai-connection-panel.component';
 

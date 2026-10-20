@@ -1,6 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { AI_SCRAPER_KEY_STORAGE } from '../constants/ai-scraper.constants';
+import { environment } from '../../../../../environments/environment';
+import { AI_SCRAPER_KEY_STORAGE } from '../../constants/ai-scraper.constants';
 
 /**
  * Conexión con el backend de IA (`R-SE-1`): expone el endpoint configurado y la

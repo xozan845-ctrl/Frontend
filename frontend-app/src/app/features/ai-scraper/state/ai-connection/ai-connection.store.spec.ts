@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AiConnectionStore } from './ai-connection.store';
-import { AI_SCRAPER_KEY_STORAGE } from '../constants/ai-scraper.constants';
+import { AI_SCRAPER_KEY_STORAGE } from '../../constants/ai-scraper.constants';
 
 describe('AiConnectionStore', () => {
   let store: AiConnectionStore;

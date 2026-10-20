@@ -1,4 +1,4 @@
-import type { AiSession, AiSessionDetail, AiSessionStatus } from '../models/ai-session.model';
+import type { AiSession, AiSessionDetail, AiSessionStatus } from '../../models/ai-session.model';
 
 export interface AiSessionState {
   sessions: AiSession[];

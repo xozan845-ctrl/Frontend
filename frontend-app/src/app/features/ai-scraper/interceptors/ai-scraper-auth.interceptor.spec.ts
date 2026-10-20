@@ -3,7 +3,7 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { aiScraperAuthInterceptor } from './ai-scraper-auth.interceptor';
-import { AiConnectionStore } from '../state/ai-connection.store';
+import { AiConnectionStore } from '../state/ai-connection/ai-connection.store';
 
 describe('aiScraperAuthInterceptor', () => {
   let http: HttpClient;
