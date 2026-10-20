@@ -153,6 +153,7 @@ features se detallan en
 - **Decisiones de arquitectura**: [`docs/decisiones.md`](./docs/decisiones.md).
 - **Estado y evidencias** (auditoría): [`docs/rules/_meta/AUDIT.md`](./docs/rules/_meta/AUDIT.md).
 - **Despliegue en Dockploy**: [`docs/dockploy-setup.md`](./docs/dockploy-setup.md).
+- **Despliegue en Firebase Hosting** (staging, plan gratuito): [`docs/firebase-hosting-setup.md`](./docs/firebase-hosting-setup.md).
 
 ---
 
@@ -164,3 +165,6 @@ npm run build
 
 Los archivos optimizados se generan en `dist/frontend-app/browser/`. El despliegue
 en Dockploy se rige por [`docs/rules/cd/`](./docs/rules/cd/README.md).
+
+Para **staging** (plan gratuito de Firebase Hosting) usa `npm run deploy` o
+`npm run deploy:preview`; ver [`docs/firebase-hosting-setup.md`](./docs/firebase-hosting-setup.md).
