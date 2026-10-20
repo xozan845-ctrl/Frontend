@@ -62,6 +62,10 @@ Pasos:
 
   Sin este fallback, refrescar `/shop` o `/checkout` devuelve 404.
 
+- **Mapa de logística (ADR-25)**: la CSP autoriza `https://tile.openstreetmap.org`
+  (y sus subdominios) en `img-src`. Si se cambia de proveedor de teselas, hay que
+  actualizar `nginx.conf` e `index.html` en el mismo PR (`R-SE-7`, `R-DO-1`).
+
 - **Cache**: `index.html` sin cache (o `no-store`) y assets con hash
   (`outputHashing: all`) con cache larga.
 
