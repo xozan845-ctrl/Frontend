@@ -1,0 +1,72 @@
+<section class="card flex flex-col gap-4 p-5" data-testid="deliveries-donut">
+  <header class="flex items-center justify-between gap-3">
+    <h2 class="flex items-center gap-2 font-heading text-base font-black tracking-tight uppercase">
+      <i class="fa-solid fa-clipboard-check text-slate-400" aria-hidden="true"></i>
+      Estado de entregas
+    </h2>
+    <span
+      class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 dark:bg-surface-700 dark:text-slate-300"
+      aria-hidden="true"
+    >
+      <i class="fa-solid fa-chevron-right text-[10px]"></i>
+    </span>
+  </header>
+
+  <div class="flex flex-col items-center gap-5 sm:flex-row sm:gap-3">
+    <div class="relative h-[150px] w-[150px] shrink-0">
+      <svg viewBox="0 0 140 140" class="h-full w-full" role="img" [attr.aria-label]="ariaLabel()">
+        <circle
+          cx="70"
+          cy="70"
+          [attr.r]="radius"
+          fill="none"
+          stroke="currentColor"
+          class="text-slate-100 dark:text-surface-700"
+          stroke-width="18"
+        />
+        @for (arc of arcs(); track arc.status) {
+          <circle
+            cx="70"
+            cy="70"
+            [attr.r]="radius"
+            fill="none"
+            [attr.stroke]="arc.color"
+            stroke-width="18"
+            stroke-linecap="butt"
+            [attr.stroke-dasharray]="arc.dash"
+            [attr.stroke-dashoffset]="arc.offset"
+            transform="rotate(-90 70 70)"
+          />
+        }
+      </svg>
+      <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <span class="font-heading text-3xl leading-none font-black text-slate-900 dark:text-white">
+          {{ total() }}
+        </span>
+        <span
+          class="text-[10px] font-bold tracking-widest text-slate-500 uppercase dark:text-slate-400"
+        >
+          pedidos
+        </span>
+      </div>
+    </div>
+
+    <ul class="flex w-full flex-col gap-2.5" aria-label="Detalle de entregas por estado">
+      @for (segment of segments(); track segment.status) {
+        <li
+          class="grid grid-cols-[auto_1fr_auto_auto] items-center gap-2 text-xs"
+          [attr.data-testid]="'delivery-legend-' + segment.status"
+        >
+          <span class="h-2.5 w-2.5 rounded-full" [class]="toneDot(segment.tone)"></span>
+          <span class="font-semibold text-slate-600 dark:text-slate-300">{{ segment.label }}</span>
+          <span class="font-heading font-black tabular-nums text-slate-900 dark:text-white">
+            {{ segment.count }}
+          </span>
+          <span class="w-8 text-right font-medium tabular-nums text-slate-400">
+            {{ segment.percent }}%
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
