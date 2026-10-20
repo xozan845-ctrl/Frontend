@@ -72,6 +72,10 @@ async function baselineCommand() {
 
   for (const [suiteId, findings] of Object.entries(sections)) {
     const keys = [...new Set(findings.map((finding) => finding.key))].sort();
+    if (keys.length === 0) {
+      lines.push(`  '${suiteId}': [],`);
+      continue;
+    }
     lines.push(`  '${suiteId}': [`);
     for (const key of keys) lines.push(`    ${quote(key)},`);
     lines.push('  ],');

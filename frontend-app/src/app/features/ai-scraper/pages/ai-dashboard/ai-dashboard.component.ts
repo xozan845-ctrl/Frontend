@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AiConnectionService } from '../../services/ai-connection.service';
+import { AiConnectionStore } from '../../state/ai-connection.store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AiConnectionPanelComponent } from '../../components/ai-connection-panel/ai-connection-panel.component';
 
@@ -15,7 +15,7 @@ import { AiConnectionPanelComponent } from '../../components/ai-connection-panel
   templateUrl: './ai-dashboard.component.html',
 })
 export default class AiDashboardComponent implements OnDestroy {
-  private readonly connection = inject(AiConnectionService);
+  private readonly connection = inject(AiConnectionStore);
   private readonly seo = inject(SeoService);
 
   readonly endpoint = this.connection.endpoint;

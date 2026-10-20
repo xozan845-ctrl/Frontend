@@ -1,7 +1,7 @@
 import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../../../core/services/seo.service';
-import { BILLING_INVOICES } from '../../adapters/fixtures/billing.fixture';
+import { BILLING_INVOICES } from '../../constants/billing.fixtures';
 import { InvoiceFiltersChipsComponent } from '../../components/invoice-filters-chips/invoice-filters-chips.component';
 import { InvoiceListTableComponent } from '../../components/invoice-list-table/invoice-list-table.component';
 import { INVOICE_STATUSES } from '../../constants/billing.constants';

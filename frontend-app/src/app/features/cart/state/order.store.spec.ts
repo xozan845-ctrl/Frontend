@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { OrderStore } from './order.store';
 import { OrderResponse } from '../models/order.model';
+import { ORDER_REPOSITORY } from '../repositories/order.repository';
 
 const order: OrderResponse = {
   id: 'ord-1',
@@ -11,13 +13,18 @@ const order: OrderResponse = {
 };
 
 describe('OrderStore', () => {
+  const orderRepo = { createOrder: vi.fn(() => of(order)) };
+
   const setup = () => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [{ provide: ORDER_REPOSITORY, useValue: orderRepo }],
+    });
     return TestBed.inject(OrderStore);
   };
 
   beforeEach(() => {
     sessionStorage.clear();
+    orderRepo.createOrder.mockReturnValue(of(order));
     TestBed.resetTestingModule();
   });
 
@@ -45,6 +52,17 @@ describe('OrderStore', () => {
 
     const store = setup();
 
+    expect(store.lastOrder()).toEqual(order);
+  });
+
+  it('debe crear la orden y dejarla como última', () => {
+    const store = setup();
+    let result: OrderResponse | undefined;
+
+    store.placeOrder({ usarCarrito: true }).subscribe((created) => (result = created));
+
+    expect(orderRepo.createOrder).toHaveBeenCalledWith({ usarCarrito: true });
+    expect(result).toEqual(order);
     expect(store.lastOrder()).toEqual(order);
   });
 });

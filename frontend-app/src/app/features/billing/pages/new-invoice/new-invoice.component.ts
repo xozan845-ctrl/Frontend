@@ -14,14 +14,14 @@ import {
   BILLING_CLIENTS,
   BILLING_INVOICES,
   BILLING_PRODUCTS,
-} from '../../adapters/fixtures/billing.fixture';
+} from '../../constants/billing.fixtures';
 import { CatalogPickerCardComponent } from '../../components/catalog-picker-card/catalog-picker-card.component';
 import { ClientSearchCardComponent } from '../../components/client-search-card/client-search-card.component';
 import { InvoiceDraftPanelComponent } from '../../components/invoice-draft-panel/invoice-draft-panel.component';
 import type { InvoiceLineQuantityChange } from '../../components/invoice-draft-panel/invoice-draft-panel.types';
 import { InvoiceInfoCardComponent } from '../../components/invoice-info-card/invoice-info-card.component';
 import { InvoiceListTableComponent } from '../../components/invoice-list-table/invoice-list-table.component';
-import { BILLING_STORE_NAME } from '../../constants/billing.constants';
+import { BILLING_STORE_NAME, BILLING_TAX_RATE } from '../../constants/billing.constants';
 import {
   BillingClient,
   BillingProduct,
@@ -109,7 +109,9 @@ export default class NewInvoiceComponent implements OnDestroy {
     });
   });
 
-  readonly totals = computed(() => calculateInvoiceTotals(this.lines(), this.discountPercent()));
+  readonly totals = computed(() =>
+    calculateInvoiceTotals(this.lines(), this.discountPercent(), BILLING_TAX_RATE),
+  );
 
   constructor() {
     this.seoService.setPage(

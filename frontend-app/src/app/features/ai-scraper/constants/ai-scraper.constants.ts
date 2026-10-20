@@ -22,3 +22,10 @@ export const AI_SCRAPER_POLL_MS = 3000;
 
 /** Tope de sondeos antes de rendirse (evita bucles infinitos). */
 export const AI_SCRAPER_POLL_MAX_ATTEMPTS = 200;
+
+/** Sitios públicos de práctica para las sugerencias del chat de IA. */
+export const AI_SCRAPER_PRACTICE_SITES = {
+  catalog: 'https://books.toscrape.com/',
+  articles: 'https://quotes.toscrape.com/',
+  example: 'https://scrapethissite.com/',
+} as const;

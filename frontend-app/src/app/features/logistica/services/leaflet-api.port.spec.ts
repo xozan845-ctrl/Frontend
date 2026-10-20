@@ -1,4 +1,4 @@
-import { resolveLeaflet } from './leaflet-api';
+import { resolveLeaflet } from './leaflet-api.port';
 
 describe('resolveLeaflet', () => {
   it('debe preferir el default cuando el bundler expone la API como CJS', () => {

@@ -13,7 +13,7 @@ import { AI_SCRAPER_KEY_STORAGE } from '../constants/ai-scraper.constants';
 @Injectable({
   providedIn: 'root',
 })
-export class AiConnectionService {
+export class AiConnectionStore {
   private readonly key = signal<string>(this.readStoredKey());
 
   /** API key actual (vacía si no hay). */

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { BILLING_CLIENTS } from '../../adapters/fixtures/billing.fixture';
+import { BILLING_CLIENTS } from '../../constants/billing.fixtures';
 import { ClientSearchCardComponent } from './client-search-card.component';
 
 describe('ClientSearchCardComponent', () => {

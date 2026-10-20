@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
+import { AuthStore } from '../../state/auth.store';
 import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 })
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AUTH_REPOSITORY);
+  private readonly authStore = inject(AuthStore);
   private readonly seoService = inject(SeoService);
 
   readonly form = this.fb.nonNullable.group({
@@ -40,7 +40,7 @@ export class ForgotPasswordComponent {
 
     this.submitting.set(true);
     this.error.set(null);
-    this.authService.resetPassword(this.form.getRawValue().email).subscribe({
+    this.authStore.requestPasswordReset(this.form.getRawValue().email).subscribe({
       next: () => {
         this.submitting.set(false);
         this.sent.set(true);

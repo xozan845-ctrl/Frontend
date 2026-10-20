@@ -4,8 +4,8 @@ import {
   Invoice,
   InvoiceLine,
   calculateInvoiceTotals,
-} from '../../models/billing.model';
-import { PAYMENT_TERM_LABELS } from '../../constants/billing.constants';
+} from '../models/billing.model';
+import { BILLING_TAX_RATE, PAYMENT_TERM_LABELS } from './billing.constants';
 
 /**
  * Datos de presentación del módulo de facturación.
@@ -139,7 +139,7 @@ const buildInvoice = (
     dueAt?: string | null;
   },
 ): Invoice => {
-  const totals = calculateInvoiceTotals(base.lines, base.discountPercent);
+  const totals = calculateInvoiceTotals(base.lines, base.discountPercent, BILLING_TAX_RATE);
   return {
     ...base,
     dueAt: base.dueAt ?? null,

@@ -2,7 +2,7 @@ import { Component, OnDestroy, computed, effect, inject, input } from '@angular/
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../../../core/services/seo.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { BILLING_INVOICES, paymentTermLabel } from '../../adapters/fixtures/billing.fixture';
+import { BILLING_INVOICES, paymentTermLabel } from '../../constants/billing.fixtures';
 import { InvoiceLinesTableComponent } from '../../components/invoice-lines-table/invoice-lines-table.component';
 import { InvoiceStatusBadgeComponent } from '../../components/invoice-status-badge/invoice-status-badge.component';
 import { InvoiceTotalsPanelComponent } from '../../components/invoice-totals-panel/invoice-totals-panel.component';
