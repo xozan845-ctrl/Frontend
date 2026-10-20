@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AiSessionStore } from '../../state/ai-session.store';
+import { AiSessionStore } from '../../state/ai-session/ai-session.store';
 import { AiSession } from '../../models/ai-session.model';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';

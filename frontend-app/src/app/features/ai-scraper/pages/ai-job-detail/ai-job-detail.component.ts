@@ -1,7 +1,7 @@
 import { Component, OnDestroy, effect, inject, input, signal, untracked } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AiJobsStore } from '../../state/ai-jobs.store';
+import { AiJobsStore } from '../../state/ai-jobs/ai-jobs.store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';

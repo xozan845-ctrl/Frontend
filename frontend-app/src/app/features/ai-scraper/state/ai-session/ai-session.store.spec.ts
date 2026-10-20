@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 import { AiSessionStore } from './ai-session.store';
-import { AI_SESSION_REPOSITORY } from '../repositories/ai-session.repository';
-import { AI_JOB_REPOSITORY } from '../repositories/ai-job.repository';
-import { NotificationService } from '../../../core/services/notification.service';
-import { AiSessionDetail } from '../models/ai-session.model';
-import { AiJob } from '../models/ai-job.model';
+import { AI_SESSION_REPOSITORY } from '../../repositories/ai-session.repository';
+import { AI_JOB_REPOSITORY } from '../../repositories/ai-job.repository';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { AiSessionDetail } from '../../models/ai-session.model';
+import { AiJob } from '../../models/ai-job.model';
 
 const DETAIL: AiSessionDetail = {
   id: 'sess-1',

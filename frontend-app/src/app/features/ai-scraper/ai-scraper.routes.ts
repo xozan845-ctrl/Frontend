@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { AiJobsStore } from './state/ai-jobs.store';
-import { AiSessionStore } from './state/ai-session.store';
+import { AiJobsStore } from './state/ai-jobs/ai-jobs.store';
+import { AiSessionStore } from './state/ai-session/ai-session.store';
 import { AI_JOB_REPOSITORY } from './repositories/ai-job.repository';
 import { AI_SESSION_REPOSITORY } from './repositories/ai-session.repository';
 import { AiJobService } from './services/ai-job.service';

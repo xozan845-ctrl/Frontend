@@ -3,7 +3,7 @@ import type {
   AiJobExecution,
   AiJobInteractions,
   AiJobResults,
-} from '../models/ai-job.model';
+} from '../../models/ai-job.model';
 
 export interface AiJobsState {
   items: AiJob[];

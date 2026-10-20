@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiChatComponent from './ai-chat.component';
-import { AiSessionStore } from '../../state/ai-session.store';
+import { AiSessionStore } from '../../state/ai-session/ai-session.store';
 import { AiSession, AiSessionDetail } from '../../models/ai-session.model';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
