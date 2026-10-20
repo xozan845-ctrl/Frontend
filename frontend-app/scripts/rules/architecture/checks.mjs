@@ -169,6 +169,16 @@ export function findLayerViolations() {
       const detail = `→ ${targetRel}`;
       const key = `${rel}|layer|${targetRel}`;
 
+      // Un componente presentacional puede depender de un puerto de
+      // infraestructura (p. ej. el API de Leaflet) por su abstracción.
+      if (
+        source.kind === 'feature' &&
+        source.layer === 'components' &&
+        targetRel.endsWith('.port.ts')
+      ) {
+        continue;
+      }
+
       // Fronteras de feature: sólo por API pública (R-CX-6).
       if (
         (source.kind === 'feature' || source.kind === 'feature-root') &&
@@ -195,7 +205,10 @@ export function findLayerViolations() {
         continue;
       }
       if (source.kind === 'layout' && ['feature', 'feature-root'].includes(target.kind)) {
-        add('R-AR-2', rel, line, `layout/ importa ${target.kind} ${detail}`, key);
+        const isPublicApi = target.kind === 'feature-root' && FEATURE_ROOT_FILES.has(target.file);
+        if (!isPublicApi) {
+          add('R-AR-2', rel, line, `layout/ importa una capa interna ${detail}`, key);
+        }
         continue;
       }
 

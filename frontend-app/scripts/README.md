@@ -29,7 +29,7 @@ que son verificables por máquina.
 Dentro de `features/<feature>/`:
 
 ```
-pages/ · components/        presentación: consumen estado (stores), no puertos/servicios
+pages/ · components/        presentación: consumen estado (stores); components puede usar puertos de infra (*.port.ts)
         │
         ▼
       state/                stores: orquestan el estado a partir de servicios/puertos
@@ -53,11 +53,12 @@ Reglas concretas que impone `architecture-layers`:
 - `state/` no importa `pages/`, `components/` ni `adapters/`.
 - `pages/` no importa `services/`, `repositories/` ni `adapters/`, y no inyecta
   tokens `*_REPOSITORY`/`*_PORT` (aunque lleguen por `public-api`).
-- `components/` (presentacionales) no importa ni inyecta stores, servicios,
-  repositorios ni adapters.
+- `components/` (presentacionales) no importa ni inyecta stores, servicios de
+  dominio, repositorios ni adapters; sí puede depender de un **puerto de
+  infraestructura** (`*.port.ts`, p. ej. el API de Leaflet) por su abstracción.
 - Otro feature sólo se importa por `public-api.ts` / `public-ui.ts`.
 - `HttpClient` sólo se inyecta en `*.service.ts` o `interceptors/`.
-- `core/`, `shared/` y `layout/` no importan `features/`.
+- `core/` y `shared/` no importan `features/`; `layout/` sólo por `public-api.ts`/`public-ui.ts`.
 
 ## Arquitectura
 
