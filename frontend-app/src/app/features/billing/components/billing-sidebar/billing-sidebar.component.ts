@@ -1,17 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-interface BillingNavItem {
-  label: string;
-  icon: string;
-  link: string;
-  testId: string;
-}
-
-interface BillingSoonItem {
-  label: string;
-  icon: string;
-}
+import type { BillingNavItem, BillingSoonItem } from './billing-sidebar.types';
 
 /**
  * Navegación del módulo de facturación (presentacional, `R-SO-8`): replica el

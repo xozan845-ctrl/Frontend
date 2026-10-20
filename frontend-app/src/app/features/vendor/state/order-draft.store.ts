@@ -18,22 +18,10 @@ import {
   OrderDraft,
   OrderDraftInfo,
   OrderDraftLine,
-  VendorOrder,
   VendorProduct,
 } from '../models/vendor-order.model';
 import { VENDOR_ORDER_REPOSITORY } from '../repositories/vendor-order.repository';
-
-export interface OrderDraftState {
-  client: Client | null;
-  info: OrderDraftInfo;
-  lines: OrderDraftLine[];
-  discountPercent: number;
-  observations: string;
-  submitting: boolean;
-  error: string | null;
-  /** Último pedido registrado con éxito; la pantalla lo usa para refrescar recientes. */
-  lastCreatedOrder: VendorOrder | null;
-}
+import type { OrderDraftState } from './vendor.state';
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 999;

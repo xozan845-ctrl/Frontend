@@ -1,16 +1,6 @@
-export interface CompanyInfo {
-  name: string;
-  phone: string;
-  displayPhone: string;
-  email: string;
-  location: string;
-  whatsappMessage: string;
-  socials: {
-    twitter?: string;
-    instagram?: string;
-    github?: string;
-  };
-}
+import type { CompanyInfo } from '../models/company.model';
+
+export type { CompanyInfo } from '../models/company.model';
 
 export const COMPANY_INFO: CompanyInfo = {
   name: 'Quantum Store',

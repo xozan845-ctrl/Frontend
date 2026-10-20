@@ -2,10 +2,7 @@ import { inject, effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Review } from '../models/review.model';
 import { NotificationService } from '../../../core/services/notification.service';
-
-export interface ReviewsState {
-  reviews: Review[];
-}
+import type { ReviewsState } from './product.state';
 
 const REVIEWS_KEY = 'ecom_reviews';
 

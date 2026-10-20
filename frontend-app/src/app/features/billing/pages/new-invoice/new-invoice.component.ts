@@ -17,10 +17,8 @@ import {
 } from '../../adapters/fixtures/billing.fixture';
 import { CatalogPickerCardComponent } from '../../components/catalog-picker-card/catalog-picker-card.component';
 import { ClientSearchCardComponent } from '../../components/client-search-card/client-search-card.component';
-import {
-  InvoiceDraftPanelComponent,
-  InvoiceLineQuantityChange,
-} from '../../components/invoice-draft-panel/invoice-draft-panel.component';
+import { InvoiceDraftPanelComponent } from '../../components/invoice-draft-panel/invoice-draft-panel.component';
+import type { InvoiceLineQuantityChange } from '../../components/invoice-draft-panel/invoice-draft-panel.types';
 import { InvoiceInfoCardComponent } from '../../components/invoice-info-card/invoice-info-card.component';
 import { InvoiceListTableComponent } from '../../components/invoice-list-table/invoice-list-table.component';
 import { BILLING_STORE_NAME } from '../../constants/billing.constants';
@@ -31,11 +29,7 @@ import {
   InvoiceLine,
   calculateInvoiceTotals,
 } from '../../models/billing.model';
-
-interface BillingNotice {
-  tone: 'info' | 'success' | 'warning';
-  text: string;
-}
+import type { BillingNotice } from './new-invoice.types';
 
 const todayISO = (): string => {
   const now = new Date();

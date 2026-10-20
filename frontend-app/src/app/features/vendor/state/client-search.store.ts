@@ -14,16 +14,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { CLIENT_SEARCH_DEBOUNCE_MS } from '../constants/vendor.constants';
 import { Client, CreateClientPayload } from '../models/vendor-order.model';
 import { CLIENT_REPOSITORY } from '../repositories/client.repository';
-
-export interface ClientSearchState {
-  query: string;
-  results: Client[];
-  loading: boolean;
-  error: string | null;
-  creating: boolean;
-  /** Cliente recién creado; el contenedor lo selecciona y luego lo reconoce. */
-  lastCreated: Client | null;
-}
+import type { ClientSearchState } from './vendor.state';
 
 const initialState: ClientSearchState = {
   query: '',

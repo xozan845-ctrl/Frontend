@@ -3,36 +3,14 @@ import { signalStore, withState, withMethods, withComputed, patchState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, of, pipe, timer } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap, take, takeWhile, tap } from 'rxjs/operators';
-import {
-  AiCreateJobInput,
-  AiJob,
-  AiJobExecution,
-  AiJobInteractions,
-  AiJobResults,
-  isAiJobActive,
-} from '../models/ai-job.model';
+import { AiCreateJobInput, isAiJobActive } from '../models/ai-job.model';
 import { AI_JOB_REPOSITORY } from '../repositories/ai-job.repository';
 import { NotificationService } from '../../../core/services/notification.service';
 import {
   AI_SCRAPER_POLL_MAX_ATTEMPTS,
   AI_SCRAPER_POLL_MS,
 } from '../constants/ai-scraper.constants';
-
-export interface AiJobsState {
-  items: AiJob[];
-  nextCursor: string | null;
-  loading: boolean;
-  loadingMore: boolean;
-  error: string | null;
-  statusFilter: string;
-  creating: boolean;
-  selected: AiJob | null;
-  results: AiJobResults | null;
-  execution: AiJobExecution | null;
-  interactions: AiJobInteractions | null;
-  detailLoading: boolean;
-  detailError: string | null;
-}
+import type { AiJobsState } from './ai-jobs.state';
 
 const initialState: AiJobsState = {
   items: [],

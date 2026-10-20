@@ -10,6 +10,7 @@ import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
 } from '../../../core/models/api-response.dto';
+import type { CatalogEntry } from '../models/catalog-entry.model';
 
 const DEFAULT_FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
@@ -162,12 +163,6 @@ export function adaptOfertaFromBackend(raw: unknown, catalog?: Map<string, Catal
     category: entry?.category || 'General',
     stock: Number(oferta.stock ?? 0),
   };
-}
-
-/** Campos del producto de catálogo que se fusionan sobre la oferta. */
-export interface CatalogEntry {
-  description: string;
-  category: string;
 }
 
 /**

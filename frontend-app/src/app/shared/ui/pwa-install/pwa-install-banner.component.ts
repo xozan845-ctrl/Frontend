@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import type { BeforeInstallPromptEvent } from './pwa-install.types';
 
 @Component({
   selector: 'app-pwa-install-banner',
@@ -49,10 +50,4 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
     this.showBanner.set(false);
     localStorage.setItem('ecom_pwa_dismissed', 'true');
   }
-}
-
-// Extend Window event interface for TypeScript
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }

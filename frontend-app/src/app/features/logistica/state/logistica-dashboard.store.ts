@@ -10,15 +10,6 @@ import {
   LOGISTICA_LOAD_DELAY_MS,
 } from '../constants/logistica.constants';
 import {
-  ClientOfDay,
-  Courier,
-  DashboardKpi,
-  DeliverySegment,
-  MapRoute,
-  MapVehicle,
-  RouteOrder,
-} from '../models/logistica.model';
-import {
   LOGISTICA_CLIENTS,
   LOGISTICA_COURIERS,
   LOGISTICA_DELIVERY,
@@ -27,20 +18,7 @@ import {
   LOGISTICA_ROUTES,
   LOGISTICA_VEHICLES,
 } from '../mocks/logistica.mocks';
-
-export interface LogisticaDashboardState {
-  loading: boolean;
-  zoneFilter: string;
-  dateLabel: string;
-  kpis: readonly DashboardKpi[];
-  delivery: readonly DeliverySegment[];
-  deliveryTotal: number;
-  couriers: readonly Courier[];
-  orders: readonly RouteOrder[];
-  clients: readonly ClientOfDay[];
-  routes: readonly MapRoute[];
-  vehicles: readonly MapVehicle[];
-}
+import type { LogisticaDashboardState } from './logistica-dashboard.state';
 
 const initialState: LogisticaDashboardState = {
   loading: false,

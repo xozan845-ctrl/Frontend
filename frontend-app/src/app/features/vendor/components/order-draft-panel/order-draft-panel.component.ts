@@ -2,12 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { OrderDraftLine } from '../../models/vendor-order.model';
 import { OrderLineComponent } from '../order-line/order-line.component';
 import { OrderTotalsComponent } from '../order-totals/order-totals.component';
-
-/** Cantidad nueva de una línea del borrador (el panel resuelve el producto). */
-export interface OrderLineQuantityChange {
-  productId: string;
-  quantity: number;
-}
+import type { OrderLineQuantityChange } from './order-draft-panel.types';
 
 /**
  * Panel "Pedido actual" del POS (presentacional, `R-SO-8`): líneas con

@@ -11,13 +11,7 @@ import {
   takeWhile,
   tap,
 } from 'rxjs/operators';
-import {
-  AiCreateSessionInput,
-  AiSession,
-  AiSessionDetail,
-  AiSessionStatus,
-  isAiSessionSettled,
-} from '../models/ai-session.model';
+import { AiCreateSessionInput, isAiSessionSettled } from '../models/ai-session.model';
 import { isAiJobActive } from '../models/ai-job.model';
 import { AI_SESSION_REPOSITORY } from '../repositories/ai-session.repository';
 import { AI_JOB_REPOSITORY } from '../repositories/ai-job.repository';
@@ -26,18 +20,7 @@ import {
   AI_SCRAPER_POLL_MAX_ATTEMPTS,
   AI_SCRAPER_POLL_MS,
 } from '../constants/ai-scraper.constants';
-
-export interface AiSessionState {
-  sessions: AiSession[];
-  loading: boolean;
-  error: string | null;
-  creating: boolean;
-  current: AiSessionDetail | null;
-  status: AiSessionStatus | null;
-  statusError: string | null;
-  detailLoading: boolean;
-  sending: boolean;
-}
+import type { AiSessionState } from './ai-session.state';
 
 const initialState: AiSessionState = {
   sessions: [],

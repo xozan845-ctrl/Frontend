@@ -1,8 +1,7 @@
 import { Component, input, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SpinnerComponent } from '../spinner/spinner.component';
-
-type EmptyStateVariant = 'default' | 'error' | 'loading' | 'empty' | 'no-results';
+import type { EmptyStateVariant } from './empty-state.types';
 
 @Component({
   selector: 'app-empty-state',

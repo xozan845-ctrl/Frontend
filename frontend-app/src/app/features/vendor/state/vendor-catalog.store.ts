@@ -4,18 +4,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../core/services/notification.service';
-import { VendorProduct } from '../models/vendor-order.model';
 import { VENDOR_PRODUCT_REPOSITORY } from '../repositories/vendor-product.repository';
-
-export interface VendorCatalogState {
-  products: VendorProduct[];
-  loading: boolean;
-  error: string | null;
-  /** Término del buscador del POS (por nombre o código). */
-  query: string;
-  /** Categoría activa; `null` = todas. */
-  category: string | null;
-}
+import type { VendorCatalogState } from './vendor.state';
 
 const initialState: VendorCatalogState = {
   products: [],

@@ -1,11 +1,7 @@
 import { effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { OrderResponse } from '../models/order.model';
-
-/** Última orden creada; alimenta la pantalla de confirmación. */
-export interface OrderState {
-  lastOrder: OrderResponse | null;
-}
+import type { OrderState } from './cart.state';
 
 const STORAGE_KEY = 'ecom_last_order';
 

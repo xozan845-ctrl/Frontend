@@ -3,26 +3,11 @@ import { signalStore, withState, withMethods, withComputed, patchState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, of, pipe, Observable } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { Store } from '../../products/public-api';
-import {
-  CatalogProductOption,
-  OfferDraft,
-  StoreDraft,
-  WIZARD_STEPS,
-} from '../models/store-wizard.model';
+import { OfferDraft, StoreDraft, WIZARD_STEPS } from '../models/store-wizard.model';
 import { STORE_REPOSITORY } from '../repositories/store.repository';
 import { CATALOG_REPOSITORY } from '../repositories/catalog.repository';
 import { NotificationService } from '../../../core/services/notification.service';
-
-export interface StoreWizardState {
-  step: number;
-  loading: boolean;
-  error: string | null;
-  store: Store | null;
-  catalog: CatalogProductOption[];
-  catalogLoading: boolean;
-  publishedCount: number;
-}
+import type { StoreWizardState } from './store-wizard.state';
 
 const initialState: StoreWizardState = {
   step: 1,

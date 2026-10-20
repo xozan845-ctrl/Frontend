@@ -10,19 +10,10 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, firstValueFrom, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { User, LoginCredentials, RegisterData } from '../models/auth.model';
+import { LoginCredentials, RegisterData } from '../models/auth.model';
 import { AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { NotificationService } from '../../../core/services/notification.service';
-
-export interface AuthState {
-  user: User | null;
-  /** Access token: vive solo en memoria (R-SE-1). */
-  token: string | null;
-  /** Refresh token: se persiste en sessionStorage (R-SE-1). */
-  refreshToken: string | null;
-  loading: boolean;
-  error: string | null;
-}
+import type { AuthState } from './auth.state';
 
 const initialState: AuthState = {
   user: null,

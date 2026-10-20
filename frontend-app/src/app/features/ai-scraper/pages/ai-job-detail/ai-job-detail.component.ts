@@ -5,8 +5,7 @@ import { AiJobsStore } from '../../state/ai-jobs.store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
-
-type DetailTab = 'results' | 'execution' | 'ai';
+import type { DetailTab } from './ai-job-detail.types';
 
 /** Detalle de un job: resultados, ejecución y llamadas de IA (`R-SO-8`). */
 @Component({

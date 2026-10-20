@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
 import { formatCurrency } from '../../../core/config/currency.config';
-
-interface TrustBadge {
-  icon: string;
-  title: string;
-  subtitle: string;
-  color: string;
-}
+import type { TrustBadge } from './trust-badges.types';
 
 @Component({
   selector: 'app-trust-badges',

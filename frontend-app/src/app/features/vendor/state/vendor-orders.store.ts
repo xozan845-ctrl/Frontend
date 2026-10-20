@@ -13,26 +13,9 @@ import { EMPTY, fromEvent, pipe, timer } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../core/services/notification.service';
 import { VENDOR_POLL_INTERVAL_MS } from '../constants/vendor.constants';
-import { OrderStatus, VendorOrder } from '../models/vendor-order.model';
+import { OrderStatus } from '../models/vendor-order.model';
 import { VENDOR_ORDER_REPOSITORY } from '../repositories/vendor-order.repository';
-
-export interface VendorOrdersState {
-  orders: VendorOrder[];
-  loading: boolean;
-  error: string | null;
-  /** Marca de tiempo (ms) de la última carga lograda; alimenta "Actualizado …". */
-  lastUpdatedAt: number | null;
-  /** Modo "en vivo": sondeo activo que se pausa con la pestaña oculta. */
-  live: boolean;
-  /** Filtro por estado de la lista completa; `null` equivale a "Todas". */
-  statusFilter: OrderStatus | null;
-  /** Pedido abierto en la página de detalle (`pedidos/:id`). */
-  selectedOrder: VendorOrder | null;
-  selectedLoading: boolean;
-  selectedError: string | null;
-  /** Cambio de estado en curso; deshabilita las acciones del detalle. */
-  updatingStatus: boolean;
-}
+import type { VendorOrdersState, VendorTodayKpis } from './vendor.state';
 
 const initialState: VendorOrdersState = {
   orders: [],
@@ -61,18 +44,6 @@ function isDocumentHidden(): boolean {
  * (`R-AR-10`). Los derivados de la lista (filtro y conteos) viven en
  * `withComputed` (`R-ST-3`).
  */
-
-/** KPIs del inicio del panel: venta de hoy y trabajo por atender. */
-export interface VendorTodayKpis {
-  /** Suma de los pedidos creados hoy, sin contar cancelados. */
-  soldToday: number;
-  /** Pedidos creados hoy (cualquier estado). */
-  ordersToday: number;
-  /** Pedidos pendientes por atender (histórico cargado). */
-  pending: number;
-  /** Pedidos en proceso (histórico cargado). */
-  inProgress: number;
-}
 
 /** ¿La marca ISO cae en el día local de `today`? (vacía o inválida → false). */
 function isSameLocalDay(iso: string, today: Date): boolean {
