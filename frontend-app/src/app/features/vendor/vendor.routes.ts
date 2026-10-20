@@ -11,10 +11,14 @@ import { OrderDraftStore } from './state/order-draft.store';
 import { VendorCatalogStore } from './state/vendor-catalog.store';
 import { VendorOrdersStore } from './state/vendor-orders.store';
 
-/** Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO (`R-UX-6`). */
+/**
+ * Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO
+ * (`R-UX-6`). La página vive en `shared/ui` porque también la usa logística
+ * (`R-SH-3`).
+ */
 const comingSoonRoute = (title: string, description: string, icon: string): Route => ({
-  loadComponent: () => import('./pages/coming-soon/coming-soon.component'),
-  data: { title, description, icon },
+  loadComponent: () => import('../../shared/ui/coming-soon/coming-soon.component'),
+  data: { title, description, icon, context: 'Panel del vendedor' },
 });
 
 /**

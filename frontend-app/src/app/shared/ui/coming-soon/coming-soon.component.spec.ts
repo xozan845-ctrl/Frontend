@@ -1,18 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import ComingSoonComponent from './coming-soon.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../core/services/seo.service';
 
 describe('ComingSoonComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };
 
-  const setup = async (title = 'Reportes') => {
+  const setup = async (title = 'Reportes', context = 'Panel del vendedor') => {
     await TestBed.configureTestingModule({
       imports: [ComingSoonComponent],
       providers: [provideRouter([]), { provide: SeoService, useValue: seo }],
     }).compileComponents();
     const fixture = TestBed.createComponent(ComingSoonComponent);
     fixture.componentRef.setInput('title', title);
+    fixture.componentRef.setInput('context', context);
     fixture.detectChanges();
     return fixture;
   };
@@ -28,10 +29,11 @@ describe('ComingSoonComponent', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Reportes');
     expect(text).toContain('En construcción');
+    expect(fixture.nativeElement.querySelector('[data-testid="coming-soon"]')).not.toBeNull();
   });
 
-  it('debe aplicar el SEO de la sección y restaurarlo al salir (R-UX-6)', async () => {
-    const fixture = await setup('Inventario');
+  it('debe aplicar el SEO de la sección con su módulo y restaurarlo al salir (R-UX-6)', async () => {
+    const fixture = await setup('Inventario', 'Panel del vendedor');
 
     expect(seo.setPage).toHaveBeenCalledWith('Inventario — Panel del vendedor', expect.any(String));
 
