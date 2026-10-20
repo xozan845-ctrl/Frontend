@@ -556,3 +556,47 @@ contexto y consecuencias.
   La ruta de facturación sigue sin guard en la fase visual; al conectar la lógica
   se protegerá con un guard que acepte vendedor/facturador (R-SE-6). Revertir es
   quitar el enlace del navbar y la intención `biller` del formulario.
+
+## ADR-25: Módulo de logística visual (tablero de rutas y entregas)
+
+- **Fecha**: 2026-10-20
+- **Estado**: Aceptado — **fase visual** (la lógica de rutas y entregas queda
+  para una fase posterior)
+- **Contexto**: se necesita una superficie de **logística** para monitorear
+  clientes, rutas, repartidores y entregas. Core Engine aún no expone endpoints
+  de rutas, repartidores ni entregas, y el pedido explícito es construir primero
+  el **diseño** con fidelidad al boceto aprobado. El lenguaje visual es el mismo
+  del panel del vendedor (ADR-20) y de facturación (ADR-23): shell con sidebar
+  oscuro, tarjetas, chips y tablas.
+- **Decisión**:
+  - Crear el feature **`features/logistica/`** cargado de forma perezosa bajo
+    `/logistica` (R-AR-12, R-LZ-1), con shell propio y entrada visible en el
+    navbar (desktop y móvil).
+  - **Rutas**: `/logistica/dashboard` (tablero) y las secciones del sidebar
+    (`mapa-clientes`, `rutas`, `pedidos`, `repartidores`, `zonas`,
+    `incidencias`, `reportes`, `configuracion`) como páginas "En construcción"
+    reales (R-UX-1) con SEO propio (R-UX-6). `''` redirige a `dashboard`.
+  - **Mapa**: Leaflet 1.9 + teselas de **OpenStreetMap** (R-SE-7: proveedor
+    externo justificado; sin API key ni datos de usuario en la URL). El JS viaja
+    en el chunk lazy del tablero y el CSS se carga como asset al montar el panel,
+    para no tocar el bundle inicial (R-PF-1). La CSP de `index.html` y
+    `nginx.conf` autoriza únicamente `tile.openstreetmap.org` en `img-src`.
+  - **Datos de demostración**: `mocks/logistica.mocks.ts` replica los valores
+    del boceto; `LogisticaDashboardStore` (provisto en la ruta, ADR-21) simula la
+    latencia de carga, expone estados de carga (R-UX-1) y deriva filtros y
+    totales en `withComputed` (R-ST-3). El filtro de zona y la jornada son
+    funcionales; el resto de acciones son visuales.
+  - **Presentación pura**: componentes _dumb_ con `input`/`output` y
+    `data-testid` (R-SO-8, R-CP-2), con specs de componente y de store. La página
+    "En construcción" se promueve a `shared/ui/coming-soon/` porque ahora tiene
+    dos consumidores reales (vendor y logística, R-SH-3).
+- **Consecuencias**: el módulo es navegable y revisable sin backend; al conectar
+  la lógica se sustituyen los mocks por puertos HTTP y se protege con el guard
+  correspondiente (R-SE-6). El CSS global de Tailwind crece ~5 kB y el bundle
+  inicial queda en **507.72 kB**, por encima del presupuesto de aviso de 500 kB
+  (ya excedido en `main` con 501.04 kB); el aviso no bloquea el build (el error
+  está en 1 MB) y el recorte del inicial se registra como deuda aparte para no
+  mezclar un refactor global con este módulo (R-IA-6). Revertir es retirar la
+  ruta `/logistica`, el enlace del navbar y el feature.
+
+---

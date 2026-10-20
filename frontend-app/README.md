@@ -21,6 +21,7 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 - **Crear tienda (`/crear-tienda`)**: asistente guiado para vendedores (cuenta → tienda → productos → listo, ADR-16).
 - **Panel del vendedor (`/vendedor`, ADR-20)**: superficie de trabajo del vendedor con sidebar propio; visible para cuentas de rol vendedor. Lanzadas: **Inicio** (KPIs del día y accesos rápidos, `/vendedor/inicio`), **Nuevo pedido** (POS con clientes, catálogo y "Pedidos recientes" en vivo por sondeo, `/vendedor/ventas/nuevo`), **Pedidos** (lista con filtro por estado y detalle con cambio de estado, `/vendedor/pedidos`) y **Clientes** (búsqueda por nombre/código/teléfono y alta rápida, `/vendedor/clientes`); el resto (Productos, Inventario, Reportes, Ajustes, Ayuda) en estado "En construcción".
 - **Facturación (`/facturacion`, ADR-23)**: módulo visual de facturación con shell propio (sidebar oscuro), **Nueva factura** (cliente, información, catálogo y panel de la factura actual con IVA 15 %), **Facturas** (listado con filtro por estado) y **detalle imprimible** del comprobante. En esta fase usa datos de presentación; la lógica de emisión llega con los stores y puertos del feature. El header incluye **Facturación**: sin sesión abre el alta de **cuenta de facturador** (`/register?rol=biller`, ADR-24) y con sesión entra al módulo.
+- **Logística (`/logistica`, ADR-25)**: tablero visual de rutas y entregas con shell propio (sidebar oscuro): KPIs del día, **mapa de clientes y rutas** sobre OpenStreetMap (Leaflet), estado de entregas, repartidores activos y tablas de **pedidos en ruta** y **clientes del día**. El filtro por zona y la jornada son funcionales; las secciones restantes (mapa de clientes, rutas, pedidos, repartidores, zonas, incidencias, reportes, configuración) están "En construcción". En esta fase usa datos de demostración.
 - **Lista de Deseos (`/tienda/:storeId/wishlist`)**: favoritos persistidos localmente.
 - **Planes (`/plans`)**: selección de membresías.
 - **Scraping con IA (`/ia`)**: feature independiente que consume el backend `ai_scraper_executor` (ADR-18): crear/supervisar **jobs** y **chat** por sesión (URL → radiografía → instrucciones → resultados).
@@ -30,16 +31,17 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 
 ## 🛠️ Tecnologías
 
-| Tecnología         | Descripción                                                        |
-| :----------------- | :----------------------------------------------------------------- |
-| **Angular 22**     | Framework principal (standalone components, lazy loading, signals) |
-| **NgRx Signals**   | Gestión de estado reactiva (`@ngrx/signals`)                       |
-| **Tailwind CSS 4** | Estilos utility-first con tokens propios (`surface`, `accent`)     |
-| **Vitest**         | Runner de pruebas unitarias y de componentes                       |
-| **Playwright**     | Pruebas E2E de los flujos críticos                                 |
-| **ESLint**         | Lint (incluye `templateAccessibility`)                             |
-| **Prettier**       | Formato de código (`.prettierrc`)                                  |
-| **TypeScript 6**   | Tipado estático                                                    |
+| Tecnología         | Descripción                                                          |
+| :----------------- | :------------------------------------------------------------------- |
+| **Angular 22**     | Framework principal (standalone components, lazy loading, signals)   |
+| **NgRx Signals**   | Gestión de estado reactiva (`@ngrx/signals`)                         |
+| **Tailwind CSS 4** | Estilos utility-first con tokens propios (`surface`, `accent`)       |
+| **Leaflet**        | Mapa de rutas sobre OpenStreetMap en el módulo de logística (ADR-25) |
+| **Vitest**         | Runner de pruebas unitarias y de componentes                         |
+| **Playwright**     | Pruebas E2E de los flujos críticos                                   |
+| **ESLint**         | Lint (incluye `templateAccessibility`)                               |
+| **Prettier**       | Formato de código (`.prettierrc`)                                    |
+| **TypeScript 6**   | Tipado estático                                                      |
 
 ---
 
@@ -123,6 +125,7 @@ src/
     │   ├── cart/                 # pages/cart-view, pages/checkout, pages/confirmation, state, services, repositories, adapters
     │   ├── billing/              # facturación (ADR-23): shell + sidebar lazy, pages (nueva factura, facturas, detalle), components, models, adapters/fixtures
     │   ├── home/                 # pages/home, pages/store-entry (raíz multi-tienda), pages/not-found
+    │   ├── logistica/            # tablero de rutas y entregas (ADR-25): shell + sidebar lazy, dashboard, mapa Leaflet, store y mocks
     │   ├── plans/                # pages/plans
     │   ├── products/             # pages/, components/, state, services, repositories, adapters, models
     │   ├── stores/               # pages/create-store (asistente), components/, state, services, repositories, adapters, models
