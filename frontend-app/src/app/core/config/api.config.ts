@@ -1,19 +1,6 @@
-export interface ApiEndpointsConfig {
-  products: string;
-  categories: string;
-  storefront: string;
-  auth: string;
-  orders: string;
-  cart: string;
-  vendor: string;
-}
+import type { ApiConfiguration } from '../models/api-config.model';
 
-export interface ApiConfiguration {
-  dataSource: 'api' | 'mock';
-  authType: 'bearer' | 'cookie';
-  withCredentials?: boolean;
-  endpoints: ApiEndpointsConfig;
-}
+export type { ApiConfiguration, ApiEndpointsConfig } from '../models/api-config.model';
 
 export const DEFAULT_API_CONFIG: ApiConfiguration = {
   dataSource: 'api',

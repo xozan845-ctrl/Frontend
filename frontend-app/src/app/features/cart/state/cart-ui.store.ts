@@ -1,8 +1,5 @@
 import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
-
-export interface CartUiState {
-  isSidebarOpen: boolean;
-}
+import type { CartUiState } from './cart.state';
 
 const initialState: CartUiState = { isSidebarOpen: false };
 

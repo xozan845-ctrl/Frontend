@@ -1,12 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-interface LogisticaNavItem {
-  label: string;
-  icon: string;
-  link: string;
-  testId: string;
-}
+import type { LogisticaNavItem } from './logistica-sidebar.types';
 
 /**
  * Navegación del módulo de logística (presentacional, `R-SO-8`): replica el

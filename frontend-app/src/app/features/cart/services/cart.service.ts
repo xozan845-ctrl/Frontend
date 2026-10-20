@@ -7,11 +7,7 @@ import { toUserMessage } from '../../../core/models/api-error';
 import { CartItem } from '../models/cart.model';
 import { CartRepository } from '../repositories/cart.repository';
 import { adaptCartFromBackend } from '../adapters/cart.adapter';
-
-interface MockItem {
-  ofertaId: string;
-  quantity: number;
-}
+import type { MockItem } from '../models/mock-item.model';
 
 @Injectable({
   providedIn: 'root',

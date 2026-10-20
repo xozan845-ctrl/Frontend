@@ -3,27 +3,10 @@ import { signalStore, withState, withMethods, withComputed, patchState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { Product } from '../models/product.model';
-import { Store } from '../models/store.model';
 import { PRODUCT_REPOSITORY } from '../repositories/product.repository';
 import { NotificationService } from '../../../core/services/notification.service';
 import { FILTER_CATEGORIES } from '../constants/categories.constants';
-
-export interface ProductState {
-  /** Tienda activa (resuelta por URL); `null` fuera del storefront. */
-  store: Store | null;
-  storeId: string | null;
-  products: Product[];
-  selectedProduct: Product | null;
-  loading: boolean;
-  error: string | null;
-  selectedCategory: string;
-  priceMin: number | null;
-  priceMax: number | null;
-  sortOption: string;
-  currentPage: number;
-  pageSize: number;
-}
+import type { ProductState } from './product.state';
 
 const initialState: ProductState = {
   store: null,

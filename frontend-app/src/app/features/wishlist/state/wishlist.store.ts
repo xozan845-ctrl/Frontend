@@ -8,10 +8,7 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import type { Product } from '../../products/public-api';
-
-export interface WishlistState {
-  items: Product[];
-}
+import type { WishlistState } from './wishlist.state';
 
 const WISHLIST_KEY = 'ecom_wishlist';
 

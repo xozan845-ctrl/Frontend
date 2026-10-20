@@ -1,10 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { ROUTE_TONE_CLASSES } from '../../constants/logistica.constants';
 import { ClientOfDay } from '../../models/logistica.model';
-
-interface ClientRow extends ClientOfDay {
-  whatsappUrl: string;
-}
+import type { ClientRow } from './clients-table.types';
 
 /** Construye el enlace de WhatsApp a partir del teléfono (`R-SE-7`). */
 export function whatsappUrl(phone: string): string {

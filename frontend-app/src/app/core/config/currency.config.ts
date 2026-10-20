@@ -5,12 +5,9 @@
  * debe mostrarlos con el símbolo y separadores locales (`C$1,200.00`). Vive en
  * `core/` porque lo consumen tanto `shared/` (pipe) como `core/` (SEO).
  */
-export interface CurrencyConfig {
-  /** Código ISO 4217. */
-  code: string;
-  /** Locale BCP 47 usado para símbolo y separadores. */
-  locale: string;
-}
+import type { CurrencyConfig } from '../models/currency-config.model';
+
+export type { CurrencyConfig } from '../models/currency-config.model';
 
 export const CURRENCY: CurrencyConfig = {
   code: 'NIO',

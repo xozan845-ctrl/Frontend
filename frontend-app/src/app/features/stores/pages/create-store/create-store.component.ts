@@ -1,12 +1,6 @@
 import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard.store';
@@ -15,12 +9,7 @@ import { CreateStoreStepperComponent } from '../../components/create-store-stepp
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SeoService } from '../../../../core/services/seo.service';
-
-type ProductRow = FormGroup<{
-  productId: FormControl<string>;
-  selected: FormControl<boolean>;
-  margin: FormControl<number>;
-}>;
+import type { ProductRow } from './create-store.types';
 
 /**
  * Asistente para crear la tienda del vendedor, en 4 pasos: cuenta → tienda →

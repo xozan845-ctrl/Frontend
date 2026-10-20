@@ -13,12 +13,7 @@ import {
 } from '../../constants/vendor.constants';
 import { OrderLine, OrderStatus } from '../../models/vendor-order.model';
 import { VendorOrdersStore } from '../../state/vendor-orders.store';
-
-/** Paso del avance del pedido para la línea de tiempo (estados finales aparte). */
-interface TimelineStep {
-  status: OrderStatus;
-  label: string;
-}
+import type { TimelineStep } from './order-detail.types';
 
 /**
  * Página "Detalle del pedido" (`pedidos/:id`, ADR-20): resumen, líneas con

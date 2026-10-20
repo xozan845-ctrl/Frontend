@@ -2,12 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { InvoiceLine, invoiceLineTotal } from '../../models/billing.model';
 import { InvoiceTotalsPanelComponent } from '../invoice-totals-panel/invoice-totals-panel.component';
-
-/** Cantidad nueva de una línea (el panel deja el producto en la línea). */
-export interface InvoiceLineQuantityChange {
-  productId: string;
-  quantity: number;
-}
+import type { InvoiceLineQuantityChange } from './invoice-draft-panel.types';
 
 /**
  * Panel "Factura actual" (presentacional, `R-SO-8`): líneas con steppers,

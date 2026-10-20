@@ -1,7 +1,8 @@
 import { InjectionToken } from '@angular/core';
 import * as LeafletNamespace from 'leaflet';
+import type { LeafletApi } from './leaflet-api.types';
 
-export type LeafletApi = typeof LeafletNamespace;
+export type { LeafletApi } from './leaflet-api.types';
 
 /**
  * Resuelve la API de Leaflet sorteando el interop CJS/ESM: esbuild la expone

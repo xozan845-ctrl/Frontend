@@ -7,6 +7,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiChatMessageComponent } from '../../components/ai-chat-message/ai-chat-message.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
+import type { ChatSuggestion, SessionGroup } from './ai-chat.types';
 
 /** Parsea headers opcionales (JSON `{ "Authorization": "Bearer x" }`). */
 function parseHeaders(raw: string): Record<string, string> | null {
@@ -23,21 +24,6 @@ function parseHeaders(raw: string): Record<string, string> | null {
   } catch {
     return null;
   }
-}
-
-/** Sugerencia del estado vacío: rellena la URL con un sitio público de práctica. */
-interface ChatSuggestion {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  url: string;
-}
-
-/** Grupo del historial por antigüedad. */
-interface SessionGroup {
-  label: string;
-  items: AiSession[];
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;

@@ -15,12 +15,7 @@ import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-
-/** Fragmento de texto para resaltar sin concatenar HTML (R-SE-3). */
-interface HighlightPart {
-  value: string;
-  matched: boolean;
-}
+import type { HighlightPart } from './search-autocomplete.types';
 
 @Component({
   selector: 'app-search-autocomplete',

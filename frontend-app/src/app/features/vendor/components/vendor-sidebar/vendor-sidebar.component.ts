@@ -1,12 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-interface VendorNavItem {
-  label: string;
-  icon: string;
-  link: string;
-  testId: string;
-}
+import type { VendorNavItem } from './vendor-sidebar.types';
 
 /**
  * Navegación del panel del vendedor (presentacional, `R-SO-8`): pinta las

@@ -1,12 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { ROUTE_TONE_CLASSES } from '../../constants/logistica.constants';
 import { DeliverySegment, RouteTone } from '../../models/logistica.model';
-
-interface DonutArc extends DeliverySegment {
-  color: string;
-  dash: string;
-  offset: number;
-}
+import type { DonutArc } from './deliveries-donut.types';
 
 const RADIUS = 54;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
