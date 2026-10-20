@@ -11,6 +11,7 @@ y se sirve con nginx (Docker) en Dockploy.
 - **Decisiones de arquitectura (ADR):** [`frontend-app/docs/decisiones.md`](./frontend-app/docs/decisiones.md)
 - **Estado y auditoría:** [`frontend-app/docs/rules/_meta/AUDIT.md`](./frontend-app/docs/rules/_meta/AUDIT.md)
 - **Despliegue (Docker + nginx + Dockploy):** [`frontend-app/docs/dockploy-setup.md`](./frontend-app/docs/dockploy-setup.md)
+- **Despliegue staging (Firebase Hosting, gratis):** [`frontend-app/docs/firebase-hosting-setup.md`](./frontend-app/docs/firebase-hosting-setup.md)
 
 ## Estructura del código
 
