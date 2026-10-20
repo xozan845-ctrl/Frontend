@@ -1,0 +1,95 @@
+/**
+ * config/project.mjs — Frontend (Quantum Store)
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Datos y política específicos de ESTE proyecto para el motor de reglas
+ * (`scripts/engine/`). Es la capa de configuración: solo datos, sin lógica del
+ * motor. Al portar el motor a otro repo Angular se edita este archivo (y
+ * `manifest.mjs` + `baseline.mjs`); `scripts/engine/` no se toca.
+ * ──────────────────────────────────────────────────────────────────────────────
+ */
+
+/** Rama principal del repositorio. */
+export const MAIN_BRANCH = 'main';
+
+/** Árbol normativo de reglas (lo lee el motor para el reporte de cobertura). */
+export const RULES_DIR = 'docs/rules';
+
+/** Raíz del código Angular, relativa a `frontend-app/`. */
+export const APP_SRC_DIR = 'src/app';
+
+/**
+ * Archivos que SÍ pueden declarar `interface`/`type`/`enum`.
+ * El resto son archivos de implementación: los tipos deben vivir aparte.
+ */
+export const TYPE_DECLARATION_FILE_PATTERNS = [
+  /\/models\//,
+  /\.model\.ts$/,
+  /\.dto\.ts$/,
+  /\.types\.ts$/,
+  /\.port\.ts$/,
+  /\.state\.ts$/,
+  /\.repository\.ts$/,
+  /\.spec\.ts$/,
+  /public-api\.ts$/,
+  /public-ui\.ts$/,
+];
+
+/**
+ * Capas de un feature (`features/<feature>/<capa>/`). Cada capa declara qué
+ * capas del MISMO feature puede importar. `null` = sin restricción dentro del
+ * feature (sujeto a las reglas globales).
+ */
+export const FEATURE_LAYER_DEPENDENCIES = {
+  models: new Set(['models']),
+  repositories: new Set(['models', 'repositories']),
+  adapters: new Set(['models', 'adapters']),
+  services: new Set(['models', 'repositories', 'adapters', 'services', 'constants']),
+  state: new Set(['models', 'repositories', 'services', 'state', 'constants']),
+  pages: new Set([
+    'models',
+    'state',
+    'pages',
+    'components',
+    'constants',
+    'guards',
+    'interceptors',
+    'resolvers',
+  ]),
+  components: new Set(['models', 'components', 'constants']),
+  guards: new Set(['models', 'services', 'repositories', 'state', 'guards']),
+  interceptors: new Set([
+    'models',
+    'services',
+    'repositories',
+    'state',
+    'guards',
+    'constants',
+    'interceptors',
+  ]),
+  resolvers: new Set(['models', 'services', 'repositories', 'state', 'resolvers']),
+  constants: new Set(['models', 'constants']),
+  mocks: new Set(['models', 'mocks', 'constants']),
+};
+
+/** Ficheros raíz de un feature que se consideran capa `root`. */
+export const FEATURE_ROOT_FILES = new Set(['public-api.ts', 'public-ui.ts']);
+
+/** Ficheros de composición exentos de las reglas de capas. */
+export const COMPOSITION_FILES = new Set(['src/app/app.config.ts', 'src/app/app.routes.ts']);
+
+/** Ficheros donde está permitido inyectar `HttpClient` (R-AR-8). */
+export const HTTP_CLIENT_ALLOWED = [
+  /\.service\.ts$/,
+  /\/services\//,
+  /\/interceptors\//,
+  /\.spec\.ts$/,
+];
+
+/** Archivos de composición de rutas: pueden importar guards de otro feature. */
+export const ROUTES_FILE = /(^|\/)[^/]+\.routes\.ts$/;
+
+/** Hosts/enlaces no-API permitidos sin pasar por configuración. */
+export const HARDCODED_URL_ALLOWLIST = [/^https:\/\/wa\.me\//, /^https:\/\/www\.w3\.org\//];
+
+/** Prefijos de imports externos permitidos en `models/` (R-CX-4: dominio puro). */
+export const MODEL_ALLOWED_EXTERNAL = [];
