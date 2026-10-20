@@ -77,6 +77,19 @@
           Facturación
         </a>
 
+        <!-- Logística (ADR-25): tablero de rutas y entregas -->
+        <a
+          routerLink="/logistica/dashboard"
+          routerLinkActive="text-accent-600 dark:text-accent-400"
+          data-testid="navbar-logistica-link"
+          class="relative group text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+        >
+          Logística
+          <span
+            class="after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-accent-600 after:transition-all after:duration-300 group-hover:after:w-full after:rounded-full"
+          ></span>
+        </a>
+
         <!-- Theme Toggle -->
         <button
           (click)="toggleTheme()"
@@ -277,6 +290,15 @@
         class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
       >
         Facturación
+      </a>
+      <a
+        routerLink="/logistica/dashboard"
+        routerLinkActive="text-accent-600 dark:text-accent-400"
+        data-testid="navbar-logistica-link-mobile"
+        (click)="isMobileMenuOpen.set(false)"
+        class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+      >
+        Logística
       </a>
 
       <div class="border-t border-slate-100 dark:border-surface-700 pt-6">
