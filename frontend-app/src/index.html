@@ -2,9 +2,15 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
+    <!-- CSP estricta (R-SE-9). El hash sha256 autoriza el único script inline
+         que genera Angular (el "swap" de CSS crítico de Beasties:
+         link[data-beasties-media].media = 'all'). Si al actualizar Angular
+         cambia ese snippet, los estilos dejarán de aplicarse; recalcula el hash
+         con el error de la consola del navegador o con el comando documentado en
+         docs/firebase-hosting-setup.md (§3). -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com https://*.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://api.kbcoleccion.com http://localhost:8080 http://localhost:3000; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'sha256-LMY6wYoFV9I4wWzxaq1N/dTpl4iurQktw706UCHK3vM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://images.unsplash.com https://*.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org; connect-src 'self' https://api.kbcoleccion.com http://localhost:8080 http://localhost:3000; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <title>Quantum Store</title>
     <base href="/" />
