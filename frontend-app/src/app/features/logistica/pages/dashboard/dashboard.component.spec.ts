@@ -1,8 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SeoService } from '../../../../core/services/seo.service';
+import { LEAFLET_API, LeafletApi } from '../../services/leaflet-api';
 import { LogisticaDashboardStore } from '../../state/logistica-dashboard.store';
 import LogisticaDashboardComponent from './dashboard.component';
+
+function createLeafletMock() {
+  const markerInstance = { addTo: vi.fn(), bindTooltip: vi.fn() };
+  markerInstance.addTo.mockReturnValue(markerInstance);
+  markerInstance.bindTooltip.mockReturnValue(markerInstance);
+
+  const layerGroupInstance = { addTo: vi.fn(), clearLayers: vi.fn() };
+  layerGroupInstance.addTo.mockReturnValue(layerGroupInstance);
+
+  const mapInstance = {
+    zoomIn: vi.fn(),
+    zoomOut: vi.fn(),
+    setView: vi.fn(),
+    remove: vi.fn(),
+  };
+
+  return {
+    map: vi.fn(() => mapInstance),
+    tileLayer: vi.fn(() => ({ addTo: vi.fn() })),
+    polyline: vi.fn(() => ({ addTo: vi.fn() })),
+    marker: vi.fn(() => markerInstance),
+    divIcon: vi.fn(() => ({})),
+    layerGroup: vi.fn(() => layerGroupInstance),
+    control: { attribution: vi.fn(() => ({ addTo: vi.fn() })) },
+  };
+}
 
 describe('LogisticaDashboardComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };
@@ -13,6 +40,7 @@ describe('LogisticaDashboardComponent', () => {
       providers: [
         provideRouter([]),
         LogisticaDashboardStore,
+        { provide: LEAFLET_API, useValue: createLeafletMock() as unknown as LeafletApi },
         { provide: SeoService, useValue: seo },
       ],
     }).compileComponents();

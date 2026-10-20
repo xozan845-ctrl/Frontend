@@ -109,6 +109,11 @@
 
   <div class="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
     <div class="flex min-w-0 flex-col gap-5">
+      <app-logistica-map-panel
+        [routes]="store.routes()"
+        [vehicles]="store.vehicles()"
+        [loading]="store.loading()"
+      />
       <app-logistica-orders-table [orders]="store.filteredOrders()" [loading]="store.loading()" />
     </div>
 
