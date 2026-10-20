@@ -19,10 +19,10 @@ casi todas las demás.
 
 ## Mapa de IDs
 
-| Prefijo  | Rango | Archivo              | Ámbito                                                         |
-| -------- | ----- | -------------------- | -------------------------------------------------------------- |
-| `R-AR-*` | 1–13  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas por feature y ciclo de vida |
-| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits              |
+| Prefijo  | Rango | Archivo              | Ámbito                                                                      |
+| -------- | ----- | -------------------- | --------------------------------------------------------------------------- |
+| `R-AR-*` | 1–14  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas por feature, ciclo de vida y empaquetado |
+| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits                           |
 
 ## Estructura por capas (ADR-12)
 
