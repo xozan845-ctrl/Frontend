@@ -23,10 +23,11 @@ almacenamiento y mensajes de commit en `frontend-app/`.
 
 ## Tipos y datos
 
-| ID      | Regla                                                                                                                                                                                                                                                                                    |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R-NC-9  | **Modelo de dominio vs DTO de backend**: el dominio en `models/*.model.ts` (PascalCase, sin envelope). El shape tolerante del backend en `models/*.dto.ts` con sufijo `Backend...DTO` (`BackendProductDTO`); prohibido usar un DTO como tipo de dominio o exponerlo a los componentes.   |
-| R-NC-10 | **Sin `any`**: prohibido `any` explícito o implícito en modelos, adapters y servicios. Las entradas no confiables se tipan `unknown` y se estrechan con guards/narrowing. Deuda conocida: ninguna; los adapters vigentes normalizan `unknown` sin `Record<string, any>` (12ª auditoría). |
+| ID      | Regla                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R-NC-9  | **Modelo de dominio vs DTO de backend**: el dominio en `models/*.model.ts` (PascalCase, sin envelope). El shape tolerante del backend en `models/*.dto.ts` con sufijo `Backend...DTO` (`BackendProductDTO`); prohibido usar un DTO como tipo de dominio o exponerlo a los componentes.                                                                                                                                |
+| R-NC-10 | **Sin `any`**: prohibido `any` explícito o implícito en modelos, adapters y servicios. Las entradas no confiables se tipan `unknown` y se estrechan con guards/narrowing. Deuda conocida: ninguna; los adapters vigentes normalizan `unknown` sin `Record<string, any>` (12ª auditoría).                                                                                                                              |
+| R-NC-13 | **Declaraciones de tipo en archivos dedicados**: `interface`, `type X =` y `enum` viven en `models/` (`*.model.ts`, `*.dto.ts`) o en archivos de sólo tipos (`*.types.ts`, `*.state.ts`, `*.port.ts`, `*.repository.ts`); prohibido declararlos dentro de services, stores, adapters, páginas, componentes, constantes o configuración. Excepción: un tipo derivado de una constante (`type X = (typeof C)[number]`). |
 
 ## Claves y rutas
 
@@ -35,7 +36,7 @@ almacenamiento y mensajes de commit en `frontend-app/`.
 | R-NC-11 | **Claves de `localStorage` con prefijo `ecom_`** (`ecom_cart_items`, `ecom_auth_data`, `ecom_wishlist`, `ecom_recently_viewed`); prohibido dispersar claves nuevas sin prefijo (la clave histórica `theme` migró a `ecom_theme`; ver AUDIT).                                                                                              |
 | R-NC-12 | **Rutas en `kebab-case`**; el idioma sigue el tipo de término (ADR-17): términos técnicos consolidados en inglés (`/shop`, `/wishlist`, `/checkout`, `/login`) y sustantivos de dominio en español (`/producto/:id`, `/carrito`, `/cuenta`, `/tienda/:storeId`, `/crear-tienda`); la ruta comodín `**` resuelve al `not-found.component`. |
 
-> `R-NC-1..12` sustituyen la numeración anterior (heredada de NestJS). No se
+> `R-NC-1..13` sustituyen la numeración anterior (heredada de NestJS). No se
 > reutilizan IDs: las reglas sobre controladores, DTOs de entrada/salida y
 > sufijos de CQRS del proyecto origen **no existen** en este repo.
 >
