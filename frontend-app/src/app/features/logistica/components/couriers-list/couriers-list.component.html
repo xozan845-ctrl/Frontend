@@ -1,0 +1,93 @@
+<section class="card flex flex-col gap-3 p-5" data-testid="couriers-list">
+  <header class="flex items-center justify-between gap-3">
+    <h2 class="flex items-center gap-2 font-heading text-base font-black tracking-tight uppercase">
+      <i class="fa-solid fa-user-group text-slate-400" aria-hidden="true"></i>
+      Repartidores activos
+    </h2>
+    <button
+      type="button"
+      class="rounded-lg px-2 py-1 text-[11px] font-bold text-accent-600 transition-colors hover:bg-accent-50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:text-accent-400 dark:hover:bg-surface-700"
+      data-testid="couriers-view-all"
+    >
+      Ver todos
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="flex flex-col gap-3">
+      @for (row of [1, 2, 3]; track row) {
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 animate-pulse rounded-full bg-slate-100 dark:bg-surface-700"></div>
+          <div class="flex-1">
+            <div class="h-3 w-2/3 animate-pulse rounded bg-slate-100 dark:bg-surface-700"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <ul
+      class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+      aria-label="Repartidores activos"
+    >
+      @for (courier of couriers(); track courier.id) {
+        <li class="flex items-center gap-2.5 py-3 first:pt-1 last:pb-1" data-testid="courier-row">
+          <div class="relative shrink-0">
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-[11px] font-black text-slate-600 dark:bg-surface-700 dark:text-slate-200"
+              aria-hidden="true"
+            >
+              {{ courier.initials }}
+            </span>
+            <span
+              class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-surface-800"
+              [class]="courier.status === 'retraso' ? 'bg-red-500' : 'bg-emerald-500'"
+              aria-hidden="true"
+            ></span>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-xs font-bold text-slate-900 dark:text-white">
+              {{ courier.name }}
+            </p>
+            <p class="truncate text-[11px] text-slate-500 dark:text-slate-400">
+              {{ courier.routeLabel }} · {{ courier.zone }}
+            </p>
+          </div>
+
+          <div class="hidden w-24 shrink-0 flex-col gap-1 sm:flex">
+            <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+              {{ courier.delivered }}/{{ courier.total }} entregas
+            </span>
+            <div
+              class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-surface-700"
+              role="progressbar"
+              [attr.aria-valuenow]="progress(courier)"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-label]="'Progreso de ' + courier.name"
+            >
+              <div
+                class="h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none"
+                [class]="statusMeta[courier.status].bar"
+                [style.width.%]="progress(courier)"
+              ></div>
+            </div>
+          </div>
+
+          <span class="w-8 shrink-0 text-right text-[10px] font-bold tabular-nums text-slate-500">
+            {{ progress(courier) }}%
+          </span>
+
+          <span
+            class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold whitespace-nowrap"
+            [class]="statusMeta[courier.status].chip"
+          >
+            {{ statusMeta[courier.status].label }}
+          </span>
+
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-300" aria-hidden="true"></i>
+        </li>
+      }
+    </ul>
+  }
+</section>

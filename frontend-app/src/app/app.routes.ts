@@ -52,6 +52,14 @@ export const routes: Routes = [
     loadChildren: () => import('./features/billing/billing.routes').then((m) => m.BILLING_ROUTES),
   },
   {
+    // Logística (ADR-25): tablero visual de rutas y entregas. Se carga lazy
+    // para que el mapa (Leaflet) y sus paneles no viajen en el bundle inicial
+    // (R-LZ-1, R-PF-1).
+    path: 'logistica',
+    loadChildren: () =>
+      import('./features/logistica/logistica.routes').then((m) => m.LOGISTICA_ROUTES),
+  },
+  {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
     children: [...HOME_ROUTES, ...PRODUCTS_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],
