@@ -1,6 +1,9 @@
-import { effect } from '@angular/core';
+import { effect, inject } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
-import { OrderResponse } from '../models/order.model';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { CreateOrderPayload, OrderResponse } from '../models/order.model';
+import { ORDER_REPOSITORY } from '../repositories/order.repository';
 import type { OrderState } from './cart.state';
 
 const STORAGE_KEY = 'ecom_last_order';
@@ -17,9 +20,15 @@ const initialState: OrderState = {
 export const OrderStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withMethods((store) => ({
+  withMethods((store, orderRepo = inject(ORDER_REPOSITORY)) => ({
     setLastOrder(lastOrder: OrderResponse): void {
       patchState(store, { lastOrder });
+    },
+    /** Crea la orden y deja su resultado como último pedido (lo usa checkout). */
+    placeOrder(payload: CreateOrderPayload): Observable<OrderResponse> {
+      return orderRepo
+        .createOrder(payload)
+        .pipe(tap((order) => patchState(store, { lastOrder: order })));
     },
   })),
   withHooks({

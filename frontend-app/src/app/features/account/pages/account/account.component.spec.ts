@@ -2,17 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import AccountComponent from './account.component';
-import { AUTH_REPOSITORY, AuthStore } from '../../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 
 describe('AccountComponent', () => {
-  const authRepo = {
-    me: vi.fn(() => of({ id: 'u-1', email: 'ana@tienda.com', name: 'Ana', role: 'comprador' })),
-    changePassword: vi.fn(() => of(true)),
-  };
   const authStore = {
     user: () => ({ id: 1, email: 'ana@tienda.com', name: 'Ana' }),
+    me: vi.fn(() => of({ id: 'u-1', email: 'ana@tienda.com', name: 'Ana', role: 'comprador' })),
+    changePassword: vi.fn(() => of(true)),
     clearSession: vi.fn(),
   };
   const notification = { showSuccess: vi.fn(), showError: vi.fn() };
@@ -23,7 +21,6 @@ describe('AccountComponent', () => {
       imports: [AccountComponent],
       providers: [
         provideRouter([]),
-        { provide: AUTH_REPOSITORY, useValue: authRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
@@ -37,17 +34,17 @@ describe('AccountComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    authRepo.me.mockReturnValue(
+    authStore.me.mockReturnValue(
       of({ id: 'u-1', email: 'ana@tienda.com', name: 'Ana', role: 'comprador' }),
     );
-    authRepo.changePassword.mockReturnValue(of(true));
+    authStore.changePassword.mockReturnValue(of(true));
     TestBed.resetTestingModule();
   });
 
   it('debe cargar el perfil desde GET /auth/me', async () => {
     const fixture = await setup();
 
-    expect(authRepo.me).toHaveBeenCalled();
+    expect(authStore.me).toHaveBeenCalled();
     expect(fixture.componentInstance.profile()).toEqual({
       email: 'ana@tienda.com',
       role: 'comprador',
@@ -64,7 +61,7 @@ describe('AccountComponent', () => {
 
     fixture.componentInstance.onSubmit();
 
-    expect(authRepo.changePassword).not.toHaveBeenCalled();
+    expect(authStore.changePassword).not.toHaveBeenCalled();
   });
 
   it('debe cambiar la contraseña, limpiar la sesión y volver al login', async () => {
@@ -78,13 +75,13 @@ describe('AccountComponent', () => {
 
     fixture.componentInstance.onSubmit();
 
-    expect(authRepo.changePassword).toHaveBeenCalledWith('actual123', 'nueva12345');
+    expect(authStore.changePassword).toHaveBeenCalledWith('actual123', 'nueva12345');
     expect(authStore.clearSession).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith(['/login']);
   });
 
   it('debe notificar si el cambio de contraseña falla', async () => {
-    authRepo.changePassword.mockReturnValueOnce(throwError(() => new Error('actual incorrecta')));
+    authStore.changePassword.mockReturnValueOnce(throwError(() => new Error('actual incorrecta')));
     const fixture = await setup();
     fixture.componentInstance.form.setValue({
       current: 'mala',

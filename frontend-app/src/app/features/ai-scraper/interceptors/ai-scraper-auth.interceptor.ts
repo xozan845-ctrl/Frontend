@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { AiConnectionService } from '../services/ai-connection.service';
+import { AiConnectionStore } from '../state/ai-connection.store';
 import { AI_SCRAPER_API_KEY_HEADER } from '../constants/ai-scraper.constants';
 
 /**
@@ -15,7 +15,7 @@ export const aiScraperAuthInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const apiKey = inject(AiConnectionService).apiKey().trim();
+  const apiKey = inject(AiConnectionStore).apiKey().trim();
   if (!apiKey) {
     return next(req);
   }

@@ -7,6 +7,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiChatMessageComponent } from '../../components/ai-chat-message/ai-chat-message.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
+import { AI_SCRAPER_PRACTICE_SITES } from '../../constants/ai-scraper.constants';
 import type { ChatSuggestion, SessionGroup } from './ai-chat.types';
 
 /** Parsea headers opcionales (JSON `{ "Authorization": "Bearer x" }`). */
@@ -34,21 +35,21 @@ const SUGGESTIONS: readonly ChatSuggestion[] = [
     icon: 'fa-solid fa-store',
     title: 'Explorar un catálogo',
     description: 'Nombres, precios y disponibilidad.',
-    url: 'https://books.toscrape.com/',
+    url: AI_SCRAPER_PRACTICE_SITES.catalog,
   },
   {
     id: 'articles',
     icon: 'fa-regular fa-newspaper',
     title: 'Reunir artículos',
     description: 'Titulares, autores y fechas.',
-    url: 'https://quotes.toscrape.com/',
+    url: AI_SCRAPER_PRACTICE_SITES.articles,
   },
   {
     id: 'example',
     icon: 'fa-solid fa-flask',
     title: 'Probar con un ejemplo',
     description: 'Un sitio público de práctica.',
-    url: 'https://scrapethissite.com/',
+    url: AI_SCRAPER_PRACTICE_SITES.example,
   },
 ];
 

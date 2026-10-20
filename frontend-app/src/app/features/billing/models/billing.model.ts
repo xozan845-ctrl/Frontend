@@ -1,5 +1,3 @@
-import { BILLING_TAX_RATE } from '../constants/billing.constants';
-
 /** Estados del ciclo de vida de una factura (vocabulario del dominio). */
 export type InvoiceStatus = 'borrador' | 'emitida' | 'pagada' | 'anulada';
 
@@ -81,7 +79,7 @@ export function roundMoney(value: number): number {
 export function calculateInvoiceTotals(
   lines: readonly InvoiceLine[],
   discountPercent: number,
-  taxRate: number = BILLING_TAX_RATE,
+  taxRate: number,
 ): InvoiceTotals {
   const subtotal = roundMoney(lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0));
   const safePercent = Math.min(100, Math.max(0, discountPercent));

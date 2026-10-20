@@ -10,7 +10,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SeoService } from '../../../../core/services/seo.service';
-import { ORDER_REPOSITORY, OrderRepository } from '../../repositories/order.repository';
 import { CreateOrderPayload } from '../../models/order.model';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
@@ -28,7 +27,6 @@ export class CheckoutComponent implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
   private readonly seoService = inject(SeoService);
-  private readonly orderService: OrderRepository = inject(ORDER_REPOSITORY);
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);
 
@@ -57,12 +55,11 @@ export class CheckoutComponent implements OnDestroy {
 
     const payload: CreateOrderPayload = { usarCarrito: true };
 
-    this.orderService
-      .createOrder(payload)
+    this.orderStore
+      .placeOrder(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (order) => {
-          this.orderStore.setLastOrder(order);
+        next: () => {
           this.cartStore.reset();
           this.isSubmitting.set(false);
           this.router.navigate(['/tienda', this.storeId(), 'checkout', 'confirmacion']);

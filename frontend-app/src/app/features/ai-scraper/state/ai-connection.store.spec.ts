@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { AiConnectionService } from './ai-connection.service';
+import { AiConnectionStore } from './ai-connection.store';
 import { AI_SCRAPER_KEY_STORAGE } from '../constants/ai-scraper.constants';
 
-describe('AiConnectionService', () => {
-  let service: AiConnectionService;
+describe('AiConnectionStore', () => {
+  let store: AiConnectionStore;
 
   beforeEach(() => {
     sessionStorage.removeItem(AI_SCRAPER_KEY_STORAGE);
-    TestBed.configureTestingModule({ providers: [AiConnectionService] });
-    service = TestBed.inject(AiConnectionService);
+    TestBed.configureTestingModule({ providers: [AiConnectionStore] });
+    store = TestBed.inject(AiConnectionStore);
   });
 
   afterEach(() => {
@@ -18,33 +18,33 @@ describe('AiConnectionService', () => {
   });
 
   it('debe empezar sin clave cuando no hay nada persistido', () => {
-    expect(service.hasKey()).toBe(false);
-    expect(service.apiKey()).toBe('');
+    expect(store.hasKey()).toBe(false);
+    expect(store.apiKey()).toBe('');
   });
 
   it('debe guardar la clave en memoria y sessionStorage, recortando espacios', () => {
-    service.setApiKey('  secret  ');
-    expect(service.apiKey()).toBe('secret');
-    expect(service.hasKey()).toBe(true);
+    store.setApiKey('  secret  ');
+    expect(store.apiKey()).toBe('secret');
+    expect(store.hasKey()).toBe(true);
     expect(sessionStorage.getItem(AI_SCRAPER_KEY_STORAGE)).toBe('secret');
   });
 
   it('debe leer una clave ya persistida al construirse', () => {
     sessionStorage.setItem(AI_SCRAPER_KEY_STORAGE, 'persistida');
     TestBed.resetTestingModule();
-    TestBed.configureTestingModule({ providers: [AiConnectionService] });
-    expect(TestBed.inject(AiConnectionService).apiKey()).toBe('persistida');
+    TestBed.configureTestingModule({ providers: [AiConnectionStore] });
+    expect(TestBed.inject(AiConnectionStore).apiKey()).toBe('persistida');
   });
 
   it('debe limpiar la clave de memoria y sessionStorage', () => {
-    service.setApiKey('secret');
-    service.clearApiKey();
-    expect(service.hasKey()).toBe(false);
+    store.setApiKey('secret');
+    store.clearApiKey();
+    expect(store.hasKey()).toBe(false);
     expect(sessionStorage.getItem(AI_SCRAPER_KEY_STORAGE)).toBeNull();
   });
 
   it('debe exponer el endpoint configurado del backend de IA', () => {
-    expect(service.endpoint).toBe('http://localhost:3000/api/v1');
-    expect(service.isConfigured).toBe(true);
+    expect(store.endpoint).toBe('http://localhost:3000/api/v1');
+    expect(store.isConfigured).toBe(true);
   });
 });

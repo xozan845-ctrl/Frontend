@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiDashboardComponent from './ai-dashboard.component';
-import { AiConnectionService } from '../../services/ai-connection.service';
+import { AiConnectionStore } from '../../state/ai-connection.store';
 
 function connectionFake() {
   return {
@@ -21,7 +21,7 @@ describe('AiDashboardComponent', () => {
     connection = connectionFake();
     TestBed.configureTestingModule({
       imports: [AiDashboardComponent],
-      providers: [provideRouter([]), { provide: AiConnectionService, useValue: connection }],
+      providers: [provideRouter([]), { provide: AiConnectionStore, useValue: connection }],
     });
   });
 

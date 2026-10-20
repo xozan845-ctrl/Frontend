@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore, AUTH_REPOSITORY } from '../../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 
@@ -29,7 +29,6 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 export default class AccountComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
-  private readonly authService = inject(AUTH_REPOSITORY);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly seoService = inject(SeoService);
@@ -53,7 +52,7 @@ export default class AccountComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.authService
+    this.authStore
       .me()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -76,7 +75,7 @@ export default class AccountComponent implements OnInit, OnDestroy {
 
     const { current, next } = this.form.getRawValue();
     this.submitting.set(true);
-    this.authService
+    this.authStore
       .changePassword(current, next)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

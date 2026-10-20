@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import OrdersComponent from './orders.component';
 import { ORDER_REPOSITORY } from '../../../cart/public-api';
+import { AccountOrdersStore } from '../../state/account-orders.store';
 import { SeoService } from '../../../../core/services/seo.service';
 
 describe('OrdersComponent', () => {
@@ -26,6 +27,7 @@ describe('OrdersComponent', () => {
       imports: [OrdersComponent],
       providers: [
         provideRouter([]),
+        AccountOrdersStore,
         { provide: ORDER_REPOSITORY, useValue: orderRepo },
         { provide: SeoService, useValue: seo },
       ],

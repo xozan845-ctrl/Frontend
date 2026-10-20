@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { BILLING_PRODUCTS } from '../../adapters/fixtures/billing.fixture';
+import { BILLING_PRODUCTS } from '../../constants/billing.fixtures';
 import { CatalogPickerCardComponent } from './catalog-picker-card.component';
 
 const categories = ['Cremas', 'Cuidado capilar', 'Tintes', 'Tratamientos'];

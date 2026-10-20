@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BILLING_INVOICES } from '../../adapters/fixtures/billing.fixture';
+import { BILLING_INVOICES } from '../../constants/billing.fixtures';
 import { InvoiceListTableComponent } from './invoice-list-table.component';
 
 describe('InvoiceListTableComponent', () => {

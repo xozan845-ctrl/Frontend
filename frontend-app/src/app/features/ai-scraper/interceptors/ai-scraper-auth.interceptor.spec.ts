@@ -3,12 +3,12 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { aiScraperAuthInterceptor } from './ai-scraper-auth.interceptor';
-import { AiConnectionService } from '../services/ai-connection.service';
+import { AiConnectionStore } from '../state/ai-connection.store';
 
 describe('aiScraperAuthInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
-  let connection: AiConnectionService;
+  let connection: AiConnectionStore;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,7 +19,7 @@ describe('aiScraperAuthInterceptor', () => {
     });
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
-    connection = TestBed.inject(AiConnectionService);
+    connection = TestBed.inject(AiConnectionStore);
     connection.clearApiKey();
   });
 

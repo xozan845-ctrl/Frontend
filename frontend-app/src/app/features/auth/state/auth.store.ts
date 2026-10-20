@@ -8,9 +8,9 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, firstValueFrom, pipe } from 'rxjs';
+import { EMPTY, firstValueFrom, pipe, Observable } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { LoginCredentials, RegisterData } from '../models/auth.model';
+import { LoginCredentials, RegisterData, User } from '../models/auth.model';
 import { AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { NotificationService } from '../../../core/services/notification.service';
 import type { AuthState } from './auth.state';
@@ -160,6 +160,18 @@ export const AuthStore = signalStore(
               refreshInFlight = null;
             });
           return refreshInFlight;
+        },
+        /** Perfil autoritativo de la sesión (`GET /auth/me`). */
+        me(): Observable<User> {
+          return authService.me();
+        },
+        /** Solicita el restablecimiento de contraseña por correo. */
+        requestPasswordReset(email: string): Observable<boolean> {
+          return authService.resetPassword(email);
+        },
+        /** Cambia la contraseña de la sesión actual. */
+        changePassword(currentPassword: string, newPassword: string): Observable<boolean> {
+          return authService.changePassword(currentPassword, newPassword);
         },
       };
     },

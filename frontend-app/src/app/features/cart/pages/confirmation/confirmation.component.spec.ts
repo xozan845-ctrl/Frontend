@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SeoService } from '../../../../core/services/seo.service';
 import { ProductStore } from '../../../products/state/product.store';
+import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { ConfirmationComponent } from './confirmation.component';
 
 const order = {
@@ -22,6 +23,7 @@ describe('ConfirmationComponent', () => {
         provideRouter([]),
         { provide: SeoService, useValue: seo },
         { provide: ProductStore, useValue: { storeId: () => 'tienda-1' } },
+        { provide: ORDER_REPOSITORY, useValue: { createOrder: vi.fn() } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(ConfirmationComponent);
