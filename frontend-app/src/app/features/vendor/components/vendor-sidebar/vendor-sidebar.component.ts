@@ -51,6 +51,12 @@ export class VendorSidebarComponent {
       testId: 'vendor-nav-pedidos',
     },
     {
+      label: 'Mi empresa',
+      icon: 'fa-solid fa-building',
+      link: '/vendedor/empresa',
+      testId: 'vendor-nav-empresa',
+    },
+    {
       label: 'Facturación',
       icon: 'fa-solid fa-file-invoice-dollar',
       link: '/facturacion/nueva',

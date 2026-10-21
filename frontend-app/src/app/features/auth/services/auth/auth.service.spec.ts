@@ -423,6 +423,19 @@ describe('AuthService', () => {
       expect(result?.user.role).toBe('vendedor');
     });
 
+    it('debe autenticar con rol empresario con el correo de convención E2E', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service
+        .login({ email: 'empresario@tienda.test', password: 'secreto1' })
+        .subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.email).toBe('empresario@tienda.test');
+      expect(result?.user.role).toBe('empresario');
+    });
+
     it('debe rechazar en mock cuando la contraseña es corta', () => {
       build();
       let error: Error | undefined;

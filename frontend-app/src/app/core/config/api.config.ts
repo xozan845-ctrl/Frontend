@@ -14,5 +14,6 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     orders: '/orders',
     cart: '/carrito',
     vendor: '/vendedores',
+    companies: '/empresas',
   },
 };

@@ -1,0 +1,374 @@
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-6" data-testid="company-settings-page">
+  <header>
+    <nav
+      aria-label="Ruta de navegación"
+      class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+    >
+      <a routerLink="/vendedor/inicio" class="transition-colors hover:text-accent-600"> Inicio </a>
+      <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+      <span aria-current="page" class="text-accent-600 dark:text-accent-400">Mi empresa</span>
+    </nav>
+    <h1
+      class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+    >
+      Mi empresa
+    </h1>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      Administra la empresa, la modalidad logística y los vendedores con su participación.
+    </p>
+  </header>
+
+  @if (error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="company-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        data-testid="company-retry"
+        (click)="retry()"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+    <section
+      class="card flex flex-col gap-3 p-6"
+      role="status"
+      aria-live="polite"
+      data-testid="company-loading"
+    >
+      <span class="sr-only">Cargando empresa…</span>
+      <app-skeleton-loader height="24px" width="40%" />
+      <app-skeleton-loader height="16px" width="65%" />
+      <app-skeleton-loader height="16px" width="50%" />
+    </section>
+  } @else if (!hasCompany()) {
+    @if (canCreateCompany()) {
+      <section class="card flex flex-col gap-5 p-6" aria-labelledby="create-company-title">
+        <div>
+          <h2
+            id="create-company-title"
+            class="font-heading text-lg font-black tracking-tight uppercase"
+          >
+            Crear empresa
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            La empresa es el tenant comercial: agrupa tu tienda, tus vendedores y tus envíos.
+          </p>
+        </div>
+
+        <form
+          [formGroup]="createCompanyForm"
+          (ngSubmit)="submitCompany()"
+          class="flex flex-col gap-4"
+          novalidate
+          data-testid="create-company-form"
+        >
+          <div class="flex flex-col gap-1">
+            <label for="company-name" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+              Nombre de la empresa
+            </label>
+            <input
+              id="company-name"
+              type="text"
+              class="input"
+              formControlName="name"
+              autocomplete="organization"
+              data-testid="company-name"
+            />
+            @if (
+              createCompanyForm.controls.name.invalid && createCompanyForm.controls.name.touched
+            ) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                El nombre debe tener entre 2 y 160 caracteres.
+              </p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label for="company-mode" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+              Modalidad logística
+            </label>
+            <select
+              id="company-mode"
+              class="input"
+              formControlName="logisticsMode"
+              data-testid="company-mode"
+            >
+              @for (mode of logisticsModes; track mode.value) {
+                <option [value]="mode.value">{{ mode.label }} — {{ mode.description }}</option>
+              }
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary self-start"
+            [disabled]="saving()"
+            data-testid="create-company-submit"
+          >
+            <i class="fa-solid fa-building text-xs" aria-hidden="true"></i>
+            {{ saving() ? 'Creando…' : 'Crear empresa' }}
+          </button>
+        </form>
+      </section>
+    } @else {
+      <section class="card flex flex-col gap-2 p-6" data-testid="company-unavailable">
+        <h2 class="font-heading text-lg font-black tracking-tight uppercase">Sin empresa activa</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Solo una cuenta de empresario puede crear y administrar la empresa.
+        </p>
+      </section>
+    }
+  } @else {
+    <section
+      class="card flex flex-col gap-5 p-6"
+      aria-labelledby="company-summary-title"
+      data-testid="company-card"
+    >
+      <header class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2
+            id="company-summary-title"
+            class="font-heading text-lg font-black tracking-tight uppercase"
+          >
+            {{ company()?.name }}
+          </h2>
+          <p class="mt-1 text-xs font-bold tracking-widest text-slate-400 uppercase">
+            Empresa activa
+          </p>
+        </div>
+        <span
+          class="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black tracking-widest text-emerald-800 uppercase dark:bg-emerald-900/30 dark:text-emerald-300"
+          data-testid="company-status"
+        >
+          {{ company()?.status }}
+        </span>
+      </header>
+
+      <dl class="grid gap-4 sm:grid-cols-3">
+        <div>
+          <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+            Modalidad logística
+          </dt>
+          <dd
+            class="mt-1 text-sm font-bold text-slate-900 dark:text-white"
+            data-testid="company-logistics-mode"
+          >
+            {{ modeLabel(company()!.logisticsMode) }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Creada</dt>
+          <dd class="mt-1 text-sm font-bold text-slate-900 dark:text-white">
+            {{ company()?.createdAt | date: 'mediumDate' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+            Identificador
+          </dt>
+          <dd class="mt-1 truncate font-mono text-xs text-slate-500 dark:text-slate-400">
+            {{ company()?.id }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card flex flex-col gap-5 p-6" aria-labelledby="company-logistics-title">
+      <div>
+        <h2
+          id="company-logistics-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Logística
+        </h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Aplica a los envíos futuros; los envíos ya creados conservan su modalidad.
+        </p>
+      </div>
+
+      @if (isEmpresario()) {
+        <form
+          [formGroup]="logisticsForm"
+          (ngSubmit)="submitLogistics()"
+          class="flex flex-col gap-3 sm:flex-row sm:items-end"
+          novalidate
+          data-testid="logistics-form"
+        >
+          <div class="flex flex-1 flex-col gap-1">
+            <label
+              for="logistics-mode"
+              class="text-xs font-bold text-slate-600 dark:text-slate-300"
+            >
+              Modalidad
+            </label>
+            <select
+              id="logistics-mode"
+              class="input"
+              formControlName="logisticsMode"
+              data-testid="logistics-mode"
+            >
+              @for (mode of logisticsModes; track mode.value) {
+                <option [value]="mode.value">{{ mode.label }}</option>
+              }
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary self-start sm:self-auto"
+            [disabled]="saving()"
+            data-testid="save-logistics"
+          >
+            {{ saving() ? 'Guardando…' : 'Guardar modalidad' }}
+          </button>
+        </form>
+      } @else {
+        <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="logistics-readonly">
+          Solo un empresario puede cambiar la modalidad logística.
+        </p>
+      }
+    </section>
+
+    <section class="card flex flex-col gap-5 p-6" aria-labelledby="company-sellers-title">
+      <div>
+        <h2
+          id="company-sellers-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Vendedores
+        </h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Crea vendedores y define su participación sobre las ventas.
+        </p>
+      </div>
+
+      @if (isEmpresario()) {
+        <form
+          [formGroup]="sellerForm"
+          (ngSubmit)="submitSeller()"
+          class="grid gap-3 sm:grid-cols-2"
+          novalidate
+          data-testid="seller-form"
+        >
+          <div class="flex flex-col gap-1">
+            <label for="seller-name" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+              Nombre
+            </label>
+            <input
+              id="seller-name"
+              type="text"
+              class="input"
+              formControlName="name"
+              autocomplete="name"
+              data-testid="seller-name"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="seller-email" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+              Correo
+            </label>
+            <input
+              id="seller-email"
+              type="email"
+              class="input"
+              formControlName="email"
+              autocomplete="email"
+              data-testid="seller-email"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="seller-password"
+              class="text-xs font-bold text-slate-600 dark:text-slate-300"
+            >
+              Contraseña
+            </label>
+            <div class="relative">
+              <input
+                id="seller-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="input pr-11"
+                formControlName="password"
+                autocomplete="new-password"
+                data-testid="seller-password"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:text-white"
+                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <i
+                  class="fa-solid text-sm"
+                  [class.fa-eye]="!showPassword()"
+                  [class.fa-eye-slash]="showPassword()"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="seller-participation"
+              class="text-xs font-bold text-slate-600 dark:text-slate-300"
+            >
+              Participación (%)
+            </label>
+            <input
+              id="seller-participation"
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              class="input"
+              formControlName="participationPercentage"
+              data-testid="seller-participation"
+            />
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary self-start sm:col-span-2"
+            [disabled]="saving()"
+            data-testid="create-seller"
+          >
+            <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
+            {{ saving() ? 'Creando…' : 'Crear vendedor' }}
+          </button>
+        </form>
+      }
+
+      @if (sellers().length === 0) {
+        <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="sellers-empty">
+          Aún no hay vendedores creados desde esta sesión.
+        </p>
+      } @else {
+        <ul
+          class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+          data-testid="sellers-list"
+        >
+          @for (seller of sellers(); track seller.id) {
+            <li
+              class="flex flex-wrap items-center justify-between gap-2 py-3"
+              data-testid="seller-row"
+            >
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ seller.name }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ seller.email }}</p>
+              </div>
+              <span class="text-xs font-black text-accent-600 dark:text-accent-400">
+                {{ seller.participationPercentage }} %
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</div>

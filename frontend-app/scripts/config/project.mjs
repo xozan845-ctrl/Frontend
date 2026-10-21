@@ -143,6 +143,11 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
+  empresas: {
+    layers: ['adapters', 'constants', 'models', 'pages', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   home: { layers: ['pages'], publicApi: false, publicUi: false },
   logistica: {
     layers: ['components', 'constants', 'mocks', 'models', 'pages', 'services', 'state'],
@@ -284,6 +289,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'billing',
   'cart',
   'checkout',
+  'empresas',
   'home',
   'logistica',
   'plans',

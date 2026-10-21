@@ -22,6 +22,7 @@ features/<feature>/
 | `auth`       | Login, registro, recuperación y guards de sesión.       |
 | `billing`    | Facturación: nueva factura, listado y detalle (ADR-23). |
 | `cart`       | Carrito, checkout y confirmación de pedido.             |
+| `empresas`   | Empresa, modalidad logística y vendedores (ADR-27).     |
 | `home`       | Inicio, entrada multi-tienda y 404.                     |
 | `logistica`  | Tablero de rutas, entregas y mapa Leaflet (ADR-25).     |
 | `plans`      | Planes y suscripciones.                                 |
