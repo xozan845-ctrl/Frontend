@@ -1,7 +1,12 @@
 import { DOCUMENT } from '@angular/common';
+import {
+  EnvironmentInjector,
+  createEnvironmentInjector,
+  runInInjectionContext,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
-import { SeoService } from './seo.service';
+import { SeoService, injectSeoCleanup, injectSeoPage } from './seo.service';
 
 describe('SeoService', () => {
   let service: SeoService;
@@ -148,5 +153,32 @@ describe('SeoService', () => {
     expect(meta.getTag('name="twitter:card"')?.content).toBe('summary_large_image');
     expect(doc.head.querySelector('link[rel="canonical"]')).toBeNull();
     expect(doc.getElementById('seo-product-jsonld')).toBeNull();
+  });
+
+  it('debe aplicar y restaurar el SEO de una página estática al destruir el contexto (R-AR-15)', () => {
+    const injector = createEnvironmentInjector([], TestBed.inject(EnvironmentInjector));
+
+    runInInjectionContext(injector, () => injectSeoPage('Planes', 'Elige tu membresía'));
+
+    expect(title.getTitle()).toBe('Planes | Quantum Store');
+    expect(meta.getTag('name="description"')?.content).toBe('Elige tu membresía');
+
+    injector.destroy();
+
+    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
+  });
+
+  it('debe limpiar el SEO dinámico al destruir el contexto (R-AR-15)', () => {
+    const injector = createEnvironmentInjector([], TestBed.inject(EnvironmentInjector));
+    let seo!: SeoService;
+
+    runInInjectionContext(injector, () => {
+      seo = injectSeoCleanup();
+    });
+    seo.setPage('Catálogo', 'Explora el catálogo');
+
+    injector.destroy();
+
+    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
   });
 });

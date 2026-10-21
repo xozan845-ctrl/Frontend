@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart/cart.store';
@@ -8,7 +8,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-cart-view',
@@ -22,26 +22,21 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   ],
   templateUrl: './cart-view.component.html',
 })
-export class CartViewComponent implements OnDestroy {
+export class CartViewComponent {
   readonly cartStore = inject(CartStore);
   readonly authStore = inject(AuthStore);
   private readonly productStore = inject(ProductStore);
   private readonly router = inject(Router);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Carrito',
+    'Revisa y ajusta los productos de tu carrito.',
+  );
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
   readonly shopRoute = computed(() => `/tienda/${this.storeId()}/shop`);
 
   showClearConfirm = signal(false);
-
-  constructor() {
-    this.seoService.setPage('Carrito', 'Revisa y ajusta los productos de tu carrito.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   checkout() {
     this.router.navigate(['/tienda', this.storeId(), 'checkout']);

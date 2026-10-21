@@ -1,6 +1,6 @@
-import { Component, OnDestroy, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
@@ -16,22 +16,16 @@ import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store
   imports: [RouterLink, AppCurrencyPipe, RecentOrdersTableComponent],
   templateUrl: './dashboard.component.html',
 })
-export default class DashboardComponent implements OnDestroy {
+export default class DashboardComponent {
   readonly orders = inject(VendorOrdersStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Inicio — Panel del vendedor',
+    'El resumen de tu tienda: ventas de hoy, pedidos pendientes y accesos rápidos.',
+  );
 
   protected readonly recentOrders = computed(() => this.orders.orders().slice(0, 5));
 
   constructor() {
-    this.seoService.setPage(
-      'Inicio — Panel del vendedor',
-      'El resumen de tu tienda: ventas de hoy, pedidos pendientes y accesos rápidos.',
-    );
-
     this.orders.loadOrders();
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }

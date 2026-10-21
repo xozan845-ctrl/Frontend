@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AccountOrdersStore } from '../../state/account-orders.store';
 
 @Component({
@@ -13,9 +13,9 @@ import { AccountOrdersStore } from '../../state/account-orders.store';
   imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './orders.component.html',
 })
-export default class OrdersComponent implements OnInit, OnDestroy {
+export default class OrdersComponent implements OnInit {
   private readonly store = inject(AccountOrdersStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage('Mis pedidos', 'Historial de tus compras.');
 
   readonly orders = this.store.orders;
   readonly loading = this.store.loading;
@@ -24,15 +24,7 @@ export default class OrdersComponent implements OnInit, OnDestroy {
   /** Referencia estable para el botón "Reintentar" de `EmptyState` (R-SO-6). */
   readonly retry = () => this.store.loadOrders();
 
-  constructor() {
-    this.seoService.setPage('Mis pedidos', 'Historial de tus compras.');
-  }
-
   ngOnInit(): void {
     this.store.loadOrders();
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }

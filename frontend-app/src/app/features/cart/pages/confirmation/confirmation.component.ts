@@ -1,9 +1,9 @@
-import { Component, computed, OnDestroy, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductStore } from '../../../products/public-api';
 import { OrderStore } from '../../state/order/order.store';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -11,8 +11,11 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   imports: [RouterLink, AppCurrencyPipe],
   templateUrl: './confirmation.component.html',
 })
-export class ConfirmationComponent implements OnDestroy {
-  private readonly seoService = inject(SeoService);
+export class ConfirmationComponent {
+  private readonly seoService = injectSeoPage(
+    'Pedido confirmado',
+    'Tu pedido en Quantum Store fue confirmado.',
+  );
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);
 
@@ -28,13 +31,5 @@ export class ConfirmationComponent implements OnDestroy {
     const date = new Date(createdAt);
     return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('es-NI');
   });
-
-  constructor() {
-    this.seoService.setPage('Pedido confirmado', 'Tu pedido en Quantum Store fue confirmado.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 }
 export default ConfirmationComponent;

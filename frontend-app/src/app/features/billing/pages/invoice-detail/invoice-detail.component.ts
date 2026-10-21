@@ -1,6 +1,6 @@
-import { Component, OnDestroy, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoCleanup } from '../../../../core/services/seo/seo.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { BILLING_INVOICES, paymentTermLabel } from '../../constants/billing.fixtures';
 import { InvoiceLinesTableComponent } from '../../components/invoice-lines-table/invoice-lines-table.component';
@@ -27,11 +27,11 @@ const LONG_DATE = new Intl.DateTimeFormat('es-NI', { dateStyle: 'long' });
   ],
   templateUrl: './invoice-detail.component.html',
 })
-export default class InvoiceDetailComponent implements OnDestroy {
+export default class InvoiceDetailComponent {
   /** Parámetro de ruta (`facturas/:id`) enlazado con `withComponentInputBinding`. */
   readonly id = input.required<string>();
 
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoCleanup();
 
   readonly storeName = BILLING_STORE_NAME;
   readonly invoice = computed(() => BILLING_INVOICES.find((item) => item.id === this.id()) ?? null);
@@ -55,10 +55,6 @@ export default class InvoiceDetailComponent implements OnDestroy {
         );
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   formatDate(iso: string): string {

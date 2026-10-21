@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal, OnDestroy } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
@@ -9,7 +9,7 @@ import { OrderStore } from '../../state/order/order.store';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { CreateOrderPayload } from '../../models/order.model';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
@@ -20,13 +20,13 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
-export class CheckoutComponent implements OnDestroy {
+export class CheckoutComponent {
   readonly cartStore = inject(CartStore);
   readonly authStore = inject(AuthStore);
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage('Checkout', 'Finaliza tu compra en Quantum Store.');
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);
 
@@ -35,14 +35,6 @@ export class CheckoutComponent implements OnDestroy {
   readonly shopRoute = computed(() => `/tienda/${this.storeId()}/shop`);
 
   isSubmitting = signal(false);
-
-  constructor() {
-    this.seoService.setPage('Checkout', 'Finaliza tu compra en Quantum Store.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   /**
    * Core Engine crea la orden a partir de las ofertas del carrito

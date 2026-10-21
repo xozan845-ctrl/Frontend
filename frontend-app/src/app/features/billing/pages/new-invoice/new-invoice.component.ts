@@ -1,15 +1,7 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatCurrency } from '../../../../core/config/currency.config';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import {
   BILLING_CLIENTS,
   BILLING_INVOICES,
@@ -63,8 +55,11 @@ const normalize = (value: string): string =>
   ],
   templateUrl: './new-invoice.component.html',
 })
-export default class NewInvoiceComponent implements OnDestroy {
-  private readonly seoService = inject(SeoService);
+export default class NewInvoiceComponent {
+  private readonly seoService = injectSeoPage(
+    'Nueva factura — Facturación',
+    'Arma la factura del cliente, elige productos del catálogo y revisa los totales antes de emitirla.',
+  );
   private readonly recentInvoicesSection =
     viewChild<ElementRef<HTMLElement>>('recentInvoicesSection');
 
@@ -112,17 +107,6 @@ export default class NewInvoiceComponent implements OnDestroy {
   readonly totals = computed(() =>
     calculateInvoiceTotals(this.lines(), this.discountPercent(), BILLING_TAX_RATE),
   );
-
-  constructor() {
-    this.seoService.setPage(
-      'Nueva factura — Facturación',
-      'Arma la factura del cliente, elige productos del catálogo y revisa los totales antes de emitirla.',
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   setClientQuery(value: string): void {
     this.clientQuery.set(value);
