@@ -5,7 +5,7 @@ import { EMPTY, forkJoin, of, pipe, timer } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap, take, takeWhile, tap } from 'rxjs/operators';
 import { AiCreateJobInput, isAiJobActive } from '../../models/ai-job.model';
 import { AI_JOB_REPOSITORY } from '../../repositories/ai-job.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import {
   AI_SCRAPER_POLL_MAX_ATTEMPTS,
   AI_SCRAPER_POLL_MS,

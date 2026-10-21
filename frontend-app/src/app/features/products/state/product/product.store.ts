@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { PRODUCT_REPOSITORY } from '../../repositories/product.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { FILTER_CATEGORIES } from '../../constants/categories.constants';
 import type { ProductState } from './product.state';
 

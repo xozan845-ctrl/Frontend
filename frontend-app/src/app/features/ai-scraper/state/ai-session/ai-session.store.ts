@@ -15,7 +15,7 @@ import { AiCreateSessionInput, isAiSessionSettled } from '../../models/ai-sessio
 import { isAiJobActive } from '../../models/ai-job.model';
 import { AI_SESSION_REPOSITORY } from '../../repositories/ai-session.repository';
 import { AI_JOB_REPOSITORY } from '../../repositories/ai-job.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import {
   AI_SCRAPER_POLL_MAX_ATTEMPTS,
   AI_SCRAPER_POLL_MS,

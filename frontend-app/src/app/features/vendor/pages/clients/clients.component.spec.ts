@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import ClientsComponent from './clients.component';
 import { CLIENT_REPOSITORY, ClientRepository } from '../../repositories/client.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../core/services/seo/seo.service';
 import { Client } from '../../models/vendor-order.model';
 import { ClientSearchStore } from '../../state/client-search/client-search.store';

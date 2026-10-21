@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductStore } from '../../features/products/public-api';
-import { NotificationService } from '../../core/services/notification.service';
+import { NotificationService } from '../../core/services/notification/notification.service';
 import { StoreConfigService } from '../../core/services/store-config/store-config.service';
 
 @Component({

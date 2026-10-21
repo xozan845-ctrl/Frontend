@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { ChangePasswordFormComponent } from '../../components/change-password-form/change-password-form.component';
 import type { AccountProfile, PasswordChangePayload } from '../../models/account.model';

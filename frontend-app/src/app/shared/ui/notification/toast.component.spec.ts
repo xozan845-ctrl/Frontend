@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../core/services/notification.service';
+import { NotificationService } from '../../../core/services/notification/notification.service';
 import { ToastComponent } from './toast.component';
 
 describe('ToastComponent', () => {

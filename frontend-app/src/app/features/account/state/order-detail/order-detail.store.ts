@@ -3,8 +3,8 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, of, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { ORDER_REPOSITORY } from '../../cart/public-api';
-import type { AccountOrderDetailState } from './account.state';
+import { ORDER_REPOSITORY } from '../../../cart/public-api';
+import type { AccountOrderDetailState } from '../account.state';
 
 const initialState: AccountOrderDetailState = {
   order: null,

@@ -16,7 +16,7 @@ import { CartStore } from '../../../cart/public-api';
 import { ReviewsStore } from '../../state/reviews/reviews.store';
 import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SpinnerComponent } from '../../../../shared/ui/spinner/spinner.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { ImageLightboxComponent } from '../../../../shared/ui/image-lightbox/image-lightbox.component';

@@ -5,7 +5,7 @@ import { CartItem } from '../../models/cart.model';
 import { Product } from '../../../products/models/product.model';
 import { CART_REPOSITORY, CartRepository } from '../../repositories/cart.repository';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 
 const product = (id: number, price = 100): Product => ({
   id: String(id),

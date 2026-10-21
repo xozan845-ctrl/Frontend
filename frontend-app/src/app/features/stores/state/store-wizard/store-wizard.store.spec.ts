@@ -5,7 +5,7 @@ import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repo
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { Store } from '../../../products/public-api';
 
 const store: Store = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', description: '' };

@@ -1,7 +1,7 @@
 import { inject, effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Review } from '../../models/review.model';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import type { ReviewsState } from '../product/product.state';
 
 const REVIEWS_KEY = 'ecom_reviews';

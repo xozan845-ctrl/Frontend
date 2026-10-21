@@ -13,7 +13,7 @@ import {
 } from '../../models/store-wizard.model';
 import { STORE_REPOSITORY } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY } from '../../repositories/catalog.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import type { StoreWizardState } from './store-wizard.state';
 
 const initialState: StoreWizardState = {
