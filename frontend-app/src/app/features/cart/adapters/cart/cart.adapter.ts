@@ -1,7 +1,7 @@
-import { CartItem } from '../models/cart.model';
-import type { Product } from '../../products/public-api';
-import { BackendCarritoDTO, BackendCarritoItemDTO } from '../models/cart.dto';
-import { unwrapApiSingleResponse } from '../../../core/models/api-response.dto';
+import { CartItem } from '../../models/cart.model';
+import type { Product } from '../../../products/public-api';
+import { BackendCarritoDTO, BackendCarritoItemDTO } from '../../models/cart.dto';
+import { unwrapApiSingleResponse } from '../../../../core/models/api-response.dto';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';

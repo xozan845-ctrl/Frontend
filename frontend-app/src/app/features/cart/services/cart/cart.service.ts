@@ -6,7 +6,7 @@ import { environment } from '../../../../../environments/environment';
 import { toUserMessage } from '../../../../core/models/api-error';
 import { CartItem } from '../../models/cart.model';
 import { CartRepository } from '../../repositories/cart.repository';
-import { adaptCartFromBackend } from '../../adapters/cart.adapter';
+import { adaptCartFromBackend } from '../../adapters/cart/cart.adapter';
 import type { MockItem } from '../../models/mock-item.model';
 
 @Injectable({

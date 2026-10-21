@@ -2,7 +2,7 @@ import { adaptProductListFromBackend, adaptSingleProductFromBackend } from './pr
 import {
   PRODUCT_LIST_ENVELOPE_FIXTURE,
   PRODUCT_SINGLE_ENVELOPE_FIXTURE,
-} from './fixtures/product.fixture';
+} from '../fixtures/product.fixture';
 
 // R-C-8: test de contrato contra un fixture realista versionado en el repo,
 // no contra el backend en vivo. Si el shape cambia, el fixture cambia en el PR.

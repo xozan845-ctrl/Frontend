@@ -7,7 +7,7 @@ import { toUserMessage } from '../../../../core/models/api-error';
 import { Store } from '../../../products/public-api';
 import { OfferDraft, StoreDraft } from '../../models/store-wizard.model';
 import { StoreRepository } from '../../repositories/store.repository';
-import { adaptStoreFromBackend } from '../../adapters/store.adapter';
+import { adaptStoreFromBackend } from '../../adapters/store/store.adapter';
 
 const MOCK_STORE: Store = {
   id: 'tienda-demo',

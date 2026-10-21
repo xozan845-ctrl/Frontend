@@ -11,7 +11,7 @@ import {
   adaptOrderResponse,
   adaptOrderTimelineFromBackend,
   generateMockOrderResponse,
-} from '../../adapters/order.adapter';
+} from '../../adapters/order/order.adapter';
 
 @Injectable({
   providedIn: 'root',

@@ -3,7 +3,7 @@ import {
   CATALOGO_ENVELOPE_FIXTURE,
   TIENDA_DIRECT_FIXTURE,
   TIENDA_ENVELOPE_FIXTURE,
-} from './fixtures/store.fixture';
+} from '../fixtures/store.fixture';
 
 // R-C-8: contrato contra un fixture realista versionado en el repo, no contra
 // el backend en vivo. Si el shape cambia, el fixture cambia en el mismo PR.

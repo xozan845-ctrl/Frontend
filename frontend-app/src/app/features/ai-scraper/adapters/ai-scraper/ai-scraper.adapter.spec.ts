@@ -16,7 +16,7 @@ import {
   adaptSessionStatusFromBackend,
   adaptSessionStatusResponseFromBackend,
 } from './ai-scraper.adapter';
-import { isAiJobActive, isAiJobTerminal } from '../models/ai-job.model';
+import { isAiJobActive, isAiJobTerminal } from '../../models/ai-job.model';
 import {
   BACKEND_INTERACTIONS,
   BACKEND_JOB_CAMEL,
@@ -29,7 +29,7 @@ import {
   BACKEND_SESSION_DETAIL,
   BACKEND_SESSION_LIST,
   BACKEND_SESSION_STATUS,
-} from './fixtures/ai-scraper.fixture';
+} from '../fixtures/ai-scraper.fixture';
 
 describe('adaptJobFromBackend', () => {
   it('debe normalizar un job en camelCase cuando el backend lo entrega así', () => {

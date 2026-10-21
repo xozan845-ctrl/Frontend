@@ -1,10 +1,10 @@
-import { Store } from '../../products/public-api';
-import { CatalogProductOption } from '../models/store-wizard.model';
-import { BackendProductoCatalogoDTO, BackendTiendaDTO } from '../models/store.dto';
+import { Store } from '../../../products/public-api';
+import { CatalogProductOption } from '../../models/store-wizard.model';
+import { BackendProductoCatalogoDTO, BackendTiendaDTO } from '../../models/store.dto';
 import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
-} from '../../../core/models/api-response.dto';
+} from '../../../../core/models/api-response.dto';
 
 /**
  * Tienda del vendedor (`POST /vendedores/tienda`, `GET /vendedores/me/tienda`).

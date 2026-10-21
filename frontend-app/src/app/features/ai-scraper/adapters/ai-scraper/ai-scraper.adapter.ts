@@ -12,7 +12,7 @@ import {
   AiJobStatus,
   AiResultItem,
   AiResultSource,
-} from '../models/ai-job.model';
+} from '../../models/ai-job.model';
 import {
   AiSession,
   AiSessionDetail,
@@ -21,7 +21,7 @@ import {
   AiSessionStatus,
   AiSessionStatusResponse,
   AiSendMessageResult,
-} from '../models/ai-session.model';
+} from '../../models/ai-session.model';
 import {
   BackendJobCommandDTO,
   BackendJobDTO,
@@ -32,14 +32,14 @@ import {
   BackendJobPageDTO,
   BackendJobResultsDTO,
   BackendInteractionDTO,
-} from '../models/ai-job.dto';
+} from '../../models/ai-job.dto';
 import {
   BackendSendMessageDTO,
   BackendSessionDTO,
   BackendSessionMessageDTO,
   BackendSessionProfileDTO,
   BackendSessionStatusDTO,
-} from '../models/ai-session.dto';
+} from '../../models/ai-session.dto';
 
 // --- Helpers de estrechamiento (R-NC-10: `unknown` + narrowing, sin `any`) ---
 
