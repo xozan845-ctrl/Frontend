@@ -1,6 +1,6 @@
 import { Component, OnDestroy, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { BILLING_INVOICES, paymentTermLabel } from '../../constants/billing.fixtures';
 import { InvoiceLinesTableComponent } from '../../components/invoice-lines-table/invoice-lines-table.component';

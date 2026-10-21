@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { LEAFLET_API, LeafletApi } from '../../services/leaflet-api/leaflet-api.port';
 import { LogisticaDashboardStore } from '../../state/logistica-dashboard/logistica-dashboard.store';
 import LogisticaDashboardComponent from './dashboard.component';

@@ -10,7 +10,7 @@ export const baseline = {
   'architecture-types': [],
   'architecture-layers': [],
   'architecture-config': [],
-  'architecture-packaging': ['src/app/core/services/seo'],
+  'architecture-packaging': [],
 };
 
 /** Claves aceptadas para una suite (para validar el propio baseline). */

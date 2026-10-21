@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import NewInvoiceComponent from './new-invoice.component';
 
 describe('NewInvoiceComponent', () => {

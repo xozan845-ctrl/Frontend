@@ -8,7 +8,7 @@ import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/sto
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import type { ProductRow } from './create-store.types';
 
 /**

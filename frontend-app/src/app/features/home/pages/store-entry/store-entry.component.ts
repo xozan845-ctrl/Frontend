@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 /** Un `storeId` válido: alfanumérico con guiones (UUID/slug), 1–100 caracteres. */
 const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;

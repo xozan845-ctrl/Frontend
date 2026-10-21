@@ -12,7 +12,7 @@ import {
   VendorProductRepository,
 } from '../../repositories/vendor-product.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { ClientSearchStore } from '../../state/client-search/client-search.store';
 import { OrderDraftStore } from '../../state/order-draft/order-draft.store';
 import { VendorCatalogStore } from '../../state/vendor-catalog/vendor-catalog.store';

@@ -6,7 +6,7 @@ import { CartStore } from '../../../cart/state/cart/cart.store';
 import { WishlistStore } from '../../../wishlist/state/wishlist/wishlist.store';
 import { ReviewsStore } from '../../state/reviews/reviews.store';
 import { ProductStore } from '../../state/product/product.store';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { Product } from '../../models/product.model';

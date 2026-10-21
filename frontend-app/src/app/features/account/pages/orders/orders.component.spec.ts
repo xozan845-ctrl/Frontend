@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import OrdersComponent from './orders.component';
 import { ORDER_REPOSITORY } from '../../../cart/public-api';
 import { AccountOrdersStore } from '../../state/account-orders.store';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 describe('OrdersComponent', () => {
   const orderRepo = {

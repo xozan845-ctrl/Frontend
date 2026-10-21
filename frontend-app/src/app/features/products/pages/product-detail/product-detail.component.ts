@@ -23,7 +23,7 @@ import { ImageLightboxComponent } from '../../../../shared/ui/image-lightbox/ima
 import { ProductCarouselComponent } from '../../components/product-carousel/product-carousel.component';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({

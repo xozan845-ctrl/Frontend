@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
-import { SeoService } from '../../../core/services/seo.service';
+import { SeoService } from '../../../core/services/seo/seo.service';
 
 /**
  * Página genérica "En construcción" (`R-UX-1`, `R-SH-3`): las secciones sin

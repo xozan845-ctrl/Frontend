@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import AccountComponent from './account.component';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 describe('AccountComponent', () => {
   const authStore = {

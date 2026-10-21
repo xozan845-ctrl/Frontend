@@ -1,5 +1,5 @@
 import { Component, OnDestroy, inject } from '@angular/core';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { ClientsTableComponent } from '../../components/clients-table/clients-table.component';
 import { CouriersListComponent } from '../../components/couriers-list/couriers-list.component';
 import { DeliveriesDonutComponent } from '../../components/deliveries-donut/deliveries-donut.component';
