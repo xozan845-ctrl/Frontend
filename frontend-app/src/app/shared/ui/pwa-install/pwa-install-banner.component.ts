@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import type { BeforeInstallPromptEvent } from './pwa-install.types';
 
 @Component({
@@ -7,7 +7,7 @@ import type { BeforeInstallPromptEvent } from './pwa-install.types';
   templateUrl: './pwa-install-banner.component.html',
   styleUrl: './pwa-install-banner.component.css',
 })
-export class PwaInstallBannerComponent implements OnInit, OnDestroy {
+export class PwaInstallBannerComponent implements OnInit {
   showBanner = signal(false);
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
@@ -23,17 +23,17 @@ export class PwaInstallBannerComponent implements OnInit, OnDestroy {
     this.deferredPrompt = null;
   };
 
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => {
+    window.removeEventListener('beforeinstallprompt', this.onBeforeInstallPrompt);
+    window.removeEventListener('appinstalled', this.onAppInstalled);
+  });
+
   ngOnInit(): void {
     // No mostrar si el usuario ya lo descartó.
     if (localStorage.getItem('ecom_pwa_dismissed') === 'true') return;
 
     window.addEventListener('beforeinstallprompt', this.onBeforeInstallPrompt);
     window.addEventListener('appinstalled', this.onAppInstalled);
-  }
-
-  ngOnDestroy(): void {
-    window.removeEventListener('beforeinstallprompt', this.onBeforeInstallPrompt);
-    window.removeEventListener('appinstalled', this.onAppInstalled);
   }
 
   async install(): Promise<void> {

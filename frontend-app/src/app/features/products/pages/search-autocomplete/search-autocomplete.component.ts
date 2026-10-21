@@ -4,16 +4,16 @@ import {
   ElementRef,
   HostListener,
   inject,
-  OnDestroy,
   signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { ProductStore } from '../../state/product/product.store';
 import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import type { HighlightPart } from './search-autocomplete.types';
 
@@ -24,13 +24,12 @@ import type { HighlightPart } from './search-autocomplete.types';
   templateUrl: './search-autocomplete.component.html',
   styleUrl: './search-autocomplete.component.css',
 })
-export class SearchAutocompleteComponent implements OnDestroy {
+export class SearchAutocompleteComponent {
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('container') containerRef!: ElementRef<HTMLElement>;
 
   private readonly productStore = inject(ProductStore);
   private readonly router = inject(Router);
-  private readonly destroy$ = new Subject<void>();
 
   searchTerm = signal('');
   isOpen = signal(false);
@@ -84,7 +83,7 @@ export class SearchAutocompleteComponent implements OnDestroy {
   private searchSubject = new Subject<string>();
 
   private readonly filterInput = this.searchSubject
-    .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+    .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
     .subscribe((term) => {
       this.searchTerm.set(term);
       this.isOpen.set(term.length >= 2);
@@ -173,10 +172,5 @@ export class SearchAutocompleteComponent implements OnDestroy {
     if (this.containerRef && !this.containerRef.nativeElement.contains(event.target as Node)) {
       this.close();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

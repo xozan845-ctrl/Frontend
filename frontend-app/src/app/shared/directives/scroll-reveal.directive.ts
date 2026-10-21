@@ -1,4 +1,4 @@
-import { Directive, ElementRef, inject, OnInit, OnDestroy } from '@angular/core';
+import { DestroyRef, Directive, ElementRef, inject, OnInit } from '@angular/core';
 
 @Directive({
   selector: '[appScrollReveal]',
@@ -7,9 +7,10 @@ import { Directive, ElementRef, inject, OnInit, OnDestroy } from '@angular/core'
     '[class.scroll-reveal]': 'true',
   },
 })
-export class ScrollRevealDirective implements OnInit, OnDestroy {
+export class ScrollRevealDirective implements OnInit {
   private el = inject(ElementRef);
   private observer: IntersectionObserver | null = null;
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.observer?.disconnect());
 
   ngOnInit(): void {
     this.observer = new IntersectionObserver(
@@ -22,9 +23,5 @@ export class ScrollRevealDirective implements OnInit, OnDestroy {
       { threshold: 0.1 },
     );
     this.observer.observe(this.el.nativeElement);
-  }
-
-  ngOnDestroy(): void {
-    this.observer?.disconnect();
   }
 }

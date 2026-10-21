@@ -1,8 +1,8 @@
 import {
   Component,
+  DestroyRef,
   computed,
   inject,
-  OnDestroy,
   signal,
   effect,
   input,
@@ -23,7 +23,7 @@ import { ImageLightboxComponent } from '../../../../shared/ui/image-lightbox/ima
 import { ProductCarouselComponent } from '../../components/product-carousel/product-carousel.component';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoCleanup } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
@@ -44,7 +44,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css',
 })
-export class ProductDetailComponent implements OnDestroy {
+export class ProductDetailComponent {
   readonly productStore = inject(ProductStore);
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
@@ -53,7 +53,7 @@ export class ProductDetailComponent implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly cartFlyService = inject(CartFlyService);
   private readonly fb = inject(FormBuilder);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoCleanup();
 
   /** Parámetros de ruta (`/tienda/:storeId/producto/:id`, `R-AR-12`). */
   readonly storeId = input<string>('');
@@ -156,10 +156,9 @@ export class ProductDetailComponent implements OnDestroy {
     }
   });
 
-  ngOnDestroy() {
-    this.productStore.clearSelectedProduct();
-    this.seoService.reset();
-  }
+  private readonly cleanup = inject(DestroyRef).onDestroy(() =>
+    this.productStore.clearSelectedProduct(),
+  );
 
   addToCart(buttonEl: HTMLButtonElement): void {
     const product = this.productStore.selectedProduct();

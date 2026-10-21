@@ -1,4 +1,4 @@
-import { Component, OnDestroy, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
@@ -33,7 +33,7 @@ import type { TimelineStep } from './order-detail.types';
   ],
   templateUrl: './order-detail.component.html',
 })
-export default class OrderDetailComponent implements OnDestroy {
+export default class OrderDetailComponent {
   /** Parámetro de ruta (`pedidos/:id`) enlazado con `withComponentInputBinding`. */
   readonly id = input.required<string>();
   readonly orders = inject(VendorOrdersStore);
@@ -85,9 +85,7 @@ export default class OrderDetailComponent implements OnDestroy {
     }
   });
 
-  ngOnDestroy(): void {
-    this.orders.clearSelectedOrder();
-  }
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.orders.clearSelectedOrder());
 
   protected requestStatusChange(status: OrderStatus): void {
     this.pendingStatus.set(status);

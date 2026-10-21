@@ -1,4 +1,4 @@
-import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiSessionStore } from '../../state/ai-session/ai-session.store';
@@ -65,7 +65,7 @@ const SUGGESTIONS: readonly ChatSuggestion[] = [
   ],
   templateUrl: './ai-chat.component.html',
 })
-export default class AiChatComponent implements OnDestroy {
+export default class AiChatComponent {
   readonly store = inject(AiSessionStore);
   private readonly fb = inject(FormBuilder);
   private readonly seo = injectSeoPage(
@@ -74,6 +74,7 @@ export default class AiChatComponent implements OnDestroy {
   );
 
   private readonly loadSessions = this.store.loadSessions();
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.store.clearCurrent());
 
   readonly suggestions = SUGGESTIONS;
 
@@ -132,10 +133,6 @@ export default class AiChatComponent implements OnDestroy {
       control.disable({ emitEvent: false });
     }
   });
-
-  ngOnDestroy(): void {
-    this.store.clearCurrent();
-  }
 
   /** Filtra el historial mientras se escribe en el buscador. */
   onSearch(event: Event): void {
