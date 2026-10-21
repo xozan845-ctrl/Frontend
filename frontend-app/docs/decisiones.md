@@ -751,3 +751,26 @@ contexto y consecuencias.
   de cada tienda sin peticiones adicionales (la ficha llega en la misma
   respuesta que las ofertas). Revertir es volver al título fijo y retirar el
   fixture/test de contrato.
+
+## ADR-31: Ficha de la tienda del vendedor
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: `StoreService.getMyStore` ya consumía
+  `GET /vendedores/me/tienda` (`TiendaResponseDto`), pero ninguna pantalla la
+  usaba. El vendedor no tenía un lugar para ver el nombre/descripción de su
+  tienda, su empresa, participación o el enlace público.
+- **Decisión**:
+  - Nueva página **`/vendedor/tienda`** con el ítem "Mi tienda" en el sidebar.
+    Usa `VendorStoreStore`, provisto en la ruta lazy junto a `STORE_REPOSITORY`.
+  - La ficha muestra nombre, descripción, participación, fecha de creación,
+    empresa, id de tienda y accesos a la tienda pública, productos y empresa.
+  - Si el backend devuelve `404`, la vista muestra el estado vacío con enlace a
+    `/crear-tienda`; los errores se traducen y se pueden reintentar.
+  - El adapter de `stores` amplía el modelo `Store` con `companyId`,
+    `ownerUserId`, `participationPercentage` y `createdAt` (opcionales) para
+    reutilizar el mismo contrato sin duplicar el endpoint.
+- **Consecuencias**: el vendedor tiene una vista de identidad de su tienda y un
+  atajo a la tienda pública. El endpoint queda consumido por una sola capa
+  (`StoreService`). Revertir es retirar la ruta, el ítem del sidebar y los
+  campos opcionales del modelo.

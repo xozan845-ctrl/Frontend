@@ -6,3 +6,5 @@ export type {
   StoreDraft,
   WizardStep,
 } from './models/store-wizard.model';
+export { STORE_REPOSITORY, type StoreRepository } from './repositories/store.repository';
+export { StoreService } from './services/store/store.service';

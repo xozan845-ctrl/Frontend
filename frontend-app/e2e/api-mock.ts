@@ -430,6 +430,22 @@ export async function mockApi(page: Page): Promise<void> {
         return;
       }
 
+      if (method === 'GET' && path === '/vendedores/me/tienda') {
+        await route.fulfill({
+          json: {
+            id: 'tienda-demo',
+            empresa_id: 'empresa-demo',
+            propietario_usuario_id: 'vendedor-demo',
+            participacion_porcentaje: 100,
+            vendedor_id: 'vendedor-demo',
+            nombre: 'Tienda Demo',
+            descripcion: 'Storefront de demostración para pruebas E2E.',
+            creado_en: '2026-10-21T20:57:47.870Z',
+          },
+        });
+        return;
+      }
+
       if (method === 'GET' && path === '/vendedores/me/productos') {
         await route.fulfill({ json: { data: PRODUCTOS_VENDEDOR } });
         return;

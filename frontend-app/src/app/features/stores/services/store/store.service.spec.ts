@@ -197,18 +197,13 @@ describe('StoreService', () => {
     expect(error?.message).toBe('No se pudo cargar tu tienda.');
   });
 
-  it('debe simular la tienda y la oferta en modo mock', async () => {
+  it('debe simular la publicación de ofertas en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
-    let store: unknown;
     let offer: unknown = 'pendiente';
 
-    service.getMyStore().subscribe((s) => (store = s));
     service.publishOffer('t-1', { productId: 'p-1', margin: 10 }).subscribe(() => (offer = 'ok'));
-    await vi.waitFor(() => {
-      expect(store).toBeDefined();
-      expect(offer).toBe('ok');
-    });
+    await vi.waitFor(() => expect(offer).toBe('ok'));
 
     httpMock.expectNone(() => true);
   });

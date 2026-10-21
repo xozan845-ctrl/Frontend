@@ -45,7 +45,6 @@ export class StoreService implements StoreRepository {
   }
 
   getMyStore(): Observable<Store | null> {
-    if (this.isMock()) return of(MOCK_STORE).pipe(delay(200));
     if (!environment.apiUrl) return this.missingApiUrl();
 
     return this.http.get<unknown>(`${environment.apiUrl}${this.vendorEndpoint}/me/tienda`).pipe(

@@ -32,3 +32,15 @@ export const CATALOGO_ENVELOPE_FIXTURE = {
   ],
   meta: { total: 2 },
 } as const;
+
+/** `GET /vendedores/me/tienda` (`TiendaResponseDto`) con contexto de empresa. */
+export const TIENDA_VENDEDOR_FIXTURE = {
+  id: 't-1',
+  empresa_id: 'e-1',
+  propietario_usuario_id: 'u-1',
+  participacion_porcentaje: 100,
+  vendedor_id: 'u-1',
+  nombre: 'Mi Tienda',
+  descripcion: 'Ropa y accesorios',
+  creado_en: '2026-10-21T20:57:47.870Z',
+} as const;
