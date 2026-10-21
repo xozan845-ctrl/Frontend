@@ -38,7 +38,7 @@ TestBed**. Las capas de esta área son el estándar exigible; el estado vigente
 | `R-RB-*`  | 1–4   | `05-reglas-robustez.md`      | Robustez de entradas       |
 | `R-FL-*`  | 1–4   | `05-reglas-robustez.md`      | Anti-flakiness             |
 | `G-*`     | 1–6   | `06-estandares-cobertura.md` | Gates de CI                |
-| `R-COV-*` | 1–4   | `06-estandares-cobertura.md` | Cobertura y anti-regresión |
+| `R-COV-*` | 1–5   | `06-estandares-cobertura.md` | Cobertura y anti-regresión |
 | `R-QA-*`  | 1–6   | `07-qa-gates.md`             | Política global de QA      |
 
 > La mecánica de CI (gatillos, concurrencia, runner, evidencia) vive en

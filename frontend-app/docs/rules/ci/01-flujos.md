@@ -16,19 +16,19 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 
 ## Jobs esperados (contrato)
 
-| Job                 | Comando                                          | Gate            |
-| ------------------- | ------------------------------------------------ | --------------- |
-| `build`             | `npm ci` → `npm run build` + `check-budget`      | `G-3`, `R-PF-1` |
-| `test`              | `npm ci` → `npm test -- --watch=false`           | `G-1`, `G-2`    |
-| `format`            | `npm ci` → `npm run format:check`                | `G-4`           |
-| `lint`              | `npm ci` → `npm run lint` (`--max-warnings=0`)   | `G-5`           |
-| `typecheck`         | `npm ci` → `npm run typecheck`                   | `G-3`           |
-| `rules`             | `npm ci` → `npm run rules:check` + `test:engine` | `R-DO-9`        |
-| `security`          | `npm ci` → `npm audit --audit-level=high`        | `R-QA-6`        |
-| `actionlint`        | `docker run rhysd/actionlint`                    | `R-CI-8`        |
-| `shellcheck`        | `shellcheck docker-entrypoint.d/*.sh`            | `R-CI-8`        |
-| `hadolint`          | `hadolint` sobre `Dockerfile`                    | `R-CI-8`        |
-| `gitleaks`          | `gitleaks/gitleaks-action`                       | `R-CI-8`        |
-| `dependency-review` | `actions/dependency-review-action` (PR)          | `R-CI-8`        |
-| `e2e`               | `playwright install chromium` → `npm run e2e`    | `G-6`, `R-E-25` |
-| `lighthouse`        | `npm run build` → `npm run lighthouse`           | `R-PF-8`        |
+| Job                 | Comando                                                  | Gate                    |
+| ------------------- | -------------------------------------------------------- | ----------------------- |
+| `build`             | `npm ci` → `npm run build` + `check-budget`              | `G-3`, `R-PF-1`         |
+| `test`              | `npm ci` → `npm test -- --watch=false` + `coverage:diff` | `G-1`, `G-2`, `R-COV-5` |
+| `format`            | `npm ci` → `npm run format:check`                        | `G-4`                   |
+| `lint`              | `npm ci` → `npm run lint` (`--max-warnings=0`)           | `G-5`                   |
+| `typecheck`         | `npm ci` → `npm run typecheck`                           | `G-3`                   |
+| `rules`             | `npm ci` → `npm run rules:check` + `test:engine`         | `R-DO-9`                |
+| `security`          | `npm ci` → `npm audit --audit-level=high`                | `R-QA-6`                |
+| `actionlint`        | `docker run rhysd/actionlint`                            | `R-CI-8`                |
+| `shellcheck`        | `shellcheck docker-entrypoint.d/*.sh`                    | `R-CI-8`                |
+| `hadolint`          | `hadolint` sobre `Dockerfile`                            | `R-CI-8`                |
+| `gitleaks`          | `gitleaks/gitleaks-action`                               | `R-CI-8`                |
+| `dependency-review` | `actions/dependency-review-action` (PR)                  | `R-CI-8`                |
+| `e2e`               | `playwright install chromium` → `npm run e2e`            | `G-6`, `R-E-25`         |
+| `lighthouse`        | `npm run build` → `npm run lighthouse`                   | `R-PF-8`                |
