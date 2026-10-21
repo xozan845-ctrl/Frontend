@@ -13,6 +13,8 @@ ejecución y el modelo de detección de cambios (zoneless).
 | R-PF-6 | **Sin sondeo innecesario**: prohibido `setInterval`/`setTimeout` para esperar estado que ya es reactivo. Usar `effect`, signals o el `subscribe` adecuado. La suite `performance-guards` lo verifica en `features/`.                                                                                                                                                                                                                       |
 | R-PF-7 | **Zoneless y estado reactivo**: la app **no usa `zone.js`**; la detección de cambios se dispara por signals. Toda mutación de estado pasa por `signal.set/update` o `patchState`; prohibido mutar objetos/arreglos en sitio esperando que Angular reaccione (`R-ST-4`), y prohibido añadir `zone.js` sin un ADR que lo justifique.                                                                                                         |
 
+| R-PF-8 | **Lighthouse en CI**: el job `lighthouse` ejecuta `lhci autorun` sobre el build estático con umbrales mínimos (performance 0.75, accesibilidad 0.95, best-practices 0.90, SEO 0.85). Bajar un umbral exige justificación en el PR (`R-PR-4`). |
+
 ## Verificación
 
 ```bash

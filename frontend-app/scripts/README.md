@@ -192,7 +192,7 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura verificada: **38/250 IDs** de regla con check real; hay **2
+Cobertura verificada: **38/251 IDs** de regla con check real; hay **2
 contextuales** (`R-AR-3`, `R-NC-9`) declaradas en `cites` porque hoy no tienen
 check propio. `R-NC-10` (`any`) se verifica en ESLint
 (`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,

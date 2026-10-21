@@ -31,3 +31,4 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | `gitleaks`          | `gitleaks/gitleaks-action`                       | `R-CI-8`        |
 | `dependency-review` | `actions/dependency-review-action` (PR)          | `R-CI-8`        |
 | `e2e`               | `playwright install chromium` → `npm run e2e`    | `G-6`, `R-E-25` |
+| `lighthouse`        | `npm run build` → `npm run lighthouse`           | `R-PF-8`        |
