@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
@@ -10,7 +10,7 @@ import { SeoService } from '../../../../core/services/seo.service';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './forgot-password.component.html',
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authStore = inject(AuthStore);
   private readonly seoService = inject(SeoService);
@@ -28,6 +28,10 @@ export class ForgotPasswordComponent {
       'Recuperar contraseña',
       'Solicita el restablecimiento de tu contraseña.',
     );
+  }
+
+  ngOnDestroy(): void {
+    this.seoService.reset();
   }
 
   isInvalid(field: string): boolean {

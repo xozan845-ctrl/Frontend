@@ -92,18 +92,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ];
 
   constructor() {
-    // Reset pagination and update SEO when category changes
+    // Única fuente del título del catálogo: se recalcula al cambiar de categoría
+    // (incluido el `?cat=` inicial). Antes `ngOnInit` lo sobrescribía con el genérico.
     effect(() => {
       const cat = this.selectedCategory();
-      this.seoService.updateTitle(cat === 'All' ? 'Catálogo de Productos' : `${cat} — Catálogo`);
+      this.seoService.setPage(
+        cat === 'All' ? 'Catálogo de Productos' : `${cat} — Catálogo`,
+        'Explora todo nuestro catálogo editorial de tecnología.',
+      );
     });
   }
 
   ngOnInit() {
-    this.seoService.setPage(
-      'Catálogo de Productos',
-      'Explora todo nuestro catálogo editorial de tecnología.',
-    );
     // El storefront ya lo cargó `storefrontResolver` antes de activar la ruta.
     // Support ?cat= query param from search autocomplete
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
