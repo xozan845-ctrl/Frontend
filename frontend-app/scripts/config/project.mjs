@@ -99,7 +99,11 @@ export const FEATURE_ALLOWED_ROOT_FILES = new Set(['public-api.ts', 'public-ui.t
  * una capa exige actualizar este contrato en el mismo PR.
  */
 export const FEATURE_CONTRACTS = {
-  account: { layers: ['pages', 'state'], publicApi: false, publicUi: false },
+  account: {
+    layers: ['components', 'models', 'pages', 'state'],
+    publicApi: false,
+    publicUi: false,
+  },
   'ai-scraper': {
     layers: [
       'adapters',

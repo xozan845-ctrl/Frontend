@@ -1,33 +1,20 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
-import {
-  AbstractControl,
-  FormBuilder,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
-
-/** Valida que `confirm` coincida con `next`. */
-function passwordsMatch(group: AbstractControl): ValidationErrors | null {
-  const next = group.get('next')?.value;
-  const confirm = group.get('confirm')?.value;
-  return next && confirm && next !== confirm ? { passwordMismatch: true } : null;
-}
+import { ChangePasswordFormComponent } from '../../components/change-password-form/change-password-form.component';
+import type { AccountProfile, PasswordChangePayload } from '../../models/account.model';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [ReactiveFormsModule, UpperCasePipe, RouterLink],
+  imports: [UpperCasePipe, RouterLink, ChangePasswordFormComponent],
   templateUrl: './account.component.html',
 })
 export default class AccountComponent {
-  private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
@@ -35,17 +22,8 @@ export default class AccountComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   /** Perfil autoritativo de `GET /auth/me`. */
-  readonly profile = signal<{ email: string; role: string } | null>(null);
+  readonly profile = signal<AccountProfile | null>(null);
   readonly submitting = signal(false);
-
-  readonly form = this.fb.nonNullable.group(
-    {
-      current: ['', [Validators.required]],
-      next: ['', [Validators.required, Validators.minLength(8)]],
-      confirm: ['', [Validators.required]],
-    },
-    { validators: [passwordsMatch] },
-  );
 
   private readonly loadProfile = this.authStore
     .me()
@@ -57,16 +35,12 @@ export default class AccountComponent {
       },
     });
 
-  onSubmit(): void {
-    if (this.form.invalid || this.submitting()) {
-      this.form.markAllAsTouched();
-      return;
-    }
+  onPasswordSubmit(payload: PasswordChangePayload): void {
+    if (this.submitting()) return;
 
-    const { current, next } = this.form.getRawValue();
     this.submitting.set(true);
     this.authStore
-      .changePassword(current, next)
+      .changePassword(payload.current, payload.next)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

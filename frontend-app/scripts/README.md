@@ -29,7 +29,12 @@ que son verificables por máquina.
 | `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`.                             |
 | `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                    |
 | `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                     |
-| `docs-sync`              | `R-DO-8`                                       | Si el PR cambia lógica/CI, exige actualizar la documentación necesaria; se omite en `main`.        |
+
+> El contrato de capas por feature de `architecture-features` se declara en
+> `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
+> quitar o renombrar una capa exige actualizar el contrato y la documentación
+> del feature en el mismo PR (`R-AR-16`).
+> | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige actualizar la documentación necesaria; se omite en `main`. |
 
 ### Modelo de capas
 

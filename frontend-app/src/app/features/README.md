@@ -30,6 +30,13 @@ features/<feature>/
 | `vendor`     | Panel del vendedor: POS, pedidos y clientes (ADR-20).   |
 | `wishlist`   | Lista de deseos persistida localmente.                  |
 
+## Contratos de capas
+
+Cada feature declara sus capas obligatorias en `FEATURE_CONTRACTS`
+(`scripts/config/project.mjs`, `R-AR-16`). `account` reutiliza `auth` y `cart`
+por su API pública; sus capas locales son `pages`, `state`, `components` y
+`models`, sin duplicar stores, puertos ni adapters de esos dominios.
+
 ## Fronteras
 
 - Un feature consume a otro solo por `public-api.ts`/`public-ui.ts`

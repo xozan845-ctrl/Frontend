@@ -51,29 +51,14 @@ describe('AccountComponent', () => {
     });
   });
 
-  it('no debe cambiar la contraseña si el formulario es inválido', async () => {
-    const fixture = await setup();
-    fixture.componentInstance.form.setValue({
-      current: 'actual123',
-      next: 'nueva12345',
-      confirm: 'distinta123',
-    });
-
-    fixture.componentInstance.onSubmit();
-
-    expect(authStore.changePassword).not.toHaveBeenCalled();
-  });
-
   it('debe cambiar la contraseña, limpiar la sesión y volver al login', async () => {
     const fixture = await setup();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    fixture.componentInstance.form.setValue({
+
+    fixture.componentInstance.onPasswordSubmit({
       current: 'actual123',
       next: 'nueva12345',
-      confirm: 'nueva12345',
     });
-
-    fixture.componentInstance.onSubmit();
 
     expect(authStore.changePassword).toHaveBeenCalledWith('actual123', 'nueva12345');
     expect(authStore.clearSession).toHaveBeenCalled();
@@ -83,13 +68,11 @@ describe('AccountComponent', () => {
   it('debe notificar si el cambio de contraseña falla', async () => {
     authStore.changePassword.mockReturnValueOnce(throwError(() => new Error('actual incorrecta')));
     const fixture = await setup();
-    fixture.componentInstance.form.setValue({
+
+    fixture.componentInstance.onPasswordSubmit({
       current: 'mala',
       next: 'nueva12345',
-      confirm: 'nueva12345',
     });
-
-    fixture.componentInstance.onSubmit();
 
     expect(notification.showError).toHaveBeenCalledWith('actual incorrecta');
     expect(authStore.clearSession).not.toHaveBeenCalled();
