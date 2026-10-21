@@ -70,6 +70,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-ST-5/6/7** — `rxMethod` para HTTP; alcance del store; persistencia en `withHooks`.
 - [ ] **R-PF-1/2/3** — Build dentro de budgets; `NgOptimizedImage`; rutas lazy.
 - [ ] **R-PF-4/6/7** — Sin trabajo pesado en plantilla; sin sondeo; zoneless (sin `zone.js`).
+- [ ] **R-PF-8** — Lighthouse en CI con umbrales mínimos (performance, accesibilidad, best-practices, SEO).
 
 ## 6. UI/UX ([`ui/`](../ui/README.md))
 
