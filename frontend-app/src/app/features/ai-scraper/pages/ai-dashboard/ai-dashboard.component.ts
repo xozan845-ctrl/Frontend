@@ -1,7 +1,7 @@
-import { Component, OnDestroy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AiConnectionPanelComponent } from '../../components/ai-connection-panel/ai-connection-panel.component';
 
 /**
@@ -14,20 +14,15 @@ import { AiConnectionPanelComponent } from '../../components/ai-connection-panel
   imports: [RouterLink, AiConnectionPanelComponent],
   templateUrl: './ai-dashboard.component.html',
 })
-export default class AiDashboardComponent implements OnDestroy {
+export default class AiDashboardComponent {
   private readonly connection = inject(AiConnectionStore);
-  private readonly seo = inject(SeoService);
+  private readonly seo = injectSeoPage(
+    'Scraping con IA',
+    'Configura la conexión con el backend de IA.',
+  );
 
   readonly endpoint = this.connection.endpoint;
   readonly hasKey = this.connection.hasKey;
-
-  constructor() {
-    this.seo.setPage('Scraping con IA', 'Configura la conexión con el backend de IA.');
-  }
-
-  ngOnDestroy(): void {
-    this.seo.reset();
-  }
 
   saveKey(value: string): void {
     this.connection.setApiKey(value);

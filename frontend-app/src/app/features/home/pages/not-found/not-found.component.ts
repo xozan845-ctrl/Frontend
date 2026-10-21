@@ -1,6 +1,6 @@
-import { Component, OnDestroy, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-not-found',
@@ -8,14 +8,9 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   imports: [EmptyStateComponent],
   templateUrl: './not-found.component.html',
 })
-export default class NotFoundComponent implements OnDestroy {
-  private readonly seoService = inject(SeoService);
-
-  constructor() {
-    this.seoService.setPage('Página no encontrada', 'La página que buscas no existe o fue movida.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
+export default class NotFoundComponent {
+  private readonly seoService = injectSeoPage(
+    'Página no encontrada',
+    'La página que buscas no existe o fue movida.',
+  );
 }

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { CURRENCY, formatCurrency } from '../../config/currency.config';
 import { COMPANY_INFO } from '../../constants/company.constants';
@@ -227,4 +227,31 @@ export class SeoService {
       return value;
     }
   }
+}
+
+/**
+ * Inyecta `SeoService` y registra la restauración de metadatos en el
+ * `DestroyRef` del componente/directiva (`R-AR-15`). Útil para páginas con SEO
+ * dinámico, que siguen llamando a `setPage`/`setProductPage` por su cuenta.
+ *
+ * Debe invocarse en un contexto de inyección (field initializer, constructor o
+ * factory), nunca dentro de un `effect` ni de un callback asíncrono.
+ */
+export function injectSeoCleanup(): SeoService {
+  const seo = inject(SeoService);
+  inject(DestroyRef).onDestroy(() => seo.reset());
+  return seo;
+}
+
+/**
+ * Aplica el SEO de una página estática y lo restaura al destruirse (`R-AR-15`).
+ * Sustituye al par `setPage` + `ngOnDestroy { reset() }`.
+ *
+ * Debe invocarse en un contexto de inyección (field initializer, constructor o
+ * factory), nunca dentro de un `effect` ni de un callback asíncrono.
+ */
+export function injectSeoPage(title: string, description?: string): SeoService {
+  const seo = injectSeoCleanup();
+  seo.setPage(title, description);
+  return seo;
 }

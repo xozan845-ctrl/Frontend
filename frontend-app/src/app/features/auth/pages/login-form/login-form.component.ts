@@ -1,8 +1,8 @@
-import { Component, inject, effect, signal, OnDestroy } from '@angular/core';
+import { Component, inject, effect, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-login-form',
@@ -10,12 +10,15 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login-form.component.html',
 })
-export class LoginFormComponent implements OnDestroy {
+export class LoginFormComponent {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Iniciar sesión',
+    'Accede a tu cuenta de Quantum Store.',
+  );
 
   /** Origen pedido por el guard (p. ej. `/vendedor/inicio`). */
   private readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '';
@@ -34,8 +37,6 @@ export class LoginFormComponent implements OnDestroy {
   showPassword = signal(false);
 
   constructor() {
-    this.seoService.setPage('Iniciar sesión', 'Accede a tu cuenta de Quantum Store.');
-
     // Redirige al usuario autenticado (a `returnUrl` o a la entrada multi-tienda).
     effect(() => {
       if (this.authStore.isAuthenticated()) {
@@ -49,10 +50,6 @@ export class LoginFormComponent implements OnDestroy {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
     this.router.navigateByUrl(safeUrl);
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   isFieldInvalid(field: string): boolean {

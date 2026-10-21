@@ -1,10 +1,10 @@
-import { Component, OnDestroy, effect, inject, input, untracked } from '@angular/core';
+import { Component, effect, inject, input, untracked } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { OrderDetailStore } from '../../state/order-detail.store';
 
 @Component({
@@ -13,9 +13,12 @@ import { OrderDetailStore } from '../../state/order-detail.store';
   imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './order-detail.component.html',
 })
-export default class OrderDetailComponent implements OnDestroy {
+export default class OrderDetailComponent {
   private readonly store = inject(OrderDetailStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Detalle del pedido',
+    'Detalle y seguimiento de tu pedido.',
+  );
 
   /** Id de la orden (`/cuenta/pedidos/:id`, `R-AR-12`). */
   readonly id = input<string>('');
@@ -28,14 +31,9 @@ export default class OrderDetailComponent implements OnDestroy {
   readonly retry = () => this.store.loadOrder(this.id());
 
   constructor() {
-    this.seoService.setPage('Detalle del pedido', 'Detalle y seguimiento de tu pedido.');
     effect(() => {
       const id = this.id();
       if (id) untracked(() => this.store.loadOrder(id));
     });
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }
