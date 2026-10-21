@@ -47,6 +47,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-AR-13** — `core/` sin UI ni negocio y sin importar `features/`.
 - [ ] **R-AR-14** — Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/` dentro de la capa.
 - [ ] **R-AR-15** — Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()` y limpieza con `DestroyRef`.
+- [ ] **R-AR-16** — Cada feature cumple su contrato de capas, API pública y forma de páginas/componentes.
 
 ## 4. Nomenclatura ([`02-naming.md`](../architecture/02-naming.md))
 

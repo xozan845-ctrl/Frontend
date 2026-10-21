@@ -213,104 +213,14 @@
 
     <!-- Mobile Stacked View -->
     <div class="md:hidden space-y-8">
-      @for (plan of plans; track plan.id) {
-        <div
-          class="bg-white dark:bg-surface-800 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-surface-700 relative overflow-hidden"
-          [class.border-2]="plan.popular"
-          [class.border-accent-600]="plan.popular"
-          [class.shadow-xl]="plan.popular"
-        >
-          @if (plan.popular) {
-            <div
-              class="absolute top-0 right-0 bg-accent-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-bl-lg shadow-sm"
-            >
-              Popular
-            </div>
-          }
-          <h3
-            class="text-2xl font-black uppercase mb-2"
-            [class.text-accent-600]="plan.popular"
-            [class.dark:text-accent-400]="plan.popular"
-            [class.text-amber-600]="plan.id === 'premium'"
-            [class.dark:text-amber-500]="plan.id === 'premium'"
-          >
-            {{ plan.name }}
-          </h3>
-          <div class="text-5xl font-black tracking-tighter mb-8">
-            {{ getPlanPrice(plan) | appCurrency }}
-            <span class="text-xs font-bold text-slate-400"
-              >/{{ plan.id === 'basic' ? 'MES' : getBillingCycleText() }}</span
-            >
-          </div>
-          <ul class="space-y-4 mb-8 font-medium">
-            @for (feat of planFeatures; track feat.name) {
-              <li
-                class="flex justify-between border-b border-slate-100 dark:border-surface-700 pb-3 text-sm"
-              >
-                <span class="text-slate-500">{{ feat.name }}</span>
-                @if (plan.id === 'basic') {
-                  @if (feat.basic === true) {
-                    <span class="font-bold text-emerald-600 dark:text-emerald-400"
-                      ><i class="fa-solid fa-check"></i> Incluido</span
-                    >
-                  } @else if (feat.basic === false) {
-                    <span class="text-slate-400"><i class="fa-solid fa-minus"></i></span>
-                  } @else {
-                    <strong class="font-bold text-slate-900 dark:text-white">{{
-                      feat.basic
-                    }}</strong>
-                  }
-                } @else if (plan.id === 'pro') {
-                  @if (feat.pro === true) {
-                    <span class="font-bold text-emerald-600 dark:text-emerald-400"
-                      ><i class="fa-solid fa-check"></i> Incluido</span
-                    >
-                  } @else if (feat.pro === false) {
-                    <span class="text-slate-400"><i class="fa-solid fa-minus"></i></span>
-                  } @else {
-                    <strong class="font-bold text-accent-600 dark:text-accent-400">{{
-                      feat.pro
-                    }}</strong>
-                  }
-                } @else {
-                  @if (feat.premium === true) {
-                    <span class="font-bold text-emerald-600 dark:text-emerald-400"
-                      ><i class="fa-solid fa-check"></i> Incluido</span
-                    >
-                  } @else if (feat.premium === false) {
-                    <span class="text-slate-400"><i class="fa-solid fa-minus"></i></span>
-                  } @else {
-                    <strong class="font-bold text-slate-900 dark:text-white">{{
-                      feat.premium
-                    }}</strong>
-                  }
-                }
-              </li>
-            }
-          </ul>
-          @if (plan.isCurrent) {
-            <button
-              class="w-full py-4 rounded-xl bg-slate-100 dark:bg-surface-700 text-xs font-bold uppercase tracking-widest text-slate-500 cursor-default"
-              data-testid="plans-contact-vendor"
-            >
-              {{ plan.buttonLabel }}
-            </button>
-          } @else if (plan.popular) {
-            <button
-              (click)="selectPlan(plan.name)"
-              class="w-full py-4 rounded-xl bg-accent-600 text-white text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all"
-            >
-              {{ plan.buttonLabel }}
-            </button>
-          } @else {
-            <button
-              (click)="selectPlan(plan.name)"
-              class="w-full py-4 rounded-xl border border-slate-300 dark:border-surface-600 text-slate-700 dark:text-white text-xs font-bold uppercase tracking-widest active:scale-95 transition-all"
-            >
-              {{ plan.buttonLabel }}
-            </button>
-          }
-        </div>
+      @for (card of planCards(); track card.plan.id) {
+        <app-plan-card
+          [plan]="card.plan"
+          [features]="planFeatures"
+          [price]="card.price"
+          [cycle]="card.cycle"
+          (planSelected)="selectPlan($event)"
+        />
       }
     </div>
   </div>

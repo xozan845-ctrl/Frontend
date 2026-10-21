@@ -71,6 +71,123 @@ export const FEATURE_LAYER_DEPENDENCIES = {
   mocks: new Set(['models', 'mocks', 'constants']),
 };
 
+/**
+ * Capas admitidas dentro de `features/<feature>/` (R-AR-16). Cualquier carpeta
+ * nueva debe añadirse aquí y al contrato del feature.
+ */
+export const FEATURE_ALLOWED_LAYERS = new Set([
+  'pages',
+  'components',
+  'state',
+  'services',
+  'repositories',
+  'adapters',
+  'models',
+  'constants',
+  'mocks',
+  'guards',
+  'interceptors',
+  'resolvers',
+]);
+
+/** Archivos admitidos en la raíz de un feature, además de `<feature>.routes.ts`. */
+export const FEATURE_ALLOWED_ROOT_FILES = new Set(['public-api.ts', 'public-ui.ts', 'README.md']);
+
+/**
+ * Contrato estructural de cada feature (R-AR-16): capas obligatorias y API
+ * pública. `layers` es también el conjunto cerrado de capas: añadir o quitar
+ * una capa exige actualizar este contrato en el mismo PR.
+ */
+export const FEATURE_CONTRACTS = {
+  account: { layers: ['pages', 'state'], publicApi: false, publicUi: false },
+  'ai-scraper': {
+    layers: [
+      'adapters',
+      'components',
+      'constants',
+      'interceptors',
+      'models',
+      'pages',
+      'repositories',
+      'services',
+      'state',
+    ],
+    publicApi: true,
+    publicUi: false,
+  },
+  auth: {
+    layers: [
+      'adapters',
+      'guards',
+      'interceptors',
+      'models',
+      'pages',
+      'repositories',
+      'services',
+      'state',
+    ],
+    publicApi: true,
+    publicUi: false,
+  },
+  billing: {
+    layers: ['components', 'constants', 'models', 'pages'],
+    publicApi: true,
+    publicUi: false,
+  },
+  cart: {
+    layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  home: { layers: ['pages'], publicApi: false, publicUi: false },
+  logistica: {
+    layers: ['components', 'constants', 'mocks', 'models', 'pages', 'services', 'state'],
+    publicApi: false,
+    publicUi: false,
+  },
+  plans: {
+    layers: ['components', 'constants', 'models', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
+  products: {
+    layers: [
+      'adapters',
+      'components',
+      'constants',
+      'models',
+      'pages',
+      'repositories',
+      'resolvers',
+      'services',
+      'state',
+    ],
+    publicApi: true,
+    publicUi: true,
+  },
+  stores: {
+    layers: ['adapters', 'components', 'models', 'pages', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  vendor: {
+    layers: [
+      'adapters',
+      'components',
+      'constants',
+      'guards',
+      'models',
+      'pages',
+      'repositories',
+      'services',
+      'state',
+    ],
+    publicApi: true,
+    publicUi: false,
+  },
+  wishlist: { layers: ['pages', 'state'], publicApi: true, publicUi: false },
+};
+
 /** Ficheros raíz de un feature que se consideran capa `root`. */
 export const FEATURE_ROOT_FILES = new Set(['public-api.ts', 'public-ui.ts']);
 

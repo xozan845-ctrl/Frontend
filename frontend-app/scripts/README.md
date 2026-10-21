@@ -21,6 +21,7 @@ que son verificables por máquina.
 | ------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                           |
 | `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
+| `architecture-features`  | `R-AR-16`                                      | Contrato estructural por feature: capas, API pública y forma de páginas/componentes.               |
 | `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.           |
 | `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
 | `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
