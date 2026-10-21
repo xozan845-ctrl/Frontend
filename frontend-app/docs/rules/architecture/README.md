@@ -10,7 +10,7 @@ casi todas las demás.
 
 | Archivo              | Contenido                                                                                                                                                              | Sufijo        |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `01-arquitectura.md` | Capas `core/shared/layout/features`, dirección de dependencias, DIP, adapters/ACL, NgRx Signals, rutas por feature, formularios, errores, ciclo de vida, configuración | `R-AR` (1–13) |
+| `01-arquitectura.md` | Capas `core/shared/layout/features`, dirección de dependencias, DIP, adapters/ACL, NgRx Signals, rutas por feature, formularios, errores, ciclo de vida, configuración | `R-AR` (1–15) |
 | `02-naming.md`       | Archivos, clases, selectores, tipos, rutas, claves de storage, idioma, commits                                                                                         | `R-NC` (1–12) |
 
 > Los documentos derivados de esta área (**AUDIT, CHECKLIST, historiales**) no
@@ -19,10 +19,10 @@ casi todas las demás.
 
 ## Mapa de IDs
 
-| Prefijo  | Rango | Archivo              | Ámbito                                                                      |
-| -------- | ----- | -------------------- | --------------------------------------------------------------------------- |
-| `R-AR-*` | 1–14  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas por feature, ciclo de vida y empaquetado |
-| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits                           |
+| Prefijo  | Rango | Archivo              | Ámbito                                                                                             |
+| -------- | ----- | -------------------- | -------------------------------------------------------------------------------------------------- |
+| `R-AR-*` | 1–15  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas por feature, ciclo de vida, empaquetado y estilo de componentes |
+| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits                                                  |
 
 ## Estructura por capas (ADR-12)
 
