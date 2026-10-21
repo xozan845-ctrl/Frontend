@@ -148,7 +148,10 @@ export class ProductDetailComponent implements OnDestroy {
         // Side effects fuera del tracking: `addProduct` lee y escribe el mismo
         // signal de `RecentlyViewedStore`, lo que provocaría un bucle (R-ST-3).
         untracked(() => {
-          this.seoService.setProductPage(p.name, p.description, p.price);
+          this.seoService.setProductPage(p.name, p.description, p.price, {
+            imageUrl: p.imageUrl,
+            inStock: p.stock > 0,
+          });
           this.recentlyViewedStore.addProduct(p);
         });
       }
