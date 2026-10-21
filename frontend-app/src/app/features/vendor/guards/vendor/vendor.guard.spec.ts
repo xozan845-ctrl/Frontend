@@ -34,6 +34,18 @@ describe('vendorGuard', () => {
     expect(router.createUrlTree).not.toHaveBeenCalled();
   });
 
+  it('debe permitir el acceso a una cuenta de empresario (ADR-26)', async () => {
+    const { result, router } = run({
+      isAuthenticated: () => true,
+      user: () => ({ id: 1, name: 'Eva', email: 'e@v.com', role: 'empresario' }),
+      refreshToken: () => 'r',
+      refreshTokenOnce: vi.fn(),
+    });
+
+    expect(await result).toBe(true);
+    expect(router.createUrlTree).not.toHaveBeenCalled();
+  });
+
   it('debe restaurar la sesión con el refresh token antes de decidir', async () => {
     const refreshTokenOnce = vi.fn().mockResolvedValue(true);
     const { result } = run({
