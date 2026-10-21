@@ -6,7 +6,7 @@ import { HOME_ROUTES, ROOT_ROUTES } from './features/home/home.routes';
 import { PLANS_ROUTES } from './features/plans/plans.routes';
 import { PRODUCTS_ROUTES } from './features/products/products.routes';
 import { WISHLIST_ROUTES } from './features/wishlist/wishlist.routes';
-import { storefrontResolver } from './features/products/resolvers/storefront.resolver';
+import { storefrontResolver } from './features/products/resolvers/storefront/storefront.resolver';
 
 /**
  * Punto de composición de rutas (`R-AR-2`, `R-AR-12`): cada feature aporta sus

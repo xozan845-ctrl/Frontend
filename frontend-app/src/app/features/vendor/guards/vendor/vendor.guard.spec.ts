@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { vendorGuard } from './vendor.guard';
-import { AuthStore } from '../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 
 describe('vendorGuard', () => {
   const route = {} as ActivatedRouteSnapshot;

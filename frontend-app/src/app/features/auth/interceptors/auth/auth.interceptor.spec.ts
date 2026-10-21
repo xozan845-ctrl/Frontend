@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { authInterceptor } from './auth.interceptor';
-import { AuthStore } from '../state/auth/auth.store';
+import { AuthStore } from '../../state/auth/auth.store';
 
 describe('authInterceptor', () => {
   const build = (store: Record<string, unknown>) => {

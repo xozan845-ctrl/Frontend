@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { catchError, from, switchMap, throwError } from 'rxjs';
-import { AuthStore } from '../state/auth/auth.store';
-import { environment } from '../../../../environments/environment';
+import { AuthStore } from '../../state/auth/auth.store';
+import { environment } from '../../../../../environments/environment';
 
 /** Endpoints de auth donde un 401 es definitivo (no se reintenta). */
 const NO_RETRY = /\/auth\/(login|registro|refresh)$/;

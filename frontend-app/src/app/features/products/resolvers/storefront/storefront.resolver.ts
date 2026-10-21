@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { ProductStore } from '../state/product/product.store';
+import { ProductStore } from '../../state/product/product.store';
 
 /**
  * Carga el storefront de la tienda indicada en la URL (`:storeId`) antes de

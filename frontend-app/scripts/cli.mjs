@@ -78,6 +78,11 @@ async function baselineCommand() {
       lines.push(`  '${suiteId}': [],`);
       continue;
     }
+    const inline = `  '${suiteId}': [${keys.map(quote).join(', ')}],`;
+    if (inline.length <= 100) {
+      lines.push(inline);
+      continue;
+    }
     lines.push(`  '${suiteId}': [`);
     for (const key of keys) lines.push(`    ${quote(key)},`);
     lines.push('  ],');

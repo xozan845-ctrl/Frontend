@@ -10,14 +10,7 @@ export const baseline = {
   'architecture-types': [],
   'architecture-layers': [],
   'architecture-config': [],
-  'architecture-packaging': [
-    'src/app/core/services/seo',
-    'src/app/features/ai-scraper/interceptors/ai-scraper-auth',
-    'src/app/features/auth/guards/auth',
-    'src/app/features/auth/interceptors/auth',
-    'src/app/features/products/resolvers/storefront',
-    'src/app/features/vendor/guards/vendor',
-  ],
+  'architecture-packaging': ['src/app/core/services/seo'],
 };
 
 /** Claves aceptadas para una suite (para validar el propio baseline). */
