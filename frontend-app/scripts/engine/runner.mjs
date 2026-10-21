@@ -119,6 +119,7 @@ export async function runRules({
   mode,
   reporter = 'spec',
   silent = false,
+  minVerifiedRules = 0,
 } = {}) {
   const suites = await discoverSuites(rulesDir);
   validateManifest(suites, requiredSuites);
@@ -135,6 +136,8 @@ export async function runRules({
     reporter,
     { silent },
   );
-  if (docsRulesRoot && !silent) printCoverage({ suites, rulesRoot: docsRulesRoot });
+  if (docsRulesRoot && !silent) {
+    printCoverage({ suites, rulesRoot: docsRulesRoot, minVerified: minVerifiedRules });
+  }
   return code;
 }

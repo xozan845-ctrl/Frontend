@@ -16,7 +16,8 @@ import { assertNoFresh } from './assertions.mjs';
 export default defineSuite({
   id: 'architecture-layers',
   area: 'architecture',
-  rules: ['R-AR-2', 'R-AR-3', 'R-AR-8', 'R-CX-1', 'R-CX-4', 'R-CX-6', 'R-SO-8', 'R-ST-1'],
+  rules: ['R-AR-2', 'R-AR-8', 'R-CX-1', 'R-CX-4', 'R-CX-6', 'R-SO-8', 'R-ST-1'],
+  cites: ['R-AR-3'],
   mode: 'repo',
   run: ({ test, assert }) => {
     test('La dependencia va hacia dentro: pages/components → state → services → repositories/adapters → models', () => {

@@ -13,7 +13,7 @@ import { pathToFileURL } from 'node:url';
 import { runRules } from './engine/runner.mjs';
 import { rulesDir, resolveInApp } from './engine/lib/paths.mjs';
 import { requiredSuites } from './config/manifest.mjs';
-import { RULES_DIR } from './config/project.mjs';
+import { COVERAGE_MIN_VERIFIED, RULES_DIR } from './config/project.mjs';
 import {
   findHardcodedConfig,
   findLayerViolations,
@@ -48,6 +48,7 @@ async function rulesCommand(args) {
     only: typeof flags.only === 'string' ? flags.only : undefined,
     mode: typeof flags.mode === 'string' ? flags.mode : undefined,
     reporter: typeof flags.reporter === 'string' ? flags.reporter : 'spec',
+    minVerifiedRules: COVERAGE_MIN_VERIFIED,
   });
 }
 

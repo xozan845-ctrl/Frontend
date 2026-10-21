@@ -6,6 +6,7 @@
 import { relative } from 'node:path';
 import { appRoot } from './lib/paths.mjs';
 import { collectRuleIds } from './lib/rules-docs.mjs';
+import { analyzeRuleCoverage } from './lib/coverage.mjs';
 
 export function printSuitePlan(suites) {
   console.log(`Ejecutando validación modular de reglas (${suites.length} suites)...\n`);
@@ -16,17 +17,23 @@ export function printSuitePlan(suites) {
   console.log('');
 }
 
-export function printCoverage({ suites, rulesRoot }) {
+export function printCoverage({ suites, rulesRoot, minVerified = 0 }) {
   const defined = collectRuleIds(rulesRoot);
-  const cited = new Set(suites.flatMap((suite) => suite.rules));
-  const covered = [...cited].filter((id) => defined.has(id)).sort();
-  const unknown = [...cited].filter((id) => !defined.has(id)).sort();
+  const analysis = analyzeRuleCoverage({ suites, definedIds: defined, minVerified });
 
   console.log('');
-  console.log(`Cobertura ejecutable: ${covered.length}/${defined.size} IDs de regla tienen check.`);
-  if (unknown.length > 0) {
+  console.log(
+    `Cobertura verificada: ${analysis.verified.length}/${analysis.defined} IDs de regla tienen check.`,
+  );
+  if (analysis.contextual.length > 0) {
     console.log(
-      `  ⚠ Hallazgo — IDs citados por suites sin definición en docs/rules: ${unknown.join(', ')}`,
+      `  Contextuales (cites sin check propio): ${analysis.contextual.length} — ${analysis.contextual.join(', ')}`,
+    );
+  }
+  if (analysis.unknown.length > 0) {
+    const ids = [...new Set(analysis.unknown.map((entry) => entry.id))].sort();
+    console.log(
+      `  ⚠ Hallazgo — IDs citados por suites sin definición en docs/rules: ${ids.join(', ')}`,
     );
   }
 }

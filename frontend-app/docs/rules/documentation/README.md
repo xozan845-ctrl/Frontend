@@ -14,5 +14,9 @@ entregable, no un extra.
 > vive en `REQUIRED_READMES` (`scripts/config/project.mjs`) y la valida la
 > suite `docs-readmes` del motor de gobernanza.
 >
+> `R-DO-9` exige que cada suite declare en `rules` solo lo que verifica; lo
+> contextual va en `cites`. La suite `governance-coverage` y el reporte de
+> `npm run rules:check` usan `COVERAGE_MIN_VERIFIED` como suelo.
+>
 > `R-DO-8` exige que los PRs que cambian lógica/contratos o CI actualicen la
 > documentación necesaria; lo valida la suite `docs-sync` (`origin/main...HEAD`).
