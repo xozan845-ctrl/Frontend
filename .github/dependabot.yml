@@ -12,7 +12,6 @@ updates:
     labels: [deps]
     commit-message:
       prefix: build(deps)
-      include: scope
     groups:
       angular:
         patterns: ["@angular/*", "@angular-devkit/*"]
@@ -28,7 +27,6 @@ updates:
     labels: [ci, deps]
     commit-message:
       prefix: ci(deps)
-      include: scope
 
   - package-ecosystem: docker
     directory: /
@@ -38,4 +36,3 @@ updates:
     labels: [cd, deps]
     commit-message:
       prefix: build(deps)
-      include: scope
