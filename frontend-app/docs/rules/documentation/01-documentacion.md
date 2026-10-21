@@ -11,6 +11,8 @@
 | R-DO-7 | **README por directorio importante**: `docs/`, `scripts/`, `src/app/` y sus capas `core/`, `shared/`, `layout/` y `features/` incluyen un `README.md` no vacío con título que explica su responsabilidad. La lista vive en `REQUIRED_READMES` (`scripts/config/project.mjs`) y se valida con `npm run rules:check`.                                                                                                                                                                                                                                                                                                       |
 | R-DO-8 | **Docs sincronizadas con el código en PRs**: si un PR cambia lógica/contratos (`src/app/core/**`, capas de `features/` con servicios/estado/repositorios/adapters/models/guards/interceptors/resolvers, `app.config.ts`, `app.routes.ts`, `<feature>.routes.ts` y `environments/**`), el motor exige actualizar al menos un doc (`docs/**`, `README.md` o un README de `src/app/`); los cambios de `scripts/**` exigen `scripts/README.md` o `docs/**`; los de `.github/workflows/**` exigen `docs/rules/ci/**` o `scripts/README.md`. Excepciones justificadas en `DOCS_SYNC_EXEMPTIONS` (`scripts/config/project.mjs`). |
 
+| R-DO-9 | **Cobertura ejecutable honesta**: cada suite declara en `rules` solo las reglas que verifica; las que solo contextualiza van en `cites`. `npm run rules:check` falla si un ID no existe en `docs/rules`, si aparece en `rules` y `cites` a la vez o si la cobertura verificada baja de `COVERAGE_MIN_VERIFIED` (`scripts/config/project.mjs`). |
+
 ## Verificación
 
 ```bash
@@ -18,4 +20,5 @@ git grep -n "src/app/d/" -- README.md docs | grep -v "01-documentacion.md"   # R
 ls docs/rules/_meta                                                          # R-DO-6
 ls docs/README.md scripts/README.md src/app/README.md \
    src/app/{core,shared,layout,features}/README.md                           # R-DO-7
+npm run rules:check                                                          # R-DO-9: cobertura verificada
 ```

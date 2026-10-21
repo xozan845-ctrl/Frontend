@@ -233,6 +233,13 @@ export const UNIT_LAYERS = new Set([
 export const MIN_UNIT_FILES = 2;
 
 /**
+ * Suelo de cobertura verificada del motor (R-DO-9): nº mínimo de IDs de regla
+ * con check ejecutable real. Súbelo al añadir validadores; nunca lo bajes para
+ * silenciar una regresión.
+ */
+export const COVERAGE_MIN_VERIFIED = 21;
+
+/**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).
  * Rutas relativas a `frontend-app/`. Las áreas de `docs/rules` se validan
  * aparte por su convención `README.md` + `NN-tema.md` (R-DO-6).

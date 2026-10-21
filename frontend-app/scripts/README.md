@@ -29,6 +29,7 @@ que son verificables por máquina.
 | `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`.                             |
 | `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                    |
 | `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                     |
+| `governance-coverage`    | `R-DO-9`                                       | Suites honestas (rules vs cites) y suelo de cobertura verificada.                                  |
 
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
@@ -185,9 +186,12 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura ejecutable: **21/243 IDs** de regla con check. Las suites de git
-(`git-commits`, `git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage),
-`R-GP` (push) y `R-PR` (PR) siguen siendo proceso y revisión manual. La deuda
-arquitectónica aceptada está en **cero** (`config/baseline.mjs`). El gate
-`docs-sync` (`R-DO-8`) exige documentación actualizada cuando un PR toca lógica,
-el motor o CI.
+Cobertura verificada: **21/245 IDs** de regla con check real; hay **2
+contextuales** (`R-AR-3`, `R-NC-9`) declaradas en `cites` porque hoy no tienen
+check propio. Las suites de git (`git-commits`, `git-branch`) cubren
+`R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y `R-PR` (PR) siguen
+siendo proceso y revisión manual. La deuda arquitectónica aceptada está en
+**cero** (`config/baseline.mjs`). El gate `docs-sync` (`R-DO-8`) exige
+documentación actualizada cuando un PR toca lógica, el motor o CI, y
+`governance-coverage` (`R-DO-9`) impide que la cobertura baje de
+`COVERAGE_MIN_VERIFIED`.

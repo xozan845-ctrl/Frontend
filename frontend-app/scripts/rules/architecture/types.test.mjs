@@ -15,7 +15,8 @@ import { assertNoFresh } from './assertions.mjs';
 export default defineSuite({
   id: 'architecture-types',
   area: 'architecture',
-  rules: ['R-NC-13', 'R-NC-9', 'R-CX-4'],
+  rules: ['R-NC-13'],
+  cites: ['R-NC-9', 'R-CX-4'],
   mode: 'repo',
   run: ({ test, assert }) => {
     test('R-NC-13: los tipos se declaran en archivos dedicados, no mezclados con implementación', () => {

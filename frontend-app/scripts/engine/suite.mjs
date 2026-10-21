@@ -22,13 +22,14 @@ export function __setRegistration(enabled) {
  * @param {object} spec
  * @param {string} spec.id Identificador único de la suite.
  * @param {string} [spec.area] Área de `docs/rules` que vigila.
- * @param {string[]} [spec.rules] IDs de regla que la suite verifica.
+ * @param {string[]} [spec.rules] IDs de regla que la suite **verifica**.
+ * @param {string[]} [spec.cites] IDs que solo contextualiza (sin check propio).
  * @param {'pure'|'repo'} [spec.mode] `pure` no toca disco/git; `repo` inspecciona el repo.
  * @param {(ctx: { test: typeof test, assert: typeof assert }) => void} spec.run
- * @returns {Readonly<{ id: string, area?: string, rules: string[], mode: string }>}
+ * @returns {Readonly<{ id: string, area?: string, rules: string[], cites: string[], mode: string }>}
  */
 export function defineSuite(spec) {
-  const { id, area, rules = [], mode = 'repo', run } = spec ?? {};
+  const { id, area, rules = [], cites = [], mode = 'repo', run } = spec ?? {};
 
   if (!id) throw new Error('defineSuite: falta el campo "id"');
   if (typeof run !== 'function') throw new Error(`defineSuite(${id}): falta "run"`);
@@ -40,5 +41,5 @@ export function defineSuite(spec) {
     describe(id, () => run({ test, assert }));
   }
 
-  return Object.freeze({ id, area, rules: [...rules], mode });
+  return Object.freeze({ id, area, rules: [...rules], cites: [...cites], mode });
 }

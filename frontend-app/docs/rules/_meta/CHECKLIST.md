@@ -28,7 +28,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-COV-1** — La cobertura no baja respecto a `main`.
 - [ ] **R-COV-2** — Todo archivo de lógica tocado tiene `*.spec.ts` (o excepción documentada).
 - [ ] **R-GC-5** — Verificación del ámbito en verde antes del commit: `npx prettier --check .`, `npm run build` y `npm test`.
-- [ ] **R-DO-1/6/7/8** — README raíz al día, áreas de `docs/rules`, directorios importantes con README y docs sincronizadas con los cambios de lógica/CI.
+- [ ] **R-DO-1/6/7/8/9** — README raíz al día, áreas de `docs/rules`, directorios importantes con README, docs sincronizadas y cobertura del motor sin deuda.
 
 ## 3. Arquitectura ([`architecture/`](../architecture/README.md))
 
