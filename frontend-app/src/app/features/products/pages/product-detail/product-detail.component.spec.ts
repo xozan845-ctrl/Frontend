@@ -1,15 +1,15 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { AuthStore } from '../../../auth/state/auth.store';
-import { CartStore } from '../../../cart/state/cart.store';
+import { AuthStore } from '../../../auth/state/auth/auth.store';
+import { CartStore } from '../../../cart/state/cart/cart.store';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
-import { ProductStore } from '../../state/product.store';
-import { ReviewsStore } from '../../state/reviews.store';
-import { RecentlyViewedStore } from '../../state/recently-viewed.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist.store';
+import { ProductStore } from '../../state/product/product.store';
+import { ReviewsStore } from '../../state/reviews/reviews.store';
+import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
+import { WishlistStore } from '../../../wishlist/state/wishlist/wishlist.store';
 import { Product } from '../../models/product.model';
 import { ProductDetailComponent } from './product-detail.component';
 

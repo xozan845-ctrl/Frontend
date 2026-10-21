@@ -9,7 +9,7 @@ import {
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 import { VendorOrder } from '../../models/vendor-order.model';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 
 const now = new Date();
 const atDay = (daysAgo: number, hours: number): string =>

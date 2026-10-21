@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { CartStore } from '../../state/cart.store';
+import { CartStore } from '../../state/cart/cart.store';
 import { ProductStore } from '../../../products/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';

@@ -6,7 +6,7 @@ import { CLIENT_REPOSITORY, ClientRepository } from '../../repositories/client.r
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
 import { Client } from '../../models/vendor-order.model';
-import { ClientSearchStore } from '../../state/client-search.store';
+import { ClientSearchStore } from '../../state/client-search/client-search.store';
 
 const carla: Client = {
   id: 'vc-1',

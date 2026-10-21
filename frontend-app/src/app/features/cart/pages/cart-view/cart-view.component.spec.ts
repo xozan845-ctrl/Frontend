@@ -1,9 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { CartStore } from '../../state/cart.store';
-import { ProductStore } from '../../../products/state/product.store';
-import { AuthStore } from '../../../auth/state/auth.store';
+import { CartStore } from '../../state/cart/cart.store';
+import { ProductStore } from '../../../products/state/product/product.store';
+import { AuthStore } from '../../../auth/state/auth/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartViewComponent } from './cart-view.component';
 import { SeoService } from '../../../../core/services/seo.service';

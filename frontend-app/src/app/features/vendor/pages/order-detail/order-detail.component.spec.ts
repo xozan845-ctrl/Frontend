@@ -8,7 +8,7 @@ import {
 } from '../../repositories/vendor-order.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 import { OrderStatus, VendorOrder } from '../../models/vendor-order.model';
 
 const pendingOrder: VendorOrder = {

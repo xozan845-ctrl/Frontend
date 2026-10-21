@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { ProductStore } from '../../state/product.store';
+import { ProductStore } from '../../state/product/product.store';
 import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';

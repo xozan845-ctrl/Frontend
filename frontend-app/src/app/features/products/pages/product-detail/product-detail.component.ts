@@ -11,10 +11,10 @@ import {
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductStore } from '../../state/product.store';
+import { ProductStore } from '../../state/product/product.store';
 import { CartStore } from '../../../cart/public-api';
-import { ReviewsStore } from '../../state/reviews.store';
-import { RecentlyViewedStore } from '../../state/recently-viewed.store';
+import { ReviewsStore } from '../../state/reviews/reviews.store';
+import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SpinnerComponent } from '../../../../shared/ui/spinner/spinner.component';

@@ -1,5 +1,5 @@
 import { Route, Routes } from '@angular/router';
-import { LogisticaDashboardStore } from './state/logistica-dashboard.store';
+import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
 
 /** Secciones del módulo sin fase: página real "En construcción" (`R-UX-1`, `R-UX-6`). */
 const comingSoonRoute = (

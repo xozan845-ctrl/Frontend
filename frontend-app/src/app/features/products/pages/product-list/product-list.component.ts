@@ -11,10 +11,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { ProductStore } from '../../state/product.store';
+import { ProductStore } from '../../state/product/product.store';
 import { CartStore } from '../../../cart/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { ReviewsStore } from '../../state/reviews.store';
+import { ReviewsStore } from '../../state/reviews/reviews.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SearchAutocompleteComponent } from '../search-autocomplete/search-autocomplete.component';

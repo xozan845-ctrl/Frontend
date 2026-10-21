@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
-import { CartStore } from '../../state/cart.store';
-import { CartUiStore } from '../../state/cart-ui.store';
-import { ProductStore } from '../../../products/state/product.store';
-import { AuthStore } from '../../../auth/state/auth.store';
+import { CartStore } from '../../state/cart/cart.store';
+import { CartUiStore } from '../../state/cart-ui/cart-ui.store';
+import { ProductStore } from '../../../products/state/product/product.store';
+import { AuthStore } from '../../../auth/state/auth/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartDrawerComponent } from './cart-drawer.component';
 
