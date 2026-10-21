@@ -28,3 +28,9 @@ datos de entrada.
 - El interceptor de auth (`auth.interceptor.ts`) ya añade `Authorization: Bearer`
   cuando `authType: 'bearer'` y soporta `withCredentials`; esa es la ruta de
   `R-SE-1`. Las cookies quedan descartadas por decisión.
+
+## Verificación
+
+```bash
+node scripts/cli.mjs rules --only security-guards   # R-SE-3/4/7/9
+```

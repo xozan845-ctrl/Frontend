@@ -37,6 +37,7 @@ const srcRoot = resolveInApp(APP_SRC_DIR);
 
 const toRel = (file) => relative(appRoot, file).split(sep).join('/');
 const listTs = () => walkFiles(srcRoot, (name) => name.endsWith('.ts'));
+const listHtml = () => walkFiles(srcRoot, (name) => name.endsWith('.html'));
 const isSpec = (rel) => rel.endsWith('.spec.ts');
 
 /** Clasifica una ruta (`src/app/...`) por ámbito y capa. */
@@ -321,6 +322,67 @@ export function findPackagingViolations() {
         key: `${directoryRel}/${unit}`,
       });
     }
+  }
+
+  return findings;
+}
+
+/**
+ * Hallazgos de guardas de arquitectura: R-AR-7 (ngModel/FormsModule),
+ * R-AR-9 (diálogos nativos) y R-AR-10 (subscribe sin limpieza en
+ * páginas/componentes).
+ */
+export function findProhibitedApiViolations() {
+  const findings = [];
+  const add = (rule, rel, line, detail, suffix) => {
+    findings.push({
+      rule,
+      file: rel,
+      line,
+      detail,
+      key: `${rel}|${rule}|${suffix}`,
+    });
+  };
+
+  for (const file of listTs()) {
+    const rel = toRel(file);
+    if (isSpec(rel)) continue;
+    const masked = maskSource(readText(file));
+
+    if (/\bngModel\b|\bFormsModule\b/.test(masked)) {
+      add('R-AR-7', rel, 0, 'usa ngModel/FormsModule en lógica de negocio', 'ngModel');
+    }
+
+    for (const match of masked.matchAll(/\bwindow\s*\.\s*(alert|confirm|prompt)\s*\(/g)) {
+      add('R-AR-9', rel, lineAt(masked, match.index), `usa window.${match[1]} nativo`, match[1]);
+    }
+
+    for (const match of masked.matchAll(/(?:^|[^.\w])(alert|confirm|prompt)\s*\(/g)) {
+      const line = lineAt(masked, match.index);
+      const lineText = masked.split('\n')[line - 1] ?? '';
+      if (/\)\s*:/.test(lineText)) continue; // declaración de método
+      add('R-AR-9', rel, line, `usa ${match[1]} nativo`, match[1]);
+    }
+
+    if (/\/(pages|components)\//.test(rel) && /\.subscribe\s*\(/.test(masked)) {
+      if (!/takeUntilDestroyed|takeUntil|DestroyRef|async\b/.test(masked)) {
+        add(
+          'R-AR-10',
+          rel,
+          0,
+          'subscribe sin takeUntilDestroyed/takeUntil/DestroyRef',
+          'subscribe',
+        );
+      }
+    }
+  }
+
+  for (const file of listHtml()) {
+    const rel = toRel(file);
+    const html = readText(file).replace(/<!--[\s\S]*?-->/g, (comment) =>
+      comment.replace(/[^\n]/g, ' '),
+    );
+    if (/\bngModel\b/.test(html)) add('R-AR-7', rel, 0, 'usa ngModel en plantilla', 'ngModel');
   }
 
   return findings;

@@ -237,7 +237,7 @@ export const MIN_UNIT_FILES = 2;
  * con check ejecutable real. Súbelo al añadir validadores; nunca lo bajes para
  * silenciar una regresión.
  */
-export const COVERAGE_MIN_VERIFIED = 21;
+export const COVERAGE_MIN_VERIFIED = 30;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).

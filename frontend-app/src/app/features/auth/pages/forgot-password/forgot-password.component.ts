@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
@@ -13,6 +14,7 @@ import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authStore = inject(AuthStore);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly seoService = injectSeoPage(
     'Recuperar contraseña',
     'Solicita el restablecimiento de tu contraseña.',
@@ -36,16 +38,19 @@ export class ForgotPasswordComponent {
 
     this.submitting.set(true);
     this.error.set(null);
-    this.authStore.requestPasswordReset(this.form.getRawValue().email).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        this.sent.set(true);
-      },
-      error: (err: Error) => {
-        this.submitting.set(false);
-        this.error.set(err.message || 'No se pudo enviar la solicitud. Intenta de nuevo.');
-      },
-    });
+    this.authStore
+      .requestPasswordReset(this.form.getRawValue().email)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.sent.set(true);
+        },
+        error: (err: Error) => {
+          this.submitting.set(false);
+          this.error.set(err.message || 'No se pudo enviar la solicitud. Intenta de nuevo.');
+        },
+      });
   }
 }
 export default ForgotPasswordComponent;
