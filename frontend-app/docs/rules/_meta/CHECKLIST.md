@@ -74,7 +74,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 ## 6. UI/UX ([`ui/`](../ui/README.md))
 
 - [ ] **R-AC-1/2/3** — Nombre accesible, teclado y foco; modales con `role="dialog"` y cierre con Escape.
-- [ ] **R-AC-4/5/6** — Imágenes con `alt`, contraste AA y `prefers-reduced-motion`.
+- [ ] **R-AC-4/5/6** — Imágenes con `alt`, contraste AA y `prefers-reduced-motion`; axe en E2E (`R-E-25`).
 - [ ] **R-UX-1** — Estados de carga/error/vacío definidos.
 - [ ] **R-UX-3/5/6** — Dark mode, tokens de `tailwind.config.js` y `SeoService`.
 
