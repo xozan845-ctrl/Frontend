@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
 import { ProductCardComponent } from '../../../products/public-ui';
@@ -7,7 +7,7 @@ import { WishlistStore } from '../../../wishlist/public-api';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { ScrollRevealDirective } from '../../../../shared/directives/scroll-reveal.directive';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -21,12 +21,15 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   ],
   templateUrl: './home.component.html',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
   private readonly wishlistStore = inject(WishlistStore);
   private readonly reviewsStore = inject(ReviewsStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Inicio',
+    'Hardware premium y tecnología sin concesiones para profesionales.',
+  );
 
   featuredProducts = computed(() => this.productStore.products().slice(0, 4));
 
@@ -43,14 +46,6 @@ export class HomeComponent implements OnInit {
       avgRating: this.reviewsStore.getAverageRating(product.id),
       reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
     };
-  }
-
-  ngOnInit() {
-    this.seoService.setPage(
-      'Inicio',
-      'Hardware premium y tecnología sin concesiones para profesionales.',
-    );
-    // El storefront lo carga `storefrontResolver` antes de activar la ruta.
   }
 
   onAddToCart(product: Product) {

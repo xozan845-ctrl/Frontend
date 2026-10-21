@@ -58,14 +58,12 @@ export class ProductCardComponent {
   /** Reinicia el estado "añadido" tras 2 s sin usar `setTimeout` (R-PF-6). */
   private readonly addPulse = new Subject<void>();
 
-  constructor() {
-    this.addPulse
-      .pipe(
-        switchMap(() => timer(2000)),
-        takeUntilDestroyed(),
-      )
-      .subscribe(() => this.isAdding.set(false));
-  }
+  private readonly resetAdding = this.addPulse
+    .pipe(
+      switchMap(() => timer(2000)),
+      takeUntilDestroyed(),
+    )
+    .subscribe(() => this.isAdding.set(false));
 
   onToggleWishlist(): void {
     this.toggleWishlist.emit(this.product());

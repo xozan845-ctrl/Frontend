@@ -40,9 +40,7 @@ export default class OrdersComponent {
       : 'Los pedidos que registres aparecerán aquí.',
   );
 
-  constructor() {
-    this.orders.loadOrders();
-  }
+  private readonly loadOrders = this.orders.loadOrders();
 
   setFilter(status: OrderStatus | null): void {
     this.orders.setStatusFilter(status);

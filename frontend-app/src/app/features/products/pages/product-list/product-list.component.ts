@@ -1,13 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  effect,
-  computed,
-  input,
-} from '@angular/core';
+import { Component, DestroyRef, inject, signal, effect, computed, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductStore } from '../../state/product/product.store';
@@ -36,7 +27,7 @@ import { Product } from '../../models/product.model';
   ],
   templateUrl: './product-list.component.html',
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent {
   readonly productStore = inject(ProductStore);
   readonly cartStore = inject(CartStore);
   private readonly wishlistStore = inject(WishlistStore);
@@ -100,17 +91,17 @@ export class ProductListComponent implements OnInit {
     );
   });
 
-  ngOnInit() {
-    // El storefront ya lo cargó `storefrontResolver` antes de activar la ruta.
-    // Support ?cat= query param from search autocomplete
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+  private readonly applyCategoryParam = this.route.queryParams
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((params) => {
+      // El storefront ya lo cargó `storefrontResolver` antes de activar la ruta.
+      // Support ?cat= query param from search autocomplete
       if (params['cat']) {
         const cat = params['cat'];
         const matched = this.categories().find((c) => c.toLowerCase() === cat.toLowerCase());
         if (matched) this.productStore.setSelectedCategory(matched);
       }
     });
-  }
 
   onCategoryChange(cat: string) {
     this.productStore.setSelectedCategory(cat);

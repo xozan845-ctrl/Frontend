@@ -26,13 +26,15 @@ export default class StoreEntryComponent {
 
   readonly storeId = signal('');
 
-  constructor() {
-    const queryStore = this.route.snapshot.queryParamMap.get('tienda');
-    if (queryStore) this.goToStore(queryStore);
-  }
+  private readonly init = this.openFromQuery();
 
   onInput(event: Event): void {
     this.storeId.set((event.target as HTMLInputElement).value.trim());
+  }
+
+  private openFromQuery(): void {
+    const queryStore = this.route.snapshot.queryParamMap.get('tienda');
+    if (queryStore) this.goToStore(queryStore);
   }
 
   /** Navega a la tienda; valida y normaliza el id (query param/entrada, `R-SE-6`). */
