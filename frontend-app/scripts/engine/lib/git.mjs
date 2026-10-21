@@ -64,6 +64,26 @@ export function getCommitsAgainstBase(baseBranch, mainBranch) {
   return tryLog(baseBranch) ?? tryLog(mainBranch) ?? [];
 }
 
+/**
+ * Archivos cambiados por el PR (`base...HEAD`, diff de tres puntos). Si el ref
+ * base no está disponible (clone superficial), prueba `mainBranch`.
+ */
+export function getChangedFiles(baseBranch, mainBranch) {
+  const tryDiff = (target) => {
+    const out = git(['diff', '--name-only', '--no-renames', `${target}...HEAD`], {
+      allowFailure: true,
+    });
+    return out === null
+      ? null
+      : out
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean);
+  };
+
+  return tryDiff(baseBranch) ?? tryDiff(mainBranch) ?? [];
+}
+
 /** Contenido de un archivo en una ref de git, o `null` si no existe. */
 export function gitShow(ref, repoRelativePath) {
   return git(['show', `${ref}:${repoRelativePath}`], { allowFailure: true });
