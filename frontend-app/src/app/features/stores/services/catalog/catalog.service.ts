@@ -6,7 +6,7 @@ import { environment } from '../../../../../environments/environment';
 import { toUserMessage } from '../../../../core/models/api-error';
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { CatalogRepository } from '../../repositories/catalog.repository';
-import { adaptCatalogOptionsFromBackend } from '../../adapters/store.adapter';
+import { adaptCatalogOptionsFromBackend } from '../../adapters/store/store.adapter';
 
 const MOCK_CATALOG: CatalogProductOption[] = [
   { id: 'p-demo-1', name: 'Teclado Mecánico', sku: 'SKU-TEC' },

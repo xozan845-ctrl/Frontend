@@ -15,7 +15,7 @@ import {
   adaptSessionFromBackend,
   adaptSessionListFromBackend,
   adaptSessionStatusResponseFromBackend,
-} from '../../adapters/ai-scraper.adapter';
+} from '../../adapters/ai-scraper/ai-scraper.adapter';
 import { AiScraperClient } from '../ai-scraper-client.service';
 import { fail, requireValue } from '../ai-scraper-error/ai-scraper-error';
 

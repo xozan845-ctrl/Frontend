@@ -1,5 +1,5 @@
 import { adaptAuthResponseFromBackend } from './auth.adapter';
-import { AUTH_LOGIN_ENVELOPE_FIXTURE } from './fixtures/auth.fixture';
+import { AUTH_LOGIN_ENVELOPE_FIXTURE } from '../fixtures/auth.fixture';
 
 // R-C-8: contrato contra fixture versionado, no contra el backend en vivo.
 describe('auth.contract', () => {

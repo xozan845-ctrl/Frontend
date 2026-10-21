@@ -1,4 +1,4 @@
-import { AuthResponse, User } from '../models/auth.model';
+import { AuthResponse, User } from '../../models/auth.model';
 
 /**
  * Normaliza cualquier respuesta de usuario de backend a la interfaz User

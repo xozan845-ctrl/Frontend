@@ -1,20 +1,20 @@
 import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
-} from '../../../core/models/api-response.dto';
+} from '../../../../core/models/api-response.dto';
 import {
   BackendClienteDTO,
   BackendPedidoDTO,
   BackendPedidoItemDTO,
   BackendProductoVendedorDTO,
-} from '../models/vendor.dto';
+} from '../../models/vendor.dto';
 import {
   Client,
   OrderLine,
   OrderStatus,
   VendorOrder,
   VendorProduct,
-} from '../models/vendor-order.model';
+} from '../../models/vendor-order.model';
 
 /** Alias tolerados del `estado` del backend hacia los estados del dominio. */
 const STATUS_BY_ALIAS: Readonly<Record<string, OrderStatus>> = {

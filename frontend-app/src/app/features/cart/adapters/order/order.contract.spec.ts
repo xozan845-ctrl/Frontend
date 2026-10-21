@@ -1,5 +1,5 @@
 import { adaptOrderResponse } from './order.adapter';
-import { ORDER_CREATED_ENVELOPE_FIXTURE } from './fixtures/order.fixture';
+import { ORDER_CREATED_ENVELOPE_FIXTURE } from '../fixtures/order.fixture';
 
 // R-C-8: contrato contra fixture versionado, no contra el backend en vivo.
 describe('order.contract', () => {

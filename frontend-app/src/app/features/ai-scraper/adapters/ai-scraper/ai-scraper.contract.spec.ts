@@ -10,7 +10,7 @@ import {
   BACKEND_JOB_LIST,
   BACKEND_JOB_RESULTS,
   BACKEND_SESSION_DETAIL,
-} from './fixtures/ai-scraper.fixture';
+} from '../fixtures/ai-scraper.fixture';
 
 /**
  * Contrato frontend ↔ `ai_scraper_executor` (`R-C-1/3/4/8`). Los fixtures

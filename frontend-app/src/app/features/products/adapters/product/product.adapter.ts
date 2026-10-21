@@ -1,16 +1,16 @@
-import { Product } from '../models/product.model';
-import { Store } from '../models/store.model';
+import { Product } from '../../models/product.model';
+import { Store } from '../../models/store.model';
 import {
   BackendProductDTO,
   BackendOfertaDTO,
   BackendTiendaDTO,
   BackendStorefrontDTO,
-} from '../models/product.dto';
+} from '../../models/product.dto';
 import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
-} from '../../../core/models/api-response.dto';
-import type { CatalogEntry } from '../models/catalog-entry.model';
+} from '../../../../core/models/api-response.dto';
+import type { CatalogEntry } from '../../models/catalog-entry.model';
 
 const DEFAULT_FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';

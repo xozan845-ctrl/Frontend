@@ -13,7 +13,7 @@ import {
   PEDIDOS_ITEMS_FIXTURE,
   PRODUCTO_VENDEDOR_FIXTURE,
   PRODUCTOS_VENDEDOR_ENVELOPE_FIXTURE,
-} from './fixtures/vendor.fixture';
+} from '../fixtures/vendor.fixture';
 
 // R-C-8: contrato contra fixtures realistas versionados en el repo, no contra
 // el backend en vivo. Si el shape cambia, los fixtures cambian en el mismo PR.

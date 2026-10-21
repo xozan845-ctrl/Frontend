@@ -4,7 +4,10 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { toUserMessage } from '../../../../core/models/api-error';
-import { adaptClientFromBackend, adaptClientsFromBackend } from '../../adapters/vendor.adapter';
+import {
+  adaptClientFromBackend,
+  adaptClientsFromBackend,
+} from '../../adapters/vendor/vendor.adapter';
 import { Client, CreateClientPayload } from '../../models/vendor-order.model';
 import { ClientRepository } from '../../repositories/client.repository';
 

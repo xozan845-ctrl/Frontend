@@ -12,17 +12,10 @@ export const baseline = {
   'architecture-config': [],
   'architecture-packaging': [
     'src/app/core/services/seo',
-    'src/app/features/ai-scraper/adapters/ai-scraper',
     'src/app/features/ai-scraper/interceptors/ai-scraper-auth',
-    'src/app/features/auth/adapters/auth',
     'src/app/features/auth/guards/auth',
     'src/app/features/auth/interceptors/auth',
-    'src/app/features/cart/adapters/cart',
-    'src/app/features/cart/adapters/order',
-    'src/app/features/products/adapters/product',
     'src/app/features/products/resolvers/storefront',
-    'src/app/features/stores/adapters/store',
-    'src/app/features/vendor/adapters/vendor',
     'src/app/features/vendor/guards/vendor',
   ],
 };
