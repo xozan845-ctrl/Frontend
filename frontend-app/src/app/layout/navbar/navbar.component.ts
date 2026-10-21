@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Params, RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore } from '../../features/auth/public-api';
@@ -13,7 +13,7 @@ import { StoreConfigService } from '../../core/services/store-config/store-confi
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class Navbar implements OnInit {
+export class Navbar {
   readonly authStore = inject(AuthStore);
   readonly cartStore = inject(CartStore);
   readonly cartUiStore = inject(CartUiStore);
@@ -48,23 +48,22 @@ export class Navbar implements OnInit {
     return this.storeConfig.companyInfo();
   }
   isMobileMenuOpen = signal(false);
-  isDarkMode = signal(false);
+  isDarkMode = signal(this.initialDarkMode());
 
-  ngOnInit() {
-    // Verificar si hay preferencia guardada o preferencia del sistema
+  /** Tema inicial: preferencia guardada o del sistema, aplicada al `<html>`. */
+  private initialDarkMode(): boolean {
     const savedTheme =
       typeof localStorage !== 'undefined' ? localStorage.getItem('ecom_theme') : null;
     const systemPrefersDark =
       typeof window !== 'undefined' && typeof window.matchMedia === 'function'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
         : false;
+    const dark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
 
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-      this.isDarkMode.set(true);
-      if (typeof document !== 'undefined') {
-        document.documentElement.classList.add('dark');
-      }
+    if (dark && typeof document !== 'undefined') {
+      document.documentElement.classList.add('dark');
     }
+    return dark;
   }
 
   toggleTheme() {

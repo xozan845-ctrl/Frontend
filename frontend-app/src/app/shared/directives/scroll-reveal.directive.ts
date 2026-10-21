@@ -1,4 +1,4 @@
-import { DestroyRef, Directive, ElementRef, inject, OnInit } from '@angular/core';
+import { DestroyRef, Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
   selector: '[appScrollReveal]',
@@ -7,21 +7,19 @@ import { DestroyRef, Directive, ElementRef, inject, OnInit } from '@angular/core
     '[class.scroll-reveal]': 'true',
   },
 })
-export class ScrollRevealDirective implements OnInit {
-  private el = inject(ElementRef);
-  private observer: IntersectionObserver | null = null;
-  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.observer?.disconnect());
+export class ScrollRevealDirective {
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        this.el.nativeElement.classList.add('scroll-reveal--visible');
+        this.observer.unobserve(this.el.nativeElement);
+      }
+    },
+    { threshold: 0.1 },
+  );
 
-  ngOnInit(): void {
-    this.observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          this.el.nativeElement.classList.add('scroll-reveal--visible');
-          this.observer?.unobserve(this.el.nativeElement);
-        }
-      },
-      { threshold: 0.1 },
-    );
-    this.observer.observe(this.el.nativeElement);
-  }
+  /** Arranca la observación al construir la directiva (sin `ngOnInit`). */
+  private readonly started = this.observer.observe(this.el.nativeElement);
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.observer.disconnect());
 }

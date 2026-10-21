@@ -9,11 +9,7 @@
 export const baseline = {
   'architecture-types': [],
   'architecture-layers': [],
-  'architecture-lifecycle': [
-    'src/app/layout/navbar/navbar.component.ts|R-AR-15|ngOnInit',
-    'src/app/shared/directives/scroll-reveal.directive.ts|R-AR-15|ngOnInit',
-    'src/app/shared/ui/pwa-install/pwa-install-banner.component.ts|R-AR-15|ngOnInit',
-  ],
+  'architecture-lifecycle': [],
   'architecture-config': [],
   'architecture-packaging': [],
 };
