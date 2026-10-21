@@ -112,6 +112,22 @@ export const UNIT_LAYERS = new Set([
 export const MIN_UNIT_FILES = 2;
 
 /**
+ * README.md obligatorios en los directorios con contrato propio (R-DO-7).
+ * Rutas relativas a `frontend-app/`. Las áreas de `docs/rules` se validan
+ * aparte por su convención `README.md` + `NN-tema.md` (R-DO-6).
+ */
+export const REQUIRED_READMES = [
+  'README.md',
+  'docs/README.md',
+  'scripts/README.md',
+  'src/app/README.md',
+  'src/app/core/README.md',
+  'src/app/shared/README.md',
+  'src/app/layout/README.md',
+  'src/app/features/README.md',
+];
+
+/**
  * Tipos de Conventional Commits admitidos (R-GC-1). `audit` no está admitido:
  * la auditoría se documenta con `docs(...)`.
  */

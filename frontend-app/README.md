@@ -94,6 +94,11 @@ permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
 | `npm run e2e`                       | Pruebas E2E con Playwright                           |
 | `npm run lint`                      | Lint con ESLint                                      |
 | `npm run format` / `format:check`   | Formatea / verifica formato con Prettier             |
+| `npm run rules:check`               | Valida las reglas de gobernanza del repo             |
+| `npm run rules:baseline`            | Regenera la deuda aceptada del motor de reglas       |
+| `npm run test:engine`               | Tests del motor de gobernanza                        |
+| `npm run og-image`                  | Regenera la imagen Open Graph por defecto            |
+| `npm run deploy` / `deploy:preview` | Despliega en Firebase Hosting (live / staging)       |
 | `npm run patch` / `minor` / `major` | Sube la versión y publica el tag semver              |
 
 ---
@@ -145,10 +150,16 @@ features se detallan en
 [`docs/rules/frontend/`](./docs/rules/frontend/README.md) y
 [`docs/rules/architecture/`](./docs/rules/architecture/README.md) (ADR-12).
 
+Cada capa documenta su contrato en su propio README:
+[`core/`](./src/app/core/README.md) · [`shared/`](./src/app/shared/README.md) ·
+[`layout/`](./src/app/layout/README.md) ·
+[`features/`](./src/app/features/README.md) (`R-DO-7`).
+
 ---
 
 ## 📚 Reglas y documentación
 
+- **Índice de documentación**: [`docs/README.md`](./docs/README.md).
 - **Reglas del proyecto** (punto fijo): [`docs/rules/README.md`](./docs/rules/README.md).
 - **Decisiones de arquitectura**: [`docs/decisiones.md`](./docs/decisiones.md).
 - **Estado y evidencias** (auditoría): [`docs/rules/_meta/AUDIT.md`](./docs/rules/_meta/AUDIT.md).
