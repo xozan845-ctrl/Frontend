@@ -30,3 +30,4 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | `hadolint`          | `hadolint` sobre `Dockerfile`                    | `R-CI-8`        |
 | `gitleaks`          | `gitleaks/gitleaks-action`                       | `R-CI-8`        |
 | `dependency-review` | `actions/dependency-review-action` (PR)          | `R-CI-8`        |
+| `e2e`               | `playwright install chromium` → `npm run e2e`    | `G-6`, `R-E-25` |

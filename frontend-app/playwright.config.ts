@@ -20,7 +20,15 @@ export default defineConfig({
     locale: 'es-MX',
     timezoneId: 'America/Mexico_City',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // R-AC: la auditoría axe corre también en viewport móvil.
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },
+      testMatch: /a11y\.spec\.ts/,
+    },
+  ],
   webServer: {
     command: `npm start -- --configuration e2e --port ${port}`,
     url: `http://localhost:${port}`,
