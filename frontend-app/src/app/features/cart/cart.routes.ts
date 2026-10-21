@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../auth/guards/auth.guard';
+import { authGuard } from '../auth/guards/auth/auth.guard';
 
 /** Rutas del carrito, hijas de `/tienda/:storeId` (`R-AR-12`). */
 export const CART_ROUTES: Routes = [

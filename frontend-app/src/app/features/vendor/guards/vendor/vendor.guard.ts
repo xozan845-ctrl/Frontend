@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthStore } from '../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 
 /**
  * Guard del panel del vendedor (ADR-20, `R-SE-6`): exige sesión **y** rol

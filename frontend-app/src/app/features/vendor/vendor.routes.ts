@@ -1,5 +1,5 @@
 import { Route, Routes } from '@angular/router';
-import { vendorGuard } from './guards/vendor.guard';
+import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_ORDER_REPOSITORY } from './repositories/vendor-order.repository';
 import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.repository';

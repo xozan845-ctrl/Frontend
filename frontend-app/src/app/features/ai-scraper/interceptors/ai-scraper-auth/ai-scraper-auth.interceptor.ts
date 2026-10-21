@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { AiConnectionStore } from '../state/ai-connection/ai-connection.store';
-import { AI_SCRAPER_API_KEY_HEADER } from '../constants/ai-scraper.constants';
+import { environment } from '../../../../../environments/environment';
+import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store';
+import { AI_SCRAPER_API_KEY_HEADER } from '../../constants/ai-scraper.constants';
 
 /**
  * Añade la cabecera `x-api-key` **solo** a las peticiones dirigidas al backend de
