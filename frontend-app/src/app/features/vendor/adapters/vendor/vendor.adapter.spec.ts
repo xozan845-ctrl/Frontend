@@ -3,6 +3,8 @@ import {
   adaptClientsFromBackend,
   adaptOrderFromBackend,
   adaptOrdersFromBackend,
+  adaptVendorOfferFromBackend,
+  adaptVendorOfferPageFromBackend,
   adaptVendorProductFromBackend,
   adaptVendorProductsFromBackend,
   normalizeOrderStatus,
@@ -103,6 +105,47 @@ describe('vendor.adapter', () => {
       expect(adaptVendorProductFromBackend({ precio: 100 })).toBeNull();
       expect(adaptVendorProductFromBackend('producto')).toBeNull();
       expect(adaptVendorProductFromBackend({ id: 'p', precio: '12,5' })?.price).toBe(12.5);
+    });
+  });
+
+  describe('ofertas del vendedor', () => {
+    it('debe devolver null sin id y acotar el margen a 90', () => {
+      expect(adaptVendorOfferFromBackend(null)).toBeNull();
+      expect(adaptVendorOfferFromBackend({ producto_nombre: 'Sin id' })).toBeNull();
+      expect(adaptVendorOfferFromBackend({ id: 'of-1', margen: 150 })?.margin).toBe(90);
+    });
+
+    it('debe usar valores por defecto cuando faltan campos', () => {
+      expect(adaptVendorOfferFromBackend({ id: 'of-1' })).toEqual({
+        id: 'of-1',
+        storeId: '',
+        productId: '',
+        sku: '',
+        productName: 'Producto',
+        margin: 0,
+        basePrice: 0,
+        salePrice: 0,
+        stock: 0,
+        status: 'activa',
+        createdAt: '',
+      });
+    });
+
+    it('debe paginar con valores por defecto ante una respuesta vacía', () => {
+      expect(adaptVendorOfferPageFromBackend({})).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+        pages: 1,
+      });
+    });
+
+    it('debe tolerar array directo y envelope { data }', () => {
+      expect(adaptVendorOfferPageFromBackend([{ id: 'of-1' }]).items).toHaveLength(1);
+      expect(
+        adaptVendorOfferPageFromBackend({ data: { items: [{ id: 'of-2' }] } }).items,
+      ).toHaveLength(1);
     });
   });
 

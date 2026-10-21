@@ -1,0 +1,211 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="vendor-products-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Tienda</span>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Productos</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Productos
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Tus ofertas publicadas, el stock disponible y el margen con el que vendes.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="offers.loading()"
+      data-testid="refresh-offers"
+      (click)="refresh()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="offers.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (validationError(); as message) {
+    <div
+      class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-700 dark:border-amber-800 dark:bg-amber-900/10 dark:text-amber-300"
+      role="alert"
+      data-testid="offer-validation-error"
+    >
+      {{ message }}
+    </div>
+  }
+
+  @if (offers.loading()) {
+    <section class="card flex flex-col gap-3 p-6" role="status" aria-live="polite">
+      <span class="sr-only">Cargando ofertas…</span>
+      <app-skeleton-loader height="48px" customClass="rounded-xl" />
+      <app-skeleton-loader height="48px" customClass="rounded-xl" />
+      <app-skeleton-loader height="48px" customClass="rounded-xl" />
+    </section>
+  } @else if (offers.error(); as message) {
+    <section
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="offers-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        data-testid="retry-offers"
+        (click)="refresh()"
+      >
+        Reintentar
+      </button>
+    </section>
+  } @else if (!offers.hasOffers()) {
+    <section
+      class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 p-10 text-center dark:border-surface-600"
+      data-testid="offers-empty"
+    >
+      <i
+        class="fa-solid fa-box-open text-3xl text-slate-300 dark:text-surface-600"
+        aria-hidden="true"
+      ></i>
+      <p class="text-sm font-bold text-slate-600 dark:text-slate-300">
+        Aún no tienes ofertas publicadas
+      </p>
+      <p class="max-w-md text-xs text-slate-500 dark:text-slate-400">
+        Publica productos desde el asistente de creación de tienda para verlos aquí y ajustar su
+        margen.
+      </p>
+    </section>
+  } @else {
+    <section class="card overflow-hidden" aria-labelledby="offers-title">
+      <header
+        class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-5 dark:border-surface-700"
+      >
+        <h2 id="offers-title" class="font-heading text-lg font-black tracking-tight uppercase">
+          Mis ofertas
+        </h2>
+        <span
+          class="text-xs font-bold text-slate-500 dark:text-slate-400"
+          data-testid="offers-count"
+        >
+          {{ offers.total() }} {{ offers.total() === 1 ? 'oferta' : 'ofertas' }}
+        </span>
+      </header>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm" data-testid="offers-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="px-5 py-3 font-bold">Producto</th>
+              <th scope="col" class="px-3 py-3 font-bold">Stock</th>
+              <th scope="col" class="px-3 py-3 font-bold">Precio base</th>
+              <th scope="col" class="px-3 py-3 font-bold">Margen (%)</th>
+              <th scope="col" class="px-3 py-3 font-bold">Precio venta</th>
+              <th scope="col" class="px-5 py-3 font-bold">Estado</th>
+              <th scope="col" class="px-5 py-3 font-bold"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (offer of offers.offers(); track offer.id) {
+              <tr data-testid="offer-row" [attr.data-offer-id]="offer.id">
+                <td class="px-5 py-3">
+                  <p class="font-bold text-slate-900 dark:text-white">{{ offer.productName }}</p>
+                  <p class="font-mono text-[10px] text-slate-400">{{ offer.sku || '—' }}</p>
+                </td>
+                <td class="px-3 py-3 tabular-nums text-slate-600 dark:text-slate-300">
+                  {{ offer.stock }}
+                </td>
+                <td class="px-3 py-3 tabular-nums text-slate-600 dark:text-slate-300">
+                  {{ offer.basePrice | appCurrency }}
+                </td>
+                <td class="px-3 py-3">
+                  <label class="sr-only" [attr.for]="'margin-' + offer.id">
+                    Margen de {{ offer.productName }}
+                  </label>
+                  <input
+                    [id]="'margin-' + offer.id"
+                    type="number"
+                    min="0"
+                    max="90"
+                    step="1"
+                    class="input w-24 py-1.5 text-sm"
+                    [value]="marginOf(offer)"
+                    data-testid="offer-margin"
+                    (input)="onMarginInput(offer, $event)"
+                  />
+                </td>
+                <td
+                  class="px-3 py-3 font-bold tabular-nums text-slate-900 dark:text-white"
+                  data-testid="offer-sale-price"
+                >
+                  {{ offer.salePrice | appCurrency }}
+                </td>
+                <td class="px-5 py-3">
+                  <span
+                    class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                    [class]="
+                      offer.status === 'activa'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                        : 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300'
+                    "
+                  >
+                    {{ offer.status }}
+                  </span>
+                </td>
+                <td class="px-5 py-3 text-right">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    [disabled]="isSaving(offer.id)"
+                    [attr.data-testid]="'save-offer-' + offer.id"
+                    (click)="saveMargin(offer)"
+                  >
+                    {{ isSaving(offer.id) ? 'Guardando…' : 'Guardar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer
+        class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-3 dark:border-surface-700"
+      >
+        <p class="text-xs text-slate-500 dark:text-slate-400" data-testid="offers-page-indicator">
+          Página {{ offers.page() }} de {{ offers.pages() }}
+        </p>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="offers.isFirstPage() || offers.loading()"
+            data-testid="offers-prev-page"
+            (click)="previousPage()"
+          >
+            Anterior
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="offers.isLastPage() || offers.loading()"
+            data-testid="offers-next-page"
+            (click)="nextPage()"
+          >
+            Siguiente
+          </button>
+        </div>
+      </footer>
+    </section>
+  }
+</div>

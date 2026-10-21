@@ -2,14 +2,17 @@ import { Route, Routes } from '@angular/router';
 import { EMPRESAS_ROUTES } from '../empresas/public-api';
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
+import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
 import { VENDOR_ORDER_REPOSITORY } from './repositories/vendor-order.repository';
 import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.repository';
 import { ClientService } from './services/client/client.service';
+import { VendorOfferService } from './services/vendor-offer/vendor-offer.service';
 import { VendorOrderService } from './services/vendor-order/vendor-order.service';
 import { VendorProductService } from './services/vendor-product/vendor-product.service';
 import { ClientSearchStore } from './state/client-search/client-search.store';
 import { OrderDraftStore } from './state/order-draft/order-draft.store';
 import { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
+import { VendorOffersStore } from './state/vendor-offers/vendor-offers.store';
 import { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
 
 /**
@@ -71,11 +74,11 @@ export const VENDOR_ROUTES: Routes = [
       ...EMPRESAS_ROUTES,
       {
         path: 'productos',
-        ...comingSoonRoute(
-          'Productos',
-          'Tu catálogo con precios y existencias.',
-          'fa-solid fa-box',
-        ),
+        loadComponent: () => import('./pages/products/products.component'),
+        providers: [
+          VendorOffersStore,
+          { provide: VENDOR_OFFER_REPOSITORY, useClass: VendorOfferService },
+        ],
       },
       {
         path: 'inventario',
