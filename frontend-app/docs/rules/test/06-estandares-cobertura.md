@@ -40,14 +40,14 @@ Estado verificado contra el repo: la CI vive en `.github/workflows/ci.yml`
 efectivos. ✅ = existe y bloquea · ⏸ = regla vigente, paso no configurado (deuda)
 · N/A = no aplica.
 
-| Gate | Condición                                                   | Estado                                    |
-| ---- | ----------------------------------------------------------- | ----------------------------------------- |
-| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.      | ✅ `npm test` (117 archivos / 730 tests)  |
-| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`).          | ✅ `coverageThresholds` en `angular.json` |
-| G-3  | `npm run build` en verde (typecheck + budgets de `R-PF-1`). | ✅                                        |
-| G-4  | Formato conforme: `prettier --check .`.                     | ✅                                        |
-| G-5  | Lint en verde (`eslint`).                                   | ✅ `eslint.config.mjs`                    |
-| G-6  | E2E de flujos críticos en verde antes de release.           | ✅ Playwright, 13 flujos                  |
+| Gate | Condición                                                                     | Estado                                    |
+| ---- | ----------------------------------------------------------------------------- | ----------------------------------------- |
+| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.                        | ✅ `npm test` (144 archivos / 826 tests)  |
+| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`).                            | ✅ `coverageThresholds` en `angular.json` |
+| G-3  | `npm run typecheck` + `npm run build` en verde (tipos + budgets de `R-PF-1`). | ✅ job `typecheck` + `build`              |
+| G-4  | Formato conforme: `prettier --check .`.                                       | ✅                                        |
+| G-5  | Lint en verde y sin warnings (`eslint . --max-warnings=0`).                   | ✅ `eslint.config.mjs`                    |
+| G-6  | E2E de flujos críticos en verde antes de release.                             | ✅ Playwright, 13 flujos                  |
 
 > El **security gate** (`npm audit --audit-level=high`) no es un `G-*`: es la
 > regla `R-QA-6`.

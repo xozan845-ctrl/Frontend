@@ -5,17 +5,17 @@ entorno del runner y evidencia. **Los gates de calidad (`G-1…G-6`) no viven
 aquí**: son reglas de testing y siguen en
 [`../test/06-estandares-cobertura.md`](../test/06-estandares-cobertura.md).
 
-> **Estado:** el repo **no tiene `.github/workflows/`**; todo este documento es el
-> **contrato a implementar** la primera vez que se añada CI. Hasta entonces, las
-> verificaciones equivalentes se ejecutan en local antes de cada PR
-> (`R-GC-5`).
+> **Estado:** CI implementada en `.github/workflows/ci.yml` con **8 jobs**
+> (`security-gate`, `format`, `lint`, `typecheck`, `rules`, `test`, `build`,
+> `e2e`), disparo en push a `main` y en **todo PR** (incluidos los apilados), y
+> `main` protegida con aprobación y los checks obligatorios (`R-CI-7`).
 
 ## Archivos
 
 | Archivo         | Contenido                                                                                                 | IDs          |
 | --------------- | --------------------------------------------------------------------------------------------------------- | ------------ |
-| `01-flujos.md`  | Gatillos push/PR, concurrencia, sin `paths`, pipeline único, revisión de workflows, verificación con `gh` | `R-CI` (1–6) |
-| `02-entorno.md` | Runner/Node/npm, evidencia (artifacts), secretos                                                          | `R-EN` (1–4) |
+| `01-flujos.md`  | Gatillos push/PR, concurrencia, sin `paths`, pipeline único, revisión de workflows, verificación con `gh` | `R-CI` (1–7) |
+| `02-entorno.md` | Runner/Node/npm, evidencia (artifacts), secretos y endurecimiento del runner                              | `R-EN` (1–5) |
 
 > El **despliegue** vive en [`../cd/`](../cd/README.md) (Dockploy). CI integra;
 > CD despliega.
@@ -24,8 +24,8 @@ aquí**: son reglas de testing y siguen en
 
 | Prefijo  | Rango | Archivo         | Ámbito                                 |
 | -------- | ----- | --------------- | -------------------------------------- |
-| `R-CI-*` | 1–6   | `01-flujos.md`  | Flujos, ejecución y verificación de CI |
-| `R-EN-*` | 1–4   | `02-entorno.md` | Entorno y evidencia en CI              |
+| `R-CI-*` | 1–7   | `01-flujos.md`  | Flujos, ejecución y verificación de CI |
+| `R-EN-*` | 1–5   | `02-entorno.md` | Entorno y evidencia en CI              |
 
 ## Reglas de otras áreas que exige CI (cross-refs)
 
