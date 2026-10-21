@@ -32,6 +32,7 @@ describe('VendorSidebarComponent', () => {
       'Ventas',
       'Pedidos',
       'Mi empresa',
+      'Mi tienda',
       'Facturación',
       'Inventario',
       'Reportes',

@@ -1,5 +1,6 @@
 import { Route, Routes } from '@angular/router';
 import { EMPRESAS_ROUTES } from '../empresas/public-api';
+import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -14,6 +15,7 @@ import { OrderDraftStore } from './state/order-draft/order-draft.store';
 import { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
 import { VendorOffersStore } from './state/vendor-offers/vendor-offers.store';
 import { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
+import { VendorStoreStore } from './state/vendor-store/vendor-store.store';
 
 /**
  * Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO
@@ -66,6 +68,11 @@ export const VENDOR_ROUTES: Routes = [
       {
         path: 'pedidos/:id',
         loadComponent: () => import('./pages/order-detail/order-detail.component'),
+      },
+      {
+        path: 'tienda',
+        loadComponent: () => import('./pages/store/store.component'),
+        providers: [VendorStoreStore, { provide: STORE_REPOSITORY, useClass: StoreService }],
       },
       {
         path: 'clientes',

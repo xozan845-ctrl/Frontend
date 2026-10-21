@@ -3,6 +3,7 @@ import {
   CATALOGO_ENVELOPE_FIXTURE,
   TIENDA_DIRECT_FIXTURE,
   TIENDA_ENVELOPE_FIXTURE,
+  TIENDA_VENDEDOR_FIXTURE,
 } from '../fixtures/store.fixture';
 
 // R-C-8: contrato contra un fixture realista versionado en el repo, no contra
@@ -14,6 +15,7 @@ describe('store.contract', () => {
       vendorId: 'v-42',
       name: 'Tienda Demo',
       description: 'Ropa y accesorios',
+      createdAt: '2026-10-09T15:00:00Z',
     });
   });
 
@@ -23,6 +25,20 @@ describe('store.contract', () => {
       vendorId: 'v-1',
       name: 'Tienda Directa',
       description: '',
+      createdAt: '2026-10-09T15:00:00Z',
+    });
+  });
+
+  it('debe normalizar la ficha del vendedor con empresa y participación', () => {
+    expect(adaptStoreFromBackend(TIENDA_VENDEDOR_FIXTURE)).toEqual({
+      id: 't-1',
+      vendorId: 'u-1',
+      name: 'Mi Tienda',
+      description: 'Ropa y accesorios',
+      companyId: 'e-1',
+      ownerUserId: 'u-1',
+      participationPercentage: 100,
+      createdAt: '2026-10-21T20:57:47.870Z',
     });
   });
 

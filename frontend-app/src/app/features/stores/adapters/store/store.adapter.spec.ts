@@ -49,6 +49,30 @@ describe('store.adapter', () => {
       ).toEqual({ id: 't-4', vendorId: '', name: 'Tienda', description: '' });
     });
 
+    it('debe mapear el contexto de empresa y la participación de la ficha del vendedor', () => {
+      expect(
+        adaptStoreFromBackend({
+          id: 't-5',
+          empresa_id: 'e-1',
+          propietario_usuario_id: 'u-1',
+          participacion_porcentaje: '35',
+          vendedor_id: 'u-1',
+          nombre: 'Mi Tienda',
+          descripcion: 'Demo',
+          creado_en: '2026-10-21T00:00:00.000Z',
+        }),
+      ).toEqual({
+        id: 't-5',
+        vendorId: 'u-1',
+        name: 'Mi Tienda',
+        description: 'Demo',
+        companyId: 'e-1',
+        ownerUserId: 'u-1',
+        participationPercentage: 35,
+        createdAt: '2026-10-21T00:00:00.000Z',
+      });
+    });
+
     it('debe devolver null cuando no hay id o la entrada no es válida', () => {
       expect(adaptStoreFromBackend(null)).toBeNull();
       expect(adaptStoreFromBackend(undefined)).toBeNull();

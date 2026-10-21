@@ -8,4 +8,12 @@ export interface Store {
   vendorId: string;
   name: string;
   description: string;
+  /** Empresa propietaria (`empresa_id`); presente en la ficha del vendedor. */
+  companyId?: string;
+  /** Usuario propietario operativo (`propietario_usuario_id`). */
+  ownerUserId?: string;
+  /** Participación del vendedor sobre las ventas (0–100). */
+  participationPercentage?: number;
+  /** Fecha de creación ISO 8601 UTC. */
+  createdAt?: string;
 }

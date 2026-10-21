@@ -22,6 +22,22 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
     vendorId: String(tienda.vendedor_id ?? tienda.vendorId ?? ''),
     name: typeof tienda.nombre === 'string' ? tienda.nombre : 'Tienda',
     description: typeof tienda.descripcion === 'string' ? tienda.descripcion : '',
+    ...(tienda.empresa_id !== null && tienda.empresa_id !== undefined && tienda.empresa_id !== ''
+      ? { companyId: String(tienda.empresa_id) }
+      : {}),
+    ...(tienda.propietario_usuario_id !== null &&
+    tienda.propietario_usuario_id !== undefined &&
+    tienda.propietario_usuario_id !== ''
+      ? { ownerUserId: String(tienda.propietario_usuario_id) }
+      : {}),
+    ...(tienda.participacion_porcentaje !== null &&
+    tienda.participacion_porcentaje !== undefined &&
+    Number.isFinite(Number(tienda.participacion_porcentaje))
+      ? { participationPercentage: Number(tienda.participacion_porcentaje) }
+      : {}),
+    ...(typeof tienda.creado_en === 'string' && tienda.creado_en
+      ? { createdAt: tienda.creado_en }
+      : {}),
   };
 }
 

@@ -32,3 +32,4 @@ export { OrderDraftStore } from './state/order-draft/order-draft.store';
 export { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
 export { VendorOffersStore } from './state/vendor-offers/vendor-offers.store';
 export { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
+export { VendorStoreStore } from './state/vendor-store/vendor-store.store';

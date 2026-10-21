@@ -7,6 +7,7 @@ import type {
   VendorProduct,
 } from '../models/vendor-order.model';
 import type { VendorOffer } from '../models/vendor-offer.model';
+import type { Store } from '../../products/public-api';
 
 export interface ClientSearchState {
   query: string;
@@ -79,5 +80,13 @@ export interface VendorOffersState {
   loading: boolean;
   /** Oferta cuyo margen se está guardando; deshabilita solo su fila. */
   savingId: string | null;
+  error: string | null;
+}
+
+export interface VendorStoreState {
+  store: Store | null;
+  loading: boolean;
+  /** `true` cuando la consulta terminó (permite distinguir "sin tienda" de "cargando"). */
+  loaded: boolean;
   error: string | null;
 }

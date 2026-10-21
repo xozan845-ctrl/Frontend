@@ -156,3 +156,19 @@ test('R-E-23: el vendedor ajusta el margen de una oferta', async ({ page }) => {
 
   await expect(firstRow.getByTestId('offer-sale-price')).toContainText('225.00');
 });
+
+// R-E-24: el vendedor consulta la ficha de su tienda (`GET /vendedores/me/tienda`,
+// ADR-31) y desde ahí accede a la tienda pública.
+test('R-E-24: el vendedor consulta la ficha de su tienda', async ({ page }) => {
+  await login(page, '/vendedor/tienda');
+
+  await expect(page.getByTestId('vendor-store-page')).toBeVisible();
+  await expect(page.getByTestId('store-name')).toContainText('Tienda Demo');
+  await expect(page.getByTestId('store-description')).toContainText('Storefront de demostración');
+  await expect(page.getByTestId('store-participation')).toContainText('100');
+
+  await expect(page.getByTestId('store-public-link')).toHaveAttribute(
+    'href',
+    '/tienda/tienda-demo/shop',
+  );
+});
