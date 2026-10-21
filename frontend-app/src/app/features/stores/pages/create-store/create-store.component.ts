@@ -1,4 +1,4 @@
-import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,7 +8,7 @@ import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/sto
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import type { ProductRow } from './create-store.types';
 
 /**
@@ -29,12 +29,15 @@ import type { ProductRow } from './create-store.types';
   ],
   templateUrl: './create-store.component.html',
 })
-export default class CreateStoreComponent implements OnDestroy {
+export default class CreateStoreComponent {
   private readonly fb = inject(FormBuilder);
   readonly wizard = inject(StoreWizardStore);
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Crear mi tienda',
+    'Abre tu tienda en minutos: crea tu cuenta de vendedor, describe tu tienda y publica tus productos.',
+  );
 
   readonly steps = WIZARD_STEPS;
   readonly step = this.wizard.step;
@@ -67,11 +70,6 @@ export default class CreateStoreComponent implements OnDestroy {
   });
 
   constructor() {
-    this.seoService.setPage(
-      'Crear mi tienda',
-      'Abre tu tienda en minutos: crea tu cuenta de vendedor, describe tu tienda y publica tus productos.',
-    );
-
     // Con sesión de vendedor, avanza automáticamente del paso de cuenta.
     effect(() => {
       this.wizard.startForSeller(this.isSeller());
@@ -159,9 +157,5 @@ export default class CreateStoreComponent implements OnDestroy {
   invalid(form: FormGroup, field: string): boolean {
     const control = form.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }

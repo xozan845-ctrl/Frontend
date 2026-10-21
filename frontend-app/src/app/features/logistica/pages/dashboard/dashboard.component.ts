@@ -1,5 +1,5 @@
-import { Component, OnDestroy, inject } from '@angular/core';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { Component, inject } from '@angular/core';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { ClientsTableComponent } from '../../components/clients-table/clients-table.component';
 import { CouriersListComponent } from '../../components/couriers-list/couriers-list.component';
 import { DeliveriesDonutComponent } from '../../components/deliveries-donut/deliveries-donut.component';
@@ -28,25 +28,20 @@ import { LogisticaDashboardStore } from '../../state/logistica-dashboard/logisti
   ],
   templateUrl: './dashboard.component.html',
 })
-export default class LogisticaDashboardComponent implements OnDestroy {
+export default class LogisticaDashboardComponent {
   readonly store = inject(LogisticaDashboardStore);
 
   protected readonly zones = LOGISTICA_ZONES;
   protected readonly dates = LOGISTICA_DATES;
   protected readonly skeletonKpis = [1, 2, 3, 4];
 
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Logística',
+    'Monitorea clientes, rutas y entregas en tiempo real desde el tablero de logística.',
+  );
 
   constructor() {
-    this.seoService.setPage(
-      'Logística',
-      'Monitorea clientes, rutas y entregas en tiempo real desde el tablero de logística.',
-    );
     this.store.load();
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   protected onDateChange(event: Event): void {

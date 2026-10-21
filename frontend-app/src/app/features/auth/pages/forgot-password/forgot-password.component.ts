@@ -1,8 +1,8 @@
-import { Component, inject, OnDestroy, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -10,10 +10,13 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './forgot-password.component.html',
 })
-export class ForgotPasswordComponent implements OnDestroy {
+export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authStore = inject(AuthStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Recuperar contraseña',
+    'Solicita el restablecimiento de tu contraseña.',
+  );
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -22,17 +25,6 @@ export class ForgotPasswordComponent implements OnDestroy {
   readonly submitting = signal(false);
   readonly sent = signal(false);
   readonly error = signal<string | null>(null);
-
-  constructor() {
-    this.seoService.setPage(
-      'Recuperar contraseña',
-      'Solicita el restablecimiento de tu contraseña.',
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   isInvalid(field: string): boolean {
     const control = this.form.get(field);

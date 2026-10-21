@@ -1,6 +1,6 @@
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { BILLING_INVOICES } from '../../constants/billing.fixtures';
 import { InvoiceFiltersChipsComponent } from '../../components/invoice-filters-chips/invoice-filters-chips.component';
 import { InvoiceListTableComponent } from '../../components/invoice-list-table/invoice-list-table.component';
@@ -18,8 +18,11 @@ import { InvoiceStatus } from '../../models/billing.model';
   imports: [RouterLink, InvoiceFiltersChipsComponent, InvoiceListTableComponent],
   templateUrl: './invoices.component.html',
 })
-export default class InvoicesComponent implements OnDestroy {
-  private readonly seoService = inject(SeoService);
+export default class InvoicesComponent {
+  private readonly seoService = injectSeoPage(
+    'Facturas — Facturación',
+    'Consulta todas las facturas de tu tienda, filtra por estado y abre el comprobante de cada una.',
+  );
 
   readonly statuses = INVOICE_STATUSES;
   readonly statusFilter = signal<InvoiceStatus | null>(null);
@@ -52,17 +55,6 @@ export default class InvoicesComponent implements OnDestroy {
       ? 'Prueba con otro filtro o crea una factura nueva.'
       : 'Las facturas que emitas aparecerán aquí.',
   );
-
-  constructor() {
-    this.seoService.setPage(
-      'Facturas — Facturación',
-      'Consulta todas las facturas de tu tienda, filtra por estado y abre el comprobante de cada una.',
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   setFilter(status: InvoiceStatus | null): void {
     this.statusFilter.set(status);

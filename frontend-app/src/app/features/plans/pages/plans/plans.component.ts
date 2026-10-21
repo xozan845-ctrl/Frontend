@@ -1,7 +1,7 @@
-import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from '../../constants/plans.constants';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
@@ -11,20 +11,15 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   imports: [CommonModule, AppCurrencyPipe],
   templateUrl: './plans.component.html',
 })
-export default class PlansComponent implements OnDestroy {
+export default class PlansComponent {
   private readonly notificationService = inject(NotificationService);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Planes y suscripciones',
+    'Elige tu membresía de Quantum Store.',
+  );
   readonly billingType = signal<'personal' | 'empresa'>('personal');
   readonly plans: PlanTier[] = PLANS;
   readonly planFeatures: PlanFeature[] = PLAN_FEATURES;
-
-  constructor() {
-    this.seoService.setPage('Planes y suscripciones', 'Elige tu membresía de Quantum Store.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   selectPlan(planName: string) {
     if (planName === 'Pro') {

@@ -1,8 +1,8 @@
-import { Component, inject, effect, signal, OnDestroy } from '@angular/core';
+import { Component, inject, effect, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoCleanup } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-register-form',
@@ -10,12 +10,12 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register-form.component.html',
 })
-export class RegisterFormComponent implements OnDestroy {
+export class RegisterFormComponent {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoCleanup();
   /** Alta pedida desde el funnel de vendedor (`rol=seller`, ADR-22). */
   readonly isSellerIntent = this.route.snapshot.queryParamMap.get('rol') === 'seller';
   /** Alta pedida desde el acceso de facturación (`rol=biller`, ADR-24). */
@@ -77,10 +77,6 @@ export class RegisterFormComponent implements OnDestroy {
         : '/';
     const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : fallback;
     this.router.navigateByUrl(safeUrl);
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   isFieldInvalid(field: string): boolean {

@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
-import { SeoService } from '../../../core/services/seo/seo.service';
+import { injectSeoCleanup } from '../../../core/services/seo/seo.service';
 
 /**
  * Página genérica "En construcción" (`R-UX-1`, `R-SH-3`): las secciones sin
@@ -14,20 +14,16 @@ import { SeoService } from '../../../core/services/seo/seo.service';
   imports: [EmptyStateComponent],
   templateUrl: './coming-soon.component.html',
 })
-export default class ComingSoonComponent implements OnInit, OnDestroy {
+export default class ComingSoonComponent implements OnInit {
   readonly title = input.required<string>();
   readonly description = input('Estamos preparando esta sección.');
   readonly icon = input('fa-solid fa-screwdriver-wrench');
   /** Módulo al que pertenece la sección; se usa en el título del documento. */
   readonly context = input('Quantum Store');
 
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoCleanup();
 
   ngOnInit(): void {
     this.seoService.setPage(`${this.title()} — ${this.context()}`, this.description());
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }

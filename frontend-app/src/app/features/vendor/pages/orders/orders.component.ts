@@ -1,6 +1,6 @@
-import { Component, OnDestroy, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { ORDER_STATUS_LABELS } from '../../constants/vendor.constants';
 import { OrderStatus } from '../../models/vendor-order.model';
@@ -17,9 +17,12 @@ import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store
   imports: [RouterLink, RecentOrdersTableComponent],
   templateUrl: './orders.component.html',
 })
-export default class OrdersComponent implements OnDestroy {
+export default class OrdersComponent {
   readonly orders = inject(VendorOrdersStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Pedidos — Panel del vendedor',
+    'Consulta la lista completa de pedidos de tu tienda, filtra por estado y revisa el detalle de cada venta.',
+  );
 
   protected readonly statuses: OrderStatus[] = [
     'pendiente',
@@ -38,15 +41,7 @@ export default class OrdersComponent implements OnDestroy {
   );
 
   constructor() {
-    this.seoService.setPage(
-      'Pedidos — Panel del vendedor',
-      'Consulta la lista completa de pedidos de tu tienda, filtra por estado y revisa el detalle de cada venta.',
-    );
     this.orders.loadOrders();
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   setFilter(status: OrderStatus | null): void {

@@ -1,6 +1,6 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 /** Un `storeId` válido: alfanumérico con guiones (UUID/slug), 1–100 caracteres. */
 const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
@@ -16,18 +16,17 @@ const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
   standalone: true,
   templateUrl: './store-entry.component.html',
 })
-export default class StoreEntryComponent implements OnDestroy {
+export default class StoreEntryComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Tu tienda',
+    'Plataforma multi-tienda: encuentra tu tienda o crea la tuya en minutos.',
+  );
 
   readonly storeId = signal('');
 
   constructor() {
-    this.seoService.setPage(
-      'Tu tienda',
-      'Plataforma multi-tienda: encuentra tu tienda o crea la tuya en minutos.',
-    );
     const queryStore = this.route.snapshot.queryParamMap.get('tienda');
     if (queryStore) this.goToStore(queryStore);
   }
@@ -46,9 +45,5 @@ export default class StoreEntryComponent implements OnDestroy {
   /** Abre el asistente para crear una tienda (requiere cuenta de vendedor). */
   goToCreateStore(): void {
     this.router.navigate(['/crear-tienda']);
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 }

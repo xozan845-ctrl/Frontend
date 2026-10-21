@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
 import {
@@ -11,7 +11,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 /** Valida que `confirm` coincida con `next`. */
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -26,12 +26,12 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule, UpperCasePipe, RouterLink],
   templateUrl: './account.component.html',
 })
-export default class AccountComponent implements OnInit, OnDestroy {
+export default class AccountComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage('Mi cuenta', 'Gestiona tu cuenta y tu contraseña.');
   private readonly destroyRef = inject(DestroyRef);
 
   /** Perfil autoritativo de `GET /auth/me`. */
@@ -47,10 +47,6 @@ export default class AccountComponent implements OnInit, OnDestroy {
     { validators: [passwordsMatch] },
   );
 
-  constructor() {
-    this.seoService.setPage('Mi cuenta', 'Gestiona tu cuenta y tu contraseña.');
-  }
-
   ngOnInit(): void {
     this.authStore
       .me()
@@ -61,10 +57,6 @@ export default class AccountComponent implements OnInit, OnDestroy {
           // El perfil local (`AuthStore`) ya muestra los datos; no bloquea la página.
         },
       });
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
   }
 
   onSubmit(): void {

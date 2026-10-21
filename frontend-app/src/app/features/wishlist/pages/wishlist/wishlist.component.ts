@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnDestroy, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { WishlistStore } from '../../state/wishlist/wishlist.store';
@@ -7,7 +7,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
 import { QuickViewModalComponent } from '../../../products/public-ui';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({
@@ -23,25 +23,20 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   ],
   templateUrl: './wishlist.component.html',
 })
-export class WishlistComponent implements OnDestroy {
+export class WishlistComponent {
   readonly wishlistStore = inject(WishlistStore);
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly productStore = inject(ProductStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Lista de deseos',
+    'Tus productos favoritos en Quantum Store.',
+  );
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
 
   quickViewProduct = signal<Product | null>(null);
-
-  constructor() {
-    this.seoService.setPage('Lista de deseos', 'Tus productos favoritos en Quantum Store.');
-  }
-
-  ngOnDestroy(): void {
-    this.seoService.reset();
-  }
 
   /** Vista de cada producto para la plantilla (R-PF-4/R-SO-6). */
   readonly wishlistVms = computed(() =>
