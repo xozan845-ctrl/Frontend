@@ -10,7 +10,7 @@ import {
   adaptJobListFromBackend,
   adaptJobResultsFromBackend,
 } from '../../adapters/ai-scraper/ai-scraper.adapter';
-import { AiScraperClient } from '../ai-scraper-client.service';
+import { AiScraperClient } from '../ai-scraper-client/ai-scraper-client.service';
 import { fail, requireValue } from '../ai-scraper-error/ai-scraper-error.functions';
 
 /** Convierte la entrada de dominio al cuerpo que espera `POST /jobs`. */

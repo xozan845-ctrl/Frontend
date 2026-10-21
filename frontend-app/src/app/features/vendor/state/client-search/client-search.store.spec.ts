@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { ClientSearchStore } from './client-search.store';
 import { CLIENT_REPOSITORY, ClientRepository } from '../../repositories/client.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { Client } from '../../models/vendor-order.model';
 
 const carla: Client = {

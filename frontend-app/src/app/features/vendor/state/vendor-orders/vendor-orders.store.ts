@@ -11,7 +11,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, fromEvent, pipe, timer } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VENDOR_POLL_INTERVAL_MS } from '../../constants/vendor.constants';
 import { OrderStatus } from '../../models/vendor-order.model';
 import { VENDOR_ORDER_REPOSITORY } from '../../repositories/vendor-order.repository';

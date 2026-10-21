@@ -5,7 +5,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
-import { OrderDetailStore } from '../../state/order-detail.store';
+import { OrderDetailStore } from '../../state/order-detail/order-detail.store';
 
 @Component({
   selector: 'app-order-detail',

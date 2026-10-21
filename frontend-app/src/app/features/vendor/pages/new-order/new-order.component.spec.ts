@@ -11,7 +11,7 @@ import {
   VENDOR_PRODUCT_REPOSITORY,
   VendorProductRepository,
 } from '../../repositories/vendor-product.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../core/services/seo/seo.service';
 import { ClientSearchStore } from '../../state/client-search/client-search.store';
 import { OrderDraftStore } from '../../state/order-draft/order-draft.store';

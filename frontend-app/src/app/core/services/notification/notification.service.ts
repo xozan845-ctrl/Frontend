@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import type { Notification, NotificationType } from '../models/notification.model';
+import type { Notification, NotificationType } from '../../models/notification.model';
 
-export type { Notification, NotificationType } from '../models/notification.model';
+export type { Notification, NotificationType } from '../../models/notification.model';
 
 @Injectable({
   providedIn: 'root',

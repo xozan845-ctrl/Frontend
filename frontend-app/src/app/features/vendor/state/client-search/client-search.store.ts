@@ -10,7 +10,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { CLIENT_SEARCH_DEBOUNCE_MS } from '../../constants/vendor.constants';
 import { Client, CreateClientPayload } from '../../models/vendor-order.model';
 import { CLIENT_REPOSITORY } from '../../repositories/client.repository';

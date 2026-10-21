@@ -5,7 +5,7 @@ import {
   VENDOR_OFFER_REPOSITORY,
   VendorOfferRepository,
 } from '../../repositories/vendor-offer.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VendorOffer } from '../../models/vendor-offer.model';
 
 const offer: VendorOffer = {

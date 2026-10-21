@@ -5,7 +5,7 @@ import {
   VENDOR_PRODUCT_REPOSITORY,
   VendorProductRepository,
 } from '../../repositories/vendor-product.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VendorProduct } from '../../models/vendor-order.model';
 
 const product = (

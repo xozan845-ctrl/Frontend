@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AiJobService } from './ai-job.service';
-import { AiScraperClient } from '../ai-scraper-client.service';
+import { AiScraperClient } from '../ai-scraper-client/ai-scraper-client.service';
 import {
   BACKEND_JOB_CAMEL,
   BACKEND_JOB_EXECUTION,

@@ -5,7 +5,7 @@ import {
   VENDOR_ORDER_REPOSITORY,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VENDOR_DRAFT_STORAGE_KEY } from '../../constants/vendor.constants';
 import {
   Client,

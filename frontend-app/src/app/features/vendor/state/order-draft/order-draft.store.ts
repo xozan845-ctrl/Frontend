@@ -10,7 +10,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VENDOR_DRAFT_STORAGE_KEY, VENDOR_TAX_RATE } from '../../constants/vendor.constants';
 import {
   Client,

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthStore } from '../../../auth/state/auth/auth.store';
 import { CartStore } from '../../../cart/state/cart/cart.store';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../core/services/seo/seo.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { ProductStore } from '../../state/product/product.store';

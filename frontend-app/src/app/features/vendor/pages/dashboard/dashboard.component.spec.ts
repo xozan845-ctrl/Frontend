@@ -6,7 +6,7 @@ import {
   VENDOR_ORDER_REPOSITORY,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../core/services/seo/seo.service';
 import { VendorOrder } from '../../models/vendor-order.model';
 import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
