@@ -119,6 +119,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -127,6 +128,7 @@ jobs:
           cache-dependency-path: frontend-app/package-lock.json
       - run: npm ci --prefer-offline
       - run: npm test -- --watch=false
+      - run: npm run coverage:diff
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
