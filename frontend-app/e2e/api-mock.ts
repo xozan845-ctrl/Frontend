@@ -374,15 +374,31 @@ function storefrontDe(storeId: string): unknown {
   };
 }
 
-const CATALOGO = {
-  items: PRODUCTOS.map((producto) => ({
-    id: producto.id,
-    sku: producto.sku,
-    nombre: producto.nombre,
-    descripcion: producto.descripcion,
-    categoria: producto.categoria,
-  })),
-};
+interface CatalogoProductoFixture {
+  id: string;
+  empresa_id: string;
+  sku: string;
+  nombre: string;
+  descripcion: string;
+  categoria: string;
+  precio_base: number;
+  stock: number;
+  estado: string;
+  creado_en: string;
+}
+
+const CATALOGO_INICIAL: readonly CatalogoProductoFixture[] = PRODUCTOS.map((producto) => ({
+  id: producto.id,
+  empresa_id: 'empresa-demo',
+  sku: producto.sku,
+  nombre: producto.nombre,
+  descripcion: producto.descripcion,
+  categoria: producto.categoria,
+  precio_base: producto.precio,
+  stock: producto.stock,
+  estado: producto.stock > 0 ? 'disponible' : 'agotado',
+  creado_en: '2026-10-21T10:00:00.000Z',
+}));
 
 /** Minúsculas sin acentos para que la búsqueda de cartera sea tolerante. */
 function sinAcentos(value: string): string {
@@ -411,6 +427,7 @@ function filtrarClientes(query: string): ClienteFixture[] {
 export async function mockApi(page: Page): Promise<void> {
   const pedidos = pedidosIniciales(new Date());
   const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
+  const catalogo = CATALOGO_INICIAL.map((producto) => ({ ...producto }));
 
   await page.route(
     (url) => url.pathname.startsWith('/api/v1/'),
@@ -426,7 +443,56 @@ export async function mockApi(page: Page): Promise<void> {
       }
 
       if (method === 'GET' && path === '/catalog/productos') {
-        await route.fulfill({ json: CATALOGO });
+        await route.fulfill({
+          json: {
+            items: catalogo,
+            total: catalogo.length,
+            pagina: 1,
+            limite: 20,
+            paginas: 1,
+          },
+        });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/productos') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const producto: CatalogoProductoFixture = {
+          id: `p-${Date.now()}`,
+          empresa_id: 'empresa-demo',
+          sku: String(payload?.['sku'] ?? ''),
+          nombre: String(payload?.['nombre'] ?? 'Producto'),
+          descripcion: String(payload?.['descripcion'] ?? ''),
+          categoria: String(payload?.['categoria'] ?? ''),
+          precio_base: Number(payload?.['precio_base'] ?? 0),
+          stock: Number(payload?.['stock'] ?? 0),
+          estado: Number(payload?.['stock'] ?? 0) > 0 ? 'disponible' : 'agotado',
+          creado_en: '2026-10-21T12:00:00.000Z',
+        };
+        catalogo.unshift(producto);
+        await route.fulfill({ status: 201, json: producto });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/catalog\/productos\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const producto = catalogo.find((candidate) => candidate.id === id);
+        if (!producto) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Producto no encontrado.' } });
+          return;
+        }
+        if (payload?.['nombre'] !== undefined) producto.nombre = String(payload['nombre']);
+        if (payload?.['descripcion'] !== undefined)
+          producto.descripcion = String(payload['descripcion']);
+        if (payload?.['categoria'] !== undefined) producto.categoria = String(payload['categoria']);
+        if (payload?.['precio_base'] !== undefined)
+          producto.precio_base = Number(payload['precio_base']);
+        if (payload?.['stock'] !== undefined) {
+          producto.stock = Number(payload['stock']);
+          producto.estado = producto.stock > 0 ? 'disponible' : 'agotado';
+        }
+        await route.fulfill({ json: producto });
         return;
       }
 

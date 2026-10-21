@@ -6,3 +6,11 @@ export type { Product, ProductVariant } from './models/product.model';
 export type { Store } from './models/store.model';
 export { ProductStore } from './state/product/product.store';
 export { ReviewsStore } from './state/reviews/reviews.store';
+export type {
+  CatalogProduct,
+  CatalogProductFilters,
+  CatalogProductPage,
+  CatalogProductStatus,
+  CreateCatalogProductData,
+  UpdateCatalogProductData,
+} from './models/catalog-product.model';
