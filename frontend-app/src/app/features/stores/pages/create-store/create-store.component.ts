@@ -69,20 +69,18 @@ export default class CreateStoreComponent {
     return this.productRows.controls.some((row) => row.controls.selected.value);
   });
 
-  constructor() {
-    // Con sesión de vendedor, avanza automáticamente del paso de cuenta.
-    effect(() => {
-      this.wizard.startForSeller(this.isSeller());
-    });
+  /** Con sesión de vendedor, avanza automáticamente del paso de cuenta. */
+  private readonly syncSellerStep = effect(() => {
+    this.wizard.startForSeller(this.isSeller());
+  });
 
-    // Prepara el formulario de productos cuando llega el catálogo (estado de UI).
-    effect(() => {
-      const catalog = this.wizard.catalog();
-      if (this.wizard.step() === 3 && catalog.length > 0 && this.productRows.length === 0) {
-        this.buildProductRows(catalog);
-      }
-    });
-  }
+  /** Prepara el formulario de productos cuando llega el catálogo (estado de UI). */
+  private readonly prepareProductRows = effect(() => {
+    const catalog = this.wizard.catalog();
+    if (this.wizard.step() === 3 && catalog.length > 0 && this.productRows.length === 0) {
+      this.buildProductRows(catalog);
+    }
+  });
 
   // ── Paso 1: cuenta ─────────────────────────────────────────────────────────
   register(): void {

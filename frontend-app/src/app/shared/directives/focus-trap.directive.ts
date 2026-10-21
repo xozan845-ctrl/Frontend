@@ -39,16 +39,15 @@ export class FocusTrapDirective implements OnDestroy {
   private previouslyFocused: HTMLElement | null = null;
   private active = false;
 
-  constructor() {
-    effect(() => {
-      const enabled = this.appFocusTrap();
-      if (enabled && !this.active) {
-        this.activate();
-      } else if (!enabled && this.active) {
-        this.deactivate();
-      }
-    });
-  }
+  /** Activa/desactiva la trampa de foco reaccionando al input (`R-AR-15`). */
+  private readonly syncEnabled = effect(() => {
+    const enabled = this.appFocusTrap();
+    if (enabled && !this.active) {
+      this.activate();
+    } else if (!enabled && this.active) {
+      this.deactivate();
+    }
+  });
 
   ngOnDestroy(): void {
     if (this.active) this.deactivate();

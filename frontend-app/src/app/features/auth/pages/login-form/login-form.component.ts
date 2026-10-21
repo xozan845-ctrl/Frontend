@@ -36,14 +36,12 @@ export class LoginFormComponent {
 
   showPassword = signal(false);
 
-  constructor() {
-    // Redirige al usuario autenticado (a `returnUrl` o a la entrada multi-tienda).
-    effect(() => {
-      if (this.authStore.isAuthenticated()) {
-        this.redirectAfterAuth();
-      }
-    });
-  }
+  /** Redirige al usuario autenticado (a `returnUrl` o al origen multi-tienda). */
+  private readonly redirectWhenAuthenticated = effect(() => {
+    if (this.authStore.isAuthenticated()) {
+      this.redirectAfterAuth();
+    }
+  });
 
   /** Vuelve a la ruta protegida de origen (`returnUrl`) o a la entrada raíz. */
   private redirectAfterAuth(): void {
