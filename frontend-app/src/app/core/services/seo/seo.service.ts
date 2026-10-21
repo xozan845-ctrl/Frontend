@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { CURRENCY, formatCurrency } from '../config/currency.config';
-import { COMPANY_INFO } from '../constants/company.constants';
-import type { ProductSeoExtras } from '../models/seo.model';
+import { CURRENCY, formatCurrency } from '../../config/currency.config';
+import { COMPANY_INFO } from '../../constants/company.constants';
+import type { ProductSeoExtras } from '../../models/seo.model';
 
 const SITE_NAME = COMPANY_INFO.name;
 const DEFAULT_TITLE = `${SITE_NAME} — Hardware Premium`;

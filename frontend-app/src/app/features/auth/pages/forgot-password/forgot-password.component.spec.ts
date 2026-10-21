@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 describe('ForgotPasswordComponent', () => {
   const authRepo = { resetPassword: vi.fn(() => of(true)) };

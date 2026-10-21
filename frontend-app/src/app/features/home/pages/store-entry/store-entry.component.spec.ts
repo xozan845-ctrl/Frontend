@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import StoreEntryComponent from './store-entry.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 describe('StoreEntryComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };

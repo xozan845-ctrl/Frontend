@@ -8,7 +8,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-cart-view',

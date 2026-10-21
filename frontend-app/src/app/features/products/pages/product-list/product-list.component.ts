@@ -21,7 +21,7 @@ import { SearchAutocompleteComponent } from '../search-autocomplete/search-autoc
 import { QuickViewModalComponent } from '../../components/quick-view-modal/quick-view-modal.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { ScrollRevealDirective } from '../../../../shared/directives/scroll-reveal.directive';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { Product } from '../../models/product.model';
 
 @Component({

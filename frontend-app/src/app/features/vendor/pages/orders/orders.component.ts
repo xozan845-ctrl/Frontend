@@ -1,6 +1,6 @@
 import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { ORDER_STATUS_LABELS } from '../../constants/vendor.constants';
 import { OrderStatus } from '../../models/vendor-order.model';

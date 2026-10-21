@@ -7,7 +7,7 @@ import { CartStore } from '../../state/cart/cart.store';
 import { ProductStore } from '../../../products/state/product/product.store';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { Product } from '../../../products/models/product.model';
 import { CheckoutComponent } from './checkout.component';
 

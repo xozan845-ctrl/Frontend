@@ -1,7 +1,7 @@
 import { Component, OnDestroy, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { OrderStatusBadgeComponent } from '../../components/order-status-badge/order-status-badge.component';

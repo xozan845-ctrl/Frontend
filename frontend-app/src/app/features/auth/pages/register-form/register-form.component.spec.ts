@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { RegisterFormComponent } from './register-form.component';
 import { AuthStore } from '../../state/auth/auth.store';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 describe('RegisterFormComponent', () => {
   const authStore = {

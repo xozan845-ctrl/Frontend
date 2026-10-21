@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatCurrency } from '../../../../core/config/currency.config';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import {
   BILLING_CLIENTS,
   BILLING_INVOICES,

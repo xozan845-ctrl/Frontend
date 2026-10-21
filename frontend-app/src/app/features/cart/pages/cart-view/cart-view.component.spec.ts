@@ -6,7 +6,7 @@ import { ProductStore } from '../../../products/state/product/product.store';
 import { AuthStore } from '../../../auth/state/auth/auth.store';
 import { Product } from '../../../products/models/product.model';
 import { CartViewComponent } from './cart-view.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 const product: Product = {
   id: 21,

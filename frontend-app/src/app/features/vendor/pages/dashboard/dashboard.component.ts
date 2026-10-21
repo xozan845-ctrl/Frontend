@@ -1,6 +1,6 @@
 import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';

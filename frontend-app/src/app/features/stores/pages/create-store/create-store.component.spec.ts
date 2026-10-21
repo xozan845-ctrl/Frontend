@@ -8,7 +8,7 @@ import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalo
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import type { User } from '../../../auth/public-api';
 
 const createdStore = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', description: '' };

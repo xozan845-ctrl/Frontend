@@ -9,7 +9,7 @@ import { OrderStore } from '../../state/order/order.store';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { CreateOrderPayload } from '../../models/order.model';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 

@@ -7,7 +7,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
 import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
 import { QuickViewModalComponent } from '../../../products/public-ui';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 
 @Component({

@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { ProductStore } from '../../../products/public-api';
 import { OrderStore } from '../../state/order/order.store';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-confirmation',
