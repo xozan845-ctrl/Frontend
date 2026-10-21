@@ -10,7 +10,7 @@ export interface StoreRepository {
   /** Tienda del vendedor autenticado o `null` (`GET /vendedores/me/tienda`, 404 → null). */
   getMyStore(): Observable<Store | null>;
   /** Publica un producto con margen (`POST /vendedores/productos`). */
-  publishOffer(offer: OfferDraft): Observable<void>;
+  publishOffer(storeId: string, offer: OfferDraft): Observable<void>;
 }
 
 export const STORE_REPOSITORY = new InjectionToken<StoreRepository>('StoreRepository');

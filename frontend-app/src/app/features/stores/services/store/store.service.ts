@@ -57,12 +57,13 @@ export class StoreService implements StoreRepository {
     );
   }
 
-  publishOffer(offer: OfferDraft): Observable<void> {
+  publishOffer(storeId: string, offer: OfferDraft): Observable<void> {
     if (this.isMock()) return of(undefined).pipe(delay(200));
     if (!environment.apiUrl) return this.missingApiUrl();
 
     return this.http
       .post<unknown>(`${environment.apiUrl}${this.vendorEndpoint}/productos`, {
+        tienda_id: storeId,
         producto_id: offer.productId,
         margen: offer.margin,
       })

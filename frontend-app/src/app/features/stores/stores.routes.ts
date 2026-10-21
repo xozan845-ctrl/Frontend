@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { CompanyService, COMPANY_REPOSITORY } from '../empresas/public-api';
 import { StoreWizardStore } from './state/store-wizard/store-wizard.store';
 import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
@@ -22,6 +23,7 @@ export const STORES_ROUTES: Routes = [
       StoreWizardStore,
       { provide: STORE_REPOSITORY, useClass: StoreService },
       { provide: CATALOG_REPOSITORY, useClass: CatalogService },
+      { provide: COMPANY_REPOSITORY, useClass: CompanyService },
     ],
   },
 ];

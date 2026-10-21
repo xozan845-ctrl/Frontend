@@ -5,6 +5,7 @@ import CreateStoreComponent from './create-store.component';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
+import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -16,6 +17,7 @@ const createdStore = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', descriptio
 describe('CreateStoreComponent', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
+  let companyRepo: CompanyRepository;
   let currentUser: User | null;
   const authStore = {
     user: () => currentUser,
@@ -24,6 +26,7 @@ describe('CreateStoreComponent', () => {
     error: () => null,
     register: vi.fn(),
     clearSession: vi.fn(),
+    refreshTokenOnce: vi.fn().mockResolvedValue(true),
   };
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
@@ -37,6 +40,21 @@ describe('CreateStoreComponent', () => {
     catalogRepo = {
       listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
     };
+    companyRepo = {
+      create: vi.fn(() =>
+        of({
+          id: 'c-1',
+          name: 'Mi Empresa',
+          logisticsMode: 'plataforma' as const,
+          status: 'activa',
+          createdBy: 'u-1',
+          createdAt: '2026-10-21T00:00:00.000Z',
+        }),
+      ),
+      getById: vi.fn(),
+      updateLogistics: vi.fn(),
+      createSeller: vi.fn(),
+    };
     await TestBed.configureTestingModule({
       imports: [CreateStoreComponent],
       providers: [
@@ -44,6 +62,7 @@ describe('CreateStoreComponent', () => {
         StoreWizardStore,
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
+        { provide: COMPANY_REPOSITORY, useValue: companyRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
@@ -103,6 +122,54 @@ describe('CreateStoreComponent', () => {
     expect(fixture.componentInstance.isBuyer()).toBe(false);
   });
 
+  it('debe crear la empresa y la tienda cuando el empresario no tiene tenant', async () => {
+    currentUser = { id: 2, email: 'e@e.com', name: 'Eva', role: 'empresario' };
+    const fixture = await setup();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(2));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-testid="company-setup"]')).not.toBeNull();
+
+    fixture.componentInstance.storeForm.setValue({
+      companyName: 'Mi Empresa',
+      logisticsMode: 'hibrida',
+      name: 'Mi Tienda',
+      description: 'Demo',
+    });
+    fixture.componentInstance.createStore();
+
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
+    expect(companyRepo.create).toHaveBeenCalledWith({
+      name: 'Mi Empresa',
+      logisticsMode: 'hibrida',
+    });
+    expect(repo.createStore).toHaveBeenCalledWith({
+      name: 'Mi Tienda',
+      description: 'Demo',
+    });
+    expect(fixture.componentInstance.wizard.step()).toBe(3);
+  });
+
+  it('debe usar el nombre de la tienda como empresa si se deja vacío', async () => {
+    currentUser = { id: 2, email: 'e@e.com', name: 'Eva', role: 'empresario' };
+    const fixture = await setup();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(2));
+
+    fixture.componentInstance.storeForm.setValue({
+      companyName: '',
+      logisticsMode: 'plataforma',
+      name: 'Mi Tienda',
+      description: '',
+    });
+    fixture.componentInstance.createStore();
+
+    await vi.waitFor(() => expect(companyRepo.create).toHaveBeenCalled());
+    expect(companyRepo.create).toHaveBeenCalledWith({
+      name: 'Mi Tienda',
+      logisticsMode: 'plataforma',
+    });
+  });
+
   it('no debe crear la tienda si el formulario es inválido', async () => {
     const fixture = await setup();
 
@@ -114,7 +181,12 @@ describe('CreateStoreComponent', () => {
   // regression: 71 — al crear la tienda se entra al paso 3 y se carga el catálogo.
   it('debe cargar el catálogo cuando crea la tienda y avanza al paso de productos', async () => {
     const fixture = await setup();
-    fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: 'Demo' });
+    fixture.componentInstance.storeForm.setValue({
+      companyName: '',
+      logisticsMode: 'plataforma',
+      name: 'Mi Tienda',
+      description: 'Demo',
+    });
 
     fixture.componentInstance.createStore();
     await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(3));
@@ -197,7 +269,12 @@ describe('CreateStoreComponent', () => {
       throwError(() => new Error('No se pudo crear la tienda.')),
     );
     fixture.componentInstance.wizard.goToStoreStep();
-    fixture.componentInstance.storeForm.setValue({ name: 'Mi Tienda', description: '' });
+    fixture.componentInstance.storeForm.setValue({
+      companyName: '',
+      logisticsMode: 'plataforma',
+      name: 'Mi Tienda',
+      description: '',
+    });
     fixture.detectChanges();
 
     fixture.componentInstance.createStore();

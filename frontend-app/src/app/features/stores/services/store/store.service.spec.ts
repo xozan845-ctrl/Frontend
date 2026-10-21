@@ -61,10 +61,14 @@ describe('StoreService', () => {
     environment.apiUrl = 'https://api.test';
     build();
 
-    service.publishOffer({ productId: 'p-1', margin: 20 }).subscribe();
+    service.publishOffer('t-1', { productId: 'p-1', margin: 20 }).subscribe();
     const request = httpMock.expectOne('https://api.test/vendedores/productos');
     expect(request.request.method).toBe('POST');
-    expect(request.request.body).toEqual({ producto_id: 'p-1', margen: 20 });
+    expect(request.request.body).toEqual({
+      tienda_id: 't-1',
+      producto_id: 'p-1',
+      margen: 20,
+    });
     request.flush({ id: 'of-1' });
   });
 
@@ -142,7 +146,7 @@ describe('StoreService', () => {
     build();
     let error: Error | undefined;
 
-    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe({
+    service.publishOffer('t-1', { productId: 'p-1', margin: 10 }).subscribe({
       error: (err: Error) => (error = err),
     });
     httpMock
@@ -200,7 +204,7 @@ describe('StoreService', () => {
     let offer: unknown = 'pendiente';
 
     service.getMyStore().subscribe((s) => (store = s));
-    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe(() => (offer = 'ok'));
+    service.publishOffer('t-1', { productId: 'p-1', margin: 10 }).subscribe(() => (offer = 'ok'));
     await vi.waitFor(() => {
       expect(store).toBeDefined();
       expect(offer).toBe('ok');
@@ -216,7 +220,7 @@ describe('StoreService', () => {
     let offerError: Error | undefined;
 
     service.getMyStore().subscribe({ error: (err: Error) => (storeError = err) });
-    service.publishOffer({ productId: 'p-1', margin: 10 }).subscribe({
+    service.publishOffer('t-1', { productId: 'p-1', margin: 10 }).subscribe({
       error: (err: Error) => (offerError = err),
     });
 

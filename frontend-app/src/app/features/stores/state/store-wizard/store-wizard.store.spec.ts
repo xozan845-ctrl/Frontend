@@ -3,14 +3,26 @@ import { of, throwError } from 'rxjs';
 import { StoreWizardStore } from './store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
+import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Store } from '../../../products/public-api';
 
 const store: Store = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', description: '' };
+const company = {
+  id: 'c-1',
+  name: 'Mi Empresa',
+  logisticsMode: 'plataforma' as const,
+  status: 'activa',
+  createdBy: 'u-1',
+  createdAt: '2026-10-21T00:00:00.000Z',
+};
 
 describe('StoreWizardStore', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
+  let companyRepo: CompanyRepository;
+  let authStore: { user: ReturnType<typeof vi.fn>; refreshTokenOnce: ReturnType<typeof vi.fn> };
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
   const setup = () => {
@@ -22,11 +34,31 @@ describe('StoreWizardStore', () => {
     catalogRepo = {
       listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),
     };
+    companyRepo = {
+      create: vi.fn(() => of(company)),
+      getById: vi.fn(() => of(company)),
+      updateLogistics: vi.fn(() => of(company)),
+      createSeller: vi.fn(() =>
+        of({
+          id: 's-1',
+          name: 'Vera',
+          email: 'vera@tienda.test',
+          role: 'vendedor',
+          participationPercentage: 10,
+        }),
+      ),
+    };
+    authStore = {
+      user: vi.fn(() => null),
+      refreshTokenOnce: vi.fn().mockResolvedValue(true),
+    };
     TestBed.configureTestingModule({
       providers: [
         StoreWizardStore,
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
+        { provide: COMPANY_REPOSITORY, useValue: companyRepo },
+        { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
       ],
     });
@@ -129,6 +161,89 @@ describe('StoreWizardStore', () => {
     expect(notification.showError).toHaveBeenCalled();
   });
 
+  it('debe crear la empresa y la tienda cuando el empresario no tiene tenant', async () => {
+    const wizard = setup();
+    authStore.user.mockReturnValue({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@tienda.test',
+      role: 'empresario',
+    });
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: 'Demo',
+      company: { name: 'Mi Empresa', logisticsMode: 'hibrida' },
+    });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+
+    expect(companyRepo.create).toHaveBeenCalledWith({
+      name: 'Mi Empresa',
+      logisticsMode: 'hibrida',
+    });
+    expect(authStore.refreshTokenOnce).toHaveBeenCalled();
+    expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });
+  });
+
+  it('no debe crear la tienda si falla el alta de la empresa', async () => {
+    const wizard = setup();
+    vi.mocked(companyRepo.create).mockReturnValue(throwError(() => new Error('empresa duplicada')));
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: '',
+      company: { name: 'Mi Empresa', logisticsMode: 'plataforma' },
+    });
+    await vi.waitFor(() => expect(wizard.error()).toBe('empresa duplicada'));
+
+    expect(repo.createStore).not.toHaveBeenCalled();
+    expect(wizard.step()).toBe(1);
+  });
+
+  it('no debe crear la tienda si la sesión no se renueva tras la empresa', async () => {
+    const wizard = setup();
+    authStore.refreshTokenOnce.mockResolvedValue(false);
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: '',
+      company: { name: 'Mi Empresa', logisticsMode: 'propia' },
+    });
+    await vi.waitFor(() => expect(wizard.error()).toContain('la sesión no se pudo renovar'));
+
+    expect(repo.createStore).not.toHaveBeenCalled();
+  });
+
+  it('debe omitir la empresa cuando el JWT ya trae el tenant', async () => {
+    const wizard = setup();
+    authStore.user.mockReturnValue({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@tienda.test',
+      role: 'empresario',
+      tenantId: 'c-1',
+    });
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: '',
+      company: { name: 'Mi Empresa', logisticsMode: 'plataforma' },
+    });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+
+    expect(companyRepo.create).not.toHaveBeenCalled();
+    expect(repo.createStore).toHaveBeenCalled();
+  });
+
+  it('no debe publicar ofertas si aún no hay tienda', async () => {
+    const wizard = setup();
+
+    wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('Primero crea tu tienda.'));
+
+    expect(repo.publishOffer).not.toHaveBeenCalled();
+  });
+
   it('debe cargar el catálogo y registrar su error', async () => {
     const wizard = setup();
 
@@ -143,11 +258,13 @@ describe('StoreWizardStore', () => {
 
   it('debe publicar ofertas y avanzar a "Listo"', async () => {
     const wizard = setup();
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
 
     wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);
     await vi.waitFor(() => expect(wizard.step()).toBe(4));
 
-    expect(repo.publishOffer).toHaveBeenCalledWith({ productId: 'p-1', margin: 15 });
+    expect(repo.publishOffer).toHaveBeenCalledWith('t-1', { productId: 'p-1', margin: 15 });
     expect(wizard.publishedCount()).toBe(1);
   });
 
@@ -163,6 +280,8 @@ describe('StoreWizardStore', () => {
 
   it('debe registrar el error al publicar ofertas', async () => {
     const wizard = setup();
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
     vi.mocked(repo.publishOffer).mockReturnValue(throwError(() => new Error('boom')));
 
     wizard.publishOffers([{ productId: 'p-1', margin: 15 }]);

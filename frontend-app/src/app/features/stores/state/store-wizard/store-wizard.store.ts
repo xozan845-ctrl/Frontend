@@ -1,9 +1,16 @@
-import { inject } from '@angular/core';
+import { inject, untracked } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, forkJoin, of, pipe, Observable } from 'rxjs';
+import { EMPTY, forkJoin, from, of, pipe, Observable, throwError } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { OfferDraft, StoreDraft, WIZARD_STEPS } from '../../models/store-wizard.model';
+import { AuthStore } from '../../../auth/public-api';
+import { COMPANY_REPOSITORY } from '../../../empresas/public-api';
+import {
+  OfferDraft,
+  StoreCompanySetup,
+  StoreDraft,
+  WIZARD_STEPS,
+} from '../../models/store-wizard.model';
 import { STORE_REPOSITORY } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY } from '../../repositories/catalog.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -38,8 +45,29 @@ export const StoreWizardStore = signalStore(
       store,
       storeRepo = inject(STORE_REPOSITORY),
       catalogRepo = inject(CATALOG_REPOSITORY),
+      companyRepo = inject(COMPANY_REPOSITORY),
+      authStore = inject(AuthStore),
       notificationService = inject(NotificationService),
     ) => {
+      /**
+       * Crea la empresa del empresario y renueva la sesión para que el JWT
+       * lleve el `tenant_id` que exige `POST /vendedores/tienda`.
+       */
+      const setupCompany = (company: StoreCompanySetup): Observable<void> =>
+        companyRepo.create({ name: company.name, logisticsMode: company.logisticsMode }).pipe(
+          switchMap(() => from(authStore.refreshTokenOnce())),
+          switchMap((renewed) =>
+            renewed
+              ? of(undefined)
+              : throwError(
+                  () =>
+                    new Error(
+                      'La empresa se creó, pero la sesión no se pudo renovar. Inicia sesión de nuevo.',
+                    ),
+                ),
+          ),
+        );
+
       const loadCatalog = rxMethod<void>(
         pipe(
           tap(() => patchState(store, { catalogLoading: true, error: null })),
@@ -92,12 +120,19 @@ export const StoreWizardStore = signalStore(
           patchState(store, initialState);
         },
 
-        /** Crea la tienda y, al lograrlo, avanza al paso de productos. */
+        /** Crea la empresa (si falta) y la tienda, y avanza al paso de productos. */
         createStore: rxMethod<StoreDraft>(
           pipe(
             tap(() => patchState(store, { loading: true, error: null })),
-            switchMap((draft) =>
-              storeRepo.createStore(draft).pipe(
+            switchMap((draft) => {
+              const needsCompany = !!draft.company && !untracked(() => authStore.user()?.tenantId);
+              const company$: Observable<void> =
+                needsCompany && draft.company ? setupCompany(draft.company) : of(undefined);
+
+              return company$.pipe(
+                switchMap(() =>
+                  storeRepo.createStore({ name: draft.name, description: draft.description }),
+                ),
                 tap((created) => {
                   patchState(store, { store: created, loading: false, step: 3, error: null });
                   notificationService.showSuccess(`Tienda "${created.name}" creada.`);
@@ -109,8 +144,8 @@ export const StoreWizardStore = signalStore(
                   notificationService.showError(message);
                   return EMPTY;
                 }),
-              ),
-            ),
+              );
+            }),
           ),
         ),
 
@@ -119,10 +154,18 @@ export const StoreWizardStore = signalStore(
           pipe(
             tap((offers) => patchState(store, { loading: offers.length > 0, error: null })),
             switchMap((offers) => {
+              const storeId = untracked(() => store.store())?.id;
+              if (offers.length > 0 && !storeId) {
+                const message = 'Primero crea tu tienda.';
+                patchState(store, { loading: false, error: message });
+                notificationService.showError(message);
+                return EMPTY;
+              }
+
               const source$: Observable<unknown> =
                 offers.length === 0
                   ? of<unknown>(null)
-                  : forkJoin(offers.map((offer) => storeRepo.publishOffer(offer)));
+                  : forkJoin(offers.map((offer) => storeRepo.publishOffer(storeId!, offer)));
               return source$.pipe(
                 tap(() => {
                   patchState(store, {
