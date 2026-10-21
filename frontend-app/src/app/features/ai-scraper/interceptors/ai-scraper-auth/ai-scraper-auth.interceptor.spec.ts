@@ -8,7 +8,7 @@ import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store
 describe('aiScraperAuthInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
-  let connection: AiConnectionStore;
+  let connection: InstanceType<typeof AiConnectionStore>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

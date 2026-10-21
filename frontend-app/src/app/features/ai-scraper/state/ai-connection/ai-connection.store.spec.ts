@@ -4,7 +4,7 @@ import { AiConnectionStore } from './ai-connection.store';
 import { AI_SCRAPER_KEY_STORAGE } from '../../constants/ai-scraper.constants';
 
 describe('AiConnectionStore', () => {
-  let store: AiConnectionStore;
+  let store: InstanceType<typeof AiConnectionStore>;
 
   beforeEach(() => {
     sessionStorage.removeItem(AI_SCRAPER_KEY_STORAGE);
@@ -44,7 +44,7 @@ describe('AiConnectionStore', () => {
   });
 
   it('debe exponer el endpoint configurado del backend de IA', () => {
-    expect(store.endpoint).toBe('http://localhost:3000/api/v1');
-    expect(store.isConfigured).toBe(true);
+    expect(store.endpoint()).toBe('http://localhost:3000/api/v1');
+    expect(store.isConfigured()).toBe(true);
   });
 });

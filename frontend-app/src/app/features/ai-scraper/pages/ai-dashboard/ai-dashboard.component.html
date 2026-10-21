@@ -22,7 +22,7 @@
   </header>
 
   <app-ai-connection-panel
-    [endpoint]="endpoint"
+    [endpoint]="endpoint()"
     [hasKey]="hasKey()"
     (save)="saveKey($event)"
     (clear)="clearKey()"
