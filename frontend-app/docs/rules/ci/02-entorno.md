@@ -9,6 +9,7 @@ Aplica a: runner, dependencias y la evidencia que deja cada ejecución.
 | R-EN-3 | **Evidencia en todos los runs**: el job de test sube el informe de cobertura como artifact en **todos** los runs (`if: always()`), verde o rojo, como evidencia de auditoría (`R-COV-3`). El estado del gate lo determina el resultado del job, nunca la presencia del artifact.                               |
 | R-EN-4 | **Secretos**: si un job los necesita, viven únicamente en GitHub Secrets; prohibido imprimirlos en logs (`echo`, `set -x`) y prohibido commitearlos. Esta regla extiende `R-GA-4` a CI.                                                                                                                        |
 | R-EN-5 | **Endurecimiento del runner**: el workflow declara `permissions: contents: read`, cada job tiene `timeout-minutes` y las acciones de terceros van fijadas por **SHA** (no por tag móvil). `persist-credentials: false` salvo donde se necesite git explícitamente.                                             |
+| R-EN-6 | **SBOM y trazabilidad de dependencias**: el job de seguridad genera un **SBOM CycloneDX** (`npm sbom --sbom-format cyclonedx`) y lo publica como artifact en todos los runs. La revisión de dependencias nuevas en PRs la hace `dependency-review` (`R-CI-8`).                                                 |
 
 ## Notas
 
