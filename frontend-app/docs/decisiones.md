@@ -774,3 +774,33 @@ contexto y consecuencias.
   atajo a la tienda pública. El endpoint queda consumido por una sola capa
   (`StoreService`). Revertir es retirar la ruta, el ítem del sidebar y los
   campos opcionales del modelo.
+
+## ADR-32: Catálogo maestro de productos
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: la app consumía `GET /catalog/productos` solo para enriquecer el
+  storefront y no existía una pantalla para administrar el catálogo maestro. El
+  contrato expone listado público con filtros/paginación, detalle y CRUD del
+  empresario.
+- **Decisión**:
+  - Nuevo `CatalogProductService`/`CatalogProductsStore` y página
+    **`/vendedor/catalogo`** dentro del shell del vendedor.
+  - Se consumen `GET /catalog/productos` (q, estado, categoría, paginación),
+    `GET /catalog/productos/:id`, `POST /catalog/productos` y
+    `PATCH /catalog/productos/:id`.
+  - La página muestra SKU, nombre, categoría, precio base, stock y estado; el
+    empresario puede crear y editar en un formulario inline. Un vendedor ve el
+    listado en modo lectura.
+  - El sidebar separa **Catálogo** (productos maestros) de **Ofertas** (lo que
+    antes se llamaba "Productos"), para reflejar el contrato.
+  - **Limitación conocida del backend**: `GET /catalog/productos` valida
+    `pagina`/`limite` como números sin transformar la query string, así que
+    rechaza `?pagina=1&limite=20` con `400 VALIDACION`. El servicio omite esos
+    parámetros cuando tienen los valores por defecto; la paginación explícita
+    queda pendiente de que Core Engine añada la coerción numérica.
+- **Consecuencias**: el empresario administra su catálogo y las ofertas siguen
+  su flujo propio. La primera página y los filtros `q`/`estado`/`categoria`
+  funcionan contra el backend actual; la paginación explícita requiere el fix
+  del backend. Revertir es retirar la ruta, el ítem del sidebar y los archivos
+  del catálogo.

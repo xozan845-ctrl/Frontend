@@ -27,10 +27,16 @@ export class VendorSidebarComponent {
       testId: 'vendor-nav-inicio',
     },
     {
-      label: 'Productos',
+      label: 'Catálogo',
+      icon: 'fa-solid fa-layer-group',
+      link: '/vendedor/catalogo',
+      testId: 'vendor-nav-catalogo',
+    },
+    {
+      label: 'Ofertas',
       icon: 'fa-solid fa-box',
       link: '/vendedor/productos',
-      testId: 'vendor-nav-productos',
+      testId: 'vendor-nav-ofertas',
     },
     {
       label: 'Clientes',

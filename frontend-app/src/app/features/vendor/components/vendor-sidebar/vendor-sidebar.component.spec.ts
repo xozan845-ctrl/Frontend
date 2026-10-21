@@ -27,7 +27,8 @@ describe('VendorSidebarComponent', () => {
 
     expect(links.map((link) => link.nativeElement.textContent.trim())).toEqual([
       'Inicio',
-      'Productos',
+      'Catálogo',
+      'Ofertas',
       'Clientes',
       'Ventas',
       'Pedidos',

@@ -172,3 +172,25 @@ test('R-E-24: el vendedor consulta la ficha de su tienda', async ({ page }) => {
     '/tienda/tienda-demo/shop',
   );
 });
+
+// R-E-26: el empresario consulta el catálogo maestro y crea un producto
+// (`GET/POST /catalog/productos`, ADR-32).
+test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) => {
+  await login(page, '/vendedor/catalogo', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('catalog-page')).toBeVisible();
+  await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(6);
+
+  await page.getByTestId('new-catalog-product').click();
+  await expect(page.getByTestId('catalog-form')).toBeVisible();
+  await page.getByTestId('catalog-sku').fill('SKU-NUEVO-01');
+  await page.getByTestId('catalog-name').fill('Producto Nuevo');
+  await page.getByTestId('catalog-description').fill('Creado desde el catálogo');
+  await page.getByTestId('catalog-category').fill('Demo');
+  await page.getByTestId('catalog-price').fill('250.00');
+  await page.getByTestId('catalog-stock').fill('7');
+  await page.getByTestId('save-catalog-product').click();
+
+  await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(7);
+  await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText('Producto Nuevo');
+});

@@ -1,5 +1,8 @@
 import { Route, Routes } from '@angular/router';
 import { EMPRESAS_ROUTES } from '../empresas/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
+import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
+import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
@@ -79,6 +82,14 @@ export const VENDOR_ROUTES: Routes = [
         loadComponent: () => import('./pages/clients/clients.component'),
       },
       ...EMPRESAS_ROUTES,
+      {
+        path: 'catalogo',
+        loadComponent: () => import('../products/pages/catalog/catalog.component'),
+        providers: [
+          CatalogProductsStore,
+          { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
+        ],
+      },
       {
         path: 'productos',
         loadComponent: () => import('./pages/products/products.component'),
