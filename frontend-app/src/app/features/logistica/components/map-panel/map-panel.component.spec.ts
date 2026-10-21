@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MapRoute, MapVehicle } from '../../models/logistica.model';
-import { LEAFLET_API, LeafletApi } from '../../services/leaflet-api.port';
+import { LEAFLET_API, LeafletApi } from '../../services/leaflet-api/leaflet-api.port';
 import MapPanelComponent from './map-panel.component';
 
 function createLeafletMock() {

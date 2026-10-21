@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CartService } from './cart.service';
-import { CartItem } from '../models/cart.model';
-import { environment } from '../../../../environments/environment';
+import { CartItem } from '../../models/cart.model';
+import { environment } from '../../../../../environments/environment';
 
 const cartResponse = {
   items: [

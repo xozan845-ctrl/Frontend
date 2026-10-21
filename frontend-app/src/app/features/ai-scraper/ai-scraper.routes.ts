@@ -3,8 +3,8 @@ import { AiJobsStore } from './state/ai-jobs/ai-jobs.store';
 import { AiSessionStore } from './state/ai-session/ai-session.store';
 import { AI_JOB_REPOSITORY } from './repositories/ai-job.repository';
 import { AI_SESSION_REPOSITORY } from './repositories/ai-session.repository';
-import { AiJobService } from './services/ai-job.service';
-import { AiSessionService } from './services/ai-session.service';
+import { AiJobService } from './services/ai-job/ai-job.service';
+import { AiSessionService } from './services/ai-session/ai-session.service';
 
 /**
  * Rutas del feature `ai-scraper` (`R-AR-12`, `R-LZ-1`). El feature se carga con

@@ -6,18 +6,18 @@ import {
   AiSession,
   AiSessionDetail,
   AiSessionStatusResponse,
-} from '../models/ai-session.model';
-import { AiSessionRepository } from '../repositories/ai-session.repository';
-import { AI_SCRAPER_ENDPOINTS } from '../constants/ai-scraper.constants';
+} from '../../models/ai-session.model';
+import { AiSessionRepository } from '../../repositories/ai-session.repository';
+import { AI_SCRAPER_ENDPOINTS } from '../../constants/ai-scraper.constants';
 import {
   adaptSendMessageFromBackend,
   adaptSessionDetailFromBackend,
   adaptSessionFromBackend,
   adaptSessionListFromBackend,
   adaptSessionStatusResponseFromBackend,
-} from '../adapters/ai-scraper.adapter';
-import { AiScraperClient } from './ai-scraper-client.service';
-import { fail, requireValue } from './ai-scraper-error';
+} from '../../adapters/ai-scraper.adapter';
+import { AiScraperClient } from '../ai-scraper-client.service';
+import { fail, requireValue } from '../ai-scraper-error/ai-scraper-error';
 
 /** Convierte la entrada de dominio al cuerpo que espera `POST /sessions`. */
 function toBackendSessionPayload(input: AiCreateSessionInput): Record<string, unknown> {

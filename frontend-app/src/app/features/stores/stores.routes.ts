@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import { StoreWizardStore } from './state/store-wizard/store-wizard.store';
 import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
-import { StoreService } from './services/store.service';
-import { CatalogService } from './services/catalog.service';
+import { StoreService } from './services/store/store.service';
+import { CatalogService } from './services/catalog/catalog.service';
 
 /**
  * Rutas de la tienda del vendedor (`R-AR-12`). `/crear-tienda` es **pública**:

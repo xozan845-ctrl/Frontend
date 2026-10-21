@@ -2,16 +2,16 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../models/order.model';
-import { OrderRepository } from '../repositories/order.repository';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../../models/order.model';
+import { OrderRepository } from '../../repositories/order.repository';
 import {
   adaptOrderListFromBackend,
   adaptOrderResponse,
   adaptOrderTimelineFromBackend,
   generateMockOrderResponse,
-} from '../adapters/order.adapter';
+} from '../../adapters/order.adapter';
 
 @Injectable({
   providedIn: 'root',

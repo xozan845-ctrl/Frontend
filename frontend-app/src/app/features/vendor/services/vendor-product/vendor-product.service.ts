@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { adaptVendorProductsFromBackend } from '../adapters/vendor.adapter';
-import { VendorProduct } from '../models/vendor-order.model';
-import { VendorProductRepository } from '../repositories/vendor-product.repository';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { adaptVendorProductsFromBackend } from '../../adapters/vendor.adapter';
+import { VendorProduct } from '../../models/vendor-order.model';
+import { VendorProductRepository } from '../../repositories/vendor-product.repository';
 
 /**
  * Catálogo propio del vendedor (`GET /vendedores/me/productos`, contrato asumido

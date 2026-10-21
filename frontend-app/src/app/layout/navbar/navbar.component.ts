@@ -5,7 +5,7 @@ import { AuthStore } from '../../features/auth/public-api';
 import { CartStore, CartUiStore } from '../../features/cart/public-api';
 import { ProductStore } from '../../features/products/public-api';
 import { WishlistStore } from '../../features/wishlist/public-api';
-import { StoreConfigService } from '../../core/services/store-config.service';
+import { StoreConfigService } from '../../core/services/store-config/store-config.service';
 
 @Component({
   selector: 'app-navbar',
