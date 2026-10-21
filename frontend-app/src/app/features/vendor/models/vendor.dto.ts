@@ -51,3 +51,33 @@ export interface BackendProductoVendedorDTO {
   imagen_url?: string | null;
   imagen?: string | null;
 }
+
+/** Oferta del vendedor (`OfertaResponseDto`). */
+export interface BackendOfertaVendedorDTO {
+  id?: string | number | null;
+  tienda_id?: string | number | null;
+  tiendaId?: string | number | null;
+  producto_id?: string | number | null;
+  productoId?: string | number | null;
+  sku?: string | null;
+  producto_nombre?: string | null;
+  productoNombre?: string | null;
+  margen?: number | string | null;
+  precio_base?: number | string | null;
+  precioBase?: number | string | null;
+  precio_venta?: number | string | null;
+  precioVenta?: number | string | null;
+  stock?: number | string | null;
+  estado?: string | null;
+  creado_en?: string | null;
+  creadoEn?: string | null;
+}
+
+/** Página de ofertas (`PaginaOfertasResponseDto`). */
+export interface BackendPaginaOfertasDTO {
+  items?: BackendOfertaVendedorDTO[] | null;
+  total?: number | string | null;
+  pagina?: number | string | null;
+  limite?: number | string | null;
+  paginas?: number | string | null;
+}

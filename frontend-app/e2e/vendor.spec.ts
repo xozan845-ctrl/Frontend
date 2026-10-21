@@ -137,3 +137,22 @@ test('R-E-22: el empresario crea su empresa desde el panel', async ({ page }) =>
   await expect(page.getByTestId('company-card')).toContainText('Mi Empresa');
   await expect(page.getByTestId('company-logistics-mode')).toContainText('Híbrida');
 });
+
+// R-E-23: el vendedor consulta sus ofertas y ajusta el margen de venta
+// (ADR-29). El mock devuelve la página real de `PaginaOfertasResponseDto`.
+test('R-E-23: el vendedor ajusta el margen de una oferta', async ({ page }) => {
+  await login(page, '/vendedor/productos');
+
+  await expect(page.getByTestId('vendor-products-page')).toBeVisible();
+  await expect(page.locator('[data-testid="offer-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('offers-page-indicator')).toContainText('Página 1 de 1');
+
+  const firstRow = page.locator('[data-testid="offer-row"]').first();
+  await expect(firstRow).toContainText('KPBM Shampoo Keratina');
+  await expect(firstRow.getByTestId('offer-sale-price')).toContainText('207.00');
+
+  await firstRow.getByTestId('offer-margin').fill('25');
+  await page.getByTestId('save-offer-of-1').click();
+
+  await expect(firstRow.getByTestId('offer-sale-price')).toContainText('225.00');
+});

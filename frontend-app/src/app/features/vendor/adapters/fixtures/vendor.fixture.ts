@@ -94,3 +94,57 @@ export const PRODUCTOS_VENDEDOR_ENVELOPE_FIXTURE = {
   ],
   total: 1,
 } as const;
+
+/** `PaginaOfertasResponseDto` real: `items`, paginación y precios decimales. */
+export const OFERTAS_PAGE_FIXTURE = {
+  items: [
+    {
+      id: 'of-1',
+      tienda_id: 't-1',
+      vendedor_id: 'v-1',
+      empresa_id: 'e-1',
+      participacion_porcentaje: 100,
+      producto_id: 'p-1',
+      sku: 'SKU-001',
+      producto_nombre: 'Teclado Mecánico',
+      margen: 15,
+      precio_base: '1000.00',
+      precio_venta: '1150.00',
+      stock: 10,
+      estado: 'activa',
+      creado_en: '2026-10-21T00:00:00.000Z',
+    },
+    {
+      id: 'of-2',
+      tienda_id: 't-1',
+      producto_id: 'p-2',
+      sku: 'SKU-002',
+      producto_nombre: 'Mouse Gamer',
+      margen: '20',
+      precio_base: 50,
+      precio_venta: '60.00',
+      stock: '5',
+      estado: 'agotada',
+      creado_en: '2026-10-20T00:00:00.000Z',
+    },
+  ],
+  total: 2,
+  pagina: 1,
+  limite: 20,
+  paginas: 1,
+} as const;
+
+/** `OfertaResponseDto` devuelta por `PATCH /vendedores/productos/:id`. */
+export const OFERTA_DIRECT_FIXTURE = {
+  id: 'of-1',
+  tienda_id: 't-1',
+  producto_id: 'p-1',
+  sku: 'SKU-001',
+  producto_nombre: 'Teclado Mecánico',
+  margen: 25,
+  precio_base: '1000.00',
+  precio_venta: '1250.00',
+  stock: 10,
+  estado: 'activa',
+  creado_en: '2026-10-21T00:00:00.000Z',
+} as const;

@@ -4,6 +4,8 @@ import {
 } from '../../../../core/models/api-response.dto';
 import {
   BackendClienteDTO,
+  BackendOfertaVendedorDTO,
+  BackendPaginaOfertasDTO,
   BackendPedidoDTO,
   BackendPedidoItemDTO,
   BackendProductoVendedorDTO,
@@ -15,6 +17,7 @@ import {
   VendorOrder,
   VendorProduct,
 } from '../../models/vendor-order.model';
+import { VendorOffer, VendorOfferPage } from '../../models/vendor-offer.model';
 
 /** Alias tolerados del `estado` del backend hacia los estados del dominio. */
 const STATUS_BY_ALIAS: Readonly<Record<string, OrderStatus>> = {
@@ -175,4 +178,62 @@ export function adaptVendorProductsFromBackend(response: unknown): VendorProduct
   return unwrapApiListResponse<unknown>(response)
     .map((raw) => adaptVendorProductFromBackend(raw))
     .filter((product): product is VendorProduct => product !== null);
+}
+
+/** Entero no negativo; inválido → `fallback`. */
+function toCount(value: unknown, fallback = 0): number {
+  const n = typeof value === 'string' ? Number(value) : value;
+  return typeof n === 'number' && Number.isFinite(n) ? Math.max(0, Math.round(n)) : fallback;
+}
+
+/**
+ * Oferta del vendedor (`GET /vendedores/me/ofertas`,
+ * `PATCH /vendedores/productos/:id`). `null` si no hay id.
+ */
+export function adaptVendorOfferFromBackend(raw: unknown): VendorOffer | null {
+  const oferta = unwrapApiSingleResponse<BackendOfertaVendedorDTO>(raw);
+  if (!oferta || typeof oferta !== 'object') return null;
+  if (!hasId(oferta.id)) return null;
+
+  return {
+    id: String(oferta.id),
+    storeId: hasId(oferta.tienda_id ?? oferta.tiendaId)
+      ? String(oferta.tienda_id ?? oferta.tiendaId)
+      : '',
+    productId: hasId(oferta.producto_id ?? oferta.productoId)
+      ? String(oferta.producto_id ?? oferta.productoId)
+      : '',
+    sku: toText(oferta.sku, ''),
+    productName: toText(oferta.producto_nombre ?? oferta.productoNombre, 'Producto'),
+    margin: Math.min(90, toCount(oferta.margen)),
+    basePrice: toAmount(oferta.precio_base ?? oferta.precioBase),
+    salePrice: toAmount(oferta.precio_venta ?? oferta.precioVenta),
+    stock: toCount(oferta.stock),
+    status: toText(oferta.estado, 'activa'),
+    createdAt: toText(oferta.creado_en ?? oferta.creadoEn, ''),
+  };
+}
+
+/**
+ * Página de ofertas (`PaginaOfertasResponseDto`): tolera `{ items, total,
+ * pagina, limite, paginas }`, array directo y envelopes `{ data }`.
+ */
+export function adaptVendorOfferPageFromBackend(response: unknown): VendorOfferPage {
+  const page =
+    toObject<BackendPaginaOfertasDTO>(unwrapApiSingleResponse<BackendPaginaOfertasDTO>(response)) ??
+    {};
+  const rawItems = Array.isArray(page.items)
+    ? page.items
+    : unwrapApiListResponse<unknown>(response);
+  const items = rawItems
+    .map((raw) => adaptVendorOfferFromBackend(raw))
+    .filter((offer): offer is VendorOffer => offer !== null);
+
+  return {
+    items,
+    total: toCount(page.total ?? items.length),
+    page: Math.max(1, toCount(page.pagina, 1)),
+    limit: Math.max(1, toCount(page.limite, 20)),
+    pages: Math.max(1, toCount(page.paginas, 1)),
+  };
 }

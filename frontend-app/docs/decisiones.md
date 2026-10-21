@@ -703,3 +703,29 @@ contexto y consecuencias.
   `COMPANY_REPOSITORY` (provisto en la ruta lazy) y el `StoreWizardStore`
   depende de `AuthStore` para renovar la sesión. Revertir es volver a un paso 2
   de solo tienda y retirar `tienda_id` del payload de ofertas.
+
+## ADR-29: Ofertas del vendedor (listado y margen)
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: la sección **Productos** del panel era una página "En
+  construcción". Core Engine ya expone el contrato de ofertas:
+  `GET /vendedores/me/ofertas` (`PaginaOfertasResponseDto`) y
+  `PATCH /vendedores/productos/:id` (`CambiarMargenRequestDto`), con el margen
+  en enteros 0–90 (RN-01).
+- **Decisión**:
+  - Nuevo `VendorOffersStore` y página `pages/products` con el puerto
+    `VENDOR_OFFER_REPOSITORY`/`VendorOfferService`, provistos en la ruta lazy de
+    `productos`.
+  - La página lista las ofertas paginadas con stock, precio base, margen y
+    precio de venta; permite editar el margen por fila y refrescar.
+  - El listado y la actualización pasan por un adapter tolerante
+    (`VendorOffer`) que normaliza precios string/número y la paginación
+    (`items`, `total`, `pagina`, `limite`, `paginas`).
+  - La edición local valida margen entero 0–90 antes de llamar al backend y
+    reemplaza la fila con la oferta devuelta por `PATCH`.
+- **Consecuencias**: el panel deja de tener una sección muerta y el vendedor
+  puede ajustar precios sin salir de la lista. La página no consulta
+  `GET /vendedores/me/productos` (endpoint asumido del POS); usa únicamente el
+  contrato público de ofertas. Revertir es restaurar la página "En
+  construcción" y retirar el store, el servicio y el ítem de fixtures E2E.

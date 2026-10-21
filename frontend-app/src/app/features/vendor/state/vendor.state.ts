@@ -6,6 +6,7 @@ import type {
   VendorOrder,
   VendorProduct,
 } from '../models/vendor-order.model';
+import type { VendorOffer } from '../models/vendor-offer.model';
 
 export interface ClientSearchState {
   query: string;
@@ -67,4 +68,16 @@ export interface VendorTodayKpis {
   pending: number;
   /** Pedidos en proceso (histórico cargado). */
   inProgress: number;
+}
+
+export interface VendorOffersState {
+  offers: VendorOffer[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  loading: boolean;
+  /** Oferta cuyo margen se está guardando; deshabilita solo su fila. */
+  savingId: string | null;
+  error: string | null;
 }

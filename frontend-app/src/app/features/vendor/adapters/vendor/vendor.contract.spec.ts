@@ -3,12 +3,16 @@ import {
   adaptClientsFromBackend,
   adaptOrderFromBackend,
   adaptOrdersFromBackend,
+  adaptVendorOfferFromBackend,
+  adaptVendorOfferPageFromBackend,
   adaptVendorProductFromBackend,
   adaptVendorProductsFromBackend,
 } from './vendor.adapter';
 import {
   CLIENTE_ENVELOPE_FIXTURE,
   CLIENTES_DIRECT_FIXTURE,
+  OFERTA_DIRECT_FIXTURE,
+  OFERTAS_PAGE_FIXTURE,
   PEDIDO_ENVELOPE_FIXTURE,
   PEDIDOS_ITEMS_FIXTURE,
   PRODUCTO_VENDEDOR_FIXTURE,
@@ -115,5 +119,51 @@ describe('vendor.contract', () => {
         inStock: false,
       },
     ]);
+  });
+
+  it('debe normalizar la página real de ofertas y sus tipos string', () => {
+    expect(adaptVendorOfferPageFromBackend(OFERTAS_PAGE_FIXTURE)).toEqual({
+      items: [
+        {
+          id: 'of-1',
+          storeId: 't-1',
+          productId: 'p-1',
+          sku: 'SKU-001',
+          productName: 'Teclado Mecánico',
+          margin: 15,
+          basePrice: 1000,
+          salePrice: 1150,
+          stock: 10,
+          status: 'activa',
+          createdAt: '2026-10-21T00:00:00.000Z',
+        },
+        {
+          id: 'of-2',
+          storeId: 't-1',
+          productId: 'p-2',
+          sku: 'SKU-002',
+          productName: 'Mouse Gamer',
+          margin: 20,
+          basePrice: 50,
+          salePrice: 60,
+          stock: 5,
+          status: 'agotada',
+          createdAt: '2026-10-20T00:00:00.000Z',
+        },
+      ],
+      total: 2,
+      page: 1,
+      limit: 20,
+      pages: 1,
+    });
+  });
+
+  it('debe normalizar la oferta devuelta al cambiar el margen', () => {
+    expect(adaptVendorOfferFromBackend(OFERTA_DIRECT_FIXTURE)).toMatchObject({
+      id: 'of-1',
+      productName: 'Teclado Mecánico',
+      margin: 25,
+      salePrice: 1250,
+    });
   });
 });

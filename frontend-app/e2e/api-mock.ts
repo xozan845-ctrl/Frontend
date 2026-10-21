@@ -141,6 +141,50 @@ const PRODUCTOS_VENDEDOR: readonly ProductoVendedorFixture[] = [
   },
 ];
 
+interface OfertaVendedorFixture {
+  id: string;
+  tienda_id: string;
+  producto_id: string;
+  sku: string;
+  producto_nombre: string;
+  margen: number;
+  precio_base: number;
+  precio_venta: number;
+  stock: number;
+  estado: string;
+  creado_en: string;
+}
+
+/** Ofertas del panel de productos (R-E-23): una activa y una agotada. */
+const OFERTAS_VENDEDOR: readonly OfertaVendedorFixture[] = [
+  {
+    id: 'of-1',
+    tienda_id: 'tienda-demo',
+    producto_id: 'vp-1',
+    sku: 'KPBM-001',
+    producto_nombre: 'KPBM Shampoo Keratina',
+    margen: 15,
+    precio_base: 180,
+    precio_venta: 207,
+    stock: 12,
+    estado: 'activa',
+    creado_en: '2026-10-21T10:00:00.000Z',
+  },
+  {
+    id: 'of-2',
+    tienda_id: 'tienda-demo',
+    producto_id: 'vp-2',
+    sku: 'SP-002',
+    producto_nombre: 'Salon Plus Mascarilla',
+    margen: 20,
+    precio_base: 220,
+    precio_venta: 264,
+    stock: 0,
+    estado: 'agotada',
+    creado_en: '2026-10-20T10:00:00.000Z',
+  },
+];
+
 interface ClienteFixture {
   id: string;
   codigo: string;
@@ -366,6 +410,7 @@ function filtrarClientes(query: string): ClienteFixture[] {
  */
 export async function mockApi(page: Page): Promise<void> {
   const pedidos = pedidosIniciales(new Date());
+  const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
 
   await page.route(
     (url) => url.pathname.startsWith('/api/v1/'),
@@ -387,6 +432,36 @@ export async function mockApi(page: Page): Promise<void> {
 
       if (method === 'GET' && path === '/vendedores/me/productos') {
         await route.fulfill({ json: { data: PRODUCTOS_VENDEDOR } });
+        return;
+      }
+
+      if (method === 'GET' && path === '/vendedores/me/ofertas') {
+        const pagina = Number(url.searchParams.get('pagina') ?? 1) || 1;
+        const limite = Number(url.searchParams.get('limite') ?? 20) || 20;
+        const inicio = (pagina - 1) * limite;
+        await route.fulfill({
+          json: {
+            items: ofertas.slice(inicio, inicio + limite),
+            total: ofertas.length,
+            pagina,
+            limite,
+            paginas: Math.max(1, Math.ceil(ofertas.length / limite)),
+          },
+        });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/vendedores\/productos\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as { margen?: number } | null;
+        const oferta = ofertas.find((candidate) => candidate.id === id);
+        if (!oferta || typeof payload?.margen !== 'number') {
+          await route.fulfill({ status: 404, json: { mensaje: 'Oferta no encontrada.' } });
+          return;
+        }
+        oferta.margen = payload.margen;
+        oferta.precio_venta = redondear2(oferta.precio_base * (1 + payload.margen / 100));
+        await route.fulfill({ json: oferta });
         return;
       }
 
