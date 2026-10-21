@@ -22,6 +22,9 @@ que son verificables por máquina.
 | `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                           |
 | `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
 | `architecture-features`  | `R-AR-16`                                      | Contrato estructural por feature: capas, API pública y forma de páginas/componentes.               |
+| `architecture-guards`    | `R-AR-7/9/10`                                  | Sin `ngModel`, diálogos nativos ni `subscribe` sin limpieza.                                       |
+| `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                     |
+| `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                           |
 | `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.           |
 | `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
 | `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
@@ -186,12 +189,13 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura verificada: **21/245 IDs** de regla con check real; hay **2
+Cobertura verificada: **30/247 IDs** de regla con check real; hay **2
 contextuales** (`R-AR-3`, `R-NC-9`) declaradas en `cites` porque hoy no tienen
-check propio. Las suites de git (`git-commits`, `git-branch`) cubren
-`R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y `R-PR` (PR) siguen
-siendo proceso y revisión manual. La deuda arquitectónica aceptada está en
-**cero** (`config/baseline.mjs`). El gate `docs-sync` (`R-DO-8`) exige
-documentación actualizada cuando un PR toca lógica, el motor o CI, y
+check propio. `R-NC-10` (`any`) se verifica en ESLint
+(`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,
+`git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y
+`R-PR` (PR) siguen siendo proceso y revisión manual. La deuda arquitectónica
+aceptada está en **cero** (`config/baseline.mjs`). El gate `docs-sync` (`R-DO-8`)
+exige documentación actualizada cuando un PR toca lógica, el motor o CI, y
 `governance-coverage` (`R-DO-9`) impide que la cobertura baje de
 `COVERAGE_MIN_VERIFIED`.

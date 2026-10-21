@@ -10,13 +10,13 @@ ejecución y el modelo de detección de cambios (zoneless).
 | R-PF-3 | **Carga diferida**: el bundle inicial no importa estáticamente features de dominio (`R-AR-6`); rutas lazy y `@defer` según `R-LZ-*`.                                                                                                                                                                                               |
 | R-PF-4 | **Sin trabajo pesado en plantilla**: prohibido invocar funciones costosas en el HTML (filtrado, orden, formateo repetido). Los derivados se calculan una vez en `computed`/`withComputed` (`R-ST-3`).                                                                                                                              |
 | R-PF-5 | **Diferido de UI pesada**: bloques no críticos (carruseles, secciones below-the-fold, modales) se envuelven en `@defer` cuando su coste lo justifique (`R-LZ-2/3`).                                                                                                                                                                |
-| R-PF-6 | **Sin sondeo innecesario**: prohibido `setInterval`/`setTimeout` para esperar estado que ya es reactivo. Usar `effect`, signals o el `subscribe` adecuado. (Deuda conocida: `product-detail` sondea con `setInterval` — ver AUDIT.)                                                                                                |
+| R-PF-6 | **Sin sondeo innecesario**: prohibido `setInterval`/`setTimeout` para esperar estado que ya es reactivo. Usar `effect`, signals o el `subscribe` adecuado. La suite `performance-guards` lo verifica en `features/`.                                                                                                               |
 | R-PF-7 | **Zoneless y estado reactivo**: la app **no usa `zone.js`**; la detección de cambios se dispara por signals. Toda mutación de estado pasa por `signal.set/update` o `patchState`; prohibido mutar objetos/arreglos en sitio esperando que Angular reaccione (`R-ST-4`), y prohibido añadir `zone.js` sin un ADR que lo justifique. |
 
 ## Verificación
 
 ```bash
 npm run build            # budgets: no debe fallar por exceso de peso (R-PF-1)
-grep -rn "setInterval\|setTimeout" src/app/domains   # R-PF-6
-grep -rn "zone.js" package.json angular.json         # R-PF-7: no debe aparecer
+node scripts/cli.mjs rules --only performance-guards   # R-PF-6/7
+grep -rn "zone.js" package.json angular.json           # R-PF-7: no debe aparecer
 ```
