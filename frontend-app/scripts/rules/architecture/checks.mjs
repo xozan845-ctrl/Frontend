@@ -16,7 +16,9 @@ import {
   hasRuntimeCode,
   injectsHttpClient,
   isDerivedConstType,
+  lineAt,
   maskComments,
+  maskSource,
 } from '../../engine/lib/source.mjs';
 import {
   APP_SRC_DIR,
@@ -317,6 +319,46 @@ export function findPackagingViolations() {
         line: 0,
         detail: `unidad '${unit}' (${unitFiles.length} archivos) debe vivir en ${directoryRel}/${unit}/`,
         key: `${directoryRel}/${unit}`,
+      });
+    }
+  }
+
+  return findings;
+}
+
+/**
+ * Hallazgos de R-AR-15: componentes y directivas sin `constructor` ni hooks de
+ * ciclo de vida (`ngOnInit`/`ngOnDestroy`). La DI va con `inject()`, la
+ * inicialización en *field initializers* o `effect()` y la limpieza con
+ * `DestroyRef.onDestroy()`/`takeUntilDestroyed()`.
+ */
+export function findLifecycleViolations() {
+  const findings = [];
+  const hooks = [
+    { name: 'constructor', pattern: /\bconstructor\s*\(/g },
+    { name: 'ngOnInit', pattern: /\bngOnInit\s*\(/g },
+    { name: 'ngOnDestroy', pattern: /\bngOnDestroy\s*\(/g },
+  ];
+
+  for (const file of listTs()) {
+    const rel = toRel(file);
+    if (isSpec(rel)) continue;
+
+    const masked = maskSource(readText(file));
+    const isComponent = /@(?:Component|Directive)\s*\(/.test(masked);
+    if (!isComponent) continue;
+
+    for (const { name, pattern } of hooks) {
+      pattern.lastIndex = 0;
+      const match = pattern.exec(masked);
+      if (!match) continue;
+
+      findings.push({
+        rule: 'R-AR-15',
+        file: rel,
+        line: lineAt(masked, match.index),
+        detail: `${name} en componente/directiva (usa inject/field initializer/DestroyRef)`,
+        key: `${rel}|R-AR-15|${name}`,
       });
     }
   }

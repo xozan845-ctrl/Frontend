@@ -12,6 +12,7 @@ export const requiredSuites = [
   { id: 'docs-structure', file: 'rules/docs/structure.test.mjs' },
   { id: 'architecture-types', file: 'rules/architecture/types.test.mjs' },
   { id: 'architecture-layers', file: 'rules/architecture/layers.test.mjs' },
+  { id: 'architecture-lifecycle', file: 'rules/architecture/lifecycle.test.mjs' },
   { id: 'architecture-config', file: 'rules/architecture/config.test.mjs' },
   { id: 'architecture-packaging', file: 'rules/architecture/packaging.test.mjs' },
 ];

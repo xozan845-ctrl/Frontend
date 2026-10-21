@@ -17,6 +17,7 @@ import { RULES_DIR } from './config/project.mjs';
 import {
   findHardcodedConfig,
   findLayerViolations,
+  findLifecycleViolations,
   findPackagingViolations,
   findTypeDeclarations,
 } from './rules/architecture/checks.mjs';
@@ -54,6 +55,7 @@ async function baselineCommand() {
   const sections = {
     'architecture-types': findTypeDeclarations(),
     'architecture-layers': findLayerViolations(),
+    'architecture-lifecycle': findLifecycleViolations(),
     'architecture-config': findHardcodedConfig(),
     'architecture-packaging': findPackagingViolations(),
   };

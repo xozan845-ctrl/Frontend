@@ -40,10 +40,12 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-AR-7** — Formularios con `ReactiveFormsModule`; sin `ngModel` de negocio.
 - [ ] **R-AR-8** — Sin `HttpClient` en componentes.
 - [ ] **R-AR-9** — Errores traducidos y notificados; sin `alert`/`confirm`.
-- [ ] **R-AR-10** — Suscripciones y listeners de `window`/`document` liberados (`takeUntilDestroyed`/`ngOnDestroy`).
+- [ ] **R-AR-10** — Suscripciones y listeners de `window`/`document` liberados (`takeUntilDestroyed`/`DestroyRef`/`ngOnDestroy`).
 - [ ] **R-AR-11** — Sin hosts/URLs hardcodeados; configuración en `environment`/`core/config`.
 - [ ] **R-AR-12** — El feature declara `<feature>.routes.ts`; `app.routes.ts` lo compone con `loadChildren`.
 - [ ] **R-AR-13** — `core/` sin UI ni negocio y sin importar `features/`.
+- [ ] **R-AR-14** — Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/` dentro de la capa.
+- [ ] **R-AR-15** — Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()` y limpieza con `DestroyRef`.
 
 ## 4. Nomenclatura ([`02-naming.md`](../architecture/02-naming.md))
 
