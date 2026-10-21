@@ -1,14 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { PLANS, PLAN_FEATURES, PlanTier, PlanFeature } from '../../constants/plans.constants';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
+import { PlanCardComponent } from '../../components/plan-card/plan-card.component';
 
 @Component({
   selector: 'app-plans',
   standalone: true,
-  imports: [CommonModule, AppCurrencyPipe],
+  imports: [CommonModule, AppCurrencyPipe, PlanCardComponent],
   templateUrl: './plans.component.html',
 })
 export default class PlansComponent {
@@ -20,6 +21,14 @@ export default class PlansComponent {
   readonly billingType = signal<'personal' | 'empresa'>('personal');
   readonly plans: PlanTier[] = PLANS;
   readonly planFeatures: PlanFeature[] = PLAN_FEATURES;
+
+  readonly planCards = computed(() =>
+    this.plans.map((plan) => ({
+      plan,
+      price: this.getPlanPrice(plan),
+      cycle: plan.id === 'basic' ? 'MES' : this.getBillingCycleText(),
+    })),
+  );
 
   selectPlan(planName: string) {
     if (planName === 'Pro') {
