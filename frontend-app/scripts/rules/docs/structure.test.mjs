@@ -18,7 +18,7 @@ const RULE_ID_ROW = /^\|\s*(?:\*\*)?((?:R-[A-Z]+|G)-\d+)(?:\*\*)?\s*\|/gm;
 export default defineSuite({
   id: 'docs-structure',
   area: 'documentation',
-  rules: ['R-DO-1', 'R-DO-2'],
+  rules: ['R-DO-6'],
   mode: 'repo',
   run: ({ test, assert }) => {
     test('Existen todas las suites de reglas del manifiesto (no se borra una regla en silencio)', () => {

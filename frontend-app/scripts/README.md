@@ -26,7 +26,8 @@ que son verificables por máquina.
 | `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
 | `git-commits`            | `R-GC-1..4`, `R-GB-2`                          | Validador puro de asuntos (Conventional Commits) y nombres de rama.                                |
 | `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`.                             |
-| `docs-structure`         | `R-DO-1/2`                                     | Manifiesto de suites, estructura de `docs/rules`, unicidad de IDs y enlaces.                       |
+| `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                    |
+| `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                     |
 
 ### Modelo de capas
 
