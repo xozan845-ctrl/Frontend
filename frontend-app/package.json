@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "rules:check": "node scripts/cli.mjs rules",
     "rules:baseline": "node scripts/cli.mjs baseline",
-    "test:engine": "node --test scripts/engine/*.test.mjs",
+    "test:engine": "node --test scripts/engine/*.test.mjs scripts/engine/lib/*.test.mjs",
     "e2e": "playwright test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

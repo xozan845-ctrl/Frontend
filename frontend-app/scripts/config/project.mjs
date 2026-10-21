@@ -110,3 +110,88 @@ export const UNIT_LAYERS = new Set([
 
 /** Mínimo de archivos de una unidad para exigir subcarpeta (R-AR-14). */
 export const MIN_UNIT_FILES = 2;
+
+/**
+ * Tipos de Conventional Commits admitidos (R-GC-1). `audit` no está admitido:
+ * la auditoría se documenta con `docs(...)`.
+ */
+export const ALLOWED_COMMIT_TYPES = [
+  'feat',
+  'fix',
+  'docs',
+  'test',
+  'refactor',
+  'perf',
+  'style',
+  'ci',
+  'build',
+  'chore',
+];
+
+/**
+ * Ámbitos reales del repo (R-GC-1): features, capas/piezas y áreas de
+ * gobernanza/entrega/documentación.
+ */
+export const ALLOWED_COMMIT_SCOPES = [
+  // Features
+  'account',
+  'ai-scraper',
+  'auth',
+  'billing',
+  'cart',
+  'checkout',
+  'home',
+  'logistica',
+  'plans',
+  'products',
+  'stores',
+  'vendor',
+  'wishlist',
+  // Capas y piezas de la app
+  'adapters',
+  'api',
+  'components',
+  'config',
+  'core',
+  'features',
+  'footer',
+  'guards',
+  'images',
+  'interceptors',
+  'layout',
+  'mocks',
+  'models',
+  'navbar',
+  'repositories',
+  'resolvers',
+  'routing',
+  'services',
+  'shared',
+  'shared-ui',
+  'state',
+  'storefront',
+  'ui',
+  // Gobernanza, entrega y documentación
+  'architecture',
+  'audit',
+  'cd',
+  'ci',
+  'cobertura',
+  'contrato',
+  'decisiones',
+  'deps',
+  'di',
+  'docs',
+  'e2e',
+  'git',
+  'lifecycle',
+  'packaging',
+  'release',
+  'robustez',
+  'rules',
+  'security',
+  'seo',
+  'structure',
+  'test',
+  'tsconfig',
+];
