@@ -13,3 +13,6 @@ entregable, no un extra.
 > `R-DO-7` exige un `README.md` por directorio importante. La lista canónica
 > vive en `REQUIRED_READMES` (`scripts/config/project.mjs`) y la valida la
 > suite `docs-readmes` del motor de gobernanza.
+>
+> `R-DO-8` exige que los PRs que cambian lógica/contratos o CI actualicen la
+> documentación necesaria; lo valida la suite `docs-sync` (`origin/main...HEAD`).

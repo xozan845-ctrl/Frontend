@@ -211,3 +211,49 @@ export const ALLOWED_COMMIT_SCOPES = [
   'test',
   'tsconfig',
 ];
+
+/**
+ * Compuertas de sincronización docs↔código (R-DO-8). Cada compuerta se activa
+ * si el PR toca archivos que cumplen `when` (y no `exclude`); en ese caso exige
+ * al menos un archivo que cumpla `require`.
+ */
+export const DOCS_SYNC_GATES = [
+  {
+    id: 'app-logic',
+    when: [
+      /^frontend-app\/src\/app\/core\//,
+      /^frontend-app\/src\/app\/features\/[^/]+\/(services|state|repositories|adapters|models|guards|interceptors|resolvers)\//,
+      /^frontend-app\/src\/app\/app\.(config|routes)\.ts$/,
+      /^frontend-app\/src\/app\/features\/[^/]+\/[^/]+\.routes\.ts$/,
+      /^frontend-app\/src\/environments\//,
+    ],
+    exclude: [/\.spec\.ts$/],
+    require: [
+      /^frontend-app\/docs\/.+\.md$/,
+      /^frontend-app\/src\/app\/.+README\.md$/,
+      /^frontend-app\/README\.md$/,
+      /^README\.md$/,
+    ],
+    reason:
+      'Los cambios de lógica/contratos deben reflejarse en docs/ (docs/rules, ADR, README de app o de la capa).',
+  },
+  {
+    id: 'governance',
+    when: [/^frontend-app\/scripts\/.+\.(mjs|ts)$/],
+    exclude: [/\.test\.mjs$/],
+    require: [/^frontend-app\/scripts\/README\.md$/, /^frontend-app\/docs\/.+\.md$/],
+    reason: 'Los cambios del motor de gobernanza deben actualizar scripts/README o docs/.',
+  },
+  {
+    id: 'ci',
+    when: [/^\.github\/workflows\/.+\.ya?ml$/],
+    require: [/^frontend-app\/docs\/rules\/ci\/.+\.md$/, /^frontend-app\/scripts\/README\.md$/],
+    reason: 'Los cambios de CI deben reflejarse en docs/rules/ci o scripts/README.',
+  },
+];
+
+/**
+ * Excepciones justificadas al gate de docs (R-DO-8). Cada entrada debe incluir
+ * un motivo y se revisa en el PR; no se usa para saltarse la documentación.
+ */
+export const DOCS_SYNC_EXEMPTIONS = [];
