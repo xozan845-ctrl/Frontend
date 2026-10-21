@@ -31,6 +31,8 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
   const name =
     typeof rawName === 'string' && rawName ? rawName : email ? email.split('@')[0] : 'Usuario';
   const roles = u['roles'];
+  const tenantId = u['tenant_id'] ?? u['tenantId'];
+  const personalId = u['personal_id'] ?? u['personalId'];
 
   return {
     id,
@@ -46,6 +48,8 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
       (typeof u['avatar_url'] === 'string' && u['avatar_url']) ||
       (typeof u['photo'] === 'string' && u['photo']) ||
       undefined,
+    ...(typeof tenantId === 'string' && tenantId ? { tenantId } : {}),
+    ...(typeof personalId === 'string' && personalId ? { personalId } : {}),
   };
 }
 

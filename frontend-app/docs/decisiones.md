@@ -494,6 +494,8 @@ contexto y consecuencias.
   en el registro real). `ADR-20` mantiene su decisión sobre guard y rutas; esta
   decisión sustituye únicamente su consecuencia sobre la visibilidad del enlace.
   Revertir es restaurar la condición de rol en las dos variantes del enlace.
+  **Actualización (ADR-26)**: el registro real envía `rol: 'empresario'` y el
+  guard acepta `empresario` y `vendedor`.
 
 ## ADR-23: Módulo de facturación visual (feature independiente)
 
@@ -556,6 +558,8 @@ contexto y consecuencias.
   La ruta de facturación sigue sin guard en la fase visual; al conectar la lógica
   se protegerá con un guard que acepte vendedor/facturador (R-SE-6). Revertir es
   quitar el enlace del navbar y la intención `biller` del formulario.
+  **Actualización (ADR-26)**: el alta traduce `biller` a `rol: 'empresario'`
+  (no `vendedor`), que es el rol registrable del contrato real.
 
 ## ADR-25: Módulo de logística visual (tablero de rutas y entregas)
 
@@ -600,3 +604,39 @@ contexto y consecuencias.
   ruta `/logistica`, el enlace del navbar y el feature.
 
 ---
+
+## ADR-26: Consumo del contrato real de autenticación (`/api/v1/auth`)
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: el frontend venía consumiendo una versión **asumida** del
+  contrato de auth (payload `rol: 'vendedor'`, envelope `{ data }`, sin
+  `expira_en`). El OpenAPI público de Core Engine y el código de
+  `identity-service` confirman otro contrato: el alta pública solo admite
+  `empresario` o `comprador`; la sesión devuelve `access_token`,
+  `refresh_token`, `expira_en` y `usuario`; y existen endpoints que el frontend
+  aún no consumía (`crear-usuario`, `vincular-personal`). Además, el panel del
+  vendedor debe aceptar al **empresario**, que es el rol que crea la empresa y
+  la tienda.
+- **Decisión**:
+  - `RegisterData.role` conserva las intenciones de producto (`customer`,
+    `seller`, `biller`), pero el payload traduce `seller`/`biller` a
+    **`empresario`** y el resto a **`comprador`**. Esto sustituye el mapeo a
+    `vendedor` de ADR-22/ADR-24.
+  - La detección interna de vendedor (`isSellerRole`) acepta `empresario` y
+    `vendedor`; la usan el `vendorGuard` y el asistente de alta de tienda.
+  - El puerto `AuthRepository` consume **toda** la superficie `/auth`:
+    `registro`, `login`, `refresh`, `logout`, `me`, `restablecer-contrasena`,
+    `cambiar-contrasena`, `crear-usuario` y `vincular-personal`.
+  - `crear-usuario` y `vincular-personal` se exponen en `AuthService`/`AuthStore`
+    para las futuras pantallas de administración y logística; no se añade UI en
+    este cambio.
+  - El adapter normaliza `tenant_id`/`personal_id` a `tenantId`/`personalId` y
+    sigue tolerando envelopes heredados (`R-AR-4`).
+- **Consecuencias**: el login, refresh, logout y `me` funcionan contra el
+  gateway actual. El alta con `empresario` exige que `identity-service` esté
+  construido con el cambio de roles de ADR-25 del backend; una imagen anterior
+  rechaza `empresario` y acepta `vendedor`. El alta de tienda sigue necesitando
+  `POST /empresas` antes de `POST /vendedores/tienda` (tenant activo), que se
+  abordará al conectar el dominio de empresas. Revertir es volver a mapear
+  `seller`/`biller` a `vendedor` y retirar los dos métodos nuevos del puerto.

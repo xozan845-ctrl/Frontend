@@ -80,7 +80,7 @@ describe('AuthService', () => {
       nombre: 'Vendedor',
       correo: 'v@tienda.test',
       contrasena: 'secreto123',
-      rol: 'vendedor',
+      rol: 'empresario',
     });
     request.flush({ token: 'jwt', user: { id: 3, name: 'Vendedor', email: 'v@tienda.test' } });
   });
@@ -102,7 +102,7 @@ describe('AuthService', () => {
       nombre: 'Facturador',
       correo: 'f@tienda.test',
       contrasena: 'secreto123',
-      rol: 'vendedor',
+      rol: 'empresario',
     });
     request.flush({ token: 'jwt', user: { id: 4, name: 'Facturador', email: 'f@tienda.test' } });
   });
@@ -174,6 +174,118 @@ describe('AuthService', () => {
     request.flush({ ok: true });
 
     expect(result).toBe(true);
+  });
+
+  it('debe crear un usuario como administrador con el payload del contrato', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: User | undefined;
+
+    service
+      .createUser({
+        name: 'Nuevo Operativo',
+        email: 'operativo@tienda.test',
+        password: 'secreto123',
+        role: 'operativo',
+        tenantId: 'tenant-1',
+        personalId: 'personal-1',
+      })
+      .subscribe((u) => (result = u));
+
+    const request = httpMock.expectOne('https://api.test/auth/crear-usuario');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      nombre: 'Nuevo Operativo',
+      correo: 'operativo@tienda.test',
+      contrasena: 'secreto123',
+      rol: 'operativo',
+      tenant_id: 'tenant-1',
+      personal_id: 'personal-1',
+    });
+    request.flush({
+      id: 'u-9',
+      nombre: 'Nuevo Operativo',
+      correo: 'operativo@tienda.test',
+      rol: 'operativo',
+      tenant_id: 'tenant-1',
+      personal_id: 'personal-1',
+      creado_en: '2026-10-21T00:00:00.000Z',
+    });
+
+    expect(result?.id).toBe('u-9');
+    expect(result?.role).toBe('operativo');
+    expect(result?.tenantId).toBe('tenant-1');
+    expect(result?.personalId).toBe('personal-1');
+  });
+
+  it('debe vincular la ficha de personal', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: boolean | undefined;
+
+    service
+      .linkPersonal({ personalId: 'personal-1', name: 'Operativo' })
+      .subscribe((r) => (result = r));
+    const request = httpMock.expectOne('https://api.test/auth/vincular-personal');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ personal_id: 'personal-1', nombre: 'Operativo' });
+    request.flush({ ok: true });
+
+    expect(result).toBe(true);
+  });
+
+  it('debe traducir el error de crear usuario', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service
+      .createUser({
+        name: 'Nuevo',
+        email: 'nuevo@tienda.test',
+        password: 'secreto123',
+        role: 'comprador',
+      })
+      .subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/crear-usuario')
+      .flush(
+        { mensaje: 'Solo un administrador puede crear usuarios.' },
+        { status: 403, statusText: 'Forbidden' },
+      );
+
+    expect(error?.message).toBe('Solo un administrador puede crear usuarios.');
+  });
+
+  it('debe traducir el error de vincular personal', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.linkPersonal({ personalId: 'personal-1' }).subscribe({
+      error: (e: Error) => (error = e),
+    });
+    httpMock
+      .expectOne('https://api.test/auth/vincular-personal')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+
+    expect(error?.message).toBe('No se pudo vincular la ficha de personal.');
+  });
+
+  it('debe traducir el error de refresh', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let error: Error | undefined;
+
+    service.refresh('refresh-1').subscribe({ error: (e: Error) => (error = e) });
+    httpMock
+      .expectOne('https://api.test/auth/refresh')
+      .flush(
+        { mensaje: 'La sesion fue cerrada; inicia sesion de nuevo.' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(error?.message).toBe('La sesion fue cerrada; inicia sesion de nuevo.');
   });
 
   it('debe traducir el error de cambiar la contraseña', () => {
@@ -353,6 +465,34 @@ describe('AuthService', () => {
 
       expect(result?.refreshToken).toBe('refresh-1');
     });
+
+    it('debe crear un usuario en mock', async () => {
+      build();
+      let result: User | undefined;
+
+      service
+        .createUser({
+          name: 'Nuevo',
+          email: 'nuevo@tienda.test',
+          password: 'secreto123',
+          role: 'comprador',
+        })
+        .subscribe((u) => (result = u));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.email).toBe('nuevo@tienda.test');
+      expect(result?.role).toBe('comprador');
+    });
+
+    it('debe vincular personal en mock', async () => {
+      build();
+      let result: boolean | undefined;
+
+      service.linkPersonal({ personalId: 'personal-1' }).subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBe(true), { timeout: 2000 });
+
+      expect(result).toBe(true);
+    });
   });
 
   describe('sin apiUrl configurada', () => {
@@ -385,6 +525,33 @@ describe('AuthService', () => {
       let error: Error | undefined;
 
       service.refresh('refresh-1').subscribe({ error: (err: Error) => (error = err) });
+
+      expect(error?.message).toContain('apiUrl no configurado');
+    });
+
+    it('debe fallar la creación de usuario', () => {
+      build();
+      let error: Error | undefined;
+
+      service
+        .createUser({
+          name: 'Nuevo',
+          email: 'nuevo@tienda.test',
+          password: 'secreto123',
+          role: 'comprador',
+        })
+        .subscribe({ error: (err: Error) => (error = err) });
+
+      expect(error?.message).toContain('apiUrl no configurado');
+    });
+
+    it('debe fallar la vinculación de personal', () => {
+      build();
+      let error: Error | undefined;
+
+      service.linkPersonal({ personalId: 'personal-1' }).subscribe({
+        error: (err: Error) => (error = err),
+      });
 
       expect(error?.message).toContain('apiUrl no configurado');
     });

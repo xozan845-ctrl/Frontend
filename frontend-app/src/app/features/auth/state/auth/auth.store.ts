@@ -10,7 +10,13 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, firstValueFrom, pipe, Observable } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import { LoginCredentials, RegisterData, User } from '../../models/auth.model';
+import {
+  CreateUserData,
+  LinkPersonalData,
+  LoginCredentials,
+  RegisterData,
+  User,
+} from '../../models/auth.model';
 import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
 import type { AuthState } from './auth.state';
@@ -172,6 +178,14 @@ export const AuthStore = signalStore(
         /** Cambia la contraseña de la sesión actual. */
         changePassword(currentPassword: string, newPassword: string): Observable<boolean> {
           return authService.changePassword(currentPassword, newPassword);
+        },
+        /** Alta administrativa de usuario (solo admin, `POST /auth/crear-usuario`). */
+        createUser(userData: CreateUserData): Observable<User> {
+          return authService.createUser(userData);
+        },
+        /** Vincula la ficha de personal del usuario autenticado (`POST /auth/vincular-personal`). */
+        linkPersonal(data: LinkPersonalData): Observable<boolean> {
+          return authService.linkPersonal(data);
         },
       };
     },

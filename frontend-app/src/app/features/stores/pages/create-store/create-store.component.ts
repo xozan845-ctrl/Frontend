@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore, isSellerRole } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/store-wizard.model';
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
@@ -43,8 +43,8 @@ export default class CreateStoreComponent {
   readonly step = this.wizard.step;
   readonly showPassword = signal(false);
 
-  /** Sesión actual: de vendedor (puede crear tienda) o de comprador (no). */
-  readonly isSeller = computed(() => this.authStore.user()?.role === 'vendedor');
+  /** Sesión actual: de vendedor/empresario (puede crear tienda) o de comprador (no). */
+  readonly isSeller = computed(() => isSellerRole(this.authStore.user()?.role));
   readonly isBuyer = computed(() => this.authStore.isAuthenticated() && !this.isSeller());
 
   // Paso 1 — cuenta de vendedor

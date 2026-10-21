@@ -39,6 +39,19 @@ describe('auth.adapter', () => {
       expect(adaptUserFromBackend({ avatar_url: 'b.png' }).avatar).toBe('b.png');
       expect(adaptUserFromBackend({ photo: 'c.png' }).avatar).toBe('c.png');
     });
+
+    it('debe mapear el tenant y la ficha de personal (snake_case y camelCase)', () => {
+      expect(adaptUserFromBackend({ tenant_id: 't-1', personal_id: 'p-1' })).toMatchObject({
+        tenantId: 't-1',
+        personalId: 'p-1',
+      });
+      expect(adaptUserFromBackend({ tenantId: 't-2', personalId: 'p-2' })).toMatchObject({
+        tenantId: 't-2',
+        personalId: 'p-2',
+      });
+      expect(adaptUserFromBackend({})).not.toHaveProperty('tenantId');
+      expect(adaptUserFromBackend({})).not.toHaveProperty('personalId');
+    });
   });
 
   describe('adaptAuthResponseFromBackend', () => {

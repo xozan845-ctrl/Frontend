@@ -1,6 +1,13 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthResponse, LoginCredentials, RegisterData, User } from '../models/auth.model';
+import {
+  AuthResponse,
+  CreateUserData,
+  LinkPersonalData,
+  LoginCredentials,
+  RegisterData,
+  User,
+} from '../models/auth.model';
 
 export interface AuthRepository {
   login(credentials: LoginCredentials): Observable<AuthResponse>;
@@ -14,6 +21,10 @@ export interface AuthRepository {
   resetPassword(email: string): Observable<boolean>;
   /** Cambia la contraseña autenticada (`POST /auth/cambiar-contrasena`). */
   changePassword(currentPassword: string, newPassword: string): Observable<boolean>;
+  /** Alta administrativa de usuario (`POST /auth/crear-usuario`, solo admin). */
+  createUser(userData: CreateUserData): Observable<User>;
+  /** Vincula la ficha de personal del usuario autenticado (`POST /auth/vincular-personal`). */
+  linkPersonal(data: LinkPersonalData): Observable<boolean>;
 }
 
 export const AUTH_REPOSITORY = new InjectionToken<AuthRepository>('AuthRepository');

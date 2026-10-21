@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { delay, of, throwError } from 'rxjs';
 import { AuthStore } from './auth.store';
 import { AuthRepository, AUTH_REPOSITORY } from '../../repositories/auth.repository';
 
@@ -21,6 +21,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -148,6 +150,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -171,6 +175,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -191,6 +197,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -212,6 +220,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -232,6 +242,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -253,6 +265,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -277,6 +291,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -318,6 +334,8 @@ describe('AuthStore', () => {
       me: vi.fn(() => of(authResponse.user)),
       resetPassword: vi.fn(() => of(true)),
       changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
@@ -330,5 +348,117 @@ describe('AuthStore', () => {
 
     expect(renewed).toBe(false);
     expect(store.isAuthenticated()).toBe(false);
+  });
+
+  it('refreshTokenOnce deduplica renovaciones concurrentes (R-SE-1)', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+    vi.mocked(repo.refresh).mockClear();
+    vi.mocked(repo.refresh).mockReturnValue(of(authResponse).pipe(delay(10)));
+
+    const [first, second] = await Promise.all([store.refreshTokenOnce(), store.refreshTokenOnce()]);
+
+    expect(first).toBe(true);
+    expect(second).toBe(true);
+    expect(repo.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('debe usar el mensaje por defecto cuando el logout falla sin mensaje', async () => {
+    repo = {
+      login: vi.fn(() => of(authResponse)),
+      register: vi.fn(() => of(authResponse)),
+      refresh: vi.fn(() => of(authResponse)),
+      logout: vi.fn(() => throwError(() => new Error(''))),
+      me: vi.fn(() => of(authResponse.user)),
+      resetPassword: vi.fn(() => of(true)),
+      changePassword: vi.fn(() => of(true)),
+      createUser: vi.fn(() => of(authResponse.user)),
+      linkPersonal: vi.fn(() => of(true)),
+    };
+    TestBed.configureTestingModule({
+      providers: [{ provide: AUTH_REPOSITORY, useValue: repo }],
+    });
+    const store = TestBed.inject(AuthStore);
+
+    store.logout();
+
+    await vi.waitFor(() => expect(store.error()).toBe('Error al cerrar sesión'));
+  });
+
+  it('delega el alta administrativa de usuario en el repositorio', () => {
+    const store = setup();
+
+    store.createUser({
+      name: 'Nuevo',
+      email: 'nuevo@tienda.test',
+      password: 'secreto123',
+      role: 'comprador',
+    });
+
+    expect(repo.createUser).toHaveBeenCalledWith({
+      name: 'Nuevo',
+      email: 'nuevo@tienda.test',
+      password: 'secreto123',
+      role: 'comprador',
+    });
+  });
+
+  it('delega la vinculación de personal en el repositorio', () => {
+    const store = setup();
+
+    store.linkPersonal({ personalId: 'personal-1', name: 'Nuevo' });
+
+    expect(repo.linkPersonal).toHaveBeenCalledWith({
+      personalId: 'personal-1',
+      name: 'Nuevo',
+    });
+  });
+
+  it('delega el perfil, el restablecimiento y el cambio de contraseña', () => {
+    const store = setup();
+
+    store.me().subscribe();
+    store.requestPasswordReset('ana@tienda.test').subscribe();
+    store.changePassword('actual123', 'nueva12345').subscribe();
+
+    expect(repo.me).toHaveBeenCalled();
+    expect(repo.resetPassword).toHaveBeenCalledWith('ana@tienda.test');
+    expect(repo.changePassword).toHaveBeenCalledWith('actual123', 'nueva12345');
+  });
+
+  it('debe tolerar un fallo de sessionStorage al persistir el refresh token', async () => {
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage bloqueado');
+    });
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    try {
+      const store = setup();
+      store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+
+      await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+      await vi.waitFor(() =>
+        expect(error).toHaveBeenCalledWith('Failed to persist refresh token', expect.any(Error)),
+      );
+    } finally {
+      setItem.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it('debe tolerar un fallo de localStorage al restaurar la sesión', () => {
+    const removeItem = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('storage bloqueado');
+    });
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    try {
+      setup();
+      expect(error).toHaveBeenCalledWith('Failed to restore auth session', expect.any(Error));
+    } finally {
+      removeItem.mockRestore();
+      error.mockRestore();
+    }
   });
 });

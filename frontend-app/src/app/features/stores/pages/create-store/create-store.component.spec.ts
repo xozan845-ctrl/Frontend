@@ -95,6 +95,14 @@ describe('CreateStoreComponent', () => {
     expect(fixture.componentInstance.isSeller()).toBe(false);
   });
 
+  it('debe detectar una cuenta de empresario como vendedor (ADR-26)', async () => {
+    currentUser = { id: 2, email: 'e@e.com', name: 'Eva', role: 'empresario' };
+    const fixture = await setup();
+
+    expect(fixture.componentInstance.isSeller()).toBe(true);
+    expect(fixture.componentInstance.isBuyer()).toBe(false);
+  });
+
   it('no debe crear la tienda si el formulario es inválido', async () => {
     const fixture = await setup();
 
