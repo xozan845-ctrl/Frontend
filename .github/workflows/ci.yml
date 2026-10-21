@@ -33,6 +33,13 @@ jobs:
           cache-dependency-path: frontend-app/package-lock.json
       - run: npm ci --prefer-offline
       - run: npm audit --audit-level=high
+      - run: npm sbom --sbom-format cyclonedx > sbom.json
+      - name: Upload SBOM
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sbom
+          path: frontend-app/sbom.json
+          if-no-files-found: error
 
   format:
     name: Format (Prettier)
@@ -169,3 +176,74 @@ jobs:
           name: playwright-report
           path: frontend-app/playwright-report
           if-no-files-found: ignore
+
+  actionlint:
+    name: Actionlint
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - run: docker run --rm -v "$GITHUB_WORKSPACE":/repo -w /repo rhysd/actionlint:1.7.7
+
+  shellcheck:
+    name: Shellcheck
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - run: shellcheck docker-entrypoint.d/*.sh
+
+  hadolint:
+    name: Hadolint
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - run: docker run --rm -i hadolint/hadolint:v2.12.0 hadolint - < Dockerfile
+
+  gitleaks:
+    name: Gitleaks
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4

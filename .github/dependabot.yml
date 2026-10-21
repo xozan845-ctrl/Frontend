@@ -1,0 +1,41 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /frontend-app
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Mexico_City
+    open-pull-requests-limit: 5
+    labels: [deps]
+    commit-message:
+      prefix: build(deps)
+      include: scope
+    groups:
+      angular:
+        patterns: ["@angular/*", "@angular-devkit/*"]
+      dev-minor-patch:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels: [ci, deps]
+    commit-message:
+      prefix: ci(deps)
+      include: scope
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels: [cd, deps]
+    commit-message:
+      prefix: build(deps)
+      include: scope
