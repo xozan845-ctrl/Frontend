@@ -6,10 +6,10 @@ import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.reposit
 import { ClientService } from './services/client.service';
 import { VendorOrderService } from './services/vendor-order.service';
 import { VendorProductService } from './services/vendor-product.service';
-import { ClientSearchStore } from './state/client-search.store';
-import { OrderDraftStore } from './state/order-draft.store';
-import { VendorCatalogStore } from './state/vendor-catalog.store';
-import { VendorOrdersStore } from './state/vendor-orders.store';
+import { ClientSearchStore } from './state/client-search/client-search.store';
+import { OrderDraftStore } from './state/order-draft/order-draft.store';
+import { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
+import { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
 
 /**
  * Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO

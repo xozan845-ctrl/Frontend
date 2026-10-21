@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 
 /**
  * Inicio del panel del vendedor (`R-UX-1`, `R-UX-6`): KPIs del día derivados de

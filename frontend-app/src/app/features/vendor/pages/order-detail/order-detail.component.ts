@@ -12,7 +12,7 @@ import {
   ORDER_STATUS_TRANSITIONS,
 } from '../../constants/vendor.constants';
 import { OrderLine, OrderStatus } from '../../models/vendor-order.model';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 import type { TimelineStep } from './order-detail.types';
 
 /**

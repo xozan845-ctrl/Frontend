@@ -4,7 +4,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { CreateClientModalComponent } from '../../components/create-client-modal/create-client-modal.component';
 import { CreateClientPayload } from '../../models/vendor-order.model';
-import { ClientSearchStore } from '../../state/client-search.store';
+import { ClientSearchStore } from '../../state/client-search/client-search.store';
 
 /**
  * Cartera de clientes del vendedor (`R-UX-1`, `R-UX-6`): búsqueda por nombre,

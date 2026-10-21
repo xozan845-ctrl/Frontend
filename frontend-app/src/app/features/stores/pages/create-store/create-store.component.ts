@@ -3,7 +3,7 @@ import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
-import { StoreWizardStore } from '../../state/store-wizard.store';
+import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/store-wizard.model';
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';

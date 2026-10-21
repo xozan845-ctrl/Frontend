@@ -17,10 +17,10 @@ import { OrderInfoFieldsComponent } from '../../components/order-info-fields/ord
 import { ProductPickGridComponent } from '../../components/product-pick-grid/product-pick-grid.component';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { Client, CreateClientPayload, OrderDraftInfo } from '../../models/vendor-order.model';
-import { ClientSearchStore } from '../../state/client-search.store';
-import { OrderDraftStore } from '../../state/order-draft.store';
-import { VendorCatalogStore } from '../../state/vendor-catalog.store';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { ClientSearchStore } from '../../state/client-search/client-search.store';
+import { OrderDraftStore } from '../../state/order-draft/order-draft.store';
+import { VendorCatalogStore } from '../../state/vendor-catalog/vendor-catalog.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 
 /**
  * Punto de venta "Nuevo pedido" (ADR-20): contenedor que conecta los stores

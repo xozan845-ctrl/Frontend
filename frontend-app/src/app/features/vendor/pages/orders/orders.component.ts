@@ -4,7 +4,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
 import { ORDER_STATUS_LABELS } from '../../constants/vendor.constants';
 import { OrderStatus } from '../../models/vendor-order.model';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 
 /**
  * Página "Pedidos" (ADR-20): lista completa con filtro por estado en chips y

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import CreateStoreComponent from './create-store.component';
-import { StoreWizardStore } from '../../state/store-wizard.store';
+import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
 import { CatalogProductOption } from '../../models/store-wizard.model';

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { StoreWizardStore } from './state/store-wizard.store';
+import { StoreWizardStore } from './state/store-wizard/store-wizard.store';
 import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
 import { StoreService } from './services/store.service';

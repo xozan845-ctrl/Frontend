@@ -2,10 +2,10 @@ import { Component, computed, DestroyRef, inject, signal, OnDestroy } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { CartStore } from '../../state/cart.store';
+import { CartStore } from '../../state/cart/cart.store';
 import { AuthStore } from '../../../auth/public-api';
 import { ProductStore } from '../../../products/public-api';
-import { OrderStore } from '../../state/order.store';
+import { OrderStore } from '../../state/order/order.store';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TrustBadgesComponent } from '../../../../shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';

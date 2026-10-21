@@ -4,5 +4,5 @@
  */
 export type { Product, ProductVariant } from './models/product.model';
 export type { Store } from './models/store.model';
-export { ProductStore } from './state/product.store';
-export { ReviewsStore } from './state/reviews.store';
+export { ProductStore } from './state/product/product.store';
+export { ReviewsStore } from './state/reviews/reviews.store';

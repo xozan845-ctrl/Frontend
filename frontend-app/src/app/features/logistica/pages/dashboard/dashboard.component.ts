@@ -7,7 +7,7 @@ import { KpiCardComponent } from '../../components/kpi-card/kpi-card.component';
 import MapPanelComponent from '../../components/map-panel/map-panel.component';
 import { OrdersTableComponent } from '../../components/orders-table/orders-table.component';
 import { LOGISTICA_DATES, LOGISTICA_ZONES } from '../../constants/logistica.constants';
-import { LogisticaDashboardStore } from '../../state/logistica-dashboard.store';
+import { LogisticaDashboardStore } from '../../state/logistica-dashboard/logistica-dashboard.store';
 
 /**
  * Tablero de logística (ADR-25, `R-UX-1`, `R-UX-6`): KPIs del día, mapa de

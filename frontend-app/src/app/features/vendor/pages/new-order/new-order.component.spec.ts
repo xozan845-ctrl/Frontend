@@ -13,10 +13,10 @@ import {
 } from '../../repositories/vendor-product.repository';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { SeoService } from '../../../../core/services/seo.service';
-import { ClientSearchStore } from '../../state/client-search.store';
-import { OrderDraftStore } from '../../state/order-draft.store';
-import { VendorCatalogStore } from '../../state/vendor-catalog.store';
-import { VendorOrdersStore } from '../../state/vendor-orders.store';
+import { ClientSearchStore } from '../../state/client-search/client-search.store';
+import { OrderDraftStore } from '../../state/order-draft/order-draft.store';
+import { VendorCatalogStore } from '../../state/vendor-catalog/vendor-catalog.store';
+import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 import { Client, VendorOrder, VendorProduct } from '../../models/vendor-order.model';
 
 const products: VendorProduct[] = [
