@@ -640,3 +640,38 @@ contexto y consecuencias.
   `POST /empresas` antes de `POST /vendedores/tienda` (tenant activo), que se
   abordará al conectar el dominio de empresas. Revertir es volver a mapear
   `seller`/`biller` a `vendedor` y retirar los dos métodos nuevos del puerto.
+
+## ADR-27: Gestión de empresas (tenant comercial) en el frontend
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: Core Engine incorporó las empresas como tenant comercial
+  (ADR-25 del backend): la empresa agrupa tienda, vendedores, participación y
+  modalidad logística. El frontend no tenía dominio de empresas y el alta de
+  tienda fallaba contra el backend real porque el JWT del empresario recién
+  registrado no incluía `tenant_id`.
+- **Decisión**:
+  - Nuevo feature lazy **`features/empresas/`** con modelos, adapter, puerto
+    (`COMPANY_REPOSITORY`), servicio HTTP y `CompanyStore` (R-AR-3, R-AR-4).
+  - Se consumen los cuatro endpoints del contrato: alta (`POST /empresas`),
+    consulta (`GET /empresas/:id`), cambio de modalidad
+    (`PATCH /empresas/:id/logistica`) y alta de vendedor
+    (`POST /empresas/:id/vendedores`).
+  - La página **`/vendedor/empresa`** vive bajo el shell del vendedor y su
+    `vendorGuard`; muestra el alta al empresario sin empresa, la ficha de la
+    empresa, el cambio de modalidad y el alta de vendedores con participación.
+    Un vendedor solo ve la ficha en modo lectura.
+  - Tras crear la empresa el `CompanyStore` **renueva la sesión**
+    (`AuthStore.refreshTokenOnce`): el backend actualiza rol/`tenant_id` del
+    usuario y el JWT anterior no lleva el tenant que exige
+    `POST /vendedores/tienda`.
+  - El identificador de la empresa activa se toma del `tenant_id` del usuario
+    normalizado por el adapter de auth (ADR-26). La lista de vendedores se
+    limita a los creados en la sesión porque el contrato público no expone un
+    listado de vendedores de la empresa.
+- **Consecuencias**: el empresario puede crear y configurar su empresa sin
+  salir del panel; el alta de tienda ya dispone de `tenant_id` tras el refresh.
+  Queda como siguiente paso encadenar la creación de empresa dentro del
+  asistente `/crear-tienda` y añadir la edición del nombre/estado cuando el
+  contrato lo permita. Revertir es retirar el feature, la ruta y el ítem del
+  sidebar.

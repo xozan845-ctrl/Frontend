@@ -3,12 +3,13 @@ import { mockApi } from './api-mock';
 
 // Panel del vendedor (ADR-20): vive bajo `/vendedor/*`; en el entorno `e2e` la
 // cartera, el catálogo y los pedidos salen de los fixtures de `api-mock.ts`.
-const login = async (page: Page, returnUrl: string) => {
+const login = async (page: Page, returnUrl: string, email = 'vendedor@tienda.test') => {
   await page.goto(`/login?returnUrl=${encodeURIComponent(returnUrl)}`, {
     waitUntil: 'domcontentloaded',
   });
-  // Convención E2E (R-E-12): el correo `vendedor@…` entra con rol vendedor.
-  await page.locator('#email').fill('vendedor@tienda.test');
+  // Convención E2E (R-E-12): `vendedor@…` entra con rol vendedor y
+  // `empresario@…` con rol empresario.
+  await page.locator('#email').fill(email);
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();
   await page.waitForURL(new RegExp(returnUrl.replace(/\//g, '\\/')), { timeout: 30_000 });
@@ -120,4 +121,19 @@ test('R-E-21: el enlace de vendedor guía del navbar al alta y al panel', async 
 
   await expect(page).toHaveURL(/\/vendedor\/inicio/);
   await expect(page.getByTestId('dashboard-page')).toBeVisible();
+});
+
+// R-E-22: un empresario sin empresa la crea desde el panel y ve su ficha
+// (ADR-27). El mock de auth distingue `empresario@…` (R-E-12).
+test('R-E-22: el empresario crea su empresa desde el panel', async ({ page }) => {
+  await login(page, '/vendedor/empresa', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('create-company-form')).toBeVisible();
+  await page.getByTestId('company-name').fill('Mi Empresa');
+  await page.getByTestId('company-mode').selectOption('hibrida');
+  await page.getByTestId('create-company-submit').click();
+
+  await expect(page.getByTestId('company-card')).toBeVisible();
+  await expect(page.getByTestId('company-card')).toContainText('Mi Empresa');
+  await expect(page.getByTestId('company-logistics-mode')).toContainText('Híbrida');
 });

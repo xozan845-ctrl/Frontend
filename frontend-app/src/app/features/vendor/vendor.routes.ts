@@ -1,4 +1,5 @@
 import { Route, Routes } from '@angular/router';
+import { EMPRESAS_ROUTES } from '../empresas/public-api';
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_ORDER_REPOSITORY } from './repositories/vendor-order.repository';
@@ -67,6 +68,7 @@ export const VENDOR_ROUTES: Routes = [
         path: 'clientes',
         loadComponent: () => import('./pages/clients/clients.component'),
       },
+      ...EMPRESAS_ROUTES,
       {
         path: 'productos',
         ...comingSoonRoute(
