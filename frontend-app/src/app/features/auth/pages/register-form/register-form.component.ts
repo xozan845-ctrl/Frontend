@@ -2,7 +2,7 @@ import { Component, inject, effect, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../state/auth/auth.store';
-import { injectSeoCleanup } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 @Component({
   selector: 'app-register-form',
@@ -15,7 +15,6 @@ export class RegisterFormComponent {
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly seoService = injectSeoCleanup();
   /** Alta pedida desde el funnel de vendedor (`rol=seller`, ADR-22). */
   readonly isSellerIntent = this.route.snapshot.queryParamMap.get('rol') === 'seller';
   /** Alta pedida desde el acceso de facturación (`rol=biller`, ADR-24). */
@@ -38,6 +37,19 @@ export class RegisterFormComponent {
       ? 'seller'
       : undefined;
 
+  private readonly seoService = injectSeoPage(
+    this.isBillerIntent
+      ? 'Cuenta de facturador'
+      : this.isSellerIntent
+        ? 'Cuenta de vendedor'
+        : 'Crear cuenta',
+    this.isBillerIntent
+      ? 'Crea tu cuenta de facturador para emitir facturas desde tu tienda.'
+      : this.isSellerIntent
+        ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
+        : 'Regístrate en Quantum Store.',
+  );
+
   readonly registerForm = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -46,26 +58,12 @@ export class RegisterFormComponent {
 
   showPassword = signal(false);
 
-  constructor() {
-    this.seoService.setPage(
-      this.isBillerIntent
-        ? 'Cuenta de facturador'
-        : this.isSellerIntent
-          ? 'Cuenta de vendedor'
-          : 'Crear cuenta',
-      this.isBillerIntent
-        ? 'Crea tu cuenta de facturador para emitir facturas desde tu tienda.'
-        : this.isSellerIntent
-          ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
-          : 'Regístrate en Quantum Store.',
-    );
-
-    effect(() => {
-      if (this.authStore.isAuthenticated()) {
-        this.redirectAfterAuth();
-      }
-    });
-  }
+  /** Redirige al usuario autenticado según el origen del alta (`R-AR-15`). */
+  private readonly redirectWhenAuthenticated = effect(() => {
+    if (this.authStore.isAuthenticated()) {
+      this.redirectAfterAuth();
+    }
+  });
 
   /** Vuelve a la ruta protegida de origen (`returnUrl`) o al destino de la intención. */
   private redirectAfterAuth(): void {

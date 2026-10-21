@@ -1,7 +1,7 @@
 import { Component, OnDestroy, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { OrderStatusBadgeComponent } from '../../components/order-status-badge/order-status-badge.component';
@@ -37,7 +37,11 @@ export default class OrderDetailComponent implements OnDestroy {
   /** Parámetro de ruta (`pedidos/:id`) enlazado con `withComponentInputBinding`. */
   readonly id = input.required<string>();
   readonly orders = inject(VendorOrdersStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Detalle del pedido — Panel del vendedor',
+    'Revisa las líneas, totales y estado de un pedido y actualiza su avance.',
+  );
+  private readonly loadOrder = this.orders.loadOrder(this.id);
 
   protected readonly timelineSteps: TimelineStep[] = [
     { status: 'pendiente', label: ORDER_STATUS_LABELS.pendiente },
@@ -61,40 +65,28 @@ export default class OrderDetailComponent implements OnDestroy {
     return order ? ORDER_STATUS_TRANSITIONS[order.status] : [];
   });
 
-  constructor() {
-    this.seoService.setPage(
-      'Detalle del pedido — Panel del vendedor',
-      'Revisa las líneas, totales y estado de un pedido y actualiza su avance.',
-    );
+  // El SEO toma el id en cuanto el pedido llega.
+  private readonly syncOrderSeo = effect(() => {
+    const order = this.orders.selectedOrder();
+    if (order) {
+      this.seoService.setPage(
+        `Pedido ${order.id} — Panel del vendedor`,
+        `Detalle del pedido ${order.id}: líneas, totales y estado.`,
+      );
+    }
+  });
 
-    // Carga el pedido y reacciona a los cambios del parámetro de ruta
-    // pasando la señal (ruta reactiva de `rxMethod`, sin lecturas rastreadas).
-    this.orders.loadOrder(this.id);
-
-    // El SEO toma el id en cuanto el pedido llega.
-    effect(() => {
-      const order = this.orders.selectedOrder();
-      if (order) {
-        this.seoService.setPage(
-          `Pedido ${order.id} — Panel del vendedor`,
-          `Detalle del pedido ${order.id}: líneas, totales y estado.`,
-        );
-      }
-    });
-
-    // Cierra la confirmación cuando el estado nuevo ya quedó aplicado.
-    effect(() => {
-      const order = this.orders.selectedOrder();
-      const pending = this.pendingStatus();
-      if (order && pending && order.status === pending) {
-        this.pendingStatus.set(null);
-      }
-    });
-  }
+  // Cierra la confirmación cuando el estado nuevo ya quedó aplicado.
+  private readonly resetConfirmOnApply = effect(() => {
+    const order = this.orders.selectedOrder();
+    const pending = this.pendingStatus();
+    if (order && pending && order.status === pending) {
+      this.pendingStatus.set(null);
+    }
+  });
 
   ngOnDestroy(): void {
     this.orders.clearSelectedOrder();
-    this.seoService.reset();
   }
 
   protected requestStatusChange(status: OrderStatus): void {

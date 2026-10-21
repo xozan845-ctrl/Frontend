@@ -40,22 +40,21 @@ export default class InvoiceDetailComponent {
     return invoice ? paymentTermLabel(invoice.paymentTerm) : '';
   });
 
-  constructor() {
-    this.seoService.setPage(
-      'Detalle de factura — Facturación',
-      'Revisa el comprobante, las líneas y los totales de una factura.',
-    );
-
-    effect(() => {
-      const invoice = this.invoice();
-      if (invoice) {
-        this.seoService.setPage(
-          `Factura ${invoice.number} — Facturación`,
-          `Comprobante de la factura ${invoice.number} de ${invoice.clientName}.`,
-        );
-      }
-    });
-  }
+  /** SEO inicial y dinámico de la factura (`R-AR-15`, `R-UX-6`). */
+  private readonly syncInvoiceSeo = effect(() => {
+    const invoice = this.invoice();
+    if (invoice) {
+      this.seoService.setPage(
+        `Factura ${invoice.number} — Facturación`,
+        `Comprobante de la factura ${invoice.number} de ${invoice.clientName}.`,
+      );
+    } else {
+      this.seoService.setPage(
+        'Detalle de factura — Facturación',
+        'Revisa el comprobante, las líneas y los totales de una factura.',
+      );
+    }
+  });
 
   formatDate(iso: string): string {
     return LONG_DATE.format(new Date(`${iso}T12:00:00`));

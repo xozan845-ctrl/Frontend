@@ -1,4 +1,4 @@
-import { Component, OnInit, input } from '@angular/core';
+import { Component, effect, input } from '@angular/core';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { injectSeoCleanup } from '../../../core/services/seo/seo.service';
 
@@ -14,7 +14,7 @@ import { injectSeoCleanup } from '../../../core/services/seo/seo.service';
   imports: [EmptyStateComponent],
   templateUrl: './coming-soon.component.html',
 })
-export default class ComingSoonComponent implements OnInit {
+export default class ComingSoonComponent {
   readonly title = input.required<string>();
   readonly description = input('Estamos preparando esta sección.');
   readonly icon = input('fa-solid fa-screwdriver-wrench');
@@ -23,7 +23,7 @@ export default class ComingSoonComponent implements OnInit {
 
   private readonly seoService = injectSeoCleanup();
 
-  ngOnInit(): void {
+  private readonly syncSeo = effect(() => {
     this.seoService.setPage(`${this.title()} — ${this.context()}`, this.description());
-  }
+  });
 }

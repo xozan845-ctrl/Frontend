@@ -83,15 +83,13 @@ export class SearchAutocompleteComponent implements OnDestroy {
 
   private searchSubject = new Subject<string>();
 
-  constructor() {
-    this.searchSubject
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe((term) => {
-        this.searchTerm.set(term);
-        this.isOpen.set(term.length >= 2);
-        this.focusedIndex.set(-1);
-      });
-  }
+  private readonly filterInput = this.searchSubject
+    .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+    .subscribe((term) => {
+      this.searchTerm.set(term);
+      this.isOpen.set(term.length >= 2);
+      this.focusedIndex.set(-1);
+    });
 
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
 import {
@@ -26,7 +26,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule, UpperCasePipe, RouterLink],
   templateUrl: './account.component.html',
 })
-export default class AccountComponent implements OnInit {
+export default class AccountComponent {
   private readonly fb = inject(FormBuilder);
   readonly authStore = inject(AuthStore);
   private readonly notification = inject(NotificationService);
@@ -47,17 +47,15 @@ export default class AccountComponent implements OnInit {
     { validators: [passwordsMatch] },
   );
 
-  ngOnInit(): void {
-    this.authStore
-      .me()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (user) => this.profile.set({ email: user.email, role: user.role ?? '' }),
-        error: () => {
-          // El perfil local (`AuthStore`) ya muestra los datos; no bloquea la página.
-        },
-      });
-  }
+  private readonly loadProfile = this.authStore
+    .me()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
+      next: (user) => this.profile.set({ email: user.email, role: user.role ?? '' }),
+      error: () => {
+        // El perfil local (`AuthStore`) ya muestra los datos; no bloquea la página.
+      },
+    });
 
   onSubmit(): void {
     if (this.form.invalid || this.submitting()) {

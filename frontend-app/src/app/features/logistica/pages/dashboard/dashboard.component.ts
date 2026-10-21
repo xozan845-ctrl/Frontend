@@ -40,9 +40,7 @@ export default class LogisticaDashboardComponent {
     'Monitorea clientes, rutas y entregas en tiempo real desde el tablero de logística.',
   );
 
-  constructor() {
-    this.store.load();
-  }
+  private readonly loadDashboard = this.store.load();
 
   protected onDateChange(event: Event): void {
     this.store.setDateLabel((event.target as HTMLSelectElement).value);

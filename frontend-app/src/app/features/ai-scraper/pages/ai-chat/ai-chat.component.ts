@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiSessionStore } from '../../state/ai-session/ai-session.store';
 import { AiSession } from '../../models/ai-session.model';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiChatMessageComponent } from '../../components/ai-chat-message/ai-chat-message.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
@@ -65,10 +65,15 @@ const SUGGESTIONS: readonly ChatSuggestion[] = [
   ],
   templateUrl: './ai-chat.component.html',
 })
-export default class AiChatComponent implements OnInit, OnDestroy {
+export default class AiChatComponent implements OnDestroy {
   readonly store = inject(AiSessionStore);
   private readonly fb = inject(FormBuilder);
-  private readonly seo = inject(SeoService);
+  private readonly seo = injectSeoPage(
+    'Chat de scraping',
+    'Conversa con la IA para extraer datos de una web.',
+  );
+
+  private readonly loadSessions = this.store.loadSessions();
 
   readonly suggestions = SUGGESTIONS;
 
@@ -116,27 +121,19 @@ export default class AiChatComponent implements OnInit, OnDestroy {
     ].filter((group) => group.items.length > 0);
   });
 
-  constructor() {
-    this.seo.setPage('Chat de scraping', 'Conversa con la IA para extraer datos de una web.');
-    // Habilita/deshabilita la instrucción según el estado del chat gestionando el
-    // `FormControl` (no el atributo `disabled`), evitando el warning de Angular
-    // al usar `disabled` sobre un control reactivo.
-    effect(() => {
-      const control = this.messageForm.controls.instruction;
-      if (this.store.canSend()) {
-        if (control.disabled) control.enable({ emitEvent: false });
-      } else if (control.enabled) {
-        control.disable({ emitEvent: false });
-      }
-    });
-  }
-
-  ngOnInit(): void {
-    this.store.loadSessions();
-  }
+  // Habilita/deshabilita la instrucción según el estado del chat gestionando el
+  // `FormControl` (no el atributo `disabled`), evitando el warning de Angular
+  // al usar `disabled` sobre un control reactivo.
+  private readonly syncMessageControl = effect(() => {
+    const control = this.messageForm.controls.instruction;
+    if (this.store.canSend()) {
+      if (control.disabled) control.enable({ emitEvent: false });
+    } else if (control.enabled) {
+      control.disable({ emitEvent: false });
+    }
+  });
 
   ngOnDestroy(): void {
-    this.seo.reset();
     this.store.clearCurrent();
   }
 
