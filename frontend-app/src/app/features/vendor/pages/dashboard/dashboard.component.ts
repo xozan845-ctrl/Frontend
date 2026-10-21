@@ -25,7 +25,5 @@ export default class DashboardComponent {
 
   protected readonly recentOrders = computed(() => this.orders.orders().slice(0, 5));
 
-  constructor() {
-    this.orders.loadOrders();
-  }
+  private readonly loadOrders = this.orders.loadOrders();
 }

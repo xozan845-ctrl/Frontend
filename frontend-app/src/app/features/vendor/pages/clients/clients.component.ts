@@ -1,6 +1,6 @@
 import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { CreateClientModalComponent } from '../../components/create-client-modal/create-client-modal.component';
 import { CreateClientPayload } from '../../models/vendor-order.model';
@@ -20,32 +20,27 @@ import { ClientSearchStore } from '../../state/client-search/client-search.store
 })
 export default class ClientsComponent implements OnDestroy {
   readonly clients = inject(ClientSearchStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Clientes — Panel del vendedor',
+    'Busca en tu cartera de clientes por nombre, código o teléfono y registra clientes nuevos.',
+  );
 
   protected readonly isModalOpen = signal(false);
   protected readonly resultCount = computed(() => this.clients.results().length);
   protected readonly hasQuery = computed(() => this.clients.query().trim().length > 0);
 
-  constructor() {
-    this.seoService.setPage(
-      'Clientes — Panel del vendedor',
-      'Busca en tu cartera de clientes por nombre, código o teléfono y registra clientes nuevos.',
-    );
+  private readonly loadClients = this.clients.loadInitial();
 
-    this.clients.loadInitial();
-
-    // El cliente recién creado cierra el modal y limpia la marca del store.
-    effect(() => {
-      if (this.clients.lastCreated()) {
-        this.clients.acknowledgeCreated();
-        this.isModalOpen.set(false);
-      }
-    });
-  }
+  // El cliente recién creado cierra el modal y limpia la marca del store.
+  private readonly closeAfterCreate = effect(() => {
+    if (this.clients.lastCreated()) {
+      this.clients.acknowledgeCreated();
+      this.isModalOpen.set(false);
+    }
+  });
 
   ngOnDestroy(): void {
     this.clients.reset();
-    this.seoService.reset();
   }
 
   protected onQueryInput(event: Event): void {

@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { ClientPickerComponent } from '../../components/client-picker/client-picker.component';
 import { CreateClientModalComponent } from '../../components/create-client-modal/create-client-modal.component';
 import { OrderDraftPanelComponent } from '../../components/order-draft-panel/order-draft-panel.component';
@@ -47,44 +47,39 @@ export default class NewOrderComponent implements OnDestroy {
   readonly catalog = inject(VendorCatalogStore);
   readonly clients = inject(ClientSearchStore);
   readonly orders = inject(VendorOrdersStore);
-  private readonly seoService = inject(SeoService);
+  private readonly seoService = injectSeoPage(
+    'Nuevo pedido — Panel del vendedor',
+    'Registra los pedidos de tus clientes desde el punto de venta: cliente, productos, totales y observaciones.',
+  );
   private readonly recentOrdersSection = viewChild<ElementRef<HTMLElement>>('recentOrdersSection');
 
   readonly isClientModalOpen = signal(false);
   /** Los recientes del POS muestran solo los últimos movimientos. */
   readonly recentOrders = computed(() => this.orders.orders().slice(0, 5));
 
-  constructor() {
-    this.seoService.setPage(
-      'Nuevo pedido — Panel del vendedor',
-      'Registra los pedidos de tus clientes desde el punto de venta: cliente, productos, totales y observaciones.',
-    );
+  private readonly loadCatalog = this.catalog.loadProducts();
+  private readonly startPolling = this.orders.startPolling();
+  private readonly loadClients = this.clients.loadInitial();
 
-    this.catalog.loadProducts();
-    this.orders.startPolling();
-    this.clients.loadInitial();
+  // Tras registrar un pedido, refresca los recientes sin esperar al polling.
+  private readonly refreshAfterCreate = effect(() => {
+    if (this.draft.lastCreatedOrder()) {
+      this.orders.refresh();
+    }
+  });
 
-    // Tras registrar un pedido, refresca los recientes sin esperar al polling.
-    effect(() => {
-      if (this.draft.lastCreatedOrder()) {
-        this.orders.refresh();
-      }
-    });
-
-    // El cliente recién creado queda seleccionado y el modal se cierra.
-    effect(() => {
-      const created = this.clients.lastCreated();
-      if (created) {
-        this.draft.selectClient(created);
-        this.clients.acknowledgeCreated();
-        this.isClientModalOpen.set(false);
-      }
-    });
-  }
+  // El cliente recién creado queda seleccionado y el modal se cierra.
+  private readonly selectCreatedClient = effect(() => {
+    const created = this.clients.lastCreated();
+    if (created) {
+      this.draft.selectClient(created);
+      this.clients.acknowledgeCreated();
+      this.isClientModalOpen.set(false);
+    }
+  });
 
   ngOnDestroy(): void {
     this.orders.stopPolling();
-    this.seoService.reset();
   }
 
   selectClient(client: Client): void {

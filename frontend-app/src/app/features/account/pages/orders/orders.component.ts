@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
@@ -13,7 +13,7 @@ import { AccountOrdersStore } from '../../state/account-orders.store';
   imports: [RouterLink, DatePipe, AppCurrencyPipe, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './orders.component.html',
 })
-export default class OrdersComponent implements OnInit {
+export default class OrdersComponent {
   private readonly store = inject(AccountOrdersStore);
   private readonly seoService = injectSeoPage('Mis pedidos', 'Historial de tus compras.');
 
@@ -24,7 +24,5 @@ export default class OrdersComponent implements OnInit {
   /** Referencia estable para el botón "Reintentar" de `EmptyState` (R-SO-6). */
   readonly retry = () => this.store.loadOrders();
 
-  ngOnInit(): void {
-    this.store.loadOrders();
-  }
+  private readonly loadOrders = this.store.loadOrders();
 }

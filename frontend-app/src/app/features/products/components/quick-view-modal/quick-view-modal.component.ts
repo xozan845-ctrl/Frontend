@@ -44,23 +44,21 @@ export class QuickViewModalComponent implements OnDestroy {
 
   private readonly addPulse = new Subject<void>();
 
-  constructor() {
-    // Reinicia "añadido" tras 2 s sin `setTimeout` (R-PF-6).
-    this.addPulse
-      .pipe(
-        switchMap(() => timer(2000)),
-        takeUntilDestroyed(),
-      )
-      .subscribe(() => this.isAdding.set(false));
+  // Reinicia "añadido" tras 2 s sin `setTimeout` (R-PF-6).
+  private readonly resetAdding = this.addPulse
+    .pipe(
+      switchMap(() => timer(2000)),
+      takeUntilDestroyed(),
+    )
+    .subscribe(() => this.isAdding.set(false));
 
-    effect(() => {
-      if (this.product()) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = '';
-      }
-    });
-  }
+  private readonly lockBodyScroll = effect(() => {
+    if (this.product()) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  });
 
   ngOnDestroy(): void {
     document.body.style.overflow = '';
