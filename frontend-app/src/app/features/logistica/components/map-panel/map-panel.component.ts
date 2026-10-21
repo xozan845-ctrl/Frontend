@@ -1,8 +1,8 @@
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
-  OnDestroy,
   computed,
   effect,
   inject,
@@ -31,7 +31,7 @@ import { LEAFLET_API } from '../../services/leaflet-api/leaflet-api.port';
   standalone: true,
   templateUrl: './map-panel.component.html',
 })
-export default class MapPanelComponent implements AfterViewInit, OnDestroy {
+export default class MapPanelComponent implements AfterViewInit {
   readonly routes = input.required<readonly MapRoute[]>();
   readonly vehicles = input<readonly MapVehicle[]>([]);
   readonly loading = input(false);
@@ -53,14 +53,14 @@ export default class MapPanelComponent implements AfterViewInit, OnDestroy {
     }
   });
 
-  ngAfterViewInit(): void {
-    this.initMap();
-  }
-
-  ngOnDestroy(): void {
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => {
     this.map?.remove();
     this.map = null;
     this.layers = null;
+  });
+
+  ngAfterViewInit(): void {
+    this.initMap();
   }
 
   protected zoomIn(): void {

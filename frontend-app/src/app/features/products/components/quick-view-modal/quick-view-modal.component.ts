@@ -1,11 +1,11 @@
 import {
   Component,
+  DestroyRef,
   inject,
   input,
   output,
   signal,
   HostListener,
-  OnDestroy,
   effect,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -26,7 +26,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   templateUrl: './quick-view-modal.component.html',
   styleUrl: './quick-view-modal.component.css',
 })
-export class QuickViewModalComponent implements OnDestroy {
+export class QuickViewModalComponent {
   product = input<Product | null>(null);
   /** Tienda activa para construir enlaces store-scoped (multi-tienda). */
   storeId = input<string>('');
@@ -60,9 +60,9 @@ export class QuickViewModalComponent implements OnDestroy {
     }
   });
 
-  ngOnDestroy(): void {
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => {
     document.body.style.overflow = '';
-  }
+  });
 
   @HostListener('document:keydown.escape')
   onEscape(): void {

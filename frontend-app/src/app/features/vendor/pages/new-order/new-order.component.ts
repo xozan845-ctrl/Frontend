@@ -1,7 +1,7 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
-  OnDestroy,
   computed,
   effect,
   inject,
@@ -42,7 +42,7 @@ import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store
   ],
   templateUrl: './new-order.component.html',
 })
-export default class NewOrderComponent implements OnDestroy {
+export default class NewOrderComponent {
   readonly draft = inject(OrderDraftStore);
   readonly catalog = inject(VendorCatalogStore);
   readonly clients = inject(ClientSearchStore);
@@ -78,9 +78,7 @@ export default class NewOrderComponent implements OnDestroy {
     }
   });
 
-  ngOnDestroy(): void {
-    this.orders.stopPolling();
-  }
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.orders.stopPolling());
 
   selectClient(client: Client): void {
     this.draft.selectClient(client);

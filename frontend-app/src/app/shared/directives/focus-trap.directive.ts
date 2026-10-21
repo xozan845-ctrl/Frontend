@@ -1,8 +1,8 @@
 import {
+  DestroyRef,
   Directive,
   ElementRef,
   HostListener,
-  OnDestroy,
   effect,
   inject,
   input,
@@ -30,7 +30,7 @@ const FOCUSABLE_SELECTOR = [
   selector: '[appFocusTrap]',
   standalone: true,
 })
-export class FocusTrapDirective implements OnDestroy {
+export class FocusTrapDirective {
   readonly appFocusTrap = input<boolean>(true);
   /** Emite cuando se pulsa Escape mientras el foco está atrapado. */
   readonly escape = output<void>();
@@ -49,9 +49,9 @@ export class FocusTrapDirective implements OnDestroy {
     }
   });
 
-  ngOnDestroy(): void {
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => {
     if (this.active) this.deactivate();
-  }
+  });
 
   @HostListener('keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {

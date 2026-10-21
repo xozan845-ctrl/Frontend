@@ -1,4 +1,4 @@
-import { Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
@@ -18,7 +18,7 @@ import { ClientSearchStore } from '../../state/client-search/client-search.store
   imports: [RouterLink, CreateClientModalComponent, SkeletonLoaderComponent],
   templateUrl: './clients.component.html',
 })
-export default class ClientsComponent implements OnDestroy {
+export default class ClientsComponent {
   readonly clients = inject(ClientSearchStore);
   private readonly seoService = injectSeoPage(
     'Clientes — Panel del vendedor',
@@ -39,9 +39,7 @@ export default class ClientsComponent implements OnDestroy {
     }
   });
 
-  ngOnDestroy(): void {
-    this.clients.reset();
-  }
+  private readonly cleanup = inject(DestroyRef).onDestroy(() => this.clients.reset());
 
   protected onQueryInput(event: Event): void {
     this.clients.setQuery((event.target as HTMLInputElement).value);
