@@ -30,10 +30,9 @@ export default class OrderDetailComponent {
 
   readonly retry = () => this.store.loadOrder(this.id());
 
-  constructor() {
-    effect(() => {
-      const id = this.id();
-      if (id) untracked(() => this.store.loadOrder(id));
-    });
-  }
+  /** Carga la orden cuando cambia el id de la ruta (`R-AR-15`). */
+  private readonly loadFromRoute = effect(() => {
+    const id = this.id();
+    if (id) untracked(() => this.store.loadOrder(id));
+  });
 }
