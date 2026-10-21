@@ -10,6 +10,8 @@
  */
 export const requiredSuites = [
   { id: 'docs-structure', file: 'rules/docs/structure.test.mjs' },
+  { id: 'git-commits', file: 'rules/git/commits.test.mjs' },
+  { id: 'git-branch', file: 'rules/git/branch.test.mjs' },
   { id: 'architecture-types', file: 'rules/architecture/types.test.mjs' },
   { id: 'architecture-layers', file: 'rules/architecture/layers.test.mjs' },
   { id: 'architecture-lifecycle', file: 'rules/architecture/lifecycle.test.mjs' },
