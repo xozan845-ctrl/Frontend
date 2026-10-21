@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { lastValueFrom, throwError } from 'rxjs';
-import { fail, requireValue } from './ai-scraper-error';
+import { fail, requireValue } from './ai-scraper-error.functions';
 
 describe('ai-scraper-error', () => {
   it('debe devolver el valor cuando existe', () => {

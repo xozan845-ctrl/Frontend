@@ -26,6 +26,7 @@ que son verificables por máquina.
 | `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                     |
 | `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                           |
 | `store-guards`           | `R-ST-1/2/4/7`                                 | Stores con `signalStore`/`withMethods`/`patchState`/`withHooks`, sin `BehaviorSubject`.            |
+| `naming-guards`          | `R-NC-1/2/11`                                  | Sufijos por capa, plantillas hermanas y claves `localStorage` con `ecom_`.                         |
 | `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.           |
 | `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
 | `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
@@ -190,7 +191,7 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura verificada: **33/249 IDs** de regla con check real; hay **2
+Cobertura verificada: **37/249 IDs** de regla con check real; hay **2
 contextuales** (`R-AR-3`, `R-NC-9`) declaradas en `cites` porque hoy no tienen
 check propio. `R-NC-10` (`any`) se verifica en ESLint
 (`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,
