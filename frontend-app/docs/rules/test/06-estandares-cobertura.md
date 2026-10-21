@@ -43,7 +43,7 @@ efectivos. ✅ = existe y bloquea · ⏸ = regla vigente, paso no configurado (d
 | Gate | Condición                                                                     | Estado                                    |
 | ---- | ----------------------------------------------------------------------------- | ----------------------------------------- |
 | G-1  | Suite unit + componentes en verde (`npm test`), 100 %.                        | ✅ `npm test` (144 archivos / 826 tests)  |
-| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`).                            | ✅ `coverageThresholds` en `angular.json` |
+| G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`): **94/88/93/95**.           | ✅ `coverageThresholds` en `angular.json` |
 | G-3  | `npm run typecheck` + `npm run build` en verde (tipos + budgets de `R-PF-1`). | ✅ job `typecheck` + `build`              |
 | G-4  | Formato conforme: `prettier --check .`.                                       | ✅                                        |
 | G-5  | Lint en verde y sin warnings (`eslint . --max-warnings=0`).                   | ✅ `eslint.config.mjs`                    |

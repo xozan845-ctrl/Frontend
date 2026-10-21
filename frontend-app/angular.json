@@ -37,8 +37,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "515kB",
+                  "maximumError": "560kB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -111,10 +111,10 @@
               "src/app/**/mocks/**/*.ts"
             ],
             "coverageThresholds": {
-              "statements": 90,
-              "branches": 85,
-              "functions": 90,
-              "lines": 92
+              "statements": 94,
+              "branches": 88,
+              "functions": 93,
+              "lines": 95
             }
           }
         }
