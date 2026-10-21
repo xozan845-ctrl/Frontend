@@ -15,6 +15,7 @@
     "rules:baseline": "node scripts/cli.mjs baseline",
     "test:engine": "node --test scripts/engine/*.test.mjs scripts/engine/lib/*.test.mjs",
     "e2e": "playwright test",
+    "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "og-image": "node scripts/generate-og-image.mjs",

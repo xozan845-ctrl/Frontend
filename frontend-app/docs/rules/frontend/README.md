@@ -22,7 +22,7 @@ incremental, estado con signal store y rendimiento.
 | `04-carga-diferida.md`          | Lazy loading de rutas, `@defer`, placeholders, prefetch y preloading                                     | `R-LZ` (1–6) |
 | `05-hidratacion-incremental.md` | SSR/SSG e hidratación incremental (`withIncrementalHydration`)                                           | `R-HI` (1–6) |
 | `06-estado-signal-store.md`     | NgRx Signals `signalStore`: features, derivados, mutaciones, alcance y persistencia                      | `R-ST` (1–7) |
-| `07-rendimiento.md`             | Presupuestos, imágenes, trabajo en plantilla, zoneless y sondeo                                          | `R-PF` (1–7) |
+| `07-rendimiento.md`             | Presupuestos, imágenes, trabajo en plantilla, zoneless, sondeo y Lighthouse                              | `R-PF` (1–8) |
 
 > Los derivados (AUDIT, CHECKLIST, historiales) viven en
 > [`../_meta/`](../_meta/README.md).
@@ -37,7 +37,7 @@ incremental, estado con signal store y rendimiento.
 | `R-LZ-*` | 1–6   | `04-carga-diferida.md`          | Lazy loading y `@defer`              |
 | `R-HI-*` | 1–6   | `05-hidratacion-incremental.md` | SSR e hidratación incremental        |
 | `R-ST-*` | 1–7   | `06-estado-signal-store.md`     | NgRx Signal Store                    |
-| `R-PF-*` | 1–7   | `07-rendimiento.md`             | Rendimiento (trasladado desde `ui/`) |
+| `R-PF-*` | 1–8   | `07-rendimiento.md`             | Rendimiento (trasladado desde `ui/`) |
 
 ## Reglas de otras áreas que exige esta (cross-refs)
 

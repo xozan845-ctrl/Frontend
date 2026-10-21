@@ -337,6 +337,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'lifecycle',
   'packaging',
   'release',
+  'rendimiento',
   'robustez',
   'rules',
   'security',
