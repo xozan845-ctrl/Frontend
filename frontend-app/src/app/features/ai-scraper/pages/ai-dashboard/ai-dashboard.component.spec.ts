@@ -7,7 +7,7 @@ import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store
 
 function connectionFake() {
   return {
-    endpoint: 'http://localhost:3000/api/v1',
+    endpoint: signal('http://localhost:3000/api/v1'),
     hasKey: signal(false),
     setApiKey: vi.fn(),
     clearApiKey: vi.fn(),

@@ -21,6 +21,7 @@ Esta área profundiza `R-AR-5` (`../architecture/01-arquitectura.md`).
 grep -rn "signalStore\|withState\|withComputed\|withMethods\|withHooks\|rxMethod\|patchState" src/app/domains
 # duplicación de estado y cálculo en plantilla (debe estar acotado) — R-ST-1/3
 grep -rn "BehaviorSubject" src/app || echo "sin BehaviorSubject (correcto)"
+node scripts/cli.mjs rules --only store-guards   # R-ST-1/2/4/7
 ```
 
 ## Notas

@@ -24,4 +24,5 @@ export const requiredSuites = [
   { id: 'architecture-packaging', file: 'rules/architecture/packaging.test.mjs' },
   { id: 'security-guards', file: 'rules/security/security.test.mjs' },
   { id: 'performance-guards', file: 'rules/frontend/performance.test.mjs' },
+  { id: 'store-guards', file: 'rules/frontend/stores.test.mjs' },
 ];
