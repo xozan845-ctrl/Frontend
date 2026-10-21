@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { CartItem } from '../models/cart.model';
-import { CartRepository } from '../repositories/cart.repository';
-import { adaptCartFromBackend } from '../adapters/cart.adapter';
-import type { MockItem } from '../models/mock-item.model';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { CartItem } from '../../models/cart.model';
+import { CartRepository } from '../../repositories/cart.repository';
+import { adaptCartFromBackend } from '../../adapters/cart.adapter';
+import type { MockItem } from '../../models/mock-item.model';
 
 @Injectable({
   providedIn: 'root',

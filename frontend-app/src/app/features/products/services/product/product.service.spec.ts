@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProductService } from './product.service';
-import { Storefront } from '../repositories/product.repository';
-import { environment } from '../../../../environments/environment';
+import { Storefront } from '../../repositories/product.repository';
+import { environment } from '../../../../../environments/environment';
 
 describe('ProductService', () => {
   let service: ProductService;

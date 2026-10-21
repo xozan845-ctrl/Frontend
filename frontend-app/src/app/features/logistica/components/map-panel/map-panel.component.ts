@@ -17,7 +17,7 @@ import {
   ROUTE_TONE_CLASSES,
 } from '../../constants/logistica.constants';
 import { MapRoute, MapVehicle } from '../../models/logistica.model';
-import { LEAFLET_API } from '../../services/leaflet-api.port';
+import { LEAFLET_API } from '../../services/leaflet-api/leaflet-api.port';
 
 /**
  * Mapa de clientes y rutas (ADR-25): dibuja las rutas del boceto sobre

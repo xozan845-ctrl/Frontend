@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { StoreConfigService } from './store-config.service';
-import { COMPANY_INFO } from '../constants/company.constants';
+import { COMPANY_INFO } from '../../constants/company.constants';
 
 describe('StoreConfigService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

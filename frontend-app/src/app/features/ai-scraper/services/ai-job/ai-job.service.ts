@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { AiCreateJobInput, AiJob, AiJobList } from '../models/ai-job.model';
-import { AiJobListOptions, AiJobRepository } from '../repositories/ai-job.repository';
-import { AI_SCRAPER_ENDPOINTS } from '../constants/ai-scraper.constants';
+import { AiCreateJobInput, AiJob, AiJobList } from '../../models/ai-job.model';
+import { AiJobListOptions, AiJobRepository } from '../../repositories/ai-job.repository';
+import { AI_SCRAPER_ENDPOINTS } from '../../constants/ai-scraper.constants';
 import {
   adaptJobExecutionFromBackend,
   adaptJobFromBackend,
   adaptJobInteractionsFromBackend,
   adaptJobListFromBackend,
   adaptJobResultsFromBackend,
-} from '../adapters/ai-scraper.adapter';
-import { AiScraperClient } from './ai-scraper-client.service';
-import { fail, requireValue } from './ai-scraper-error';
+} from '../../adapters/ai-scraper.adapter';
+import { AiScraperClient } from '../ai-scraper-client.service';
+import { fail, requireValue } from '../ai-scraper-error/ai-scraper-error';
 
 /** Convierte la entrada de dominio al cuerpo que espera `POST /jobs`. */
 function toBackendJobPayload(input: AiCreateJobInput): Record<string, unknown> {

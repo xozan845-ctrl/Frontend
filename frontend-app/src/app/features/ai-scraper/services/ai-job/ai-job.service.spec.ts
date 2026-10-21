@@ -3,14 +3,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AiJobService } from './ai-job.service';
-import { AiScraperClient } from './ai-scraper-client.service';
+import { AiScraperClient } from '../ai-scraper-client.service';
 import {
   BACKEND_JOB_CAMEL,
   BACKEND_JOB_EXECUTION,
   BACKEND_JOB_LIST,
   BACKEND_JOB_RESULTS,
   BACKEND_INTERACTIONS,
-} from '../adapters/fixtures/ai-scraper.fixture';
+} from '../../adapters/fixtures/ai-scraper.fixture';
 
 const BASE = 'http://localhost:3000/api/v1';
 

@@ -3,14 +3,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AiSessionService } from './ai-session.service';
-import { AiScraperClient } from './ai-scraper-client.service';
+import { AiScraperClient } from '../ai-scraper-client.service';
 import {
   BACKEND_SEND_MESSAGE,
   BACKEND_SESSION,
   BACKEND_SESSION_DETAIL,
   BACKEND_SESSION_LIST,
   BACKEND_SESSION_STATUS,
-} from '../adapters/fixtures/ai-scraper.fixture';
+} from '../../adapters/fixtures/ai-scraper.fixture';
 
 const BASE = 'http://localhost:3000/api/v1';
 

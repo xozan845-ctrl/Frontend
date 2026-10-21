@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { Store } from '../../products/public-api';
-import { OfferDraft, StoreDraft } from '../models/store-wizard.model';
-import { StoreRepository } from '../repositories/store.repository';
-import { adaptStoreFromBackend } from '../adapters/store.adapter';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { Store } from '../../../products/public-api';
+import { OfferDraft, StoreDraft } from '../../models/store-wizard.model';
+import { StoreRepository } from '../../repositories/store.repository';
+import { adaptStoreFromBackend } from '../../adapters/store.adapter';
 
 const MOCK_STORE: Store = {
   id: 'tienda-demo',

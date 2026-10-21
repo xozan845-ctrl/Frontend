@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { COMPANY_INFO, CompanyInfo } from '../constants/company.constants';
+import { COMPANY_INFO, CompanyInfo } from '../../constants/company.constants';
 
 @Injectable({
   providedIn: 'root',

@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { AuthResponse, LoginCredentials, RegisterData, User } from '../models/auth.model';
-import { adaptAuthResponseFromBackend, adaptUserFromBackend } from '../adapters/auth.adapter';
-import { AuthRepository } from '../repositories/auth.repository';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { AuthResponse, LoginCredentials, RegisterData, User } from '../../models/auth.model';
+import { adaptAuthResponseFromBackend, adaptUserFromBackend } from '../../adapters/auth.adapter';
+import { AuthRepository } from '../../repositories/auth.repository';
 
 @Injectable({
   providedIn: 'root',

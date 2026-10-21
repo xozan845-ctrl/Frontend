@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { toUserMessage } from '../../../core/models/api-error';
-import { CatalogProductOption } from '../models/store-wizard.model';
-import { CatalogRepository } from '../repositories/catalog.repository';
-import { adaptCatalogOptionsFromBackend } from '../adapters/store.adapter';
+import { environment } from '../../../../../environments/environment';
+import { toUserMessage } from '../../../../core/models/api-error';
+import { CatalogProductOption } from '../../models/store-wizard.model';
+import { CatalogRepository } from '../../repositories/catalog.repository';
+import { adaptCatalogOptionsFromBackend } from '../../adapters/store.adapter';
 
 const MOCK_CATALOG: CatalogProductOption[] = [
   { id: 'p-demo-1', name: 'Teclado Mecánico', sku: 'SKU-TEC' },

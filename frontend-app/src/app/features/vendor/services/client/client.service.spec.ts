@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ClientService } from './client.service';
-import { environment } from '../../../../environments/environment';
-import { Client } from '../models/vendor-order.model';
+import { environment } from '../../../../../environments/environment';
+import { Client } from '../../models/vendor-order.model';
 
 describe('ClientService', () => {
   let service: ClientService;

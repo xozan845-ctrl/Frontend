@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { VendorOrderService } from './vendor-order.service';
-import { environment } from '../../../../environments/environment';
-import { CreateOrderPayload, VendorOrder } from '../models/vendor-order.model';
+import { environment } from '../../../../../environments/environment';
+import { CreateOrderPayload, VendorOrder } from '../../models/vendor-order.model';
 
 describe('VendorOrderService', () => {
   let service: VendorOrderService;

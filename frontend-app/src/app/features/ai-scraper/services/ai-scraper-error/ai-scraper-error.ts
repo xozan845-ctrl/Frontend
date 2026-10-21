@@ -1,5 +1,5 @@
 import { OperatorFunction, catchError, throwError } from 'rxjs';
-import { toUserMessage } from '../../../core/models/api-error';
+import { toUserMessage } from '../../../../core/models/api-error';
 
 /**
  * Traduce cualquier error de la capa HTTP a un mensaje de dominio listo para la

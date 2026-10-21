@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { OrderService } from './order.service';
-import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../models/order.model';
-import { environment } from '../../../../environments/environment';
+import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../../models/order.model';
+import { environment } from '../../../../../environments/environment';
 
 const payload: CreateOrderPayload = {
   items: [{ ofertaId: 'of-1', quantity: 1 }],
