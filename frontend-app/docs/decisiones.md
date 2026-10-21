@@ -729,3 +729,25 @@ contexto y consecuencias.
   `GET /vendedores/me/productos` (endpoint asumido del POS); usa únicamente el
   contrato público de ofertas. Revertir es restaurar la página "En
   construcción" y retirar el store, el servicio y el ítem de fixtures E2E.
+
+## ADR-30: Ficha de la tienda pública en el storefront
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: `ProductService.getStorefront` ya consumía `GET /tiendas/:id`
+  (`TiendaPublicaResponseDto`), pero la página del catálogo ignoraba `tienda` y
+  mostraba un título editorial fijo ("Tienda Completa"). El contrato sí devuelve
+  el nombre y la descripción de la tienda, y el backend es multi-tienda.
+- **Decisión**:
+  - El catálogo público muestra `tienda.nombre` como título y
+    `tienda.descripcion` como subtítulo, con un fallback editorial cuando la
+    tienda no trae datos.
+  - Se versiona un fixture de `TiendaPublicaResponseDto` (incluye `empresa_id`,
+    `propietario_usuario_id`, `participacion_porcentaje` y ofertas con precios
+    decimales) y un test de contrato del adapter.
+  - El E2E del storefront verifica que el nombre y la descripción de la tienda
+    salen del endpoint público.
+- **Consecuencias**: el storefront deja de ser genérico y usa la identidad real
+  de cada tienda sin peticiones adicionales (la ficha llega en la misma
+  respuesta que las ofertas). Revertir es volver al título fijo y retirar el
+  fixture/test de contrato.
