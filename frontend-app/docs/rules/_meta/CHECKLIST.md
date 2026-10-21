@@ -112,9 +112,9 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 
 - [ ] **G-1** unit + componentes en verde (`npm test`).
 - [ ] **G-2** cobertura ≥ umbral (`R-COV-1`) — configurado en `angular.json`.
-- [ ] **G-3** `npm run build` en verde (typecheck + budgets).
+- [ ] **G-3** `npm run typecheck` + `npm run build` en verde (tipos + budgets).
 - [ ] **G-4** formato (`prettier --check .`).
-- [ ] **G-5** lint (`eslint`) — configurado en `eslint.config.mjs`.
+- [ ] **G-5** lint sin warnings (`eslint . --max-warnings=0`) — `eslint.config.mjs`.
 - [ ] **G-6** E2E de flujos (`npm run e2e`) — Playwright en CI.
 
 ## 12. Git — antes de subir ([`rules/git/`](../git/README.md))
