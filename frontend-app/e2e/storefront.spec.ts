@@ -50,6 +50,11 @@ const test = base.extend<{ consoleIssues: string[]; apiMock: void }>({
 test('R-E-1: el catálogo de la tienda carga productos y filtra por categoría', async ({ page }) => {
   await open(page, `${STORE}/shop`);
 
+  await expect(page.getByTestId('storefront-name')).toContainText('Tienda Demo');
+  await expect(page.getByTestId('storefront-description')).toContainText(
+    'Storefront de demostración',
+  );
+
   const cards = page.locator('app-product-card');
   // Las ofertas del fixture son 6: 3 Electronics, 2 Fitness, 1 Accessories.
   await expect(cards).toHaveCount(6);

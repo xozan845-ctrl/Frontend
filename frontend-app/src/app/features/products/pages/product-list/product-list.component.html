@@ -12,9 +12,18 @@
         </div>
         <h1
           class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading leading-none"
+          data-testid="storefront-name"
         >
-          Tienda<br />Completa
+          {{ store()?.name || 'Tienda Completa' }}
         </h1>
+        @if (store()?.description) {
+          <p
+            class="mt-4 max-w-xl text-sm text-slate-500 dark:text-slate-400"
+            data-testid="storefront-description"
+          >
+            {{ store()?.description }}
+          </p>
+        }
       </div>
 
       <!-- Smart Search Autocomplete -->

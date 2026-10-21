@@ -40,6 +40,8 @@ export class ProductListComponent {
   readonly storeId = input<string>('');
 
   // Delegar señales computadas y de estado a ProductStore
+  /** Ficha de la tienda pública (`GET /tiendas/:id`), cargada por el resolver. */
+  readonly store = this.productStore.store;
   readonly categories = this.productStore.categories;
   readonly selectedCategory = this.productStore.selectedCategory;
   readonly sortOption = this.productStore.sortOption;

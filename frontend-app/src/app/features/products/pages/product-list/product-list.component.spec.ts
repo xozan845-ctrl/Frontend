@@ -10,6 +10,7 @@ import { SeoService } from '../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { CartFlyService } from '../../../../shared/ui/cart-fly/cart-fly.service';
 import { Product } from '../../models/product.model';
+import { Store } from '../../models/store.model';
 import { ProductListComponent } from './product-list.component';
 
 const products: Product[] = [
@@ -40,6 +41,7 @@ class IntersectionObserverStub {
 }
 
 describe('ProductListComponent', () => {
+  const store = signal<Store | null>(null);
   const loading = signal(false);
   const error = signal<string | null>(null);
   const selectedCategory = signal('All');
@@ -58,6 +60,7 @@ describe('ProductListComponent', () => {
     }),
   );
   const productStore = {
+    store,
     products: allProducts,
     loading,
     error,
@@ -115,6 +118,7 @@ describe('ProductListComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    store.set(null);
     loading.set(false);
     error.set(null);
     selectedCategory.set('All');
@@ -190,5 +194,22 @@ describe('ProductListComponent', () => {
     button.click();
 
     expect(cartStore.addItem).toHaveBeenCalledWith(products[0]);
+  });
+
+  it('debe mostrar el nombre y la descripción de la tienda pública', async () => {
+    store.set({
+      id: 'tienda-demo',
+      vendorId: 'v-1',
+      name: 'Tienda Demo',
+      description: 'Ropa y accesorios',
+    });
+    const fixture = await setup();
+
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="storefront-name"]').textContent,
+    ).toContain('Tienda Demo');
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="storefront-description"]').textContent,
+    ).toContain('Ropa y accesorios');
   });
 });

@@ -45,3 +45,35 @@ export const PRODUCT_SINGLE_ENVELOPE_FIXTURE = {
     stock: 5,
   },
 } as const;
+
+/**
+ * `TiendaPublicaResponseDto` real (`GET /tiendas/:id`): tienda con contexto de
+ * empresa y ofertas con precios decimales.
+ */
+export const TIENDA_PUBLICA_FIXTURE = {
+  tienda: {
+    id: 'dc81527d-78ae-4bbc-bf69-0d884186a29a',
+    empresa_id: 'dfe0cfe4-8ddc-42bf-8dd2-6c3cb43544b3',
+    propietario_usuario_id: 'e9aa395b-1654-48b0-befe-fbe38538a408',
+    participacion_porcentaje: 100,
+    vendedor_id: 'e9aa395b-1654-48b0-befe-fbe38538a408',
+    nombre: 'Tienda Ofertas',
+    descripcion: 'Productos de la empresa',
+    creado_en: '2026-10-21T21:20:00.000Z',
+  },
+  ofertas: [
+    {
+      id: 'be644b6e-ef1d-49d2-a79c-4077c2d77a07',
+      tienda_id: 'dc81527d-78ae-4bbc-bf69-0d884186a29a',
+      producto_id: 'c13a201e-060e-4f05-87ae-2e24871b95b2',
+      sku: 'SKU-OF-1',
+      producto_nombre: 'Producto Oferta',
+      margen: 25,
+      precio_base: '100.00',
+      precio_venta: '125.00',
+      stock: 10,
+      estado: 'activa',
+      creado_en: '2026-10-21T21:20:00.000Z',
+    },
+  ],
+} as const;

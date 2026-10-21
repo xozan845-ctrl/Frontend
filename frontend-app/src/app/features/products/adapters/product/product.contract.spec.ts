@@ -1,7 +1,12 @@
-import { adaptProductListFromBackend, adaptSingleProductFromBackend } from './product.adapter';
+import {
+  adaptProductListFromBackend,
+  adaptSingleProductFromBackend,
+  adaptStorefrontFromBackend,
+} from './product.adapter';
 import {
   PRODUCT_LIST_ENVELOPE_FIXTURE,
   PRODUCT_SINGLE_ENVELOPE_FIXTURE,
+  TIENDA_PUBLICA_FIXTURE,
 } from '../fixtures/product.fixture';
 
 // R-C-8: test de contrato contra un fixture realista versionado en el repo,
@@ -61,6 +66,26 @@ describe('product.contract', () => {
         category: 'Monitores',
         stock: 5,
       });
+    });
+  });
+});
+
+describe('product.contract · tienda pública', () => {
+  it('debe normalizar TiendaPublicaResponseDto a tienda + productos', () => {
+    const storefront = adaptStorefrontFromBackend(TIENDA_PUBLICA_FIXTURE);
+
+    expect(storefront.store).toEqual({
+      id: 'dc81527d-78ae-4bbc-bf69-0d884186a29a',
+      vendorId: 'e9aa395b-1654-48b0-befe-fbe38538a408',
+      name: 'Tienda Ofertas',
+      description: 'Productos de la empresa',
+    });
+    expect(storefront.products).toHaveLength(1);
+    expect(storefront.products[0]).toMatchObject({
+      id: 'be644b6e-ef1d-49d2-a79c-4077c2d77a07',
+      name: 'Producto Oferta',
+      price: 125,
+      stock: 10,
     });
   });
 });
