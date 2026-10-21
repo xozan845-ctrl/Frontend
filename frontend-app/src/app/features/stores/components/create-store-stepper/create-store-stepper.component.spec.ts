@@ -39,7 +39,7 @@ describe('CreateStoreStepperComponent', () => {
         '[data-testid^="step-"]',
       ),
     );
-    const labels = ['Cuenta', 'Tienda', 'Productos', 'Listo'];
+    const labels = ['Cuenta', 'Negocio', 'Productos', 'Listo'];
 
     expect(steps).toHaveLength(4);
     steps.forEach((step, index) => expect(step.textContent).toContain(labels[index]));

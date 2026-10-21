@@ -7,5 +7,6 @@ export type {
   LogisticsMode,
 } from './models/company.model';
 export { CompanyStore } from './state/company/company.store';
+export { CompanyService } from './services/company/company.service';
 export { COMPANY_REPOSITORY, type CompanyRepository } from './repositories/company.repository';
 export { EMPRESAS_ROUTES } from './empresas.routes';

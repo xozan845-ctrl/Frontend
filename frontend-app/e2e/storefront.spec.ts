@@ -147,8 +147,10 @@ test('R-E-15: se puede crear una tienda paso a paso', async ({ page }) => {
   await page.locator('#password').fill('secreto123');
   await page.getByRole('button', { name: 'Crear cuenta y continuar' }).click();
 
-  // Paso 2 · datos de la tienda
-  await expect(page.getByRole('heading', { name: 'Describe tu tienda' })).toBeVisible();
+  // Paso 2 · empresa y tienda
+  await expect(page.getByRole('heading', { name: 'Configura tu negocio' })).toBeVisible();
+  await page.locator('#company-name').fill('Mi Empresa');
+  await page.locator('#company-logistics-mode').selectOption('hibrida');
   await page.locator('#store-name').fill('Mi Tienda');
   await page.getByTestId('create-store-submit').click();
 

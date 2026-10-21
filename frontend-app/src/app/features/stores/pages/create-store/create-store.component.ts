@@ -4,7 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore, isSellerRole } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
-import { CatalogProductOption, OfferDraft, WIZARD_STEPS } from '../../models/store-wizard.model';
+import {
+  CatalogProductOption,
+  OfferDraft,
+  StoreCompanyMode,
+  WIZARD_STEPS,
+} from '../../models/store-wizard.model';
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
@@ -46,6 +51,9 @@ export default class CreateStoreComponent {
   /** Sesión actual: de vendedor/empresario (puede crear tienda) o de comprador (no). */
   readonly isSeller = computed(() => isSellerRole(this.authStore.user()?.role));
   readonly isBuyer = computed(() => this.authStore.isAuthenticated() && !this.isSeller());
+  /** El JWT ya trae la empresa activa; si no, el onboarding la crea antes de la tienda. */
+  readonly hasCompany = computed(() => !!this.authStore.user()?.tenantId);
+  readonly needsCompany = computed(() => this.isSeller() && !this.hasCompany());
 
   // Paso 1 — cuenta de vendedor
   readonly accountForm = this.fb.nonNullable.group({
@@ -54,8 +62,10 @@ export default class CreateStoreComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  // Paso 2 — datos de la tienda
+  // Paso 2 — empresa (si falta) y datos de la tienda
   readonly storeForm = this.fb.nonNullable.group({
+    companyName: [''],
+    logisticsMode: this.fb.nonNullable.control<StoreCompanyMode>('plataforma'),
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     description: [''],
   });
@@ -96,14 +106,17 @@ export default class CreateStoreComponent {
     this.authStore.clearSession();
   }
 
-  // ── Paso 2: tienda ─────────────────────────────────────────────────────────
+  // ── Paso 2: empresa y tienda ───────────────────────────────────────────────
   createStore(): void {
     if (this.storeForm.invalid || this.wizard.loading()) {
       this.storeForm.markAllAsTouched();
       return;
     }
-    const { name, description } = this.storeForm.getRawValue();
-    this.wizard.createStore({ name, description });
+    const { name, description, companyName, logisticsMode } = this.storeForm.getRawValue();
+    const company = this.needsCompany()
+      ? { name: companyName.trim() || name, logisticsMode }
+      : undefined;
+    this.wizard.createStore({ name, description, ...(company ? { company } : {}) });
   }
 
   // ── Paso 3: productos ──────────────────────────────────────────────────────

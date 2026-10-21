@@ -150,10 +150,14 @@
       @case (2) {
         <section class="card p-8">
           <h2 class="text-2xl font-black uppercase tracking-tighter font-heading mb-2">
-            Describe tu tienda
+            Configura tu negocio
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Este es el nombre y la descripción que verán tus clientes.
+            @if (needsCompany()) {
+              Primero creamos tu empresa (el tenant de tu negocio) y luego tu tienda.
+            } @else {
+              Este es el nombre y la descripción que verán tus clientes.
+            }
           </p>
 
           @if (wizard.error()) {
@@ -173,6 +177,46 @@
           }
 
           <form [formGroup]="storeForm" (ngSubmit)="createStore()" class="flex flex-col gap-5">
+            @if (needsCompany()) {
+              <fieldset
+                class="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4 dark:border-surface-600"
+                data-testid="company-setup"
+              >
+                <legend
+                  class="px-2 text-[10px] font-black tracking-widest text-slate-500 uppercase"
+                >
+                  Empresa
+                </legend>
+                <div class="flex flex-col gap-2">
+                  <label
+                    for="company-name"
+                    class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                    >Nombre de la empresa</label
+                  >
+                  <input
+                    id="company-name"
+                    type="text"
+                    formControlName="companyName"
+                    placeholder="Igual que la tienda si lo dejas vacío"
+                    class="input"
+                    autocomplete="organization"
+                  />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label
+                    for="company-logistics-mode"
+                    class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                    >Modalidad logística</label
+                  >
+                  <select id="company-logistics-mode" formControlName="logisticsMode" class="input">
+                    <option value="plataforma">Plataforma (logística global)</option>
+                    <option value="propia">Propia (flota de tu empresa)</option>
+                    <option value="hibrida">Híbrida (eliges por envío)</option>
+                  </select>
+                </div>
+              </fieldset>
+            }
+
             <div class="flex flex-col gap-2">
               <label
                 for="store-name"
@@ -215,7 +259,13 @@
               [disabled]="wizard.loading()"
               data-testid="create-store-submit"
             >
-              {{ wizard.loading() ? 'Creando tienda…' : 'Crear mi tienda' }}
+              {{
+                wizard.loading()
+                  ? 'Creando…'
+                  : needsCompany()
+                    ? 'Crear empresa y tienda'
+                    : 'Crear mi tienda'
+              }}
             </button>
           </form>
         </section>

@@ -671,7 +671,35 @@ contexto y consecuencias.
     listado de vendedores de la empresa.
 - **Consecuencias**: el empresario puede crear y configurar su empresa sin
   salir del panel; el alta de tienda ya dispone de `tenant_id` tras el refresh.
-  Queda como siguiente paso encadenar la creación de empresa dentro del
-  asistente `/crear-tienda` y añadir la edición del nombre/estado cuando el
-  contrato lo permita. Revertir es retirar el feature, la ruta y el ítem del
-  sidebar.
+  **Actualización (ADR-28)**: la creación de empresa ya está encadenada dentro
+  del paso 2 del asistente `/crear-tienda`. Queda pendiente editar el
+  nombre/estado de la empresa cuando el contrato lo permita. Revertir es retirar
+  el feature, la ruta y el ítem del sidebar.
+
+## ADR-28: Onboarding encadenado empresa → tienda → ofertas
+
+- **Fecha**: 2026-10-21
+- **Estado**: Aceptado
+- **Contexto**: el asistente `/crear-tienda` registraba la cuenta y creaba la
+  tienda, pero el backend exige que el JWT del empresario lleve `tenant_id`
+  (`POST /vendedores/tienda`) y que cada oferta incluya `tienda_id`
+  (`POST /vendedores/productos`). Sin ese encadenado el onboarding fallaba
+  contra el backend real.
+- **Decisión**:
+  - El paso 2 del asistente pasa a llamarse **Negocio** y agrupa los datos de la
+    empresa (nombre + modalidad logística) y de la tienda. Si el usuario ya
+    tiene `tenant_id`, la sección de empresa no se muestra.
+  - `StoreWizardStore` orquesta el alta: crea la empresa
+    (`POST /empresas`), **renueva la sesión** para obtener el nuevo JWT con
+    tenant y solo entonces crea la tienda (`POST /vendedores/tienda`). Si el
+    alta de empresa falla, no se crea la tienda; si la tienda falla después, el
+    reintento omitie la empresa ya creada.
+  - El nombre de la empresa es opcional en el formulario: si se deja vacío se
+    usa el nombre de la tienda.
+  - `publishOffer` incluye `tienda_id` en el payload
+    (`{ tienda_id, producto_id, margen }`), conforme a `PublicarProductoRequestDto`.
+- **Consecuencias**: el recorrido cuenta → empresa → tienda → productos funciona
+  con el contrato real. El wizard gana una dependencia explícita del puerto
+  `COMPANY_REPOSITORY` (provisto en la ruta lazy) y el `StoreWizardStore`
+  depende de `AuthStore` para renovar la sesión. Revertir es volver a un paso 2
+  de solo tienda y retirar `tienda_id` del payload de ofertas.
