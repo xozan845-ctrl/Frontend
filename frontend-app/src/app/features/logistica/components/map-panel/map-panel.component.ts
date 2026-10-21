@@ -44,16 +44,14 @@ export default class MapPanelComponent implements AfterViewInit, OnDestroy {
   private map: LeafletMap | null = null;
   private layers: LayerGroup | null = null;
 
-  constructor() {
-    // Redibuja cuando llegan las rutas o cambian los vehículos.
-    effect(() => {
-      const routes = this.routes();
-      const vehicles = this.vehicles();
-      if (this.map && this.layers) {
-        this.draw(routes, vehicles);
-      }
-    });
-  }
+  /** Redibuja cuando llegan las rutas o cambian los vehículos (`R-AR-15`). */
+  private readonly redrawOnChanges = effect(() => {
+    const routes = this.routes();
+    const vehicles = this.vehicles();
+    if (this.map && this.layers) {
+      this.draw(routes, vehicles);
+    }
+  });
 
   ngAfterViewInit(): void {
     this.initMap();

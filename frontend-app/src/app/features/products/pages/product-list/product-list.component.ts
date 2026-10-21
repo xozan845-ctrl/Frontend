@@ -90,17 +90,15 @@ export class ProductListComponent implements OnInit {
     { value: 'name-desc', label: 'Nombre: Z - A' },
   ];
 
-  constructor() {
-    // Única fuente del título del catálogo: se recalcula al cambiar de categoría
-    // (incluido el `?cat=` inicial). Antes `ngOnInit` lo sobrescribía con el genérico.
-    effect(() => {
-      const cat = this.selectedCategory();
-      this.seoService.setPage(
-        cat === 'All' ? 'Catálogo de Productos' : `${cat} — Catálogo`,
-        'Explora todo nuestro catálogo editorial de tecnología.',
-      );
-    });
-  }
+  // Única fuente del título del catálogo: se recalcula al cambiar de categoría
+  // (incluido el `?cat=` inicial). Antes `ngOnInit` lo sobrescribía con el genérico.
+  private readonly syncCategorySeo = effect(() => {
+    const cat = this.selectedCategory();
+    this.seoService.setPage(
+      cat === 'All' ? 'Catálogo de Productos' : `${cat} — Catálogo`,
+      'Explora todo nuestro catálogo editorial de tecnología.',
+    );
+  });
 
   ngOnInit() {
     // El storefront ya lo cargó `storefrontResolver` antes de activar la ruta.

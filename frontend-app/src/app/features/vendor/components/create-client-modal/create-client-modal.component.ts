@@ -28,13 +28,12 @@ export class CreateClientModalComponent {
     email: ['', [Validators.email]],
   });
 
-  constructor() {
-    effect(() => {
-      if (this.open()) {
-        this.form.reset({ name: '', phone: '', email: '' });
-      }
-    });
-  }
+  /** Limpia el formulario cada vez que se abre el modal (`R-AR-15`). */
+  private readonly resetOnOpen = effect(() => {
+    if (this.open()) {
+      this.form.reset({ name: '', phone: '', email: '' });
+    }
+  });
 
   submitForm(): void {
     if (this.form.invalid || this.creating()) {

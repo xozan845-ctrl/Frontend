@@ -36,21 +36,22 @@ export class OrderInfoFieldsComponent {
     { initialValue: this.form.controls.deliveryMethod.value },
   );
 
-  constructor() {
-    effect(() => {
-      const info = this.info();
-      const current = this.form.getRawValue();
-      if (info.date !== current.date || info.deliveryMethod !== current.deliveryMethod) {
-        this.form.patchValue({ date: info.date, deliveryMethod: info.deliveryMethod });
-      }
-    });
+  /** Sincroniza el formulario con los datos y emite solo cambios (`R-AR-15`). */
+  private readonly syncInfo = effect(() => {
+    const info = this.info();
+    const current = this.form.getRawValue();
+    if (info.date !== current.date || info.deliveryMethod !== current.deliveryMethod) {
+      this.form.patchValue({ date: info.date, deliveryMethod: info.deliveryMethod });
+    }
+  });
 
-    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+  private readonly emitChanges = this.form.valueChanges
+    .pipe(takeUntilDestroyed())
+    .subscribe((value) => {
       if (this.form.valid) {
         this.infoChange.emit({ date: value.date, deliveryMethod: value.deliveryMethod });
       }
     });
-  }
 
   isDateInvalid(): boolean {
     const control = this.form.controls.date;

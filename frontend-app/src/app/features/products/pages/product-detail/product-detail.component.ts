@@ -132,31 +132,29 @@ export class ProductDetailComponent implements OnDestroy {
     { icon: 'fa-solid fa-credit-card', title: 'Pago Seguro', subtitle: 'Encriptación end-to-end' },
   ];
 
-  constructor() {
-    // Selecciona el producto dentro del storefront ya cargado por el resolver.
-    effect(() => {
-      const id = this.id();
-      const products = this.productStore.products();
-      if (id && products.length > 0) {
-        this.productStore.selectProduct(id);
-      }
-    });
+  /** Selecciona el producto dentro del storefront ya cargado por el resolver. */
+  private readonly selectFromRoute = effect(() => {
+    const id = this.id();
+    const products = this.productStore.products();
+    if (id && products.length > 0) {
+      this.productStore.selectProduct(id);
+    }
+  });
 
-    effect(() => {
-      const p = this.productStore.selectedProduct();
-      if (p) {
-        // Side effects fuera del tracking: `addProduct` lee y escribe el mismo
-        // signal de `RecentlyViewedStore`, lo que provocaría un bucle (R-ST-3).
-        untracked(() => {
-          this.seoService.setProductPage(p.name, p.description, p.price, {
-            imageUrl: p.imageUrl,
-            inStock: p.stock > 0,
-          });
-          this.recentlyViewedStore.addProduct(p);
+  private readonly syncSeoAndRecentlyViewed = effect(() => {
+    const p = this.productStore.selectedProduct();
+    if (p) {
+      // Side effects fuera del tracking: `addProduct` lee y escribe el mismo
+      // signal de `RecentlyViewedStore`, lo que provocaría un bucle (R-ST-3).
+      untracked(() => {
+        this.seoService.setProductPage(p.name, p.description, p.price, {
+          imageUrl: p.imageUrl,
+          inStock: p.stock > 0,
         });
-      }
-    });
-  }
+        this.recentlyViewedStore.addProduct(p);
+      });
+    }
+  });
 
   ngOnDestroy() {
     this.productStore.clearSelectedProduct();
