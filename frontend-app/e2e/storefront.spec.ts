@@ -185,3 +185,20 @@ test('R-E-20: la raíz lleva a la tienda y al asistente de alta', async ({ page 
   await expect(page).toHaveURL(/\/crear-tienda/);
   await expect(page.getByRole('heading', { name: 'Crea tu cuenta de vendedor' })).toBeVisible();
 });
+
+// R-E-28: el comprador confirma la orden desde el checkout y llega a la
+// confirmación con la orden creada (`POST /orders`, ADR-35).
+test('R-E-28: el comprador confirma su orden', async ({ page }) => {
+  await login(page, `${STORE}/shop`);
+
+  await page.getByRole('button', { name: 'Añadir al Carrito' }).first().click();
+  await page.getByLabel('Carrito').first().click();
+  await page.getByRole('button', { name: 'Procesar Orden' }).click();
+  await expect(page).toHaveURL(/\/checkout/);
+
+  await page.getByRole('button', { name: 'Confirmar Orden' }).click();
+
+  await expect(page).toHaveURL(/\/checkout\/confirmacion/);
+  await expect(page.getByTestId('order-confirmation')).toBeVisible();
+  await expect(page.getByTestId('order-confirmation')).toContainText('Confirmada');
+});

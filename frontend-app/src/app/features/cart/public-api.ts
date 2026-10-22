@@ -6,3 +6,4 @@ export { CartUiStore } from './state/cart-ui/cart-ui.store';
 export { OrderStore } from './state/order/order.store';
 export { ORDER_REPOSITORY, type OrderRepository } from './repositories/order.repository';
 export { CART_REPOSITORY, type CartRepository } from './repositories/cart.repository';
+export { orderStatusLabel } from './models/order.model';

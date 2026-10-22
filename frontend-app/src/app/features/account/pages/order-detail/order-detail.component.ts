@@ -6,6 +6,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { OrderDetailStore } from '../../state/order-detail/order-detail.store';
+import { orderStatusLabel } from '../../../cart/public-api';
 
 @Component({
   selector: 'app-order-detail',
@@ -23,6 +24,7 @@ export default class OrderDetailComponent {
   /** Id de la orden (`/cuenta/pedidos/:id`, `R-AR-12`). */
   readonly id = input<string>('');
 
+  readonly statusLabel = orderStatusLabel;
   readonly order = this.store.order;
   readonly timeline = this.store.timeline;
   readonly loading = this.store.loading;

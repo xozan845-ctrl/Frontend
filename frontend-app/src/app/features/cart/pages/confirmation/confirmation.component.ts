@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductStore } from '../../../products/public-api';
 import { OrderStore } from '../../state/order/order.store';
+import { orderStatusLabel } from '../../models/order.model';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
@@ -20,6 +21,7 @@ export class ConfirmationComponent {
   private readonly orderStore = inject(OrderStore);
 
   /** Orden real devuelta por Core Engine (`POST /orders`). */
+  readonly statusLabel = orderStatusLabel;
   readonly order = computed(() => this.orderStore.lastOrder());
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
