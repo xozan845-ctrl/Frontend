@@ -804,3 +804,23 @@ contexto y consecuencias.
   funcionan contra el backend actual; la paginación explícita requiere el fix
   del backend. Revertir es retirar la ruta, el ítem del sidebar y los archivos
   del catálogo.
+
+## ADR-33: Inventario de bodega para administración
+
+- **Fecha**: 2026-10-22
+- **Estado**: Aceptado
+- **Contexto**: `GET /admin/inventario` expone las líneas de stock de la bodega
+  (`LineaInventarioResponseDto`) y exige rol `admin`. El frontend no tenía área
+  de administración ni guard para ese rol.
+- **Decisión**:
+  - Nuevo feature lazy **`admin`** con `ADMIN_ROUTES`, cargado desde
+    `app.routes.ts` con `loadChildren`.
+  - `adminGuard` en `auth` acepta `admin` y `super_admin`; restaura la sesión con
+    refresh, manda al login al anónimo y al inicio a un rol no autorizado.
+  - Página **`/admin/inventario`** con resumen (SKU, stock físico, reservado,
+    valor total), búsqueda por SKU/nombre, filtro por estado y tabla con stock
+    físico/disponible/reservado, precio base y valor total.
+  - Adapter tolerante a `snake_case`/`camelCase`, números string y envelopes.
+- **Consecuencias**: el área admin queda aislada del panel del vendedor y de su
+  guard; añadir futuras pantallas admin solo requiere rutas hijas en
+  `ADMIN_ROUTES`. Revertir es retirar el feature, la ruta lazy y el guard.

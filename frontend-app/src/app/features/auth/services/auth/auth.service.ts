@@ -286,11 +286,13 @@ export class AuthService implements AuthRepository {
         // Convención E2E (`R-E-12`): un correo que empieza con `vendedor` entra
         // con rol vendedor y uno con `empresario` con rol empresario (ADR-26,
         // ADR-27) para probar el panel sin backend.
-        role: credentials.email.startsWith('empresario')
-          ? 'empresario'
-          : credentials.email.startsWith('vendedor')
-            ? 'vendedor'
-            : 'comprador',
+        role: credentials.email.startsWith('admin')
+          ? 'admin'
+          : credentials.email.startsWith('empresario')
+            ? 'empresario'
+            : credentials.email.startsWith('vendedor')
+              ? 'vendedor'
+              : 'comprador',
       };
       return of({
         user: mockUser,

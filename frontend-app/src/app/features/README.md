@@ -18,6 +18,7 @@ features/<feature>/
 | Feature      | Propósito                                               |
 | ------------ | ------------------------------------------------------- |
 | `account`    | Perfil, cambio de contraseña e historial de pedidos.    |
+| `admin`      | Inventario de bodega y pantallas de administración.     |
 | `ai-scraper` | Jobs y chat de scraping con IA (ADR-18).                |
 | `auth`       | Login, registro, recuperación y guards de sesión.       |
 | `billing`    | Facturación: nueva factura, listado y detalle (ADR-23). |

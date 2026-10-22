@@ -3,3 +3,4 @@ export type { BackendRole, CreateUserData, LinkPersonalData, User } from './mode
 export { isSellerRole } from './models/auth.model';
 export { AuthStore } from './state/auth/auth.store';
 export { AUTH_REPOSITORY, type AuthRepository } from './repositories/auth.repository';
+export { adminGuard, isAdminRole } from './guards/admin/admin.guard';

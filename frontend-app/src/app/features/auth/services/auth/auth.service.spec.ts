@@ -423,6 +423,19 @@ describe('AuthService', () => {
       expect(result?.user.role).toBe('vendedor');
     });
 
+    it('debe autenticar con rol admin con el correo de convención E2E', async () => {
+      build();
+      let result: AuthResponse | undefined;
+
+      service
+        .login({ email: 'admin@tienda.test', password: 'secreto1' })
+        .subscribe((r) => (result = r));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.email).toBe('admin@tienda.test');
+      expect(result?.user.role).toBe('admin');
+    });
+
     it('debe autenticar con rol empresario con el correo de convención E2E', async () => {
       build();
       let result: AuthResponse | undefined;

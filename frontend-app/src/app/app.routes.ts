@@ -60,6 +60,12 @@ export const routes: Routes = [
       import('./features/logistica/logistica.routes').then((m) => m.LOGISTICA_ROUTES),
   },
   {
+    // Administración (ADR-33): inventario y futuras pantallas admin. Lazy para
+    // no arrastrar sus stores/servicios al bundle inicial (R-LZ-1, R-PF-1).
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
     children: [...HOME_ROUTES, ...PRODUCTS_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],

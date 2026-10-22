@@ -1,0 +1,188 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="admin-inventory-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Administración</p>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Inventario
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Stock físico, disponible, reservas y valor de la bodega.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="inventory.loading()"
+      data-testid="refresh-inventory"
+      (click)="inventory.refresh()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="inventory.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (inventory.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="inventory-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        (click)="inventory.refresh()"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de inventario">
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Productos</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="inventory-skus">
+        {{ inventory.totalSkus() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Stock físico</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="inventory-stock">
+        {{ inventory.totalStock() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Reservado</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="inventory-reserved">
+        {{ inventory.totalReserved() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Valor total</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="inventory-value">
+        {{ inventory.totalValueCents() / 100 | appCurrency }}
+      </p>
+    </div>
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="inventory-list-title">
+    <header class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      <h2
+        id="inventory-list-title"
+        class="font-heading text-lg font-black tracking-tight uppercase"
+      >
+        Líneas de inventario
+      </h2>
+      <span
+        class="text-xs font-bold text-slate-500 dark:text-slate-400"
+        data-testid="inventory-count"
+      >
+        {{ inventory.filteredLines().length }} de {{ inventory.totalSkus() }}
+      </span>
+    </header>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label for="inventory-search" class="sr-only">Buscar por SKU o nombre</label>
+        <input
+          id="inventory-search"
+          type="search"
+          class="input"
+          placeholder="Buscar por SKU o nombre…"
+          [value]="inventory.query()"
+          (input)="onQueryInput($event)"
+          data-testid="inventory-search"
+        />
+      </div>
+      <div>
+        <label for="inventory-status" class="sr-only">Estado</label>
+        <select
+          id="inventory-status"
+          class="input"
+          data-testid="inventory-status"
+          (change)="onStatusChange($event)"
+        >
+          <option value="">Todos los estados</option>
+          <option value="disponible">Disponible</option>
+          <option value="agotado">Agotado</option>
+        </select>
+      </div>
+    </div>
+
+    @if (inventory.loading()) {
+      <div class="flex flex-col gap-2" role="status" aria-live="polite">
+        <span class="sr-only">Cargando inventario…</span>
+        <app-skeleton-loader height="44px" customClass="rounded-xl" />
+        <app-skeleton-loader height="44px" customClass="rounded-xl" />
+        <app-skeleton-loader height="44px" customClass="rounded-xl" />
+      </div>
+    } @else if (!inventory.hasLines()) {
+      <p
+        class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+        data-testid="inventory-empty"
+      >
+        No hay productos en el inventario.
+      </p>
+    } @else if (inventory.filteredLines().length === 0) {
+      <p class="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        No hay líneas para estos filtros.
+      </p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm" data-testid="inventory-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">SKU</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Producto</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Stock</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Disponible</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Reservado</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Precio base</th>
+              <th scope="col" class="py-2 text-right font-bold">Valor total</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (line of inventory.filteredLines(); track line.sku) {
+              <tr data-testid="inventory-row">
+                <td class="py-3 pr-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+                  {{ line.sku }}
+                </td>
+                <td class="py-3 pr-3 font-bold text-slate-900 dark:text-white">{{ line.name }}</td>
+                <td class="py-3 pr-3 text-right tabular-nums">{{ line.stock }}</td>
+                <td class="py-3 pr-3 text-right tabular-nums">{{ line.available }}</td>
+                <td class="py-3 pr-3 text-right tabular-nums">{{ line.reserved }}</td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                    [class]="
+                      line.status === 'disponible'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                        : 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300'
+                    "
+                  >
+                    {{ line.status }}
+                  </span>
+                </td>
+                <td class="py-3 pr-3 text-right tabular-nums">
+                  {{ line.basePrice | appCurrency }}
+                </td>
+                <td class="py-3 text-right font-bold tabular-nums">
+                  {{ line.totalValueCents / 100 | appCurrency }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
