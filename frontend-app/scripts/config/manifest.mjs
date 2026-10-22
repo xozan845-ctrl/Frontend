@@ -13,6 +13,7 @@ export const requiredSuites = [
   { id: 'docs-readmes', file: 'rules/docs/readmes.test.mjs' },
   { id: 'governance-coverage', file: 'rules/docs/coverage.test.mjs' },
   { id: 'docs-sync', file: 'rules/docs/sync.test.mjs' },
+  { id: 'audit-freshness', file: 'rules/docs/audit.test.mjs' },
   { id: 'git-commits', file: 'rules/git/commits.test.mjs' },
   { id: 'git-branch', file: 'rules/git/branch.test.mjs' },
   { id: 'architecture-types', file: 'rules/architecture/types.test.mjs' },
