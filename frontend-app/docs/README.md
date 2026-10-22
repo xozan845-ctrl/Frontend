@@ -7,6 +7,7 @@ entregable (`R-DO-*`): stack, decisiones, reglas y operación viven en el repo.
 | ---------------------------------------------------------- | ------------------------------------------------------------- |
 | [`rules/README.md`](./rules/README.md)                     | Reglas de ingeniería, gobernanza y checklist de PR            |
 | [`decisiones.md`](./decisiones.md)                         | ADRs: decisiones de arquitectura con contexto y consecuencias |
+| [`plantilla-adr.md`](./plantilla-adr.md)                   | Plantilla para registrar un ADR nuevo (`R-DO-2`)              |
 | [`dockploy-setup.md`](./dockploy-setup.md)                 | Despliegue del frontend en Dockploy                           |
 | [`firebase-hosting-setup.md`](./firebase-hosting-setup.md) | Hosting alternativo en Firebase (staging y producción)        |
 | [`assets/README.md`](./assets/README.md)                   | Assets de documentación (fuente de la imagen Open Graph)      |
