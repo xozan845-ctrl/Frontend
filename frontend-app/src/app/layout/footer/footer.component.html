@@ -149,7 +149,7 @@
           &copy; {{ currentYear }} {{ companyInfo.name }} — Todos los derechos reservados.
         </p>
         <button
-          onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+          (click)="scrollToTop()"
           class="w-10 h-10 rounded-xl bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-600 dark:text-slate-400 hover:text-accent-600 hover:border-accent-600 dark:hover:text-accent-400 transition-all flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
           aria-label="Volver arriba"
         >

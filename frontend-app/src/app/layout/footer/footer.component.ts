@@ -27,6 +27,11 @@ export class Footer {
   }
   readonly currentYear = new Date().getFullYear();
 
+  /** R-SE-9: sin handlers inline (la CSP bloquea `onclick`). */
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   onNewsletterSubmit(event: Event): void {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
