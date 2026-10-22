@@ -12,8 +12,8 @@
   presupuesto inicial **513.09 kB** dentro del techo **515 kB** (error 560 kB),
   cobertura **95.31/89.55/94.84/96.11** sobre umbrales **94/88/93/95** más diff
   coverage **80%**, `npm audit` en **0**, **27 flujos E2E** (incluye axe en
-  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **40/252**
-  IDs de regla con check real; queda **1 contextual** (`R-AR-5`)
+  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **41/252**
+  IDs de regla con check real; sin contextuales pendientes
   declaradas en `cites`. Sin deudas abiertas.
 
 ## Evidencia ejecutada (2026-10-22)
@@ -34,7 +34,7 @@
 
 ### Cobertura del motor de reglas (`R-DO-9`)
 
-- **40/252** IDs con check real; **1 contextual** (`R-AR-5`) en `cites`.
+- **41/252** IDs con check real; sin contextuales pendientes.
 - Suites nuevas de esta fase: `store-guards` (R-ST-1/2/4/7), `naming-guards`
   (R-NC-1/2/11), `coverage-guards` (R-COV-2) y R-NC-9 en `architecture-types`.
 - Gates de calidad en CI: `check-budget` (R-PF-1), `coverage:diff` (R-COV-5),
