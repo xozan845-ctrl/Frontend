@@ -1,5 +1,5 @@
 /**
- * Guardas de estado (R-ST-1/2/4/7 + R-AR-5): los `*.store.ts` usan `signalStore` con
+ * Guardas de estado (R-ST-1/2/4/5/7 + R-AR-5): los `*.store.ts` usan `signalStore` con
  * `withMethods`, mutan con `patchState`, persisten en `withHooks` y no usan
  * `BehaviorSubject`.
  */
@@ -49,6 +49,16 @@ export function findStoreViolations() {
     }
     if (/\blocalStorage\b/.test(masked) && !/\bwithHooks\s*\(/.test(masked)) {
       add('R-ST-7', rel, 0, 'persistencia en localStorage fuera de withHooks', 'withHooks');
+    }
+    const emptySubscribe = masked.match(/\.subscribe\s*\(\s*\)/);
+    if (emptySubscribe) {
+      add(
+        'R-ST-5',
+        rel,
+        lineAt(masked, emptySubscribe.index),
+        'subscribe() manual en store; usa rxMethod',
+        'subscribe',
+      );
     }
   }
 

@@ -84,18 +84,20 @@ export const AiSessionStore = signalStore(
       );
 
       /** Polling del job creado por un mensaje; al terminar recarga el detalle. */
-      const pollMessageJob = (sessionId: string, jobId: string): void => {
-        timer(0, AI_SCRAPER_POLL_MS)
-          .pipe(
-            take(AI_SCRAPER_POLL_MAX_ATTEMPTS),
-            switchMap(() => jobRepo.getJob(jobId)),
-            distinctUntilChanged((a, b) => a.status === b.status),
-            takeWhile((job) => isAiJobActive(job.status), true),
-            switchMap(() => fetchDetail(sessionId)),
-            catchError(() => EMPTY),
-          )
-          .subscribe();
-      };
+      const pollMessageJob = rxMethod<{ sessionId: string; jobId: string }>(
+        pipe(
+          switchMap(({ sessionId, jobId }) =>
+            timer(0, AI_SCRAPER_POLL_MS).pipe(
+              take(AI_SCRAPER_POLL_MAX_ATTEMPTS),
+              switchMap(() => jobRepo.getJob(jobId)),
+              distinctUntilChanged((a, b) => a.status === b.status),
+              takeWhile((job) => isAiJobActive(job.status), true),
+              switchMap(() => fetchDetail(sessionId)),
+              catchError(() => EMPTY),
+            ),
+          ),
+        ),
+      );
 
       const loadSessions = rxMethod<void>(
         pipe(
@@ -172,8 +174,7 @@ export const AiSessionStore = signalStore(
             return sessionRepo.sendMessage(session.id, instruction).pipe(
               tap(({ jobId }) => {
                 patchState(store, { sending: false });
-                fetchDetail(session.id).subscribe();
-                pollMessageJob(session.id, jobId);
+                pollMessageJob({ sessionId: session.id, jobId });
               }),
               catchError((err: Error) => {
                 patchState(store, { sending: false });
