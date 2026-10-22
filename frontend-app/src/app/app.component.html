@@ -1,5 +1,7 @@
 <div class="app-layout">
-  <app-navbar />
+  @if (!isBackoffice()) {
+    <app-navbar />
+  }
 
   <main class="main-content">
     <app-pwa-install-banner />
@@ -8,17 +10,21 @@
     </div>
   </main>
 
-  <app-footer />
+  @if (!isBackoffice()) {
+    <app-footer />
+  }
 </div>
 
 <app-toast />
-@defer (on idle) {
-  <app-cart-drawer />
-} @placeholder {
-  <span aria-hidden="true"></span>
-}
-@defer (on idle) {
-  <app-floating-support />
-} @placeholder {
-  <span aria-hidden="true"></span>
+@if (!isBackoffice()) {
+  @defer (on idle) {
+    <app-cart-drawer />
+  } @placeholder {
+    <span aria-hidden="true"></span>
+  }
+  @defer (on idle) {
+    <app-floating-support />
+  } @placeholder {
+    <span aria-hidden="true"></span>
+  }
 }

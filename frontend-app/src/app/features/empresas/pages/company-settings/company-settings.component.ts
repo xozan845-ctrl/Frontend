@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import { LOGISTICS_MODE_OPTIONS, logisticsModeLabel } from '../../constants/company.constants';
 import { CreateCompanySellerData, LogisticsMode } from '../../models/company.model';
 import { CompanyStore } from '../../state/company/company.store';
@@ -25,8 +25,8 @@ export default class CompanySettingsComponent {
   readonly authStore = inject(AuthStore);
   private readonly fb = inject(FormBuilder);
   private readonly seoService = injectSeoPage(
-    'Mi empresa — Panel del vendedor',
-    'Crea tu empresa, elige la modalidad logística y administra a tus vendedores.',
+    'Empresa — Administración',
+    'Administra tu empresa, la modalidad logística y el equipo de vendedores.',
   );
 
   readonly logisticsModes = LOGISTICS_MODE_OPTIONS;
@@ -35,7 +35,7 @@ export default class CompanySettingsComponent {
 
   readonly user = this.authStore.user;
   readonly tenantId = computed(() => this.user()?.tenantId ?? null);
-  readonly isEmpresario = computed(() => this.user()?.role === 'empresario');
+  readonly isEmpresario = computed(() => isCompanyOwnerRole(this.user()?.role));
   readonly company = this.companyStore.company;
   readonly sellers = this.companyStore.sellers;
   readonly loading = this.companyStore.loading;

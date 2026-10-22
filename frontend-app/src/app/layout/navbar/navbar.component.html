@@ -53,43 +53,6 @@
           ></span>
         </a>
 
-        <!-- Panel del vendedor (ADR-22): visible siempre; el `vendorGuard` decide el acceso -->
-        <a
-          routerLink="/vendedor/inicio"
-          routerLinkActive="text-accent-600 dark:text-accent-400"
-          data-testid="navbar-vendor-link"
-          class="relative group text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
-        >
-          Vendedor
-          <span
-            class="after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-accent-600 after:transition-all after:duration-300 group-hover:after:w-full after:rounded-full"
-          ></span>
-        </a>
-
-        <!-- Facturación (ADR-24): alta de facturador o módulo si ya hay sesión -->
-        <a
-          [routerLink]="billingLink()"
-          [queryParams]="billingQueryParams()"
-          routerLinkActive="text-accent-600 dark:text-accent-400"
-          data-testid="navbar-billing-link"
-          class="text-sm font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-accent-600 dark:text-slate-400 dark:hover:text-accent-400"
-        >
-          Facturación
-        </a>
-
-        <!-- Logística (ADR-25): tablero de rutas y entregas -->
-        <a
-          routerLink="/logistica/dashboard"
-          routerLinkActive="text-accent-600 dark:text-accent-400"
-          data-testid="navbar-logistica-link"
-          class="relative group text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
-        >
-          Logística
-          <span
-            class="after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-accent-600 after:transition-all after:duration-300 group-hover:after:w-full after:rounded-full"
-          ></span>
-        </a>
-
         <!-- Theme Toggle -->
         <button
           (click)="toggleTheme()"
@@ -272,35 +235,6 @@
       >
         IA
       </a>
-      <a
-        routerLink="/vendedor/inicio"
-        routerLinkActive="text-accent-600 dark:text-accent-400"
-        data-testid="navbar-vendor-link-mobile"
-        (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
-      >
-        Vendedor
-      </a>
-      <a
-        [routerLink]="billingLink()"
-        [queryParams]="billingQueryParams()"
-        routerLinkActive="text-accent-600 dark:text-accent-400"
-        data-testid="navbar-billing-link-mobile"
-        (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
-      >
-        Facturación
-      </a>
-      <a
-        routerLink="/logistica/dashboard"
-        routerLinkActive="text-accent-600 dark:text-accent-400"
-        data-testid="navbar-logistica-link-mobile"
-        (click)="isMobileMenuOpen.set(false)"
-        class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
-      >
-        Logística
-      </a>
-
       <div class="border-t border-slate-100 dark:border-surface-700 pt-6">
         @if (authStore.isAuthenticated()) {
           <div class="flex items-center gap-3 mb-4 p-4 bg-slate-50 dark:bg-surface-800 rounded-2xl">

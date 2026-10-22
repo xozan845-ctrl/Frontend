@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { isPlatformRole } from '../../models/authorization.model';
 import { AuthStore } from '../../state/auth/auth.store';
 
 /** Indica si el rol puede acceder al área de administración. */
 export function isAdminRole(role?: string): boolean {
-  return role === 'admin' || role === 'super_admin';
+  return isPlatformRole(role);
 }
 
 /**

@@ -15,8 +15,13 @@ import type { LogisticaNavItem } from './logistica-sidebar.types';
 })
 export class LogisticaSidebarComponent {
   readonly open = input(false);
+  readonly basePath = input('/logistica');
   readonly closed = output<void>();
   readonly itemSelected = output<void>();
+
+  linkFor(link: string): string {
+    return `${this.basePath()}${link.replace(/^\/logistica/, '')}`;
+  }
 
   readonly mainItems: readonly LogisticaNavItem[] = [
     {

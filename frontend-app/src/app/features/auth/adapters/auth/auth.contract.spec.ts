@@ -54,4 +54,24 @@ describe('auth.contract', () => {
       avatar: 'https://cdn.example.com/avatars/ana.png',
     });
   });
+
+  it('debe conservar el alcance de tienda, permisos y propietario logístico', () => {
+    const user = adaptUserFromBackend({
+      user_id: 'seller-1',
+      correo: 'seller@tienda.test',
+      nombre: 'Vera',
+      rol: 'vendedor',
+      tenant_id: 'company-1',
+      tienda_id: 'store-1',
+      permisos: ['store:manage-roles'],
+      logistics_ownership: 'store',
+    });
+
+    expect(user).toMatchObject({
+      storeId: 'store-1',
+      tenantId: 'company-1',
+      permissions: ['store:manage-roles'],
+      logisticsOwnership: 'store',
+    });
+  });
 });

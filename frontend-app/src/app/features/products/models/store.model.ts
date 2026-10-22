@@ -5,11 +5,14 @@
  */
 export interface Store {
   id: string;
+  /** Slug público; el id sigue siendo la clave interna del dominio. */
+  slug?: string;
   vendorId: string;
   name: string;
   description: string;
   /** Empresa propietaria (`empresa_id`); presente en la ficha del vendedor. */
   companyId?: string;
+  companySlug?: string;
   /** Usuario propietario operativo (`propietario_usuario_id`). */
   ownerUserId?: string;
   /** Participación del vendedor sobre las ventas (0–100). */

@@ -45,6 +45,8 @@ que son verificables por máquina.
 > del feature en el mismo PR (`R-AR-16`). Ejemplos vigentes: `logistica`
 > incorpora `adapters` y `repositories` para los envíos reales (ADR-37), y
 > `storage` nace con esas capas para el bucket del tenant (ADR-42).
+> El feature `logistica` declara además `guards/` porque sus rutas deben
+> validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige documentación **del área** (no cualquier `.md`); se omite en `main`. |
 
 ### Modelo de capas

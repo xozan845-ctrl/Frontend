@@ -6,7 +6,7 @@ participación.
 
 | Capa            | Responsabilidad                                                              |
 | --------------- | ---------------------------------------------------------------------------- |
-| `models/`       | `Company`, `CompanySeller` y payloads de alta.                               |
+| `models/`       | `Company`, `CompanySeller`, tiendas asignadas y payloads de alta.            |
 | `adapters/`     | Normalización de `EmpresaResponseDto`/`VendedorEmpresaResponseDto` (R-AR-4). |
 | `repositories/` | Puerto `COMPANY_REPOSITORY`.                                                 |
 | `services/`     | HTTP contra `/empresas` y traducción de errores (R-AR-9).                    |
@@ -15,6 +15,8 @@ participación.
 
 ## Decisión
 
-La empresa es la unidad que agrupa tienda, vendedores y envíos. Crear la
-empresa cambia el `tenant_id`/rol del usuario en el backend, así que el store
-**renueva la sesión** después del alta para que el JWT lleve el tenant (ADR-27).
+La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
+Crear la empresa cambia el `tenant_id`/rol del usuario en el backend, así que el
+store **renueva la sesión** después del alta para que el JWT lleve el tenant
+(ADR-27). El vendedor se asigna a una sola tienda; sus permisos y el ownership
+de su logística deben llegar desde el backend y quedar protegidos por RLS.

@@ -32,6 +32,16 @@ function readNumber(record: Record<string, unknown>, keys: readonly string[]): n
   return null;
 }
 
+function readStringArray(record: Record<string, unknown>, keys: readonly string[]): string[] {
+  for (const key of keys) {
+    const value = record[key];
+    if (Array.isArray(value)) {
+      return value.filter((item): item is string => typeof item === 'string');
+    }
+  }
+  return [];
+}
+
 function toLogisticsMode(value: string | null): LogisticsMode {
   return LOGISTICS_MODES.includes(value as LogisticsMode) ? (value as LogisticsMode) : 'plataforma';
 }
@@ -47,6 +57,9 @@ export function adaptCompanyFromBackend(raw: unknown): Company | null {
   return {
     id,
     name: readString(record, ['nombre', 'name']) ?? 'Empresa',
+    ...(readString(record, ['slug', 'identificador'])
+      ? { slug: readString(record, ['slug', 'identificador'])! }
+      : {}),
     logisticsMode: toLogisticsMode(
       readString(record, ['modalidad_logistica', 'logisticsMode', 'logistics_mode']),
     ),
@@ -75,5 +88,17 @@ export function adaptCompanySellerFromBackend(raw: unknown): CompanySeller | nul
         'participationPercentage',
         'participation_percentage',
       ]) ?? 0,
+    ...(readString(record, ['tienda_id', 'storeId', 'store_id'])
+      ? { storeId: readString(record, ['tienda_id', 'storeId', 'store_id'])! }
+      : {}),
+    ...(readString(record, ['tienda_nombre', 'storeName', 'store_name'])
+      ? { storeName: readString(record, ['tienda_nombre', 'storeName', 'store_name'])! }
+      : {}),
+    ...(readStringArray(record, ['permisos', 'permissions']).length
+      ? { permissions: readStringArray(record, ['permisos', 'permissions']) }
+      : {}),
+    ...(record['logistics_ownership'] === 'company' || record['logistics_ownership'] === 'store'
+      ? { logisticsOwnership: record['logistics_ownership'] }
+      : {}),
   };
 }

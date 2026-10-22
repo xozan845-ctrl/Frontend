@@ -6,6 +6,7 @@ import { HOME_ROUTES, ROOT_ROUTES } from './features/home/home.routes';
 import { PLANS_ROUTES } from './features/plans/plans.routes';
 import { PRODUCTS_ROUTES } from './features/products/products.routes';
 import { WISHLIST_ROUTES } from './features/wishlist/wishlist.routes';
+import { EMPRESAS_ROUTES } from './features/empresas/public-api';
 import { storefrontResolver } from './features/products/resolvers/storefront/storefront.resolver';
 
 /**
@@ -21,6 +22,7 @@ export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
   ...ACCOUNT_ROUTES,
+  ...EMPRESAS_ROUTES,
   // La entrada raíz (`/`) debe ir **antes** que las rutas lazy con path vacío:
   // si no, `stores` captura la URL vacía con un match sin componente (el outlet
   // queda en blanco, sin error) y `ROOT_ROUTES` nunca se llega a evaluar.

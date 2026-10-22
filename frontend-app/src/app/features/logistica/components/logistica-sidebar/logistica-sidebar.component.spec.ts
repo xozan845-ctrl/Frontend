@@ -46,6 +46,20 @@ describe('LogisticaSidebarComponent', () => {
     expect(selected).toBe(1);
   });
 
+  it('debe conservar el contexto de empresa al navegar dentro de logística', async () => {
+    const fixture = await setup();
+    fixture.componentRef.setInput('basePath', '/empresa/logistica');
+    fixture.detectChanges();
+
+    expect(
+      (
+        fixture.nativeElement.querySelector(
+          '[data-testid="logistica-nav-dashboard"]',
+        ) as HTMLAnchorElement
+      ).getAttribute('href'),
+    ).toBe('/empresa/logistica/dashboard');
+  });
+
   it('debe mostrar el backdrop con el drawer abierto', async () => {
     const fixture = await setup(true);
     const host = fixture.nativeElement as HTMLElement;

@@ -101,17 +101,25 @@ export class CompanyService implements CompanyRepository {
         email: data.email,
         role: 'vendedor',
         participationPercentage: data.participationPercentage,
+        ...(data.storeId ? { storeId: data.storeId } : {}),
+        ...(data.permissions?.length ? { permissions: data.permissions } : {}),
+        ...(data.logisticsOwnership ? { logisticsOwnership: data.logisticsOwnership } : {}),
       }).pipe(delay(400));
     }
     if (!environment.apiUrl) return this.missingApiUrl();
 
+    const payload = {
+      nombre: data.name,
+      correo: data.email,
+      contrasena: data.password,
+      participacion_porcentaje: data.participationPercentage,
+      ...(data.storeId ? { tienda_id: data.storeId } : {}),
+      ...(data.permissions?.length ? { permisos: data.permissions } : {}),
+      ...(data.logisticsOwnership ? { logistics_ownership: data.logisticsOwnership } : {}),
+    };
+
     return this.http
-      .post<unknown>(`${this.apiUrl}/${encodeURIComponent(id)}/vendedores`, {
-        nombre: data.name,
-        correo: data.email,
-        contrasena: data.password,
-        participacion_porcentaje: data.participationPercentage,
-      })
+      .post<unknown>(`${this.apiUrl}/${encodeURIComponent(id)}/vendedores`, payload)
       .pipe(
         map((response) => adaptCompanySellerFromBackend(response)),
         map((seller) => {

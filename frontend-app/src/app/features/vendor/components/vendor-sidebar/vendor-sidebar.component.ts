@@ -57,16 +57,22 @@ export class VendorSidebarComponent {
       testId: 'vendor-nav-pedidos',
     },
     {
-      label: 'Mi empresa',
-      icon: 'fa-solid fa-building',
-      link: '/vendedor/empresa',
-      testId: 'vendor-nav-empresa',
-    },
-    {
       label: 'Mi tienda',
       icon: 'fa-solid fa-store',
       link: '/vendedor/tienda',
       testId: 'vendor-nav-tienda',
+    },
+    {
+      label: 'Roles y permisos',
+      icon: 'fa-solid fa-user-shield',
+      link: '/vendedor/roles',
+      testId: 'vendor-nav-roles',
+    },
+    {
+      label: 'Mi logística',
+      icon: 'fa-solid fa-truck-fast',
+      link: '/vendedor/logistica',
+      testId: 'vendor-nav-logistica',
     },
     {
       label: 'Facturación',

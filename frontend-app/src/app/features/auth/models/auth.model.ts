@@ -13,12 +13,28 @@ export type BackendRole =
   | 'supervisor'
   | 'operativo';
 
-/** Roles que pueden operar el panel de vendedor (ADR-22, ADR-26). */
-const SELLER_ROLES: readonly string[] = ['empresario', 'vendedor'];
+/** Roles que pueden operar un negocio (onboarding y contexto comercial). */
+const BUSINESS_ROLES: readonly string[] = ['empresario', 'vendedor'];
 
-/** Indica si el rol puede entrar al panel de vendedor/empresario. */
+/** Rol propietario del tenant comercial. */
+const COMPANY_OWNER_ROLES: readonly string[] = ['empresario'];
+
+/** Rol operativo de una tienda asignada por el propietario. */
+const STORE_SELLER_ROLES: readonly string[] = ['vendedor'];
+
+/** Indica si el rol puede iniciar o administrar un negocio. */
 export function isSellerRole(role?: string): boolean {
-  return !!role && SELLER_ROLES.includes(role);
+  return !!role && BUSINESS_ROLES.includes(role);
+}
+
+/** Indica si el usuario puede administrar la empresa y sus tiendas. */
+export function isCompanyOwnerRole(role?: string): boolean {
+  return !!role && COMPANY_OWNER_ROLES.includes(role);
+}
+
+/** Indica si el usuario opera una tienda asignada por la empresa. */
+export function isStoreSellerRole(role?: string): boolean {
+  return !!role && STORE_SELLER_ROLES.includes(role);
 }
 
 export interface User {
@@ -31,6 +47,12 @@ export interface User {
   tenantId?: string;
   /** Ficha de personal vinculada en field-service (`personal_id`). */
   personalId?: string;
+  /** Tienda única asignada al vendedor (`tienda_id`). */
+  storeId?: string;
+  /** Permisos delegados para roles de tienda o personal de logística. */
+  permissions?: readonly string[];
+  /** Contexto logístico que el backend asignó a la sesión. */
+  logisticsOwnership?: 'company' | 'store';
 }
 
 export interface AuthResponse {

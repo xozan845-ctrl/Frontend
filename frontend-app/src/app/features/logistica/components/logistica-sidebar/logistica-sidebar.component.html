@@ -18,7 +18,7 @@
     <div class="flex flex-col gap-1">
       @for (item of mainItems; track item.link) {
         <a
-          [routerLink]="item.link"
+          [routerLink]="linkFor(item.link)"
           routerLinkActive="bg-accent-600 text-white shadow-lg shadow-accent-600/25 hover:bg-accent-600 hover:text-white"
           [routerLinkActiveOptions]="{ exact: item.link === '/logistica/dashboard' }"
           #rla="routerLinkActive"
@@ -36,7 +36,7 @@
     <div class="mt-auto flex flex-col gap-1 border-t border-white/10 pt-4">
       @for (item of footerItems; track item.link) {
         <a
-          [routerLink]="item.link"
+          [routerLink]="linkFor(item.link)"
           routerLinkActive="bg-accent-600 text-white shadow-lg shadow-accent-600/25 hover:bg-accent-600 hover:text-white"
           #rla="routerLinkActive"
           [attr.aria-current]="rla.isActive ? 'page' : null"

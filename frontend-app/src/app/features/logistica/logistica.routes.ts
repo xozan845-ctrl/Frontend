@@ -1,5 +1,5 @@
 import { Route, Routes } from '@angular/router';
-import { fieldGuard, logisticsGuard } from '../auth/public-api';
+import { fieldGuard } from '../auth/public-api';
 import { ENVIO_REPOSITORY } from './repositories/envio.repository';
 import { INCIDENCIA_REPOSITORY } from './repositories/incidencia.repository';
 import { PERSONAL_REPOSITORY } from './repositories/personal.repository';
@@ -10,6 +10,7 @@ import { PersonalService } from './services/personal/personal.service';
 import { RutaService } from './services/ruta/ruta.service';
 import { EnviosStore } from './state/envios/envios.store';
 import { IncidenciasStore } from './state/incidencias/incidencias.store';
+import { logisticsGuard } from './guards/logistics/logistics.guard';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
 import { PersonalStore } from './state/personal/personal.store';
 import { RutasStore } from './state/rutas/rutas.store';
@@ -36,6 +37,8 @@ const comingSoonRoute = (
 export const LOGISTICA_ROUTES: Routes = [
   {
     path: '',
+    canActivate: [logisticsGuard],
+    data: { workspace: 'logistics' },
     loadComponent: () => import('./pages/logistica-shell/logistica-shell.component'),
     // El store vive al alcance del módulo y se libera al salir (`R-AR-5`, ADR-21).
     providers: [LogisticaDashboardStore],
