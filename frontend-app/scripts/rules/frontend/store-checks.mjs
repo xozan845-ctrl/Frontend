@@ -1,5 +1,5 @@
 /**
- * Guardas de estado (R-ST-1/2/4/7): los `*.store.ts` usan `signalStore` con
+ * Guardas de estado (R-ST-1/2/4/7 + R-AR-5): los `*.store.ts` usan `signalStore` con
  * `withMethods`, mutan con `patchState`, persisten en `withHooks` y no usan
  * `BehaviorSubject`.
  */
@@ -39,6 +39,7 @@ export function findStoreViolations() {
 
     if (!/\bsignalStore\s*\(/.test(masked)) {
       add('R-ST-2', rel, 0, 'el store no usa signalStore', 'signalStore');
+      add('R-AR-5', rel, 0, 'el estado compartido no vive en un signalStore', 'signalStore');
     }
     if (!/\bwithMethods\s*\(/.test(masked)) {
       add('R-ST-2', rel, 0, 'el store no declara withMethods', 'withMethods');

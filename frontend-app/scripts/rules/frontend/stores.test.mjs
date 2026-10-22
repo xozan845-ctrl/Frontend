@@ -3,16 +3,15 @@ import { findStoreViolations } from './store-checks.mjs';
 import { assertNoFresh } from '../architecture/assertions.mjs';
 
 /**
- * R-ST-1/2/4/7 — guardas de estado con NgRx Signal Store.
+ * R-ST-1/2/4/7 y R-AR-5 — guardas de estado con NgRx Signal Store.
  */
 export default defineSuite({
   id: 'store-guards',
   area: 'frontend',
-  rules: ['R-ST-1', 'R-ST-2', 'R-ST-4', 'R-ST-7'],
-  cites: ['R-AR-5'],
+  rules: ['R-ST-1', 'R-ST-2', 'R-ST-4', 'R-ST-7', 'R-AR-5'],
   mode: 'repo',
   run: ({ test, assert }) => {
-    test('R-ST-1/2/4/7: stores con signalStore, withMethods, patchState y withHooks', () => {
+    test('R-ST-1/2/4/7 + R-AR-5: stores con signalStore, withMethods, patchState y withHooks', () => {
       assertNoFresh({
         assert,
         suiteId: 'store-guards',
