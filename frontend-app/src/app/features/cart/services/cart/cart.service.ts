@@ -4,7 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { toUserMessage } from '../../../../core/models/api-error';
-import { CartItem } from '../../models/cart.model';
+import { CartSnapshot } from '../../models/cart.model';
 import { CartRepository } from '../../repositories/cart.repository';
 import { adaptCartFromBackend } from '../../adapters/cart/cart.adapter';
 import type { MockItem } from '../../models/mock-item.model';
@@ -20,7 +20,7 @@ export class CartService implements CartRepository {
   /** Carrito simulado para `dataSource: 'mock'` (E2E hermético). */
   private mockItems: MockItem[] = [];
 
-  getCart(): Observable<CartItem[]> {
+  getCart(): Observable<CartSnapshot> {
     if (this.isMock()) {
       return this.mockResponse();
     }
@@ -32,7 +32,7 @@ export class CartService implements CartRepository {
     );
   }
 
-  addItem(ofertaId: string, quantity: number): Observable<CartItem[]> {
+  addItem(ofertaId: string, quantity: number): Observable<CartSnapshot> {
     if (this.isMock()) {
       const existing = this.mockItems.find((item) => item.ofertaId === ofertaId);
       if (existing) {
@@ -52,7 +52,7 @@ export class CartService implements CartRepository {
       );
   }
 
-  updateQuantity(ofertaId: string, quantity: number): Observable<CartItem[]> {
+  updateQuantity(ofertaId: string, quantity: number): Observable<CartSnapshot> {
     if (this.isMock()) {
       this.mockItems = this.mockItems
         .map((item) => (item.ofertaId === ofertaId ? { ...item, quantity } : item))
@@ -69,7 +69,7 @@ export class CartService implements CartRepository {
       );
   }
 
-  removeItem(ofertaId: string): Observable<CartItem[]> {
+  removeItem(ofertaId: string): Observable<CartSnapshot> {
     if (this.isMock()) {
       this.mockItems = this.mockItems.filter((item) => item.ofertaId !== ofertaId);
       return this.mockResponse();
@@ -82,7 +82,7 @@ export class CartService implements CartRepository {
     );
   }
 
-  clearCart(): Observable<CartItem[]> {
+  clearCart(): Observable<CartSnapshot> {
     if (this.isMock()) {
       this.mockItems = [];
       return this.mockResponse();
@@ -96,7 +96,7 @@ export class CartService implements CartRepository {
   }
 
   /** Vista simulada con la misma forma que el backend (`{ items }`). */
-  private mockResponse(): Observable<CartItem[]> {
+  private mockResponse(): Observable<CartSnapshot> {
     const response = {
       items: this.mockItems.map((item) => ({
         oferta_id: item.ofertaId,

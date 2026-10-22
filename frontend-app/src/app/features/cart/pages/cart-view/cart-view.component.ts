@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { CartStore } from '../../state/cart/cart.store';
 import { ProductStore } from '../../../products/public-api';
 import { AuthStore } from '../../../auth/public-api';
@@ -14,6 +14,7 @@ import { injectSeoPage } from '../../../../core/services/seo/seo.service';
   selector: 'app-cart-view',
   standalone: true,
   imports: [
+    DatePipe,
     NgOptimizedImage,
     EmptyStateComponent,
     SkeletonLoaderComponent,

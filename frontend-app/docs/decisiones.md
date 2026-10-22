@@ -824,3 +824,26 @@ contexto y consecuencias.
 - **Consecuencias**: el área admin queda aislada del panel del vendedor y de su
   guard; añadir futuras pantallas admin solo requiere rutas hijas en
   `ADMIN_ROUTES`. Revertir es retirar el feature, la ruta lazy y el guard.
+
+## ADR-34: Carrito alineado con `CarritoResponseDto`
+
+- **Fecha**: 2026-10-22
+- **Estado**: Aceptado
+- **Contexto**: el carrito ya consumía los cinco endpoints de `/carrito`, pero
+  el adapter descartaba `total`, `expira_en` y los metadatos de cada línea
+  (`tienda_id`, `vendedor_id`, `sku`, `estado`). El total se recalculaba en el
+  cliente y la reserva temporal del servidor no se mostraba.
+- **Decisión**:
+  - Introducir `CartSnapshot { items, total, expiresAt }` como valor del puerto
+    `CART_REPOSITORY`; todas las mutaciones devuelven el snapshot normalizado.
+  - El adapter usa el `total` autoritativo del backend (con fallback derivado) y
+    conserva `expira_en`, `tienda_id`, `vendedor_id`, `sku` y `estado`.
+  - `CartStore` expone `total` y `expiresAt`; el total del servidor prevalece
+    sobre el derivado local y el invitado sigue usando su carrito en
+    `localStorage`.
+  - La vista del carrito muestra la hora de expiración de la reserva y limita el
+    botón de aumentar cantidad al `stock` de la oferta.
+- **Consecuencias**: el carrito refleja el estado real del backend (total y
+  expiración) y evita añadir más unidades de las disponibles. El flujo de
+  invitado no cambia. Revertir es volver a `CartItem[]` y retirar la vista de
+  expiración/stock.

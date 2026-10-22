@@ -3,6 +3,10 @@ import type { OrderResponse } from '../../models/order.model';
 
 export interface CartState {
   items: CartItem[];
+  /** Total autoritativo del servidor; 0 en el carrito local del invitado. */
+  total: number;
+  /** Expiración de la reserva del servidor (ISO 8601 UTC). */
+  expiresAt: string | null;
   loading: boolean;
   error: string | null;
 }

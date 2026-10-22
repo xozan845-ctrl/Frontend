@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CartService } from './cart.service';
-import { CartItem } from '../../models/cart.model';
+import { CartSnapshot } from '../../models/cart.model';
 import { environment } from '../../../../../environments/environment';
 
 const cartResponse = {
@@ -43,14 +43,14 @@ describe('CartService', () => {
   it('debe obtener el carrito (GET /carrito)', () => {
     environment.apiUrl = 'https://api.test';
     build();
-    let result: CartItem[] | undefined;
+    let result: CartSnapshot | undefined;
 
     service.getCart().subscribe((items) => (result = items));
     httpMock.expectOne('https://api.test/carrito').flush(cartResponse);
 
-    expect(result).toHaveLength(1);
-    expect(result?.[0]).toMatchObject({ quantity: 2 });
-    expect(result?.[0].product).toMatchObject({ id: 'of-1', name: 'Teclado', price: 100 });
+    expect(result?.items).toHaveLength(1);
+    expect(result?.items[0]).toMatchObject({ quantity: 2 });
+    expect(result?.items[0].product).toMatchObject({ id: 'of-1', name: 'Teclado', price: 100 });
   });
 
   it('debe añadir un item (POST /carrito/items)', () => {
@@ -99,11 +99,11 @@ describe('CartService', () => {
     environment.apiConfig.dataSource = 'mock';
     build();
 
-    let result: CartItem[] | undefined;
+    let result: CartSnapshot | undefined;
     service.addItem('of-9', 1).subscribe((items) => (result = items));
-    await vi.waitFor(() => expect(result).toHaveLength(1));
+    await vi.waitFor(() => expect(result?.items).toHaveLength(1));
 
-    expect(result?.[0].quantity).toBe(1);
+    expect(result?.items[0].quantity).toBe(1);
     httpMock.expectNone(() => true);
   });
 
@@ -120,52 +120,52 @@ describe('CartService', () => {
   it('debe obtener un carrito vacío en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
-    let result: CartItem[] | undefined;
+    let result: CartSnapshot | undefined;
 
     service.getCart().subscribe((items) => (result = items));
 
-    await vi.waitFor(() => expect(result).toEqual([]));
+    await vi.waitFor(() => expect(result?.items).toEqual([]));
     httpMock.expectNone(() => true);
   });
 
   it('debe fusionar la cantidad de un item existente en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
-    let result: CartItem[] | undefined;
+    let result: CartSnapshot | undefined;
 
     service.addItem('of-9', 1).subscribe();
     service.addItem('of-9', 2).subscribe((items) => (result = items));
 
-    await vi.waitFor(() => expect(result?.[0].quantity).toBe(3));
+    await vi.waitFor(() => expect(result?.items[0].quantity).toBe(3));
   });
 
   it('debe actualizar y eliminar items en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
-    let afterUpdate: CartItem[] | undefined;
-    let afterRemove: CartItem[] | undefined;
+    let afterUpdate: CartSnapshot | undefined;
+    let afterRemove: CartSnapshot | undefined;
 
     service.addItem('of-1', 1).subscribe();
     service.updateQuantity('of-1', 5).subscribe((items) => (afterUpdate = items));
-    await vi.waitFor(() => expect(afterUpdate?.[0].quantity).toBe(5));
+    await vi.waitFor(() => expect(afterUpdate?.items[0].quantity).toBe(5));
 
     service.updateQuantity('of-1', 0).subscribe((items) => (afterRemove = items));
-    await vi.waitFor(() => expect(afterRemove).toEqual([]));
+    await vi.waitFor(() => expect(afterRemove?.items).toEqual([]));
   });
 
   it('debe eliminar y vaciar el carrito en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();
-    let afterRemove: CartItem[] | undefined;
-    let afterClear: CartItem[] | undefined;
+    let afterRemove: CartSnapshot | undefined;
+    let afterClear: CartSnapshot | undefined;
 
     service.addItem('of-1', 1).subscribe();
     service.removeItem('of-1').subscribe((items) => (afterRemove = items));
-    await vi.waitFor(() => expect(afterRemove).toEqual([]));
+    await vi.waitFor(() => expect(afterRemove?.items).toEqual([]));
 
     service.addItem('of-2', 1).subscribe();
     service.clearCart().subscribe((items) => (afterClear = items));
-    await vi.waitFor(() => expect(afterClear).toEqual([]));
+    await vi.waitFor(() => expect(afterClear?.items).toEqual([]));
   });
 
   it('debe emitir error de las mutaciones cuando no hay apiUrl', () => {
