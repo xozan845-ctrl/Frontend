@@ -104,6 +104,11 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  admin: {
+    layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
+    publicApi: false,
+    publicUi: false,
+  },
   'ai-scraper': {
     layers: [
       'adapters',
@@ -284,6 +289,7 @@ export const ALLOWED_COMMIT_TYPES = [
 export const ALLOWED_COMMIT_SCOPES = [
   // Features
   'account',
+  'admin',
   'ai-scraper',
   'auth',
   'billing',

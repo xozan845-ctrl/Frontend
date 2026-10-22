@@ -8,6 +8,7 @@ export interface ApiEndpointsConfig {
   cart: string;
   vendor: string;
   companies: string;
+  inventory: string;
 }
 
 export interface ApiConfiguration {
