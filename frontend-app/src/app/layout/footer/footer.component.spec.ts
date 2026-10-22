@@ -25,4 +25,16 @@ describe('Footer', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('debe volver arriba sin handler inline (R-SE-9)', () => {
+    const scrollSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const button = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+      '[aria-label="Volver arriba"]',
+    );
+
+    button?.click();
+
+    expect(scrollSpy).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+    scrollSpy.mockRestore();
+  });
 });
