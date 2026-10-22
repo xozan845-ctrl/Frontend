@@ -370,20 +370,22 @@ export const DOCS_SYNC_GATES = [
     ],
     exclude: [/\.spec\.ts$/],
     require: [
-      /^frontend-app\/docs\/.+\.md$/,
+      /^frontend-app\/docs\/rules\/(architecture|frontend|ui|security|test)\/.+\.md$/,
+      /^frontend-app\/docs\/decisiones\.md$/,
       /^frontend-app\/src\/app\/.+README\.md$/,
       /^frontend-app\/README\.md$/,
       /^README\.md$/,
     ],
     reason:
-      'Los cambios de lógica/contratos deben reflejarse en docs/ (docs/rules, ADR, README de app o de la capa).',
+      'Los cambios de lógica/contratos deben reflejarse en la documentación del área (docs/rules de arquitectura/frontend/ui/security/test), un ADR o el README de la capa.',
   },
   {
     id: 'governance',
     when: [/^frontend-app\/scripts\/.+\.(mjs|ts)$/],
     exclude: [/\.test\.mjs$/],
-    require: [/^frontend-app\/scripts\/README\.md$/, /^frontend-app\/docs\/.+\.md$/],
-    reason: 'Los cambios del motor de gobernanza deben actualizar scripts/README o docs/.',
+    require: [/^frontend-app\/scripts\/README\.md$/, /^frontend-app\/docs\/rules\/.+\.md$/],
+    reason:
+      'Los cambios del motor de gobernanza deben actualizar scripts/README o las reglas de docs/rules (no cualquier doc).',
   },
   {
     id: 'ci',

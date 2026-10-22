@@ -41,7 +41,7 @@ que son verificables por máquina.
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
 > quitar o renombrar una capa exige actualizar el contrato y la documentación
 > del feature en el mismo PR (`R-AR-16`).
-> | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige actualizar la documentación necesaria; se omite en `main`. |
+> | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige documentación **del área** (no cualquier `.md`); se omite en `main`. |
 
 ### Modelo de capas
 
@@ -199,6 +199,6 @@ check propio. `R-NC-10` (`any`) se verifica en ESLint
 `git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y
 `R-PR` (PR) siguen siendo proceso y revisión manual. La deuda arquitectónica
 aceptada está en **cero** (`config/baseline.mjs`). El gate `docs-sync` (`R-DO-8`)
-exige documentación actualizada cuando un PR toca lógica, el motor o CI, y
+exige documentación **del área** (rules de arquitectura/frontend/ui/security/test, ADR o README) cuando un PR toca lógica, el motor o CI, y
 `governance-coverage` (`R-DO-9`) impide que la cobertura baje de
 `COVERAGE_MIN_VERIFIED`.
