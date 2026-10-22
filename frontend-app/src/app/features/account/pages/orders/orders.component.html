@@ -48,7 +48,7 @@
             <div class="flex flex-col gap-1 min-w-0">
               <span class="font-black font-mono text-sm">{{ order.orderNumber }}</span>
               <span class="text-xs text-slate-500 dark:text-slate-400">
-                {{ order.status }} · {{ order.createdAt | date: 'short' }}
+                {{ statusLabel(order.status) }} · {{ order.createdAt | date: 'short' }}
               </span>
             </div>
             <div class="flex items-center gap-4 shrink-0">

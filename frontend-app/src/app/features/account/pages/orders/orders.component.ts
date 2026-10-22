@@ -6,6 +6,7 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AccountOrdersStore } from '../../state/account-orders/account-orders.store';
+import { orderStatusLabel } from '../../../cart/public-api';
 
 @Component({
   selector: 'app-orders',
@@ -17,6 +18,7 @@ export default class OrdersComponent {
   private readonly store = inject(AccountOrdersStore);
   private readonly seoService = injectSeoPage('Mis pedidos', 'Historial de tus compras.');
 
+  readonly statusLabel = orderStatusLabel;
   readonly orders = this.store.orders;
   readonly loading = this.store.loading;
   readonly error = this.store.error;

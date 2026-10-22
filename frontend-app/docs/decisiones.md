@@ -847,3 +847,29 @@ contexto y consecuencias.
   expiración) y evita añadir más unidades de las disponibles. El flujo de
   invitado no cambia. Revertir es volver a `CartItem[]` y retirar la vista de
   expiración/stock.
+
+## ADR-35: Órdenes del comprador y checkout alineados con `OrderViewResponseDto`
+
+- **Fecha**: 2026-10-22
+- **Estado**: Aceptado
+- **Contexto**: checkout, historial, detalle y timeline ya consumían `POST
+/orders`, `GET /orders`, `GET /orders/:id` y `GET /orders/:id/timeline`, pero
+  el adapter descartaba comisión, moneda, comprador/vendedor, dirección y fechas
+  del ciclo de vida. La UI mostraba el estado crudo del backend y un
+  `orderNumber` inventado cuando el contrato solo expone `id`.
+- **Decisión**:
+  - El modelo `OrderResponse` incorpora `buyerId`, `sellerId`, `commission`,
+    `currency`, `shippingAddress`, `updatedAt` y las fechas `paidAt`,
+    `shippedAt`, `deliveredAt`, `cancelledAt`, `returnedAt`.
+  - `orderNumber` se deriva del `id` real (`ORD-XXXXXXXX`); se mantiene
+    `order_number` como fallback tolerante para respuestas heredadas.
+  - Se añade `orderStatusLabel` para traducir `pagada`, `en_preparacion`,
+    `enviada`, `entregada`, `cancelada` y `devuelta` en historial, detalle y
+    confirmación.
+  - El checkout sigue creando la orden con `usar_carrito: true`; el backend
+    vacía el carrito y la confirmación usa la orden devuelta.
+- **Consecuencias**: el comprador ve estados legibles y la orden conserva el
+  contexto completo del contrato. Quedan para siguientes PRs las vistas de
+  administración (`/orders/admin/todas`), vendedor (`/orders/vendedor/*`,
+  comisiones) y el avance de estado logístico (`PATCH /orders/:id/estado`).
+  Revertir es volver al modelo reducido y al estado crudo.

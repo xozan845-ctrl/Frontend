@@ -46,7 +46,7 @@ describe('ConfirmationComponent', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
     expect(text).toContain('ORD-123456');
-    expect(text).toContain('creada');
+    expect(text).toContain('Creada');
     expect(text).toContain('C$2,760.00');
     expect(seo.setPage).toHaveBeenCalledWith(
       'Pedido confirmado',

@@ -46,19 +46,63 @@ export function adaptOrderResponse(raw: unknown, fallbackTotal: number): OrderRe
     typeof totalCents === 'number'
       ? totalCents / 100
       : Number(data.total ?? data.amount ?? fallbackTotal);
+  const commissionCents = data.comision_cents;
+  const commission =
+    typeof commissionCents === 'number'
+      ? commissionCents / 100
+      : data.comision !== undefined && data.comision !== null
+        ? Number(data.comision)
+        : undefined;
 
   const rawItems = data.items;
+  const orderId = String(id);
+  const orderNumber = String(
+    data.orderNumber ?? data.order_number ?? `ORD-${orderId.slice(-8).toUpperCase()}`,
+  );
 
   return {
     id,
-    orderNumber: String(data.orderNumber ?? data.order_number ?? `ORD-${String(id).slice(-6)}`),
+    orderNumber,
     status: String(data.estado ?? data.status ?? 'creada'),
     total,
     createdAt: String(
       data.creado_en ?? data.createdAt ?? data.created_at ?? new Date().toISOString(),
     ),
-    storeId: data.tienda_id ? String(data.tienda_id) : undefined,
-    items: Array.isArray(rawItems) ? rawItems.map(adaptOrderItem) : undefined,
+    ...(data.tienda_id ? { storeId: String(data.tienda_id) } : {}),
+    ...(data.comprador_id || data.compradorId
+      ? { buyerId: String(data.comprador_id ?? data.compradorId) }
+      : {}),
+    ...(data.vendedor_id || data.vendedorId
+      ? { sellerId: String(data.vendedor_id ?? data.vendedorId) }
+      : {}),
+    ...(commission !== undefined && Number.isFinite(commission) ? { commission } : {}),
+    ...(typeof data.moneda === 'string' && data.moneda
+      ? { currency: data.moneda }
+      : typeof data.currency === 'string' && data.currency
+        ? { currency: data.currency }
+        : {}),
+    ...(data.direccion_envio !== undefined && data.direccion_envio !== null
+      ? { shippingAddress: data.direccion_envio }
+      : data.shippingAddress !== undefined && data.shippingAddress !== null
+        ? { shippingAddress: data.shippingAddress }
+        : {}),
+    ...(Array.isArray(rawItems) ? { items: rawItems.map(adaptOrderItem) } : {}),
+    ...((data.actualizado_en ?? data.updatedAt)
+      ? { updatedAt: String(data.actualizado_en ?? data.updatedAt) }
+      : {}),
+    ...((data.pagada_en ?? data.paidAt) ? { paidAt: String(data.pagada_en ?? data.paidAt) } : {}),
+    ...((data.enviada_en ?? data.shippedAt)
+      ? { shippedAt: String(data.enviada_en ?? data.shippedAt) }
+      : {}),
+    ...((data.entregada_en ?? data.deliveredAt)
+      ? { deliveredAt: String(data.entregada_en ?? data.deliveredAt) }
+      : {}),
+    ...((data.cancelada_en ?? data.cancelledAt)
+      ? { cancelledAt: String(data.cancelada_en ?? data.cancelledAt) }
+      : {}),
+    ...((data.devuelta_en ?? data.returnedAt)
+      ? { returnedAt: String(data.devuelta_en ?? data.returnedAt) }
+      : {}),
   };
 }
 

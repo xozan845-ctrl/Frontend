@@ -1,5 +1,6 @@
 <div
   class="min-h-screen bg-slate-50 dark:bg-surface-900 py-24 px-4 transition-colors duration-300 flex items-center justify-center"
+  data-testid="order-confirmation"
 >
   <div
     class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-[2rem] border border-slate-200 dark:border-surface-700 p-8 md:p-16 shadow-xl"
@@ -43,7 +44,7 @@
           >
           <span
             class="text-xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter"
-            >{{ ord.status }}</span
+            >{{ statusLabel(ord.status) }}</span
           >
         </div>
         <div
