@@ -9,7 +9,9 @@
     >
       Acceso
     </h2>
-    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-10">
+    <p
+      class="text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 mb-10"
+    >
       Credenciales de cuenta
     </p>
 
@@ -44,7 +46,9 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
-        <label for="email" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+        <label
+          for="email"
+          class="text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400"
           >Correo Electrónico</label
         >
         <input
@@ -63,7 +67,9 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="password" class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+        <label
+          for="password"
+          class="text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400"
           >Contraseña</label
         >
         <div class="relative">
@@ -111,13 +117,13 @@
     <div class="mt-6 text-center">
       <a
         routerLink="/recuperar"
-        class="text-xs font-bold text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+        class="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
         >¿Olvidaste tu contraseña?</a
       >
     </div>
 
     <div
-      class="mt-8 text-center text-xs font-bold text-slate-500 border-t border-slate-200 dark:border-surface-700 pt-6"
+      class="mt-8 text-center text-xs font-bold text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-surface-700 pt-6"
     >
       ¿No tienes una cuenta?
       <a
