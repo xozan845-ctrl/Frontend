@@ -18,7 +18,7 @@ updates:
       dev-minor-patch:
         dependency-type: development
         update-types: [minor, patch]
-        # R-CI-8: Angular va siempre completo al grupo `angular` (compiler y
+        # R-CI-8: todo Angular va junto al grupo `angular` (compiler y
         # compiler-cli deben subir juntos o el lock queda inconsistente).
         exclude-patterns: ["@angular/*", "@angular-devkit/*"]
 
