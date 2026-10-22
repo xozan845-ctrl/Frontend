@@ -1,0 +1,256 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="admin-orders-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/admin/inventario" class="transition-colors hover:text-accent-600">
+          Inventario
+        </a>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Pedidos</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Pedidos
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Todas las órdenes de la plataforma, su timeline y el avance logístico.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="orders.loading()"
+      data-testid="refresh-admin-orders"
+      (click)="orders.load()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="orders.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (orders.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="admin-orders-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button type="button" class="btn btn-secondary btn-sm self-start" (click)="orders.load()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <div class="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
+    <section class="card flex flex-col gap-4 p-5" aria-labelledby="admin-orders-list-title">
+      <header class="flex flex-wrap items-end justify-between gap-3">
+        <h2
+          id="admin-orders-list-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Órdenes
+        </h2>
+        <div class="flex items-center gap-2">
+          <label for="admin-orders-status" class="sr-only">Filtrar por estado</label>
+          <select
+            id="admin-orders-status"
+            class="input py-1.5 text-xs"
+            data-testid="admin-orders-status"
+            (change)="onStatusFilterChange($event)"
+          >
+            <option value="">Todos los estados</option>
+            <option value="pagada">Pagada</option>
+            <option value="en_preparacion">En preparación</option>
+            <option value="enviada">Enviada</option>
+            <option value="entregada">Entregada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="devuelta">Devuelta</option>
+          </select>
+        </div>
+      </header>
+
+      @if (orders.loading()) {
+        <div class="flex flex-col gap-2" role="status" aria-live="polite">
+          <span class="sr-only">Cargando órdenes…</span>
+          <app-skeleton-loader height="52px" customClass="rounded-xl" />
+          <app-skeleton-loader height="52px" customClass="rounded-xl" />
+          <app-skeleton-loader height="52px" customClass="rounded-xl" />
+        </div>
+      } @else if (orders.orders().length === 0) {
+        <p
+          class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+          data-testid="admin-orders-empty"
+        >
+          No hay órdenes para este filtro.
+        </p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" data-testid="admin-orders-table">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+              >
+                <th scope="col" class="py-2 pr-3 font-bold">Orden</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Total</th>
+                <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+              @for (order of orders.orders(); track order.id) {
+                <tr data-testid="admin-order-row">
+                  <td class="py-3 pr-3">
+                    <p class="font-mono text-xs font-bold text-slate-900 dark:text-white">
+                      {{ order.orderNumber }}
+                    </p>
+                    <p class="text-[10px] text-slate-400">{{ order.createdAt | date: 'short' }}</p>
+                  </td>
+                  <td class="py-3 pr-3">
+                    <span
+                      class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-widest text-slate-600 uppercase dark:bg-surface-700 dark:text-slate-300"
+                    >
+                      {{ statusLabel(order.status) }}
+                    </span>
+                  </td>
+                  <td class="py-3 pr-3 text-right font-bold tabular-nums">
+                    {{ order.total | appCurrency }}
+                  </td>
+                  <td class="py-3 text-right">
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      [attr.data-testid]="'admin-order-select-' + order.id"
+                      (click)="selectOrder(order.id)"
+                    >
+                      Ver
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="card flex flex-col gap-4 p-5" aria-labelledby="admin-order-detail-title">
+      <header class="flex items-center justify-between gap-3">
+        <h2
+          id="admin-order-detail-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Detalle
+        </h2>
+        @if (orders.selectedOrder()) {
+          <button type="button" class="btn btn-secondary btn-sm" (click)="orders.closeOrder()">
+            Cerrar
+          </button>
+        }
+      </header>
+
+      @if (orders.selectedLoading()) {
+        <div class="flex flex-col gap-2" role="status" aria-live="polite">
+          <span class="sr-only">Cargando detalle de la orden…</span>
+          <app-skeleton-loader height="80px" customClass="rounded-xl" />
+          <app-skeleton-loader height="120px" customClass="rounded-xl" />
+        </div>
+      } @else if (orders.selectedError(); as message) {
+        <p
+          class="rounded-xl bg-red-50 p-3 text-xs font-bold text-red-600 dark:bg-red-900/10 dark:text-red-400"
+        >
+          {{ message }}
+        </p>
+      } @else if (orders.selectedOrder(); as order) {
+        <div class="flex flex-col gap-4" data-testid="admin-order-detail">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p class="font-mono text-sm font-black">{{ order.orderNumber }}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                {{ statusLabel(order.status) }} · {{ order.createdAt | date: 'medium' }}
+              </p>
+            </div>
+            <span class="text-lg font-black">{{ order.total | appCurrency }}</span>
+          </div>
+
+          @if (order.items && order.items.length > 0) {
+            <div class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700">
+              @for (item of order.items; track item.ofertaId) {
+                <div class="flex items-center justify-between gap-3 py-2 text-xs">
+                  <span class="font-bold">{{ item.name }} × {{ item.quantity }}</span>
+                  <span class="tabular-nums">{{
+                    item.unitPrice * item.quantity | appCurrency
+                  }}</span>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="rounded-xl border border-slate-200 p-4 dark:border-surface-600">
+            <h3 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">
+              Avanzar estado
+            </h3>
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+              <select
+                class="input py-1.5 text-xs"
+                data-testid="admin-order-target-status"
+                [value]="targetStatus()"
+                (change)="onTargetStatusChange($event)"
+              >
+                @for (state of targetStates; track state.value) {
+                  <option [value]="state.value">{{ state.label }}</option>
+                }
+              </select>
+              <input
+                type="text"
+                class="input py-1.5 text-xs"
+                placeholder="Motivo (opcional)"
+                data-testid="admin-order-reason"
+                [value]="reason()"
+                (input)="onReasonInput($event)"
+              />
+              <button
+                type="button"
+                class="btn btn-primary btn-sm shrink-0"
+                [disabled]="orders.updating()"
+                data-testid="admin-order-advance"
+                (click)="advanceStatus()"
+              >
+                {{ orders.updating() ? 'Guardando…' : 'Avanzar' }}
+              </button>
+            </div>
+          </div>
+
+          @if (orders.timeline().length > 0) {
+            <ol class="flex flex-col gap-3" data-testid="admin-order-timeline">
+              @for (event of orders.timeline(); track event.id) {
+                <li class="flex items-start gap-3">
+                  <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent-600"></span>
+                  <div>
+                    <p class="text-xs font-bold uppercase">{{ event.type }}</p>
+                    <p class="text-[10px] text-slate-400">
+                      {{ event.createdAt | date: 'medium' }}
+                    </p>
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </div>
+      } @else {
+        <p
+          class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+          data-testid="admin-order-detail-empty"
+        >
+          Selecciona una orden para ver su detalle.
+        </p>
+      }
+    </section>
+  </div>
+</div>

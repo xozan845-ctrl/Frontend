@@ -428,6 +428,30 @@ export async function mockApi(page: Page): Promise<void> {
   const pedidos = pedidosIniciales(new Date());
   const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
   const catalogo = CATALOGO_INICIAL.map((producto) => ({ ...producto }));
+  const ordenes = [
+    {
+      id: 'o-100',
+      vendedor_id: 'vendedor-demo',
+      comprador_id: 'comprador-demo',
+      tienda_id: 'tienda-demo',
+      estado: 'pagada',
+      total_cents: 230000,
+      comision_cents: 27600,
+      moneda: 'C$',
+      items: [
+        {
+          oferta_id: 'of-1',
+          sku: 'SKU-AUD-01',
+          producto_nombre: 'Ultra-Comfort Wireless Headphones',
+          cantidad: 2,
+          precio_unitario_cents: 115000,
+          tienda_id: 'tienda-demo',
+        },
+      ],
+      creado_en: '2026-10-22T15:00:00.000Z',
+      actualizado_en: '2026-10-22T15:00:00.000Z',
+    },
+  ];
 
   await page.route(
     (url) => url.pathname.startsWith('/api/v1/'),
@@ -439,6 +463,63 @@ export async function mockApi(page: Page): Promise<void> {
 
       if (method === 'GET' && /^\/tiendas\/[^/]+$/.test(path)) {
         await route.fulfill({ json: storefrontDe(path.split('/')[2]) });
+        return;
+      }
+
+      if (method === 'GET' && path === '/orders/admin/todas') {
+        const estado = url.searchParams.get('estado');
+        await route.fulfill({
+          json: estado ? ordenes.filter((orden) => orden.estado === estado) : ordenes,
+        });
+        return;
+      }
+
+      if (method === 'GET' && /^\/orders\/[^/]+\/timeline$/.test(path)) {
+        await route.fulfill({
+          json: [
+            {
+              id: 1,
+              tipo: 'OrderCreatedEvent',
+              payload: {},
+              version: 1,
+              creado_en: '2026-10-22T15:00:00.000Z',
+            },
+          ],
+        });
+        return;
+      }
+
+      if (method === 'GET' && /^\/orders\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[2]);
+        const orden = ordenes.find((candidate) => candidate.id === id);
+        if (orden) {
+          await route.fulfill({ json: orden });
+          return;
+        }
+        await route.fulfill({ status: 404, json: { mensaje: 'Orden no encontrada.' } });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/orders\/[^/]+\/estado$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[2]);
+        const payload = request.postDataJSON() as { estado?: string } | null;
+        const orden = ordenes.find((candidate) => candidate.id === id);
+        if (orden && payload?.estado) {
+          orden.estado = payload.estado;
+          orden.actualizado_en = '2026-10-22T15:10:00.000Z';
+          await route.fulfill({
+            json: {
+              id: orden.id,
+              cliente_id: orden.comprador_id,
+              items: [],
+              total: '2300.00',
+              total_cents: orden.total_cents,
+              estado: orden.estado,
+            },
+          });
+          return;
+        }
+        await route.fulfill({ status: 400, json: { mensaje: 'Estado inválido.' } });
         return;
       }
 
