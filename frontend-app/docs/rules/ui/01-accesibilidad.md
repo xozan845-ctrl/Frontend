@@ -2,15 +2,15 @@
 
 Aplica a: todos los componentes y plantillas de la aplicación.
 
-| ID     | Regla                                                                                                                                                                                                 |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R-AC-1 | **Nombre accesible en todo control**: botones, enlaces e inputs tienen texto visible o `aria-label`/`aria-labelledby`. Un icono sin texto exige `aria-label`.                                         |
-| R-AC-2 | **Navegación por teclado**: todo control es alcanzable y accionable con teclado, en orden lógico, con foco visible (`focus-visible`/`:focus-visible`); prohibido eliminar el outline sin sustituirlo. |
-| R-AC-3 | **Diálogos y modales**: usan `role="dialog"` + `aria-modal="true"`, un nombre accesible, cierran con `Escape`, atrapan el foco mientras están abiertos y lo devuelven al disparador al cerrar.        |
-| R-AC-4 | **Imágenes**: informativas con `alt` descriptivo; decorativas con `alt=""`. Prohibido dejar `alt` ausente.                                                                                            |
-| R-AC-5 | **Contraste**: el texto y los controles cumplen contraste AA (4.5:1 texto normal, 3:1 texto grande) tanto en tema claro como oscuro.                                                                  |
-| R-AC-6 | **Movimiento**: respetar `prefers-reduced-motion` (desactivar o reducir animaciones no esenciales).                                                                                                   |
-| R-AC-7 | **Contenido dinámico**: los avisos (toasts) y cambios relevantes de estado se anuncian con región viva (`role="status"`/`aria-live`) o foco gestionado.                                               |
+| ID     | Regla                                                                                                                                                                                                                                |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R-AC-1 | **Nombre accesible en todo control**: botones, enlaces e inputs tienen texto visible o `aria-label`/`aria-labelledby`. Un icono sin texto exige `aria-label`.                                                                        |
+| R-AC-2 | **Navegación por teclado**: todo control es alcanzable y accionable con teclado, en orden lógico, con foco visible (`focus-visible`/`:focus-visible`); prohibido eliminar el outline sin sustituirlo.                                |
+| R-AC-3 | **Diálogos y modales**: usan `role="dialog"` + `aria-modal="true"`, un nombre accesible, cierran con `Escape`, atrapan el foco mientras están abiertos y lo devuelven al disparador al cerrar.                                       |
+| R-AC-4 | **Imágenes**: informativas con `alt` descriptivo; decorativas con `alt=""`. Prohibido dejar `alt` ausente.                                                                                                                           |
+| R-AC-5 | **Contraste**: el texto y los controles cumplen contraste AA (4.5:1 texto normal, 3:1 texto grande) tanto en tema claro como oscuro. Texto secundario sobre fondos claros usa `text-slate-600` (no `slate-500`, que queda al borde). |
+| R-AC-6 | **Movimiento**: respetar `prefers-reduced-motion` (desactivar o reducir animaciones no esenciales).                                                                                                                                  |
+| R-AC-7 | **Contenido dinámico**: los avisos (toasts) y cambios relevantes de estado se anuncian con región viva (`role="status"`/`aria-live`) o foco gestionado.                                                                              |
 
 ## Notas
 
