@@ -6,7 +6,7 @@
 > **lista de tareas** para dejar el despliegue acorde a esa normativa.
 >
 > **Estado:** el repo ya incluye `Dockerfile` (multi-stage, `node:22-alpine` →
-> `nginx:1.27-alpine`) y `nginx.conf` versionados; los pasos restantes son la
+> `nginx:1.31-alpine`) y `nginx.conf` versionados; los pasos restantes son la
 > configuración del proyecto/environment en Dockploy y el dominio/HTTPS.
 
 ## 0. Objetivo
@@ -50,7 +50,7 @@ Pasos:
 ## 3. Artefactos versionados (raíz del repo)
 
 - **`Dockerfile`** (raíz, multi-stage): `node:22-alpine` → `npm ci && npm run build`
-  → `nginx:1.27-alpine` sirviendo `dist/frontend-app/browser`.
+  → `nginx:1.31-alpine` sirviendo `dist/frontend-app/browser`.
 - **`nginx.conf`** (raíz) con **fallback de rutas SPA**, cabeceras de seguridad
   (CSP incluida) y reglas de cache:
 
