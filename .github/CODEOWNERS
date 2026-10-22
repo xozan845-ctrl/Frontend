@@ -1,0 +1,14 @@
+# CODEOWNERS — revisión por rol (R-GB-1, R-PR-6)
+#
+# Hoy el repo lo mantiene una sola cuenta, así que `main` exige checks pero no
+# code owner reviews (sería un deadlock). Cuando exista un segundo mantenedor,
+# activar `require_code_owner_reviews` en la protección de `main`.
+
+* @xozan845-ctrl
+
+# Rutas críticas (documentadas para cuando haya más de un revisor)
+/.github/ @xozan845-ctrl
+/frontend-app/scripts/ @xozan845-ctrl
+/frontend-app/docs/rules/ @xozan845-ctrl
+/frontend-app/angular.json @xozan845-ctrl
+/frontend-app/package.json @xozan845-ctrl
