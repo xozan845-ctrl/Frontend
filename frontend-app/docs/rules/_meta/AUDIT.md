@@ -12,8 +12,8 @@
   presupuesto inicial **513.09 kB** dentro del techo **515 kB** (error 560 kB),
   cobertura **95.31/89.55/94.84/96.11** sobre umbrales **94/88/93/95** más diff
   coverage **80%**, `npm audit` en **0**, **27 flujos E2E** (incluye axe en
-  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **38/252**
-  IDs de regla con check real; quedan **2 contextuales** (`R-AR-3`, `R-AR-5`)
+  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **40/252**
+  IDs de regla con check real; queda **1 contextual** (`R-AR-5`)
   declaradas en `cites`. Sin deudas abiertas.
 
 ## Evidencia ejecutada (2026-10-22)
@@ -34,7 +34,7 @@
 
 ### Cobertura del motor de reglas (`R-DO-9`)
 
-- **38/252** IDs con check real; **2 contextuales** (`R-AR-3`, `R-AR-5`) en `cites`.
+- **40/252** IDs con check real; **1 contextual** (`R-AR-5`) en `cites`.
 - Suites nuevas de esta fase: `store-guards` (R-ST-1/2/4/7), `naming-guards`
   (R-NC-1/2/11), `coverage-guards` (R-COV-2) y R-NC-9 en `architecture-types`.
 - Gates de calidad en CI: `check-budget` (R-PF-1), `coverage:diff` (R-COV-5),
@@ -44,19 +44,19 @@
 
 ### Arquitectura y naming (`R-AR`, `R-NC`)
 
-| Regla                       | Estado | Evidencia                                                                                                                                |
-| --------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| R-AR-1/2 estructura         | ✅     | `core/`, `shared/`, `layout/`, `features/`; `core`/`shared`/`layout` no importan features                                                |
-| R-AR-3 puertos + DI         | 🟡     | **Contextual** (sin check propio): stores dependen **solo** de `InjectionToken`; `stores` y `vendor` proveen sus puertos en su ruta lazy |
-| R-AR-4/7/8/9/11             | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores traducidos, entorno (R-AR-5 contextual)                        |
-| R-AR-6/12 rutas             | ✅     | `<feature>.routes.ts`; `stores` y `vendor` con `loadChildren`; páginas lazy                                                              |
-| R-AR-10 ciclo de vida       | ✅     | `rxMethod` (se libera con el store) + `takeUntilDestroyed` + listeners y sondeo liberados                                                |
-| R-AR-13 frontera de `core/` | ✅     | `core/{config,constants,models,services}` sin UI ni features                                                                             |
-| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                                                             |
-| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                                                              |
-| R-NC-9/10 DTO vs modelo     | ✅     | `models/*.dto.ts` con `Backend...DTO` (`product`, `store`, `vendor`); `strict` + `unknown` + narrowing                                   |
-| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_cart_items`, `ecom_refresh_token`, …                                                                                 |
-| R-NC-12 rutas               | ✅     | `kebab-case`; idioma por tipo de término (ADR-17); `**` → `not-found`                                                                    |
+| Regla                       | Estado | Evidencia                                                                                                         |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------- |
+| R-AR-1/2 estructura         | ✅     | `core/`, `shared/`, `layout/`, `features/`; `core`/`shared`/`layout` no importan features                         |
+| R-AR-3 puertos + DI         | ✅     | `architecture-ports`: 16 repositorios con interfaz + `InjectionToken`; stores sin adapters ni `HttpClient`        |
+| R-AR-4/7/8/9/11             | ✅     | Adapters, signal stores, reactive forms, sin HTTP en componentes, errores traducidos, entorno (R-AR-5 contextual) |
+| R-AR-6/12 rutas             | ✅     | `<feature>.routes.ts`; `stores` y `vendor` con `loadChildren`; páginas lazy                                       |
+| R-AR-10 ciclo de vida       | ✅     | `rxMethod` (se libera con el store) + `takeUntilDestroyed` + listeners y sondeo liberados                         |
+| R-AR-13 frontera de `core/` | ✅     | `core/{config,constants,models,services}` sin UI ni features                                                      |
+| R-NC-1 sufijo `.component`  | ✅     | **0** componentes sin sufijo                                                                                      |
+| R-NC-2 plantillas/estilos   | ✅     | Plantillas y estilos en archivos hermanos; sin `styles: []` en el decorador                                       |
+| R-NC-9/10 DTO vs modelo     | ✅     | `models/*.dto.ts` con `Backend...DTO` (`product`, `store`, `vendor`); `strict` + `unknown` + narrowing            |
+| R-NC-11 claves `ecom_`      | ✅     | `ecom_theme`, `ecom_cart_items`, `ecom_refresh_token`, …                                                          |
+| R-NC-12 rutas               | ✅     | `kebab-case`; idioma por tipo de término (ADR-17); `**` → `not-found`                                             |
 
 ### Ingeniería frontend (`R-CX`, `R-SO`, `R-SH`, `R-LZ`, `R-ST`, `R-PF`, `R-HI`)
 
