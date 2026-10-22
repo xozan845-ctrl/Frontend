@@ -8,6 +8,9 @@ import { mockApi } from './api-mock';
 const STORE = '/tienda/tienda-demo';
 
 const expectNoSeriousIssues = async (page: Page) => {
+  // Determinismo: espera a las fuentes antes de auditar (R-AC).
+  await page.evaluate(() => document.fonts.ready);
+
   const results = await new AxeBuilder({ page }).analyze();
   const blocking = results.violations
     .filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
