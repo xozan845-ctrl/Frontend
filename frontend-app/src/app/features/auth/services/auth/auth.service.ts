@@ -279,6 +279,13 @@ export class AuthService implements AuthRepository {
   private mockLogin(credentials: LoginCredentials): Observable<AuthResponse> {
     if (credentials.email && credentials.password.length >= 6) {
       const name = credentials.email.split('@')[0];
+      const role = credentials.email.startsWith('admin')
+        ? 'admin'
+        : credentials.email.startsWith('empresario')
+          ? 'empresario'
+          : credentials.email.startsWith('vendedor')
+            ? 'vendedor'
+            : 'comprador';
       const mockUser: User = {
         id: Math.floor(Math.random() * 1000),
         email: credentials.email,
@@ -286,13 +293,20 @@ export class AuthService implements AuthRepository {
         // Convención E2E (`R-E-12`): un correo que empieza con `vendedor` entra
         // con rol vendedor y uno con `empresario` con rol empresario (ADR-26,
         // ADR-27) para probar el panel sin backend.
-        role: credentials.email.startsWith('admin')
-          ? 'admin'
-          : credentials.email.startsWith('empresario')
-            ? 'empresario'
-            : credentials.email.startsWith('vendedor')
-              ? 'vendedor'
-              : 'comprador',
+        role,
+        ...(role === 'vendedor'
+          ? {
+              tenantId: 'empresa-demo',
+              storeId: 'tienda-demo',
+              logisticsOwnership: 'store' as const,
+            }
+          : {}),
+        ...(role === 'empresario' && credentials.email.startsWith('empresario-logistica')
+          ? {
+              tenantId: 'empresa-demo',
+              logisticsOwnership: 'company' as const,
+            }
+          : {}),
       };
       return of({
         user: mockUser,

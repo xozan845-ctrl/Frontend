@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { workspaceGuard } from '../auth/public-api';
 
 /**
  * Rutas del módulo de facturación (ADR-23): extensión visual del panel del
@@ -9,6 +10,8 @@ import { Routes } from '@angular/router';
 export const BILLING_ROUTES: Routes = [
   {
     path: '',
+    canActivate: [workspaceGuard],
+    data: { workspace: 'store', permission: 'store:manage-billing' },
     loadComponent: () => import('./pages/billing-shell/billing-shell.component'),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'nueva' },

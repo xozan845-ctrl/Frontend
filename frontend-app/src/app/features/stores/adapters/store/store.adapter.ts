@@ -19,11 +19,15 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
 
   return {
     id: String(id),
+    ...(typeof tienda.slug === 'string' && tienda.slug ? { slug: tienda.slug } : {}),
     vendorId: String(tienda.vendedor_id ?? tienda.vendorId ?? ''),
     name: typeof tienda.nombre === 'string' ? tienda.nombre : 'Tienda',
     description: typeof tienda.descripcion === 'string' ? tienda.descripcion : '',
     ...(tienda.empresa_id !== null && tienda.empresa_id !== undefined && tienda.empresa_id !== ''
       ? { companyId: String(tienda.empresa_id) }
+      : {}),
+    ...(typeof tienda.empresa_slug === 'string' && tienda.empresa_slug
+      ? { companySlug: tienda.empresa_slug }
       : {}),
     ...(tienda.propietario_usuario_id !== null &&
     tienda.propietario_usuario_id !== undefined &&

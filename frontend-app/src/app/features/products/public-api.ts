@@ -6,6 +6,9 @@ export type { Product, ProductVariant } from './models/product.model';
 export type { Store } from './models/store.model';
 export { ProductStore } from './state/product/product.store';
 export { ReviewsStore } from './state/reviews/reviews.store';
+export { CatalogProductsStore } from './state/catalog-product/catalog-product.store';
+export { CATALOG_PRODUCT_REPOSITORY } from './repositories/catalog-product.repository';
+export { CatalogProductService } from './services/catalog-product/catalog-product.service';
 export type {
   CatalogProduct,
   CatalogProductFilters,

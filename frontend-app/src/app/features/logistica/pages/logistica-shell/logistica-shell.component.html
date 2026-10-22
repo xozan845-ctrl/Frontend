@@ -17,7 +17,7 @@
     <span
       class="font-heading text-sm font-black tracking-widest text-slate-900 uppercase dark:text-white"
     >
-      Logística
+      {{ contextLabel() }}
     </span>
   </div>
 
@@ -25,6 +25,7 @@
     <app-logistica-sidebar
       id="logistica-sidebar"
       [open]="isSidebarOpen()"
+      [basePath]="basePath()"
       (closed)="closeSidebar()"
       (itemSelected)="closeSidebar()"
     />

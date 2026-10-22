@@ -57,58 +57,30 @@ describe('Navbar', () => {
     expect(component).toBeTruthy();
   });
 
-  // ADR-22: el enlace es visible siempre; el `vendorGuard` decide el acceso.
-  it('debe mostrar el enlace al panel del vendedor sin sesión', async () => {
+  it('no debe mezclar módulos internos en el header público sin sesión', async () => {
     currentUser.set(null);
     fixture.detectChanges();
 
-    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'));
-    expect(desktop.nativeElement.getAttribute('href')).toBe('/vendedor/inicio');
-    expect(
-      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
-    ).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-logistica-link"]'))).toBeNull();
   });
 
-  it('debe mostrar el enlace al panel del vendedor con rol comprador', async () => {
+  it('no debe mostrar módulos internos a un comprador', async () => {
     currentUser.set({ id: 2, name: 'Cami', email: 'c@c.com', role: 'comprador' });
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeTruthy();
-    expect(
-      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
-    ).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-logistica-link"]'))).toBeNull();
   });
 
-  it('debe mostrar el enlace al panel del vendedor con rol vendedor', async () => {
+  it('mantiene el header público sin módulos internos con rol vendedor', async () => {
     currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
     fixture.detectChanges();
 
-    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'));
-    expect(desktop.nativeElement.getAttribute('href')).toBe('/vendedor/inicio');
-    expect(
-      fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link-mobile"]')),
-    ).toBeTruthy();
-  });
-
-  // ADR-24: sin sesión, Facturación abre el alta de cuenta de facturador.
-  it('debe enlazar facturación al alta de facturador sin sesión', async () => {
-    currentUser.set(null);
-    fixture.detectChanges();
-
-    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'));
-    expect(desktop.nativeElement.getAttribute('href')).toBe(
-      '/register?rol=biller&returnUrl=%2Ffacturacion%2Fnueva',
-    );
-    expect(
-      fixture.debugElement.query(By.css('[data-testid="navbar-billing-link-mobile"]')),
-    ).toBeTruthy();
-  });
-
-  it('debe llevar facturación directo al módulo cuando hay sesión', async () => {
-    currentUser.set({ id: 1, name: 'Vera', email: 'v@v.com', role: 'vendedor' });
-    fixture.detectChanges();
-
-    const desktop = fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'));
-    expect(desktop.nativeElement.getAttribute('href')).toBe('/facturacion/nueva');
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-vendor-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="navbar-logistica-link"]'))).toBeNull();
   });
 });

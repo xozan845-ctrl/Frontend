@@ -5,6 +5,8 @@
  */
 export interface BackendTiendaDTO {
   id?: string | number | null;
+  slug?: string | null;
+  empresa_slug?: string | null;
   empresa_id?: string | number | null;
   propietario_usuario_id?: string | number | null;
   participacion_porcentaje?: number | string | null;

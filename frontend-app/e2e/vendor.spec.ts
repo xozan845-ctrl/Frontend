@@ -99,34 +99,23 @@ test('R-E-19: la lista de pedidos filtra por estado y el detalle carga', async (
   await expect(page.locator('[data-testid="detail-line"]')).toHaveCount(2);
 });
 
-// R-E-21: el enlace "Vendedor" es visible sin sesión y guía del navbar al alta
-// de vendedor (login → cuenta de vendedor) hasta entrar al panel (ADR-22).
-test('R-E-21: el enlace de vendedor guía del navbar al alta y al panel', async ({ page }) => {
+// R-E-21: el header público no mezcla módulos internos; el CTA de la portada
+// es la entrada al onboarding de propietario.
+test('R-E-21: la portada separa el onboarding de los módulos internos', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  // Visible sin sesión: redirige al login conservando el destino.
-  await page.getByTestId('navbar-vendor-link').click();
-  await expect(page).toHaveURL(/\/login\?returnUrl=%2Fvendedor%2Finicio/);
+  await expect(page.getByTestId('navbar-vendor-link')).toHaveCount(0);
+  await expect(page.getByTestId('navbar-billing-link')).toHaveCount(0);
+  await expect(page.getByTestId('navbar-logistica-link')).toHaveCount(0);
 
-  // El login ofrece crear la cuenta de vendedor.
-  await expect(page.getByTestId('vendor-intent-notice')).toBeVisible();
-  await page.getByRole('link', { name: 'Crea tu cuenta de vendedor' }).click();
-  await expect(page).toHaveURL(/\/register\?.*rol=seller/);
-
-  // Alta de vendedor: el mock (R-E-12) registra el rol y vuelve al panel.
-  await page.locator('#name').fill('Vera Vendedora');
-  await page.locator('#email').fill('vendedor.nuevo@tienda.test');
-  await page.locator('#password').fill('secreto1');
-  await page.getByRole('button', { name: 'Registrar Cuenta' }).click();
-
-  await expect(page).toHaveURL(/\/vendedor\/inicio/);
-  await expect(page.getByTestId('dashboard-page')).toBeVisible();
+  await page.getByRole('button', { name: 'Crear mi tienda' }).click();
+  await expect(page).toHaveURL(/\/crear-tienda/);
 });
 
 // R-E-22: un empresario sin empresa la crea desde el panel y ve su ficha
 // (ADR-27). El mock de auth distingue `empresario@…` (R-E-12).
-test('R-E-22: el empresario crea su empresa desde el panel', async ({ page }) => {
-  await login(page, '/vendedor/empresa', 'empresario@tienda.test');
+test('R-E-22: el empresario crea su empresa desde el workspace', async ({ page }) => {
+  await login(page, '/empresa/inicio', 'empresario@tienda.test');
 
   await expect(page.getByTestId('create-company-form')).toBeVisible();
   await page.getByTestId('company-name').fill('Mi Empresa');
@@ -173,10 +162,10 @@ test('R-E-24: el vendedor consulta la ficha de su tienda', async ({ page }) => {
   );
 });
 
-// R-E-26: el empresario consulta el catálogo maestro y crea un producto
-// (`GET/POST /catalog/productos`, ADR-32).
+// R-E-26: el empresario consulta el catálogo maestro y crea un producto desde
+// su workspace de empresa (`GET/POST /catalog/productos`, ADR-32).
 test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) => {
-  await login(page, '/vendedor/catalogo', 'empresario@tienda.test');
+  await login(page, '/empresa/productos', 'empresario@tienda.test');
 
   await expect(page.getByTestId('catalog-page')).toBeVisible();
   await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(6);
@@ -199,7 +188,7 @@ test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) 
 // (`GET /empresarios/me/envios`) y asigna la flota de un envío híbrido
 // (`POST /empresarios/me/envios/:id/asignacion`, ADR-37).
 test('R-E-31: el empresario asigna la flota de un envío híbrido', async ({ page }) => {
-  await login(page, '/logistica/envios', 'empresario@tienda.test');
+  await login(page, '/empresa/logistica/envios', 'empresario-logistica@tienda.test');
 
   await expect(page.getByTestId('envios-page')).toBeVisible();
   await expect(page.locator('[data-testid="envio-row"]')).toHaveCount(2);
@@ -215,7 +204,7 @@ test('R-E-31: el empresario asigna la flota de un envío híbrido', async ({ pag
 // R-E-33: el empresario consulta las rutas de campo, completa una parada y
 // cambia el estado de la ruta (`GET/PATCH /field/rutas`, ADR-39).
 test('R-E-33: el empresario opera las rutas de campo', async ({ page }) => {
-  await login(page, '/logistica/rutas', 'empresario@tienda.test');
+  await login(page, '/empresa/logistica/rutas', 'empresario-logistica@tienda.test');
 
   await expect(page.getByTestId('rutas-page')).toBeVisible();
   await expect(page.locator('[data-testid="ruta-row"]')).toHaveCount(1);
@@ -234,7 +223,7 @@ test('R-E-33: el empresario opera las rutas de campo', async ({ page }) => {
 // R-E-34: el empresario consulta el personal de campo, su disponibilidad y su
 // ubicación reportada (`GET /field/personal`, ADR-40).
 test('R-E-34: el empresario consulta el personal de reparto', async ({ page }) => {
-  await login(page, '/logistica/repartidores', 'empresario@tienda.test');
+  await login(page, '/empresa/logistica/repartidores', 'empresario-logistica@tienda.test');
 
   await expect(page.getByTestId('personal-page')).toBeVisible();
   await expect(page.locator('[data-testid="personal-row"]')).toHaveCount(2);

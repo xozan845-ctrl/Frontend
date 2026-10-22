@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Params, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore } from '../../features/auth/public-api';
 import { CartStore, CartUiStore } from '../../features/cart/public-api';
@@ -31,19 +31,6 @@ export class Navbar {
   readonly wishlistLink = computed(() =>
     this.storeId() ? ['/tienda', this.storeId(), 'wishlist'] : ['/'],
   );
-  /**
-   * Facturación (ADR-24): sin sesión lleva al alta de facturador; con sesión,
-   * directo al módulo. El `returnUrl` devuelve al usuario a la facturación tras
-   * registrarse.
-   */
-  readonly billingLink = computed(() =>
-    this.authStore.isAuthenticated() ? '/facturacion/nueva' : '/register',
-  );
-  readonly billingQueryParams = computed<Params>(() => {
-    if (this.authStore.isAuthenticated()) return {};
-    return { rol: 'biller', returnUrl: '/facturacion/nueva' };
-  });
-
   get companyInfo() {
     return this.storeConfig.companyInfo();
   }

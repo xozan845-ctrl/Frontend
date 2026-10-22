@@ -996,7 +996,6 @@ contexto y consecuencias.
 - **Consecuencias**: el empresario consulta su equipo de reparto desde la
   consola. Quedan incidencias, tracking, asistencia y asignación de flota.
   Revertir es restaurar el placeholder y retirar store, página y puerto.
-
 ## ADR-41: Incidencias de logística de campo
 
 - **Fecha**: 2026-10-23
@@ -1017,7 +1016,6 @@ contexto y consecuencias.
 - **Consecuencias**: la consola permite cerrar el ciclo de una incidencia sin
   salir de logística. Quedan tracking, asistencia, visitas y asignación de
   flota. Revertir es restaurar el placeholder y retirar store/página/puerto.
-
 ## ADR-42: Almacenamiento del tenant
 
 - **Fecha**: 2026-10-23
@@ -1043,3 +1041,55 @@ contexto y consecuencias.
   feature sin recortar otros módulos. Queda para una siguiente fase la edición
   de metadatos/etiquetas y la integración con imágenes de catálogo. Revertir es
   retirar `STORAGE_ROUTES`, el ítem del sidebar y el feature.
+## ADR-43: Workspaces separados por contexto y rol
+
+- **Fecha**: 2026-10-22
+- **Estado**: Aceptado
+- **Contexto**: el panel del vendedor contenía la gestión de empresa y el
+  header público exponía Vendedor, Facturación y Logística a cualquier persona.
+  Esto mezclaba la operación de una tienda con la administración del tenant y
+  obligaba a que cada módulo interno conviviera con el chrome del storefront.
+- **Decisión**:
+  - El workspace de empresa vive en `/empresa/**`, protegido por
+    `companyGuard` para el rol `empresario`, con sidebar propio para operación,
+    tiendas, vendedores y logística.
+  - El panel `/vendedor/**` conserva únicamente la operación de tienda; la
+    entrada histórica `/vendedor/empresa` redirige a `/empresa` para no romper
+    enlaces existentes.
+  - El header y footer públicos no muestran módulos internos; los workspaces
+    tienen su propio shell y no cargan carrito, wishlist ni soporte flotante.
+  - `isCompanyOwnerRole` e `isStoreSellerRole` expresan la diferencia entre
+    propietario y vendedor sin romper `isSellerRole`, que sigue describiendo
+    cualquier rol de negocio.
+- **Consecuencias**: la jerarquía visual y de permisos coincide con el modelo
+  empresarial. La siguiente etapa añadirá slugs legibles para empresas/tiendas
+  y resolverá la identidad por slug contra el backend; los UUID siguen siendo
+  claves internas. Revertir es volver a anidar `EMPRESAS_ROUTES` en `vendor` y
+  restaurar el chrome global en todas las rutas.
+
+## ADR-44: Autorización por workspace, scope y propiedad logística
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: la primera separación visual distinguía empresa y vendedor,
+  pero logística seguía expuesta como una ruta global y el frontend no modelaba
+  `store_id`, permisos delegados ni el propietario de una flota. Eso permitía
+  confundir administración de plataforma, tenant, tienda y reparto.
+- **Decisión**:
+  - `super_admin`/`admin` quedan en plataforma: pueden administrar
+    infraestructura y auditoría, pero no poseen ni operan logística global.
+  - `empresario` administra su tenant, varias tiendas, vendedores, catálogo de
+    empresa y flota `company`; `vendedor` administra una sola tienda, permisos
+    de tienda, productos propios/ofertas de empresa y flota `store`.
+  - Se centraliza la matriz en `authorization.model.ts` y se agregan
+    `workspaceGuard`/`logisticsGuard` para evitar navegación fuera de scope.
+  - `/empresa/logistica` y `/vendedor/logistica` cargan el mismo módulo con
+    contexto explícito; `/logistica` solo queda como compatibilidad y nunca se
+    concede a plataforma.
+  - Los contratos de sesión transportan `tenantId`, `storeId`, permisos y
+    `logisticsOwnership`. La autoridad final será RLS en API/DB, con políticas
+    por tenant, tienda, propietario de producto y propietario de flota.
+- **Consecuencias**: el vendedor puede delegar permisos sin elevarse a empresa
+  o plataforma y el empresario puede asignar vendedores a tiendas cuando el
+  backend exponga ese contrato. La especificación completa de RLS, políticas
+  negativas y pendientes backend vive en `docs/workspaces-y-rls.md`.

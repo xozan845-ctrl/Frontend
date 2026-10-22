@@ -1,5 +1,5 @@
-import { Component, HostListener, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { LogisticaSidebarComponent } from '../../components/logistica-sidebar/logistica-sidebar.component';
 
 /**
@@ -14,7 +14,19 @@ import { LogisticaSidebarComponent } from '../../components/logistica-sidebar/lo
   templateUrl: './logistica-shell.component.html',
 })
 export default class LogisticaShellComponent {
+  private readonly router = inject(Router);
   readonly isSidebarOpen = signal(false);
+  readonly basePath = computed(() => {
+    const url = this.router.url;
+    if (url.startsWith('/empresa/logistica')) return '/empresa/logistica';
+    if (url.startsWith('/vendedor/logistica')) return '/vendedor/logistica';
+    return '/logistica';
+  });
+  readonly contextLabel = computed(() => {
+    if (this.basePath() === '/empresa/logistica') return 'Logística · Empresa';
+    if (this.basePath() === '/vendedor/logistica') return 'Logística · Tienda';
+    return 'Logística';
+  });
 
   @HostListener('document:keydown.escape')
   closeSidebar(): void {

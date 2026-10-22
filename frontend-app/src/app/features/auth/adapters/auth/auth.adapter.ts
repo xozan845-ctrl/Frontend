@@ -33,6 +33,9 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
   const roles = u['roles'];
   const tenantId = u['tenant_id'] ?? u['tenantId'];
   const personalId = u['personal_id'] ?? u['personalId'];
+  const storeId = u['tienda_id'] ?? u['storeId'] ?? u['store_id'];
+  const permissions = u['permissions'] ?? u['permisos'];
+  const logisticsOwnership = u['logistics_ownership'] ?? u['logisticsOwnership'];
 
   return {
     id,
@@ -50,6 +53,17 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
       undefined,
     ...(typeof tenantId === 'string' && tenantId ? { tenantId } : {}),
     ...(typeof personalId === 'string' && personalId ? { personalId } : {}),
+    ...(typeof storeId === 'string' && storeId ? { storeId } : {}),
+    ...(Array.isArray(permissions)
+      ? {
+          permissions: permissions.filter(
+            (permission): permission is string => typeof permission === 'string',
+          ),
+        }
+      : {}),
+    ...(logisticsOwnership === 'company' || logisticsOwnership === 'store'
+      ? { logisticsOwnership }
+      : {}),
   };
 }
 

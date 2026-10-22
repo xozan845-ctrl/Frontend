@@ -73,20 +73,14 @@ test('R-E-29: el admin avanza el estado de una orden', async ({ page }) => {
   await expect(page.getByTestId('admin-order-detail')).toContainText('Enviada');
 });
 
-// R-E-30: el admin consulta todas las guías de despacho con su monto
-// (`GET /admin/envios`) y avanza el estado de una guía (`PATCH /envios/:id/estado`).
-test('R-E-30: el admin consulta envíos y avanza su estado', async ({ page }) => {
-  await login(page, '/logistica/envios');
-
-  await expect(page.getByTestId('envios-page')).toBeVisible();
-  await expect(page.locator('[data-testid="envio-row"]')).toHaveCount(2);
-  await expect(page.getByTestId('envio-row').first()).toContainText('C$2,300.00');
-  await expect(page.getByTestId('envio-status-e-2')).toContainText('Enviada');
-
-  await page.getByTestId('envio-target-e-2').selectOption('entregada');
-  await page.getByTestId('envio-advance-e-2').click();
-
-  await expect(page.getByTestId('envio-status-e-2')).toContainText('Entregada');
+// R-E-30: la plataforma no posee una flota global; un admin no puede entrar
+// al módulo de logística contextual de empresa/tienda.
+test('R-E-30: el admin no puede entrar a logística global', async ({ page }) => {
+  await page.goto('/login?returnUrl=%2Flogistica%2Fenvios', { waitUntil: 'domcontentloaded' });
+  await page.locator('#email').fill('admin@tienda.test');
+  await page.locator('#password').fill('secreto1');
+  await page.getByRole('button', { name: 'Ingresar' }).click();
+  await expect(page).toHaveURL(/\/admin\/inventario$/);
 });
 
 // R-E-32: el admin consulta el almacenamiento por empresa

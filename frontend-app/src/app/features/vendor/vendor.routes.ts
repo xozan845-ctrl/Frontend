@@ -1,6 +1,6 @@
 import { Route, Routes } from '@angular/router';
-import { EMPRESAS_ROUTES } from '../empresas/public-api';
 import { STORAGE_ROUTES } from '../storage/public-api';
+import { workspaceGuard } from '../auth/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
 import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
 import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
@@ -78,11 +78,13 @@ export const VENDOR_ROUTES: Routes = [
         loadComponent: () => import('./pages/store/store.component'),
         providers: [VendorStoreStore, { provide: STORE_REPOSITORY, useClass: StoreService }],
       },
+      // Compatibilidad con enlaces antiguos: la administración vive en su
+      // workspace propio, fuera del panel operativo.
+      { path: 'empresa', pathMatch: 'full', redirectTo: '/empresa' },
       {
         path: 'clientes',
         loadComponent: () => import('./pages/clients/clients.component'),
       },
-      ...EMPRESAS_ROUTES,
       {
         path: 'catalogo',
         loadComponent: () => import('../products/pages/catalog/catalog.component'),
@@ -125,12 +127,30 @@ export const VENDOR_ROUTES: Routes = [
         ),
       },
       {
+        path: 'roles',
+        canActivate: [workspaceGuard],
+        loadComponent: () => import('../../shared/ui/coming-soon/coming-soon.component'),
+        data: {
+          title: 'Roles y permisos',
+          description: 'Crea roles y asigna permisos dentro de tu tienda.',
+          icon: 'fa-solid fa-user-shield',
+          context: 'Tienda',
+          workspace: 'store',
+          permission: 'store:manage-roles',
+        },
+      },
+      {
         path: 'ayuda',
         ...comingSoonRoute(
           'Ayuda y soporte',
           'Guías y canales de soporte para vendedores.',
           'fa-solid fa-circle-question',
         ),
+      },
+      {
+        path: 'logistica',
+        loadChildren: () =>
+          import('../logistica/logistica.routes').then((module) => module.LOGISTICA_ROUTES),
       },
     ],
   },

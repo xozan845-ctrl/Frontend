@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Navbar } from './layout/navbar/navbar.component';
 import { Footer } from './layout/footer/footer.component';
 import { CartDrawerComponent } from './features/cart/pages/cart-drawer/cart-drawer.component';
@@ -22,4 +23,22 @@ import { FloatingSupportComponent } from './shared/ui/floating-support/floating-
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class App {}
+export class App {
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** El chrome público no debe envolver los workspaces autenticados. */
+  readonly isBackoffice = signal(this.isBackofficeUrl(this.router.url));
+
+  private readonly routerEvents = this.router.events
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.isBackoffice.set(this.isBackofficeUrl(event.urlAfterRedirects));
+      }
+    });
+
+  private isBackofficeUrl(url: string): boolean {
+    return /^(\/empresa|\/vendedor|\/facturacion|\/logistica|\/admin|\/ia)(\/|$)/.test(url);
+  }
+}
