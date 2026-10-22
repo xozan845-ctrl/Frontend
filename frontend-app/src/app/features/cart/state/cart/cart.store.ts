@@ -11,7 +11,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, forkJoin, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import type { Product } from '../../../products/public-api';
-import { CartItem } from '../../models/cart.model';
+import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { CART_REPOSITORY } from '../../repositories/cart.repository';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
@@ -19,6 +19,8 @@ import type { CartState } from './cart.state';
 
 const initialState: CartState = {
   items: [],
+  total: 0,
+  expiresAt: null,
   loading: false,
   error: null,
 };
@@ -76,10 +78,13 @@ function round2(value: number): number {
 export const CartStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ items }) => ({
+  withComputed(({ items, total }) => ({
     totalItems: () => items().reduce((acc, item) => acc + item.quantity, 0),
+    // El servidor manda el total autoritativo; el invitado usa el derivado local.
     totalPrice: () =>
-      round2(items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)),
+      total() > 0
+        ? total()
+        : round2(items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)),
   })),
   withMethods(
     (
@@ -94,13 +99,18 @@ export const CartStore = signalStore(
         authStore.isAuthenticated() && authStore.user()?.role === 'comprador';
 
       /** Ejecuta una operación del carrito del servidor y refresca el estado. */
-      const runServer = rxMethod<{ request$: Observable<CartItem[]>; successMessage?: string }>(
+      const runServer = rxMethod<{ request$: Observable<CartSnapshot>; successMessage?: string }>(
         pipe(
           tap(() => patchState(store, { loading: true, error: null })),
           switchMap(({ request$, successMessage }) =>
             request$.pipe(
-              tap((items) => {
-                patchState(store, { items, loading: false });
+              tap((snapshot) => {
+                patchState(store, {
+                  items: snapshot.items,
+                  total: snapshot.total,
+                  expiresAt: snapshot.expiresAt,
+                  loading: false,
+                });
                 if (successMessage) notificationService.showSuccess(successMessage);
               }),
               catchError((err: Error) => {
@@ -115,14 +125,16 @@ export const CartStore = signalStore(
       );
 
       const setLocal = (items: CartItem[]): void => {
-        patchState(store, { items });
+        patchState(store, { items, total: 0, expiresAt: null });
       };
 
       return {
         /** Carga el carrito: del servidor con sesión, o el local del invitado. */
         loadCart() {
           if (!useServerCart()) {
-            if (store.items().length === 0) patchState(store, { items: readLocalCart() });
+            if (store.items().length === 0) {
+              patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
+            }
             return;
           }
           runServer({ request$: cartRepo.getCart() });
@@ -173,7 +185,13 @@ export const CartStore = signalStore(
         /** Limpia el estado local sin llamar al backend (la orden ya vació el carrito). */
         reset() {
           clearLocalCart();
-          patchState(store, { items: [], loading: false, error: null });
+          patchState(store, {
+            items: [],
+            total: 0,
+            expiresAt: null,
+            loading: false,
+            error: null,
+          });
         },
         /** Vuelca el carrito del invitado al servidor (al iniciar sesión). */
         mergeLocalCart: rxMethod<CartItem[]>(
@@ -186,9 +204,14 @@ export const CartStore = signalStore(
                     local.map((item) => cartRepo.addItem(String(item.product.id), item.quantity)),
                   ).pipe(switchMap(() => cartRepo.getCart()))
               ).pipe(
-                tap((items) => {
+                tap((snapshot) => {
                   if (local.length > 0) clearLocalCart();
-                  patchState(store, { items, loading: false });
+                  patchState(store, {
+                    items: snapshot.items,
+                    total: snapshot.total,
+                    expiresAt: snapshot.expiresAt,
+                    loading: false,
+                  });
                   if (local.length > 0) {
                     notificationService.showSuccess('Hemos guardado los productos de tu carrito.');
                   }
@@ -209,7 +232,7 @@ export const CartStore = signalStore(
   withHooks({
     onInit(store, authStore = inject(AuthStore)) {
       // Hidrata el carrito local de forma síncrona (R-ST-7).
-      patchState(store, { items: readLocalCart() });
+      patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
 
       // Al iniciar sesión como comprador, vuelca el carrito local al servidor.
       effect(() => {

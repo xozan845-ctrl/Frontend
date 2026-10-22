@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CartStore } from './cart.store';
-import { CartItem } from '../../models/cart.model';
+import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { Product } from '../../../products/models/product.model';
 import { CART_REPOSITORY, CartRepository } from '../../repositories/cart.repository';
 import { AuthStore } from '../../../auth/public-api';
@@ -18,6 +18,12 @@ const product = (id: number, price = 100): Product => ({
 });
 
 const serverItems: CartItem[] = [{ product: product(1, 50), quantity: 2 }];
+const serverSnapshot: CartSnapshot = {
+  items: serverItems,
+  total: 100,
+  expiresAt: '2026-10-22T18:00:00.000Z',
+};
+const emptySnapshot: CartSnapshot = { items: [], total: 0, expiresAt: null };
 const STORAGE_KEY = 'ecom_cart_items';
 
 describe('CartStore', () => {
@@ -28,11 +34,11 @@ describe('CartStore', () => {
 
   const setup = () => {
     repo = {
-      getCart: vi.fn(() => of(serverItems)),
-      addItem: vi.fn(() => of(serverItems)),
-      updateQuantity: vi.fn(() => of(serverItems)),
-      removeItem: vi.fn(() => of([])),
-      clearCart: vi.fn(() => of([])),
+      getCart: vi.fn(() => of(serverSnapshot)),
+      addItem: vi.fn(() => of(serverSnapshot)),
+      updateQuantity: vi.fn(() => of(serverSnapshot)),
+      removeItem: vi.fn(() => of(emptySnapshot)),
+      clearCart: vi.fn(() => of(emptySnapshot)),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -105,6 +111,16 @@ describe('CartStore', () => {
 
     expect(repo.addItem).toHaveBeenCalledWith('1', 2);
     expect(store.items()).toEqual(serverItems);
+  });
+
+  it('con sesión: expone el total y la expiración del servidor', async () => {
+    authenticated = true;
+    const store = setup();
+
+    store.loadCart();
+
+    await vi.waitFor(() => expect(store.totalPrice()).toBe(100));
+    expect(store.expiresAt()).toBe('2026-10-22T18:00:00.000Z');
   });
 
   it('con sesión: loadCart usa el servidor', () => {
@@ -187,10 +203,10 @@ describe('CartStore', () => {
     authenticated = true;
     repo = {
       getCart: vi.fn(() => throwError(() => new Error('boom'))),
-      addItem: vi.fn(() => of([])),
-      updateQuantity: vi.fn(() => of([])),
-      removeItem: vi.fn(() => of([])),
-      clearCart: vi.fn(() => of([])),
+      addItem: vi.fn(() => of(emptySnapshot)),
+      updateQuantity: vi.fn(() => of(emptySnapshot)),
+      removeItem: vi.fn(() => of(emptySnapshot)),
+      clearCart: vi.fn(() => of(emptySnapshot)),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -235,11 +251,11 @@ describe('CartStore', () => {
   it('debe usar el mensaje por defecto cuando falla el volcado sin mensaje', () => {
     authenticated = true;
     repo = {
-      getCart: vi.fn(() => of([])),
+      getCart: vi.fn(() => of(emptySnapshot)),
       addItem: vi.fn(() => throwError(() => new Error(''))),
-      updateQuantity: vi.fn(() => of([])),
-      removeItem: vi.fn(() => of([])),
-      clearCart: vi.fn(() => of([])),
+      updateQuantity: vi.fn(() => of(emptySnapshot)),
+      removeItem: vi.fn(() => of(emptySnapshot)),
+      clearCart: vi.fn(() => of(emptySnapshot)),
     };
     TestBed.configureTestingModule({
       providers: [
@@ -264,11 +280,11 @@ describe('CartStore', () => {
   it('debe registrar el error al volcar el carrito local (mergeLocalCart)', () => {
     authenticated = true;
     repo = {
-      getCart: vi.fn(() => of([])),
+      getCart: vi.fn(() => of(emptySnapshot)),
       addItem: vi.fn(() => throwError(() => new Error('boom'))),
-      updateQuantity: vi.fn(() => of([])),
-      removeItem: vi.fn(() => of([])),
-      clearCart: vi.fn(() => of([])),
+      updateQuantity: vi.fn(() => of(emptySnapshot)),
+      removeItem: vi.fn(() => of(emptySnapshot)),
+      clearCart: vi.fn(() => of(emptySnapshot)),
     };
     TestBed.configureTestingModule({
       providers: [

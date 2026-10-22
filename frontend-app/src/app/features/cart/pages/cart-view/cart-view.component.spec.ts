@@ -22,11 +22,13 @@ describe('CartViewComponent', () => {
   const items = signal([{ product, quantity: 2 }]);
   const loading = signal(false);
   const error = signal<string | null>(null);
+  const expiresAt = signal<string | null>(null);
   const seo = { setPage: vi.fn(), reset: vi.fn() };
   const cartStore = {
     items,
     loading,
     error,
+    expiresAt,
     totalItems: () => items().reduce((count, item) => count + item.quantity, 0),
     totalPrice: () =>
       items().reduce((total, item) => total + item.product.price * item.quantity, 0),
@@ -66,6 +68,14 @@ describe('CartViewComponent', () => {
     expect(host.textContent).toContain(product.name);
     expect(host.textContent).toContain('C$300.00');
     expect(host.textContent).toContain('Subtotal (2)');
+  });
+
+  it('debe mostrar la expiración de la reserva cuando existe', async () => {
+    expiresAt.set('2026-10-22T18:00:00.000Z');
+    const fixture = await setup();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-testid="cart-expires"]')).not.toBeNull();
   });
 
   it('debe cambiar la cantidad del producto', async () => {

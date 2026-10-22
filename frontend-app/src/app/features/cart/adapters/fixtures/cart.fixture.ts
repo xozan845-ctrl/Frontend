@@ -9,11 +9,15 @@ export const CART_ENVELOPE_FIXTURE = {
     items: [
       {
         oferta_id: 'of-1',
+        id: 'of-1',
+        tienda_id: 't-1',
+        vendedor_id: 'v-1',
         cantidad: 2,
         producto_nombre: 'Teclado Mecánico',
         precio_venta: '299.90',
         stock: 5,
         sku: 'SKU-TEC',
+        estado: 'activa',
       },
       {
         oferta_id: 2,
@@ -24,7 +28,7 @@ export const CART_ENVELOPE_FIXTURE = {
         sku: 'SKU-MOU',
       },
     ],
-    total: 649.8,
+    total: '649.80',
     expira_en: '2026-10-10T00:00:00Z',
   },
   meta: { requestId: 'req-1' },
