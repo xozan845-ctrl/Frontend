@@ -19,6 +19,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     locale: 'es-MX',
     timezoneId: 'America/Mexico_City',
+    // R-AC: la auditoría axe debe ser determinista (sin depender del tema del SO).
+    colorScheme: 'light',
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
