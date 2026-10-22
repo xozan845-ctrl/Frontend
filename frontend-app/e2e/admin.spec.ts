@@ -53,3 +53,22 @@ test('R-E-27: el admin consulta el inventario de bodega', async ({ page }) => {
   await expect(page.getByTestId('inventory-reserved')).toContainText('2');
   await expect(page.getByTestId('inventory-row').first()).toContainText('Teclado Mecánico');
 });
+
+// R-E-29: el admin consulta las órdenes globales, su detalle y avanza el
+// estado logístico (`GET /orders/admin/todas`, `PATCH /orders/:id/estado`).
+test('R-E-29: el admin avanza el estado de una orden', async ({ page }) => {
+  await login(page, '/admin/pedidos');
+
+  await expect(page.getByTestId('admin-orders-page')).toBeVisible();
+  await expect(page.locator('[data-testid="admin-order-row"]')).toHaveCount(1);
+
+  await page.getByTestId('admin-order-select-o-100').click();
+  await expect(page.getByTestId('admin-order-detail')).toBeVisible();
+  await expect(page.getByTestId('admin-order-timeline')).toBeVisible();
+
+  await page.getByTestId('admin-order-target-status').selectOption('enviada');
+  await page.getByTestId('admin-order-reason').fill('despacho a ruta');
+  await page.getByTestId('admin-order-advance').click();
+
+  await expect(page.getByTestId('admin-order-detail')).toContainText('Enviada');
+});

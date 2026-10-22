@@ -873,3 +873,26 @@ contexto y consecuencias.
   administración (`/orders/admin/todas`), vendedor (`/orders/vendedor/*`,
   comisiones) y el avance de estado logístico (`PATCH /orders/:id/estado`).
   Revertir es volver al modelo reducido y al estado crudo.
+
+## ADR-36: Órdenes globales y transición de estado para administración
+
+- **Fecha**: 2026-10-22
+- **Estado**: Aceptado
+- **Contexto**: el área admin ya tenía inventario. Faltaban la vista global de
+  órdenes (`GET /orders/admin/todas`) y el avance del ciclo logístico
+  (`PATCH /orders/:id/estado`, roles admin/logística).
+- **Decisión**:
+  - Nueva página **`/admin/pedidos`** con lista global, filtro por estado y
+    detalle con timeline.
+  - El detalle usa `GET /orders/:id` y `GET /orders/:id/timeline`; el cambio de
+    estado usa `PATCH /orders/:id/estado` con los estados permitidos
+    (`en_preparacion`, `enviada`, `entregada`, `cancelada`, `devuelta`).
+  - Se extiende el puerto de órdenes con `listAll` (admin) y `advanceStatus`
+    (logística), reutilizando el adapter y el modelo del checkout.
+  - Tras avanzar el estado se actualizan la fila y el detalle sin recargar la
+    lista completa.
+- **Consecuencias**: el admin opera el ciclo de la orden desde el área de
+  administración. Los endpoints de vendedor (`/orders/vendedor/mis-ventas`,
+  `/orders/tienda/:id`, comisiones) quedan pendientes porque el backend aún no
+  autoriza al rol `empresario` (responde 403). Revertir es retirar la ruta y los
+  métodos nuevos del puerto.

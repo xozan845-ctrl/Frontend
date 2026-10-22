@@ -46,6 +46,12 @@ export interface OrderResponse {
   returnedAt?: string;
 }
 
+/** Resultado de avanzar el estado de una orden (`PATCH /orders/:id/estado`). */
+export interface OrderStatusUpdate {
+  id: string;
+  status: string;
+}
+
 /** Evento del timeline de una orden (`GET /orders/:id/timeline`). */
 export interface OrderTimelineEvent {
   id: number;
