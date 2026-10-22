@@ -9,7 +9,7 @@ COPY frontend-app/ ./
 RUN npm run build
 
 # --- Etapa 2: runtime (nginx sirviendo el build estático) ---
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.29-alpine AS runtime
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Include opcional del proxy de IA (ADR-18); el entrypoint lo reescribe o vacía.
 RUN touch /etc/nginx/conf.d/ai-scraper.conf
