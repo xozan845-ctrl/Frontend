@@ -21,6 +21,7 @@ export const requiredSuites = [
   { id: 'architecture-lifecycle', file: 'rules/architecture/lifecycle.test.mjs' },
   { id: 'architecture-features', file: 'rules/architecture/features.test.mjs' },
   { id: 'architecture-guards', file: 'rules/architecture/guards.test.mjs' },
+  { id: 'architecture-ports', file: 'rules/architecture/ports.test.mjs' },
   { id: 'naming-guards', file: 'rules/architecture/naming.test.mjs' },
   { id: 'architecture-config', file: 'rules/architecture/config.test.mjs' },
   { id: 'architecture-packaging', file: 'rules/architecture/packaging.test.mjs' },

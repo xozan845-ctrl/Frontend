@@ -23,6 +23,7 @@ que son verificables por máquina.
 | `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
 | `architecture-features`  | `R-AR-16`                                      | Contrato estructural por feature: capas, API pública y forma de páginas/componentes.               |
 | `architecture-guards`    | `R-AR-7/9/10`                                  | Sin `ngModel`, diálogos nativos ni `subscribe` sin limpieza.                                       |
+| `architecture-ports`     | `R-AR-3`                                       | Repositorios con interfaz + `InjectionToken`; stores sin adapters ni `HttpClient`.                 |
 | `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                     |
 | `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                           |
 | `store-guards`           | `R-ST-1/2/4/7`                                 | Stores con `signalStore`/`withMethods`/`patchState`/`withHooks`, sin `BehaviorSubject`.            |
@@ -193,8 +194,8 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura verificada: **39/252 IDs** de regla con check real; hay **2
-contextuales** (`R-AR-3`, `R-NC-9`) declaradas en `cites` porque hoy no tienen
+Cobertura verificada: **40/252 IDs** de regla con check real; hay **1
+contextual** (`R-AR-5`) declarada en `cites` porque hoy no tiene
 check propio. `R-NC-10` (`any`) se verifica en ESLint
 (`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,
 `git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y
