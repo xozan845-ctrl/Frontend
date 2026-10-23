@@ -896,3 +896,36 @@ contexto y consecuencias.
   `/orders/tienda/:id`, comisiones) quedan pendientes porque el backend aún no
   autoriza al rol `empresario` (responde 403). Revertir es retirar la ruta y los
   métodos nuevos del puerto.
+
+## ADR-37: Envíos de logística para administración y empresa
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: el módulo `logistica` era una maqueta visual sin datos reales.
+  Core Engine expone `GET /admin/envios` (todas las guías, con `monto`),
+  `GET /empresarios/me/envios` (guías de la empresa),
+  `POST /empresarios/me/envios/:id/asignacion` (flota `plataforma`/`empresa` en
+  modalidad híbrida) y `PATCH /envios/:id/estado` (`enviada`, `entregada`,
+  `cancelada`). Las guías nacen del evento `payment.procesado`, no de un alta
+  manual.
+- **Decisión**:
+  - Nueva ruta lazy **`/logistica/envios`** dentro del shell existente, con
+    `logisticsGuard` (admin, super_admin y empresario) y `EnviosStore` al
+    alcance de la ruta.
+  - El store elige el listado según el rol: admin/super_admin usan
+    `/admin/envios`; empresario usa `/empresarios/me/envios`. La asignación solo
+    se ofrece al empresario para envíos `hibrida`; el avance de estado se ofrece
+    al admin y, para el empresario, solo cuando la guía ya está asignada a la
+    flota de su tenant.
+  - Modelo `Shipment` con guía, pedido, empresa, modalidad, proveedor, estado,
+    fecha y `amount` opcional (solo admin). Adapter tolerante a `snake_case`,
+    `camelCase`, montos string y envelopes.
+  - La tabla filtra por estado en cliente, muestra carga/error/vacío y conserva
+    el monto al actualizar una fila con la respuesta sin `monto`.
+- **Consecuencias**: la primera fase de logística consume datos reales de
+  envíos y cubre el ciclo de despacho. Quedan para siguientes fases el
+  field-service (rutas, personal, tracking, incidencias) y la adaptación del
+  panel de pedidos del empresario a `GET /orders/empresa`; los endpoints
+  `/orders/vendedor/mis-ventas` y `/orders/vendedor/comisiones` siguen
+  devolviendo 403 para `empresario` y no se consumen. Revertir es retirar la
+  ruta, el ítem del sidebar y las capas nuevas del feature.

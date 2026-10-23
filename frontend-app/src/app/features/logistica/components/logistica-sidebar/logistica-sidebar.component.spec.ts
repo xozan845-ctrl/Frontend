@@ -20,11 +20,12 @@ describe('LogisticaSidebarComponent', () => {
 
   beforeEach(() => TestBed.resetTestingModule());
 
-  it('debe renderizar las ocho secciones y la configuración', async () => {
+  it('debe renderizar las nueve secciones y la configuración', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelectorAll('nav a')).toHaveLength(9);
+    expect(host.querySelectorAll('nav a')).toHaveLength(10);
+    expect(host.textContent).toContain('Envíos');
     expect(host.textContent).toContain('Mapa de clientes');
     expect(host.textContent).toContain('Pedidos en ruta');
     expect(host.textContent).toContain('Configuración');

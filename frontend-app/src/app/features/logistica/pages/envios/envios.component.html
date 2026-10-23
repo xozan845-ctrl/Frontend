@@ -1,0 +1,225 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="envios-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Logística</span>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Envíos</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Envíos
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        @if (isAdmin()) {
+          Todas las guías de despacho de la plataforma y su estado logístico.
+        } @else {
+          Las guías de despacho de tu empresa, la flota asignada y su estado.
+        }
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="envios.loading()"
+      data-testid="envios-refresh"
+      (click)="envios.load()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="envios.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (envios.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="envios-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button type="button" class="btn btn-secondary btn-sm self-start" (click)="envios.load()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="envios-list-title">
+    <header class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 id="envios-list-title" class="font-heading text-lg font-black tracking-tight uppercase">
+          Guías de despacho
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          {{ filteredShipments().length }} de {{ envios.shipments().length }} envíos
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="envios-status-filter" class="sr-only">Filtrar por estado</label>
+        <select
+          id="envios-status-filter"
+          class="input py-1.5 text-xs"
+          data-testid="envios-status-filter"
+          [value]="statusFilter()"
+          (change)="onStatusFilterChange($event)"
+        >
+          <option value="">Todos los estados</option>
+          <option value="en_preparacion">En preparación</option>
+          <option value="enviada">Enviada</option>
+          <option value="entregada">Entregada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+    </header>
+
+    @if (envios.loading()) {
+      <div class="flex flex-col gap-2" role="status" aria-live="polite">
+        <span class="sr-only">Cargando envíos…</span>
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+      </div>
+    } @else if (filteredShipments().length === 0) {
+      <p
+        class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+        data-testid="envios-empty"
+      >
+        No hay envíos para este filtro.
+      </p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[720px] text-left text-sm" data-testid="envios-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Guía / Pedido</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Modalidad</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Proveedor</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+              @if (isAdmin()) {
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Monto</th>
+              }
+              <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (shipment of filteredShipments(); track shipment.id) {
+              <tr data-testid="envio-row">
+                <td class="py-3 pr-3">
+                  <p class="font-mono text-xs font-bold text-slate-900 dark:text-white">
+                    {{ shipment.guia || shipment.id }}
+                  </p>
+                  <p class="text-[10px] text-slate-400">
+                    Pedido {{ shipment.orderId || '—' }}
+                    @if (shipment.createdAt) {
+                      · {{ shipment.createdAt | date: 'short' }}
+                    }
+                  </p>
+                </td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-widest text-slate-600 uppercase dark:bg-surface-700 dark:text-slate-300"
+                  >
+                    {{ shipment.logisticsMode }}
+                  </span>
+                </td>
+                <td
+                  class="py-3 pr-3 text-xs"
+                  [attr.data-testid]="'envio-provider-label-' + shipment.id"
+                >
+                  {{ shipment.providerType ?? 'Sin asignar' }}
+                </td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full bg-accent-50 px-2.5 py-1 text-[10px] font-black tracking-widest text-accent-700 uppercase dark:bg-accent-900/20 dark:text-accent-300"
+                    [attr.data-testid]="'envio-status-' + shipment.id"
+                  >
+                    {{ statusLabel(shipment.status) }}
+                  </span>
+                </td>
+                @if (isAdmin()) {
+                  <td class="py-3 pr-3 text-right font-bold tabular-nums">
+                    @if (shipment.amount !== undefined) {
+                      {{ shipment.amount | appCurrency }}
+                    } @else {
+                      —
+                    }
+                  </td>
+                }
+                <td class="py-3">
+                  <div class="flex flex-wrap items-center justify-end gap-2">
+                    @if (canAssign(shipment)) {
+                      <label class="sr-only" [for]="'envio-provider-' + shipment.id">
+                        Proveedor para {{ shipment.guia || shipment.id }}
+                      </label>
+                      <select
+                        [id]="'envio-provider-' + shipment.id"
+                        class="input py-1.5 text-xs"
+                        [attr.data-testid]="'envio-provider-' + shipment.id"
+                        [value]="providerFor(shipment)"
+                        [disabled]="envios.assigningId() === shipment.id"
+                        (change)="onProviderChange(shipment, $event)"
+                      >
+                        <option value="plataforma">Plataforma</option>
+                        <option value="empresa">Mi empresa</option>
+                      </select>
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm"
+                        [disabled]="envios.assigningId() === shipment.id"
+                        [attr.data-testid]="'envio-assign-' + shipment.id"
+                        (click)="assign(shipment)"
+                      >
+                        {{ envios.assigningId() === shipment.id ? 'Asignando…' : 'Asignar' }}
+                      </button>
+                    }
+
+                    @if (canAdvance(shipment)) {
+                      <label class="sr-only" [for]="'envio-target-' + shipment.id">
+                        Estado para {{ shipment.guia || shipment.id }}
+                      </label>
+                      <select
+                        [id]="'envio-target-' + shipment.id"
+                        class="input py-1.5 text-xs"
+                        [attr.data-testid]="'envio-target-' + shipment.id"
+                        [value]="statusFor(shipment)"
+                        [disabled]="envios.advancingId() === shipment.id"
+                        (change)="onStatusChange(shipment, $event)"
+                      >
+                        @for (state of targetStates; track state.value) {
+                          <option [value]="state.value">{{ state.label }}</option>
+                        }
+                      </select>
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        [disabled]="
+                          envios.advancingId() === shipment.id || shipment.status === 'entregada'
+                        "
+                        [attr.data-testid]="'envio-advance-' + shipment.id"
+                        (click)="advance(shipment)"
+                      >
+                        {{ envios.advancingId() === shipment.id ? 'Guardando…' : 'Avanzar' }}
+                      </button>
+                    }
+
+                    @if (!canAssign(shipment) && !canAdvance(shipment)) {
+                      <span class="text-[10px] text-slate-400">Sin acciones</span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

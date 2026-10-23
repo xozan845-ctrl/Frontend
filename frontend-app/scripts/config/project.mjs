@@ -155,7 +155,17 @@ export const FEATURE_CONTRACTS = {
   },
   home: { layers: ['pages'], publicApi: false, publicUi: false },
   logistica: {
-    layers: ['components', 'constants', 'mocks', 'models', 'pages', 'services', 'state'],
+    layers: [
+      'adapters',
+      'components',
+      'constants',
+      'mocks',
+      'models',
+      'pages',
+      'repositories',
+      'services',
+      'state',
+    ],
     publicApi: false,
     publicUi: false,
   },
