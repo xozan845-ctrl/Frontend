@@ -17,6 +17,8 @@ const allowed = {
 };
 
 const isMain = (branch) => branch === MAIN_BRANCH || branch === `origin/${MAIN_BRANCH}`;
+/** Dependabot fija el nombre de rama y no puede cumplir R-GB-2. */
+const isDependabotBranch = (branch) => branch.startsWith('dependabot/');
 
 export default defineSuite({
   id: 'git-branch',
@@ -26,7 +28,7 @@ export default defineSuite({
   run: ({ test, assert }) => {
     test('R-GB-2: la rama del PR sigue el patrón <tipo>/<ámbito>-<descripción>', () => {
       const { currentBranch } = getBranchContext(MAIN_BRANCH);
-      if (isMain(currentBranch)) return;
+      if (isMain(currentBranch) || isDependabotBranch(currentBranch)) return;
 
       const problems = validateBranchName(currentBranch, allowed);
       assert.deepEqual(

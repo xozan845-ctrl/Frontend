@@ -17,27 +17,27 @@ que son verificables por máquina.
 
 ## Qué vigila
 
-| Suite                    | Reglas                                         | Qué comprueba                                                                                      |
-| ------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                           |
-| `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`. |
-| `architecture-features`  | `R-AR-16`                                      | Contrato estructural por feature: capas, API pública y forma de páginas/componentes.               |
-| `architecture-guards`    | `R-AR-7/9/10`                                  | Sin `ngModel`, diálogos nativos ni `subscribe` sin limpieza.                                       |
-| `architecture-ports`     | `R-AR-3`                                       | Repositorios con interfaz + `InjectionToken`; stores sin adapters ni `HttpClient`.                 |
-| `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                     |
-| `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                           |
-| `store-guards`           | `R-ST-1/2/4/5/7 + R-AR-5`                      | Stores con `signalStore`/`withMethods`/`patchState`/`withHooks`, sin `BehaviorSubject`.            |
-| `naming-guards`          | `R-NC-1/2/11`                                  | Sufijos por capa, plantillas hermanas y claves `localStorage` con `ecom_`.                         |
-| `coverage-guards`        | `R-COV-2`                                      | Spec hermano para services, adapters y stores.                                                     |
-| `audit-freshness`        | `R-COV-3`                                      | `AUDIT.md` con fecha de auditoría y versión vigente.                                               |
-| `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.           |
-| `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                              |
-| `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.      |
-| `git-commits`            | `R-GC-1..4`, `R-GB-2`                          | Validador puro de asuntos (Conventional Commits) y nombres de rama.                                |
-| `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`.                             |
-| `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                    |
-| `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                     |
-| `governance-coverage`    | `R-DO-9`                                       | Suites honestas (rules vs cites) y suelo de cobertura verificada.                                  |
+| Suite                    | Reglas                                         | Qué comprueba                                                                                                                                    |
+| ------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                                                                         |
+| `architecture-layers`    | `R-AR-2/3/8`, `R-CX-1/4/6`, `R-SO-8`, `R-ST-1` | Dirección de dependencias: `pages/components → state → services → adapters/repositories → models`.                                               |
+| `architecture-features`  | `R-AR-16`                                      | Contrato estructural por feature: capas, API pública y forma de páginas/componentes.                                                             |
+| `architecture-guards`    | `R-AR-7/9/10`                                  | Sin `ngModel`, diálogos nativos ni `subscribe` sin limpieza.                                                                                     |
+| `architecture-ports`     | `R-AR-3`                                       | Repositorios con interfaz + `InjectionToken`; stores sin adapters ni `HttpClient`.                                                               |
+| `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                                                                   |
+| `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                                                                         |
+| `store-guards`           | `R-ST-1/2/4/5/7 + R-AR-5`                      | Stores con `signalStore`/`withMethods`/`patchState`/`withHooks`, sin `BehaviorSubject`.                                                          |
+| `naming-guards`          | `R-NC-1/2/11`                                  | Sufijos por capa, plantillas hermanas y claves `localStorage` con `ecom_`.                                                                       |
+| `coverage-guards`        | `R-COV-2`                                      | Spec hermano para services, adapters y stores.                                                                                                   |
+| `audit-freshness`        | `R-COV-3`                                      | `AUDIT.md` con fecha de auditoría y versión vigente.                                                                                             |
+| `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.                                                         |
+| `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                                                                            |
+| `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.                                                    |
+| `git-commits`            | `R-GC-1..4`, `R-GB-2`                          | Validador puro de asuntos (Conventional Commits) y nombres de rama.                                                                              |
+| `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`. Las ramas `dependabot/**` se eximen de R-GB-2; sus commits sí se validan. |
+| `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                                                                  |
+| `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                                                                   |
+| `governance-coverage`    | `R-DO-9`                                       | Suites honestas (rules vs cites) y suelo de cobertura verificada.                                                                                |
 
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
