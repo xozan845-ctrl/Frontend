@@ -211,3 +211,22 @@ test('R-E-31: el empresario asigna la flota de un envío híbrido', async ({ pag
 
   await expect(page.getByTestId('envio-provider-label-e-1')).toContainText('empresa');
 });
+
+// R-E-33: el empresario consulta las rutas de campo, completa una parada y
+// cambia el estado de la ruta (`GET/PATCH /field/rutas`, ADR-39).
+test('R-E-33: el empresario opera las rutas de campo', async ({ page }) => {
+  await login(page, '/logistica/rutas', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('rutas-page')).toBeVisible();
+  await expect(page.locator('[data-testid="ruta-row"]')).toHaveCount(1);
+  await expect(page.getByTestId('ruta-detail')).toBeVisible();
+  await expect(page.locator('[data-testid="parada-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('parada-status-parada-1')).toContainText('Pendiente');
+
+  await page.getByTestId('parada-toggle-parada-1').click();
+  await expect(page.getByTestId('parada-status-parada-1')).toContainText('Completada');
+
+  await page.getByTestId('ruta-target-status').selectOption('en_curso');
+  await page.getByTestId('ruta-save-status').click();
+  await expect(page.getByTestId('ruta-status-ruta-1')).toContainText('En curso');
+});
