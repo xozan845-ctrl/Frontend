@@ -1,0 +1,221 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="admin-storage-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex flex-wrap items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/admin/inventario" class="transition-colors hover:text-accent-600">
+          Inventario
+        </a>
+        <a routerLink="/admin/pedidos" class="transition-colors hover:text-accent-600"> Pedidos </a>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Almacenamiento</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Almacenamiento
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Buckets, cuotas y uso de almacenamiento por empresa.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="storage.loading()"
+      data-testid="storage-refresh"
+      (click)="storage.load()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="storage.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (storage.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="storage-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button type="button" class="btn btn-secondary btn-sm self-start" (click)="storage.load()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de almacenamiento">
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Empresas</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="storage-tenants">
+        {{ storage.totalTenants() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Uso total</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="storage-used">
+        {{ formatBytes(storage.totalUsedBytes()) }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cuota total</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="storage-quota">
+        {{ formatBytes(storage.totalQuotaBytes()) }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Activos</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="storage-active">
+        {{ storage.activeCount() }} / {{ storage.totalTenants() }}
+      </p>
+    </div>
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="storage-list-title">
+    <header class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2
+          id="storage-list-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Empresas con almacenamiento
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          {{ storage.tenants().length }} de {{ storage.totalTenants() }} empresas
+        </p>
+      </div>
+    </header>
+
+    @if (storage.loading()) {
+      <div class="flex flex-col gap-2" role="status" aria-live="polite">
+        <span class="sr-only">Cargando almacenamiento…</span>
+        <app-skeleton-loader height="60px" customClass="rounded-xl" />
+        <app-skeleton-loader height="60px" customClass="rounded-xl" />
+        <app-skeleton-loader height="60px" customClass="rounded-xl" />
+      </div>
+    } @else if (!storage.hasTenants()) {
+      <p
+        class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+        data-testid="storage-empty"
+      >
+        Todavía no hay empresas con almacenamiento.
+      </p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[860px] text-left text-sm" data-testid="storage-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Empresa / Bucket</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Uso</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Objetos</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Cuota (GB)</th>
+              <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (tenant of storage.tenants(); track tenant.tenantId) {
+              <tr data-testid="storage-row">
+                <td class="py-3 pr-3">
+                  <p
+                    class="max-w-[240px] truncate font-mono text-xs font-bold text-slate-900 dark:text-white"
+                    [title]="tenant.tenantId"
+                  >
+                    {{ tenant.tenantId }}
+                  </p>
+                  <p class="text-[10px] text-slate-400">{{ tenant.bucket || '—' }}</p>
+                </td>
+                <td class="py-3 pr-3">
+                  <div class="flex min-w-[150px] flex-col gap-1">
+                    <div class="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-surface-700">
+                      <div
+                        class="h-full rounded-full bg-accent-600 transition-all"
+                        [style.width.%]="usagePercent(tenant)"
+                      ></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 tabular-nums dark:text-slate-400">
+                      {{ formatBytes(tenant.usedBytes) }} de {{ formatBytes(tenant.quotaBytes) }} ·
+                      {{ usagePercent(tenant) | number: '1.0-0' }}%
+                    </p>
+                  </div>
+                </td>
+                <td class="py-3 pr-3 text-right tabular-nums">{{ tenant.objects }}</td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                    [class]="
+                      tenant.status === 'activo'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                        : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                    "
+                    [attr.data-testid]="'storage-status-' + tenant.tenantId"
+                  >
+                    {{ statusLabel(tenant.status) }}
+                  </span>
+                </td>
+                <td class="py-3 pr-3">
+                  <label class="sr-only" [for]="'storage-quota-' + tenant.tenantId">
+                    Cuota en GB para {{ tenant.tenantId }}
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      [id]="'storage-quota-' + tenant.tenantId"
+                      type="number"
+                      class="input w-24 py-1.5 text-xs"
+                      min="0.01"
+                      step="0.1"
+                      [value]="quotaValue(tenant)"
+                      [disabled]="storage.savingId() === tenant.tenantId"
+                      [attr.data-testid]="'storage-quota-input-' + tenant.tenantId"
+                      (input)="onQuotaInput(tenant.tenantId, $event)"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm"
+                      [disabled]="storage.savingId() === tenant.tenantId || !isQuotaValid(tenant)"
+                      [attr.data-testid]="'storage-save-' + tenant.tenantId"
+                      (click)="saveQuota(tenant)"
+                    >
+                      {{ storage.savingId() === tenant.tenantId ? 'Guardando…' : 'Guardar' }}
+                    </button>
+                  </div>
+                </td>
+                <td class="py-3">
+                  <div class="flex flex-wrap items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      [disabled]="storage.savingId() === tenant.tenantId"
+                      [attr.data-testid]="'storage-toggle-' + tenant.tenantId"
+                      (click)="toggleStatus(tenant)"
+                    >
+                      {{ tenant.status === 'activo' ? 'Suspender' : 'Reactivar' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      [disabled]="storage.recalculatingId() === tenant.tenantId"
+                      [attr.data-testid]="'storage-recalc-' + tenant.tenantId"
+                      (click)="recalculate(tenant)"
+                    >
+                      {{
+                        storage.recalculatingId() === tenant.tenantId ? 'Calculando…' : 'Recalcular'
+                      }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

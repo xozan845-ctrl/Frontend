@@ -19,5 +19,6 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     shipments: '/envios',
     adminShipments: '/admin/envios',
     companyShipments: '/empresarios/me/envios',
+    adminStorage: '/admin/storage',
   },
 };

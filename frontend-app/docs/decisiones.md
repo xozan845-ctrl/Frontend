@@ -929,3 +929,26 @@ contexto y consecuencias.
   `/orders/vendedor/mis-ventas` y `/orders/vendedor/comisiones` siguen
   devolviendo 403 para `empresario` y no se consumen. Revertir es retirar la
   ruta, el ítem del sidebar y las capas nuevas del feature.
+
+## ADR-38: Administración de almacenamiento por empresa
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: Core Engine expone `GET /admin/storage/tenants` con el bucket,
+  cuota, uso, objetos y estado de cada organización, además de `PATCH
+/admin/storage/tenants/:id` para ajustar cuota/estado y `POST
+/admin/storage/tenants/:id/recalcular` para reconstruir el uso desde la
+  metadata. El frontend no tenía ninguna pantalla de almacenamiento.
+- **Decisión**:
+  - Nueva ruta lazy **`/admin/almacenamiento`** dentro del área de
+    administración, con `adminGuard` y `StorageStore` al alcance de la ruta.
+  - Resumen de empresas, uso total, cuota total y activos; tabla por tenant con
+    tenant/bucket, barra de uso, objetos, estado y cuota editable en GB.
+  - `PATCH` envía `cuota_bytes` (convertido desde GB) o `estado`; `POST`
+    recalcula el uso. Tras cada mutación se actualiza la fila sin recargar.
+  - Adapter tolerante a `snake_case`/`camelCase`, números string y
+    `PaginaBucketsResponseDto`. Enlaces de navegación desde inventario y pedidos.
+- **Consecuencias**: el admin controla cuotas y suspensión por empresa desde la
+  consola. Quedan para una siguiente fase el panel de objetos del tenant
+  (`/storage/bucket`, `/storage/objetos`, descarga y flujo de subida
+  prefirmada). Revertir es retirar la ruta, la página, el store y los enlaces.

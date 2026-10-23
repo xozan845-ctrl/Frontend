@@ -1,7 +1,16 @@
 <div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="admin-inventory-page">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Administración</p>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex flex-wrap items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Inventario</span>
+        <a routerLink="/admin/pedidos" class="transition-colors hover:text-accent-600">Pedidos</a>
+        <a routerLink="/admin/almacenamiento" class="transition-colors hover:text-accent-600">
+          Almacenamiento
+        </a>
+      </nav>
       <h1
         class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
       >
