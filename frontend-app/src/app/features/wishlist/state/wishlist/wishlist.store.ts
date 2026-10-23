@@ -1,4 +1,4 @@
-import { effect } from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import {
   signalStore,
   withState,
@@ -7,6 +7,7 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
+import { ReviewsStore } from '../../../products/public-api';
 import type { Product } from '../../../products/public-api';
 import type { WishlistState } from './wishlist.state';
 
@@ -15,10 +16,21 @@ const WISHLIST_KEY = 'ecom_wishlist';
 export const WishlistStore = signalStore(
   { providedIn: 'root' },
   withState<WishlistState>({ items: [] }),
-  withComputed(({ items }) => ({
-    totalItems: () => items().length,
-    itemIds: () => new Set(items().map((p) => p.id)),
-  })),
+  withComputed(({ items }) => {
+    const reviewsStore = inject(ReviewsStore);
+    return {
+      totalItems: () => items().length,
+      itemIds: () => new Set(items().map((p) => p.id)),
+      /** Producto + reseñas para la vista de favoritos (`R-ST-3`). */
+      wishlistVms: computed(() =>
+        items().map((product) => ({
+          product,
+          avgRating: reviewsStore.getAverageRating(product.id),
+          reviewCount: reviewsStore.getReviewsByProductId(product.id).length,
+        })),
+      ),
+    };
+  }),
   withMethods((store) => ({
     toggle(product: Product): void {
       const items = store.items();

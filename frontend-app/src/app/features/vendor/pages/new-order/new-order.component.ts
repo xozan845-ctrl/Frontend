@@ -2,7 +2,6 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  computed,
   effect,
   inject,
   signal,
@@ -55,7 +54,7 @@ export default class NewOrderComponent {
 
   readonly isClientModalOpen = signal(false);
   /** Los recientes del POS muestran solo los últimos movimientos. */
-  readonly recentOrders = computed(() => this.orders.orders().slice(0, 5));
+  readonly recentOrders = this.orders.recentOrders;
 
   private readonly loadCatalog = this.catalog.loadProducts();
   private readonly startPolling = this.orders.startPolling();

@@ -75,6 +75,7 @@ export const ProductStore = signalStore(
 
       return {
         totalProducts: () => products().length,
+        featuredProducts: () => products().slice(0, 4),
         categories,
         filteredProducts,
         paginatedProducts,

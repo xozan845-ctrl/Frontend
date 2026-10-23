@@ -13,6 +13,7 @@ const initialState: RutasState = {
   loading: false,
   error: null,
   selectedRouteId: null,
+  statusFilter: '',
   savingRouteId: null,
   savingStopId: null,
 };
@@ -23,10 +24,15 @@ const initialState: RutasState = {
  */
 export const RutasStore = signalStore(
   withState(initialState),
-  withComputed(({ routes, selectedRouteId }) => ({
+  withComputed(({ routes, selectedRouteId, statusFilter }) => ({
     selectedRoute: computed(() => {
       const id = selectedRouteId();
       return id ? (routes().find((route) => route.id === id) ?? null) : null;
+    }),
+    /** Lista filtrada por estado; el derivado vive en el store (`R-ST-3`). */
+    filteredRoutes: computed(() => {
+      const status = statusFilter();
+      return status ? routes().filter((route) => route.status === status) : routes();
     }),
     routeCount: computed(() => routes().length),
     totalStops: computed(() => routes().reduce((sum, route) => sum + route.stops.length, 0)),
@@ -100,6 +106,11 @@ export const RutasStore = signalStore(
 
         selectRoute(routeId: string | null): void {
           patchState(store, { selectedRouteId: routeId });
+        },
+
+        /** Aplica el filtro por estado de la lista (`''` = todas). */
+        setStatusFilter(statusFilter: string): void {
+          patchState(store, { statusFilter });
         },
 
         /** Cambia el estado de una ruta. */

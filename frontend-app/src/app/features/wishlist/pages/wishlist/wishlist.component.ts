@@ -5,7 +5,7 @@ import { WishlistStore } from '../../state/wishlist/wishlist.store';
 import { CartStore } from '../../../cart/public-api';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { StarRatingComponent } from '../../../../shared/ui/star-rating/star-rating.component';
-import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
+import { Product, ProductStore } from '../../../products/public-api';
 import { QuickViewModalComponent } from '../../../products/public-ui';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
@@ -26,7 +26,6 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 export class WishlistComponent {
   readonly wishlistStore = inject(WishlistStore);
   private readonly cartStore = inject(CartStore);
-  private readonly reviewsStore = inject(ReviewsStore);
   private readonly productStore = inject(ProductStore);
   private readonly seoService = injectSeoPage(
     'Lista de deseos',
@@ -39,23 +38,13 @@ export class WishlistComponent {
   quickViewProduct = signal<Product | null>(null);
 
   /** Vista de cada producto para la plantilla (R-PF-4/R-SO-6). */
-  readonly wishlistVms = computed(() =>
-    this.wishlistStore.items().map((product) => ({
-      product,
-      avgRating: this.reviewsStore.getAverageRating(product.id),
-      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
-    })),
-  );
+  readonly wishlistVms = this.wishlistStore.wishlistVms;
 
   readonly quickViewVm = computed(() => {
     const product = this.quickViewProduct();
     if (!product) return null;
-    return {
-      product,
-      isInWishlist: this.wishlistStore.isInWishlist(product.id),
-      avgRating: this.reviewsStore.getAverageRating(product.id),
-      reviewCount: this.reviewsStore.getReviewsByProductId(product.id).length,
-    };
+    const vm = this.wishlistVms().find((item) => String(item.product.id) === String(product.id));
+    return vm ? { ...vm, isInWishlist: true } : null;
   });
 
   addToCart(product: Product): void {

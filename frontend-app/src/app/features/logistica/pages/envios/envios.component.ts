@@ -30,7 +30,8 @@ export default class EnviosComponent {
 
   readonly statusLabel = shipmentStatusLabel;
   readonly targetStates = TARGET_STATES;
-  readonly statusFilter = signal<string>('');
+  readonly statusFilter = this.envios.statusFilter;
+  readonly filteredShipments = this.envios.filteredShipments;
   readonly providerDrafts = signal<Record<string, ShipmentProvider>>({});
   readonly statusDrafts = signal<Record<string, string>>({});
 
@@ -39,12 +40,6 @@ export default class EnviosComponent {
     return role === 'admin' || role === 'super_admin';
   });
   readonly isEmpresario = computed(() => this.authStore.user()?.role === 'empresario');
-  readonly filteredShipments = computed(() => {
-    const status = this.statusFilter();
-    return status
-      ? this.envios.shipments().filter((shipment) => shipment.status === status)
-      : this.envios.shipments();
-  });
 
   private readonly loadShipments = this.envios.load();
 
@@ -90,6 +85,6 @@ export default class EnviosComponent {
   }
 
   onStatusFilterChange(event: Event): void {
-    this.statusFilter.set((event.target as HTMLSelectElement).value);
+    this.envios.setStatusFilter((event.target as HTMLSelectElement).value);
   }
 }

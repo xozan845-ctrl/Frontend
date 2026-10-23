@@ -12,6 +12,7 @@ import { RouterLink } from '@angular/router';
 import { NgOptimizedImage, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductStore } from '../../state/product/product.store';
+import { ProductDetailStore } from '../../state/product-detail/product-detail.store';
 import { CartStore } from '../../../cart/public-api';
 import { ReviewsStore } from '../../state/reviews/reviews.store';
 import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
@@ -43,6 +44,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css',
+  providers: [ProductDetailStore],
 })
 export class ProductDetailComponent {
   readonly productStore = inject(ProductStore);
@@ -50,6 +52,7 @@ export class ProductDetailComponent {
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly wishlistStore = inject(WishlistStore);
   readonly recentlyViewedStore = inject(RecentlyViewedStore);
+  private readonly detail = inject(ProductDetailStore);
   private readonly notificationService = inject(NotificationService);
   private readonly cartFlyService = inject(CartFlyService);
   private readonly fb = inject(FormBuilder);
@@ -72,37 +75,11 @@ export class ProductDetailComponent {
   selectedSpec = signal<string | null>(null);
   activeImageIndex = signal(0);
 
-  productReviews = computed(() => {
-    const p = this.productStore.selectedProduct();
-    if (!p) return [];
-    return this.reviewsStore
-      .getReviewsByProductId(p.id)
-      .map((review) => ({ ...review, formattedDate: this.formatDate(review.date) }));
-  });
-
-  avgRating = computed(() => {
-    const p = this.productStore.selectedProduct();
-    if (!p) return 0;
-    return this.reviewsStore.getAverageRating(p.id);
-  });
-
-  isInWishlist = computed(() => {
-    const p = this.productStore.selectedProduct();
-    return p ? this.wishlistStore.isInWishlist(p.id) : false;
-  });
-
-  recentlyViewedOtherProducts = computed(() => {
-    const current = this.productStore.selectedProduct();
-    return this.recentlyViewedStore.products().filter((p) => String(p.id) !== String(current?.id));
-  });
-
-  discountPercent = computed(() => {
-    const p = this.productStore.selectedProduct();
-    if (p?.originalPrice && p.originalPrice > p.price) {
-      return Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
-    }
-    return null;
-  });
+  productReviews = this.detail.productReviews;
+  avgRating = this.detail.avgRating;
+  isInWishlist = this.detail.isInWishlist;
+  recentlyViewedOtherProducts = this.detail.recentlyViewedOtherProducts;
+  discountPercent = this.detail.discountPercent;
 
   activeImage = computed(() => {
     const p = this.productStore.selectedProduct();
@@ -208,14 +185,6 @@ export class ProductDetailComponent {
     this.selectedRating.set(0);
     this.reviewSubmitted.set(false);
     this.showReviewForm.set(false);
-  }
-
-  private formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
   }
 }
 export default ProductDetailComponent;

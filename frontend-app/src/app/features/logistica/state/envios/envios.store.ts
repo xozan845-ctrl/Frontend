@@ -1,5 +1,5 @@
-import { inject } from '@angular/core';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
@@ -13,6 +13,7 @@ const initialState: EnviosState = {
   shipments: [],
   loading: false,
   error: null,
+  statusFilter: '',
   assigningId: null,
   advancingId: null,
 };
@@ -23,6 +24,13 @@ const initialState: EnviosState = {
  */
 export const EnviosStore = signalStore(
   withState(initialState),
+  withComputed(({ shipments, statusFilter }) => ({
+    /** Lista filtrada por estado; el derivado vive en el store (`R-ST-3`). */
+    filteredShipments: computed(() => {
+      const status = statusFilter();
+      return status ? shipments().filter((shipment) => shipment.status === status) : shipments();
+    }),
+  })),
   withMethods(
     (
       store,
@@ -121,6 +129,11 @@ export const EnviosStore = signalStore(
             ),
           ),
         ),
+
+        /** Aplica el filtro por estado de la lista (`''` = todas). */
+        setStatusFilter(statusFilter: string): void {
+          patchState(store, { statusFilter });
+        },
 
         clearError(): void {
           patchState(store, { error: null });

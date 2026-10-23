@@ -44,6 +44,7 @@ describe('RutasComponent', () => {
   const selectedRouteId = signal<string | null>(null);
   const savingRouteId = signal<string | null>(null);
   const savingStopId = signal<string | null>(null);
+  const statusFilter = signal('');
   const selectedRoute = computed(
     () => routes().find((item) => item.id === selectedRouteId()) ?? null,
   );
@@ -52,6 +53,11 @@ describe('RutasComponent', () => {
     loading: loading.asReadonly(),
     error: error.asReadonly(),
     selectedRouteId: selectedRouteId.asReadonly(),
+    statusFilter: statusFilter.asReadonly(),
+    filteredRoutes: computed(() => {
+      const status = statusFilter();
+      return status ? routes().filter((item) => item.status === status) : routes();
+    }),
     savingRouteId: savingRouteId.asReadonly(),
     savingStopId: savingStopId.asReadonly(),
     selectedRoute,
@@ -62,6 +68,7 @@ describe('RutasComponent', () => {
     ),
     load: vi.fn(),
     selectRoute: vi.fn((id: string | null) => selectedRouteId.set(id)),
+    setStatusFilter: vi.fn((status: string) => statusFilter.set(status)),
     updateStatus: vi.fn(),
     toggleStop: vi.fn(),
   };
@@ -86,6 +93,7 @@ describe('RutasComponent', () => {
     loading.set(false);
     error.set(null);
     selectedRouteId.set(null);
+    statusFilter.set('');
     savingRouteId.set(null);
     savingStopId.set(null);
     TestBed.resetTestingModule();

@@ -31,7 +31,7 @@ export class HomeComponent {
     'Hardware premium y tecnología sin concesiones para profesionales.',
   );
 
-  featuredProducts = computed(() => this.productStore.products().slice(0, 4));
+  featuredProducts = this.productStore.featuredProducts;
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');

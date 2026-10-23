@@ -12,6 +12,7 @@ export const baseline = {
   'architecture-lifecycle': [],
   'architecture-config': [],
   'architecture-packaging': [],
+  'presentation-guards': [],
 };
 
 /** Claves aceptadas para una suite (para validar el propio baseline). */

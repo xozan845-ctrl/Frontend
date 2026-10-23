@@ -5,6 +5,8 @@ export interface RutasState {
   loading: boolean;
   error: string | null;
   selectedRouteId: string | null;
+  /** Filtro por estado de la lista (`''` = todas). */
+  statusFilter: string;
   /** Ruta con un cambio de estado en curso. */
   savingRouteId: string | null;
   /** Parada con un cambio en curso. */

@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartStore } from '../../../cart/state/cart/cart.store';
@@ -21,19 +21,26 @@ const product: Product = {
 
 describe('WishlistComponent', () => {
   const items = signal<Product[]>([product]);
+  const cartStore = { addItem: vi.fn() };
+  const reviewsStore = {
+    getAverageRating: vi.fn((_productId: string | number) => 4.5),
+    getReviewsByProductId: vi.fn((_productId: string | number) => [{ id: 1 }]),
+  };
   const wishlistStore = {
     items,
     totalItems: () => items().length,
+    wishlistVms: computed(() =>
+      items().map((item) => ({
+        product: item,
+        avgRating: reviewsStore.getAverageRating(item.id),
+        reviewCount: reviewsStore.getReviewsByProductId(item.id).length,
+      })),
+    ),
     isInWishlist: vi.fn(() => true),
     toggle: vi.fn(),
     removeItem: vi.fn((id: string | number) =>
       items.update((current) => current.filter((item) => item.id !== id)),
     ),
-  };
-  const cartStore = { addItem: vi.fn() };
-  const reviewsStore = {
-    getAverageRating: vi.fn(() => 4.5),
-    getReviewsByProductId: vi.fn(() => [{ id: 1 }]),
   };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
 

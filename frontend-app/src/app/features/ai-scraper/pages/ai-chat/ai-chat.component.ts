@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiSessionStore } from '../../state/ai-session/ai-session.store';
@@ -79,7 +79,7 @@ export default class AiChatComponent {
   readonly suggestions = SUGGESTIONS;
 
   /** Término de búsqueda del historial. */
-  readonly search = signal('');
+  readonly search = this.store.search;
 
   readonly createForm = this.fb.nonNullable.group({
     url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
@@ -91,14 +91,7 @@ export default class AiChatComponent {
   });
 
   /** Historial filtrado por dominio o URL (buscador lateral). */
-  readonly filteredSessions = computed(() => {
-    const term = this.search().trim().toLowerCase();
-    const sessions = this.store.sessions();
-    if (!term) return sessions;
-    return sessions.filter((session) =>
-      `${session.domain} ${session.url}`.toLowerCase().includes(term),
-    );
-  });
+  readonly filteredSessions = this.store.filteredSessions;
 
   /** Historial agrupado en Hoy / Últimos 7 días / Anteriores. */
   readonly sessionGroups = computed<SessionGroup[]>(() => {
@@ -136,7 +129,7 @@ export default class AiChatComponent {
 
   /** Filtra el historial mientras se escribe en el buscador. */
   onSearch(event: Event): void {
-    this.search.set((event.target as HTMLInputElement).value);
+    this.store.setSearch((event.target as HTMLInputElement).value);
   }
 
   /** Rellena la URL con el ejemplo de una sugerencia. */

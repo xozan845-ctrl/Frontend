@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore, isSellerRole } from '../../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import {
   CatalogProductOption,
@@ -49,7 +49,7 @@ export default class CreateStoreComponent {
   readonly showPassword = signal(false);
 
   /** Sesión actual: de vendedor/empresario (puede crear tienda) o de comprador (no). */
-  readonly isSeller = computed(() => isSellerRole(this.authStore.user()?.role));
+  readonly isSeller = this.authStore.isSeller;
   readonly isBuyer = computed(() => this.authStore.isAuthenticated() && !this.isSeller());
   /** El JWT ya trae la empresa activa; si no, el onboarding la crea antes de la tienda. */
   readonly hasCompany = computed(() => !!this.authStore.user()?.tenantId);

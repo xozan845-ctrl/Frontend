@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { ProductStore } from '../../state/product/product.store';
-import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
+import { ProductSearchStore } from '../../state/product-search/product-search.store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
@@ -23,51 +23,25 @@ import type { HighlightPart } from './search-autocomplete.types';
   imports: [RouterLink, NgOptimizedImage, AppCurrencyPipe],
   templateUrl: './search-autocomplete.component.html',
   styleUrl: './search-autocomplete.component.css',
+  providers: [ProductSearchStore],
 })
 export class SearchAutocompleteComponent {
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('container') containerRef!: ElementRef<HTMLElement>;
 
   private readonly productStore = inject(ProductStore);
+  private readonly searchStore = inject(ProductSearchStore);
   private readonly router = inject(Router);
 
-  searchTerm = signal('');
+  readonly searchTerm = this.searchStore.term;
   isOpen = signal(false);
   focusedIndex = signal(-1);
 
   /** Tienda activa (de la URL) para construir enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
 
-  private readonly allCategories = PRODUCT_CATEGORIES;
-
-  matchedProducts = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    if (term.length < 2) return [];
-    return this.productStore
-      .products()
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(term) ||
-          p.description.toLowerCase().includes(term) ||
-          p.category.toLowerCase().includes(term),
-      )
-      .slice(0, 6);
-  });
-
-  matchedCategories = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    if (term.length < 2) return [];
-    const dynamicCats = Array.from(
-      new Set(
-        this.productStore
-          .products()
-          .map((p) => p.category)
-          .filter(Boolean),
-      ),
-    );
-    const pool = dynamicCats.length > 0 ? dynamicCats : [...PRODUCT_CATEGORIES];
-    return pool.filter((c) => c.toLowerCase().includes(term));
-  });
+  matchedProducts = this.searchStore.matchedProducts;
+  matchedCategories = this.searchStore.matchedCategories;
 
   /**
    * Productos con su nombre ya troceado en fragmentos resaltables.
@@ -85,7 +59,7 @@ export class SearchAutocompleteComponent {
   private readonly filterInput = this.searchSubject
     .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
     .subscribe((term) => {
-      this.searchTerm.set(term);
+      this.searchStore.setTerm(term);
       this.isOpen.set(term.length >= 2);
       this.focusedIndex.set(-1);
     });
@@ -93,7 +67,7 @@ export class SearchAutocompleteComponent {
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchSubject.next(value);
-    if (value.length === 0) this.searchTerm.set('');
+    if (value.length === 0) this.searchStore.clear();
   }
 
   onFocus(): void {
@@ -101,7 +75,7 @@ export class SearchAutocompleteComponent {
   }
 
   clear(): void {
-    this.searchTerm.set('');
+    this.searchStore.clear();
     this.isOpen.set(false);
     if (this.searchInputRef) this.searchInputRef.nativeElement.value = '';
     this.searchInputRef?.nativeElement.focus();

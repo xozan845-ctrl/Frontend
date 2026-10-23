@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiChatComponent from './ai-chat.component';
@@ -23,8 +23,17 @@ function session(partial: Partial<AiSession>): AiSession {
 }
 
 function sessionStoreFake() {
+  const sessions = signal<AiSession[]>([]);
+  const search = signal('');
   return {
-    sessions: signal<AiSession[]>([]),
+    sessions,
+    search,
+    filteredSessions: computed(() => {
+      const term = search().trim().toLowerCase();
+      if (!term) return sessions();
+      return sessions().filter((item) => `${item.domain} ${item.url}`.toLowerCase().includes(term));
+    }),
+    setSearch: vi.fn((value: string) => search.set(value)),
     creating: signal(false),
     current: signal<AiSessionDetail | null>(null),
     status: signal<string | null>(null),
@@ -117,7 +126,7 @@ describe('AiChatComponent', () => {
     ]);
     const fixture = TestBed.createComponent(AiChatComponent);
     fixture.detectChanges();
-    fixture.componentInstance.search.set('caf');
+    store.search.set('caf');
     expect(fixture.componentInstance.filteredSessions().map((s) => s.id)).toEqual(['2']);
   });
 
