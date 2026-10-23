@@ -1,6 +1,6 @@
 import type { User } from './auth.model';
 
-/** Superficies de trabajo; ninguna representa logística global de plataforma. */
+/** Superficies de trabajo; logística es un tenant independiente, nunca plataforma. */
 export type Workspace = 'platform' | 'company' | 'store' | 'logistics';
 
 /** Permisos de plataforma, tenant comercial, tienda y logística. */
@@ -28,15 +28,19 @@ export type Permission =
   | 'logistics:read'
   | 'logistics:manage-fleet'
   | 'logistics:manage-routes'
-  | 'logistics:manage-settings';
+  | 'logistics:manage-settings'
+  | 'logistics:manage-team'
+  | 'logistics:manage-billing';
 
 /** Propiedad de una flota: empresa o tienda de un vendedor. */
-export type LogisticsOwnership = 'company' | 'store';
+export type LogisticsOwnership = 'company' | 'store' | 'logistics_company';
 
 const PLATFORM_ROLES = ['admin', 'super_admin'] as const;
 const SUPER_ADMIN_ROLES = ['super_admin'] as const;
 const COMPANY_OWNER_ROLES = ['empresario'] as const;
 const STORE_ROLES = ['vendedor'] as const;
+const LOGISTICS_COMPANY_OWNER_ROLES = ['empresario', 'vendedor', 'empresa_logistica'] as const;
+const LOGISTICS_COMPANY_ROLES = ['empresa_logistica'] as const;
 const LOGISTICS_OPERATOR_ROLES = ['logistica', 'coordinador', 'supervisor', 'operativo'] as const;
 
 const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> = {
@@ -87,6 +91,14 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
   coordinador: ['logistics:read', 'logistics:manage-routes'],
   supervisor: ['logistics:read', 'logistics:manage-routes'],
   operativo: ['logistics:read'],
+  empresa_logistica: [
+    'logistics:read',
+    'logistics:manage-fleet',
+    'logistics:manage-routes',
+    'logistics:manage-settings',
+    'logistics:manage-team',
+    'logistics:manage-billing',
+  ],
 };
 
 export function isPlatformRole(role?: string): boolean {
@@ -103,6 +115,23 @@ export function isCompanyOwnerRole(role?: string): boolean {
 
 export function isStoreWorkspaceRole(role?: string): boolean {
   return !!role && STORE_ROLES.includes(role as (typeof STORE_ROLES)[number]);
+}
+
+/** Indica si la sesión posee un tenant logístico separado del comercial. */
+export function isLogisticsCompanyMember(user?: User | null): boolean {
+  return !!user?.logisticsCompanyId;
+}
+
+/** Solo el propietario del tenant logístico puede administrarlo. */
+export function isLogisticsCompanyOwner(user?: User | null): boolean {
+  return (
+    !!user &&
+    LOGISTICS_COMPANY_OWNER_ROLES.includes(
+      user.role as (typeof LOGISTICS_COMPANY_OWNER_ROLES)[number],
+    ) &&
+    !!user.logisticsCompanyId &&
+    user.logisticsCompanyRole === 'owner'
+  );
 }
 
 export function isLogisticsOperatorRole(role?: string): boolean {
@@ -129,13 +158,17 @@ export function canEnterWorkspace(user: User | null | undefined, workspace: Work
     case 'store':
       return isStoreWorkspaceRole(user.role) && !!user.tenantId && !!user.storeId;
     case 'logistics':
-      // Nunca se concede logística a super_admin/admin: la plataforma no tiene
-      // flota ni operaciones de reparto globales.
+      // La logística puede pertenecer a un tenant comercial o a un tenant
+      // logístico independiente; nunca se concede a la plataforma.
       return (
-        (isCompanyOwnerRole(user.role) ||
+        ((isCompanyOwnerRole(user.role) ||
           isStoreWorkspaceRole(user.role) ||
-          isLogisticsOperatorRole(user.role)) &&
-        !!user.tenantId
+          isLogisticsOperatorRole(user.role) ||
+          LOGISTICS_COMPANY_ROLES.includes(
+            user.role as (typeof LOGISTICS_COMPANY_ROLES)[number],
+          )) &&
+          (!!user.tenantId || !!user.logisticsCompanyId)) ||
+        isLogisticsCompanyOwner(user)
       );
   }
 }
@@ -153,8 +186,23 @@ export function hasPermission(user: User | null | undefined, permission: Permiss
 
   // Una lista entregada por backend representa una delegación explícita. Los
   // propietarios siguen teniendo potestad absoluta sobre su propio dominio.
-  if (user.permissions?.length && !isCompanyOwnerRole(user.role)) {
+  if (
+    user.permissions?.length &&
+    !isCompanyOwnerRole(user.role) &&
+    !isLogisticsCompanyOwner(user)
+  ) {
     return user.permissions.includes(permission);
+  }
+
+  if (isLogisticsCompanyOwner(user) && permission.startsWith('logistics:')) {
+    return [
+      'logistics:read',
+      'logistics:manage-fleet',
+      'logistics:manage-routes',
+      'logistics:manage-settings',
+      'logistics:manage-team',
+      'logistics:manage-billing',
+    ].includes(permission);
   }
 
   return DEFAULT_ROLE_PERMISSIONS[user.role ?? '']?.includes(permission) ?? false;
@@ -169,6 +217,7 @@ export function canManageLogistics(
   ownership: LogisticsOwnership,
 ): boolean {
   if (!user || !hasPermission(user, 'logistics:manage-fleet')) return false;
+  if (ownership === 'logistics_company') return isLogisticsCompanyOwner(user);
   if (ownership === 'company') return isCompanyOwnerRole(user.role);
   return user.role === 'vendedor';
 }
@@ -183,6 +232,9 @@ export function workspaceLanding(user: User | null | undefined): string {
   if (isPlatformRole(user.role)) return '/admin/inventario';
   if (isCompanyOwnerRole(user.role)) return '/empresa/inicio';
   if (isStoreWorkspaceRole(user.role)) return '/vendedor/inicio';
+  if (isLogisticsCompanyMember(user) || user.role === 'empresa_logistica') {
+    return '/logistica/dashboard';
+  }
   if (isLogisticsOperatorRole(user.role)) return '/logistica/dashboard';
   return '/';
 }

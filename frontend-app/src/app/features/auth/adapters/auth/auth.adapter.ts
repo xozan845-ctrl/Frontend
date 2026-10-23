@@ -36,6 +36,9 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
   const storeId = u['tienda_id'] ?? u['storeId'] ?? u['store_id'];
   const permissions = u['permissions'] ?? u['permisos'];
   const logisticsOwnership = u['logistics_ownership'] ?? u['logisticsOwnership'];
+  const logisticsCompanyId =
+    u['logistics_company_id'] ?? u['logisticsCompanyId'] ?? u['empresa_logistica_id'];
+  const logisticsCompanyRole = u['logistics_company_role'] ?? u['logisticsCompanyRole'];
 
   return {
     id,
@@ -61,8 +64,14 @@ export function adaptUserFromBackend(raw: unknown, fallbackEmail = ''): User {
           ),
         }
       : {}),
-    ...(logisticsOwnership === 'company' || logisticsOwnership === 'store'
+    ...(logisticsOwnership === 'company' ||
+    logisticsOwnership === 'store' ||
+    logisticsOwnership === 'logistics_company'
       ? { logisticsOwnership }
+      : {}),
+    ...(typeof logisticsCompanyId === 'string' && logisticsCompanyId ? { logisticsCompanyId } : {}),
+    ...(logisticsCompanyRole === 'owner' || logisticsCompanyRole === 'member'
+      ? { logisticsCompanyRole }
       : {}),
   };
 }

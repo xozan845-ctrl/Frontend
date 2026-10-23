@@ -9,6 +9,8 @@ export {
   hasPermission,
   isCompanyOwnerRole as isAuthorizedCompanyOwnerRole,
   isLogisticsOperatorRole,
+  isLogisticsCompanyMember,
+  isLogisticsCompanyOwner,
   isPlatformRole,
   isSuperAdminRole,
   isStoreWorkspaceRole,

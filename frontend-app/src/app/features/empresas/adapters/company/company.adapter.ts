@@ -97,7 +97,9 @@ export function adaptCompanySellerFromBackend(raw: unknown): CompanySeller | nul
     ...(readStringArray(record, ['permisos', 'permissions']).length
       ? { permissions: readStringArray(record, ['permisos', 'permissions']) }
       : {}),
-    ...(record['logistics_ownership'] === 'company' || record['logistics_ownership'] === 'store'
+    ...(record['logistics_ownership'] === 'company' ||
+    record['logistics_ownership'] === 'store' ||
+    record['logistics_ownership'] === 'logistics_company'
       ? { logisticsOwnership: record['logistics_ownership'] }
       : {}),
   };

@@ -7,6 +7,7 @@ export interface ApiEndpointsConfig {
   cart: string;
   vendor: string;
   companies: string;
+  logisticsCompanies: string;
   inventory: string;
   shipments: string;
   adminShipments: string;

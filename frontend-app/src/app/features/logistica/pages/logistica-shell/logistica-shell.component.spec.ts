@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { AuthStore } from '../../../auth/public-api';
 import LogisticaShellComponent from './logistica-shell.component';
 
 describe('LogisticaShellComponent', () => {
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [LogisticaShellComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: AuthStore, useValue: { user: () => null } }],
     }).compileComponents();
     const fixture = TestBed.createComponent(LogisticaShellComponent);
     fixture.detectChanges();
