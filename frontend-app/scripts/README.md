@@ -47,7 +47,7 @@ que son verificables por máquina.
 > `storage` nace con esas capas para el bucket del tenant (ADR-42).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
-> | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige documentación **del área** (no cualquier `.md`); se omite en `main`. |
+> | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige documentación **del área** (no cualquier `.md`); se omite en `main` y en ramas `dependabot/**`. |
 
 ### Modelo de capas
 

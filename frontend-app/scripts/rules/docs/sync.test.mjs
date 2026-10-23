@@ -13,6 +13,8 @@ import { DOCS_SYNC_EXEMPTIONS, DOCS_SYNC_GATES, MAIN_BRANCH } from '../../config
  */
 
 const isMain = (branch) => branch === MAIN_BRANCH || branch === `origin/${MAIN_BRANCH}`;
+/** Las actualizaciones de Dependabot no introducen lógica de producto. */
+const isDependabotBranch = (branch) => branch.startsWith('dependabot/');
 
 export default defineSuite({
   id: 'docs-sync',
@@ -22,7 +24,7 @@ export default defineSuite({
   run: ({ test, assert }) => {
     test('R-DO-8: los cambios de lógica/CI actualizan la documentación necesaria', () => {
       const { currentBranch, baseBranch } = getBranchContext(MAIN_BRANCH);
-      if (isMain(currentBranch)) return;
+      if (isMain(currentBranch) || isDependabotBranch(currentBranch)) return;
 
       const changedFiles = getChangedFiles(baseBranch, MAIN_BRANCH);
       if (changedFiles.length === 0) return;
