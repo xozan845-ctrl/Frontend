@@ -21,16 +21,16 @@ describe('StoreEntryComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe navegar al asistente al pulsar "Crear mi tienda"', async () => {
+  it('debe navegar al asistente al pulsar "Crear empresa"', async () => {
     const fixture = await setup();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const button = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find((candidate) => candidate.textContent?.includes('Crear mi tienda'))!;
+    ).find((candidate) => candidate.textContent?.includes('Crear empresa'))!;
 
     button.click();
 
-    expect(navigate).toHaveBeenCalledWith(['/crear-tienda']);
+    expect(navigate).toHaveBeenCalledWith(['/crear-empresa']);
   });
 
   it('debe entrar a la tienda indicada', async () => {
