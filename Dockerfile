@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # --- Etapa 1: build ---
-FROM node:22-alpine AS build
+FROM node:25-alpine AS build
 WORKDIR /app
 COPY frontend-app/package.json frontend-app/package-lock.json ./
 RUN npm ci --prefer-offline
