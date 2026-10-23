@@ -1,0 +1,283 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="incidencias-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Logística</span>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Incidencias</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Incidencias
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Problemas de entrega reportados por el equipo y su resolución.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="incidencias.loading()"
+      data-testid="incidencias-refresh"
+      (click)="incidencias.load()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="incidencias.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (incidencias.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="incidencias-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        (click)="incidencias.load()"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section class="grid gap-4 sm:grid-cols-3" aria-label="Resumen de incidencias">
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Abiertas</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="incidencias-open">
+        {{ incidencias.openCount() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">En progreso</p>
+      <p
+        class="mt-1 font-heading text-xl font-black tabular-nums"
+        data-testid="incidencias-in-progress"
+      >
+        {{ incidencias.inProgressCount() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Resueltas</p>
+      <p
+        class="mt-1 font-heading text-xl font-black tabular-nums"
+        data-testid="incidencias-resolved"
+      >
+        {{ incidencias.resolvedCount() }}
+      </p>
+    </div>
+  </section>
+
+  @if (incidencias.loading()) {
+    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]" role="status" aria-live="polite">
+      <span class="sr-only">Cargando incidencias…</span>
+      <app-skeleton-loader height="220px" customClass="rounded-xl" />
+      <app-skeleton-loader height="260px" customClass="rounded-xl" />
+    </div>
+  } @else if (incidencias.totalIncidents() === 0) {
+    <div class="card p-8 text-center" data-testid="incidencias-empty">
+      <i
+        class="fa-solid fa-triangle-exclamation mb-3 text-2xl text-slate-300"
+        aria-hidden="true"
+      ></i>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        No hay incidencias reportadas para esta empresa.
+      </p>
+    </div>
+  } @else {
+    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
+      <section class="card flex flex-col gap-4 p-5" aria-labelledby="incidencias-list-title">
+        <header class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2
+              id="incidencias-list-title"
+              class="font-heading text-lg font-black tracking-tight uppercase"
+            >
+              Reportadas
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ incidencias.filteredIncidents().length }} de {{ incidencias.totalIncidents() }}
+            </p>
+          </div>
+          <div>
+            <label for="incidencias-status-filter" class="sr-only">Filtrar por estado</label>
+            <select
+              id="incidencias-status-filter"
+              class="input py-1.5 text-xs"
+              data-testid="incidencias-status-filter"
+              [value]="incidencias.statusFilter() ?? ''"
+              (change)="onStatusFilterChange($event)"
+            >
+              <option value="">Todos los estados</option>
+              @for (state of incidentStates; track state.value) {
+                <option [value]="state.value">{{ state.label }}</option>
+              }
+            </select>
+          </div>
+        </header>
+
+        @if (incidencias.filteredIncidents().length === 0) {
+          <p class="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            No hay incidencias para este estado.
+          </p>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (incident of incidencias.filteredIncidents(); track incident.id) {
+              <li data-testid="incidencia-row">
+                <button
+                  type="button"
+                  class="w-full rounded-xl border border-slate-200 p-4 text-left transition-colors hover:border-accent-400 hover:bg-accent-50/50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:border-surface-700 dark:hover:border-accent-500 dark:hover:bg-accent-900/10"
+                  [class.border-accent-500]="incidencias.selectedIncidentId() === incident.id"
+                  [class.ring-2]="incidencias.selectedIncidentId() === incident.id"
+                  [class.ring-accent-500]="incidencias.selectedIncidentId() === incident.id"
+                  [attr.aria-current]="
+                    incidencias.selectedIncidentId() === incident.id ? 'true' : null
+                  "
+                  [attr.data-testid]="'incidencia-select-' + incident.id"
+                  (click)="selectIncident(incident)"
+                >
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="text-sm font-bold text-slate-900 dark:text-white">
+                        {{ typeLabel(incident.type) }}
+                      </p>
+                      <p class="mt-0.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">
+                        {{ incident.description }}
+                      </p>
+                    </div>
+                    <span
+                      [class]="statusBadgeClass(incident.status)"
+                      [attr.data-testid]="'incidencia-list-status-' + incident.id"
+                    >
+                      {{ statusLabel(incident.status) }}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-[10px] text-slate-400">
+                    {{ incident.createdAt | date: 'short' }}
+                  </p>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="card flex flex-col gap-4 p-5" aria-labelledby="incidencia-detail-title">
+        @if (incidencias.selectedIncident(); as incident) {
+          <div data-testid="incidencia-detail">
+            <header class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Detalle de incidencia
+                </p>
+                <h2
+                  id="incidencia-detail-title"
+                  class="font-heading text-xl font-black tracking-tight uppercase"
+                >
+                  {{ typeLabel(incident.type) }}
+                </h2>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ incident.createdAt | date: 'medium' }}
+                </p>
+              </div>
+              <span
+                [class]="statusBadgeClass(incident.status)"
+                [attr.data-testid]="'incidencia-detail-status-' + incident.id"
+              >
+                {{ statusLabel(incident.status) }}
+              </span>
+            </header>
+
+            <p class="mt-4 rounded-xl border border-slate-200 p-4 text-sm dark:border-surface-700">
+              {{ incident.description }}
+            </p>
+
+            <dl class="mt-4 grid gap-3 text-xs sm:grid-cols-3">
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Personal
+                </dt>
+                <dd class="mt-1 font-mono text-[10px] font-bold">
+                  {{ incident.personalId || '—' }}
+                </dd>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Vehículo
+                </dt>
+                <dd class="mt-1 font-mono text-[10px] font-bold">
+                  {{ incident.vehicleId || '—' }}
+                </dd>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ruta</dt>
+                <dd class="mt-1 font-mono text-[10px] font-bold">
+                  {{ incident.routeId || '—' }}
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-4 rounded-xl border border-slate-200 p-4 dark:border-surface-700">
+              <h3 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">
+                Resolución
+              </h3>
+              <div class="mt-3 flex flex-col gap-2">
+                <label for="incidencia-target-status" class="sr-only">Estado</label>
+                <select
+                  id="incidencia-target-status"
+                  class="input py-1.5 text-xs"
+                  data-testid="incidencia-target-status"
+                  [value]="statusFor(incident)"
+                  [disabled]="incidencias.savingId() === incident.id"
+                  (change)="onStatusChange(incident, $event)"
+                >
+                  @for (state of incidentStates; track state.value) {
+                    <option [value]="state.value">{{ state.label }}</option>
+                  }
+                </select>
+                <label for="incidencia-resolution" class="sr-only">Resolución</label>
+                <textarea
+                  id="incidencia-resolution"
+                  class="input min-h-20 py-2 text-xs"
+                  placeholder="Describe cómo se resolvió o se está gestionando…"
+                  data-testid="incidencia-resolution"
+                  [value]="resolutionFor(incident)"
+                  [disabled]="incidencias.savingId() === incident.id"
+                  (input)="onResolutionInput(incident, $event)"
+                ></textarea>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm self-start"
+                  [disabled]="incidencias.savingId() === incident.id"
+                  data-testid="incidencia-save"
+                  (click)="saveIncident(incident)"
+                >
+                  {{ incidencias.savingId() === incident.id ? 'Guardando…' : 'Guardar' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="p-8 text-center" data-testid="incidencia-detail-empty">
+            <i
+              class="fa-solid fa-triangle-exclamation mb-3 text-2xl text-slate-300"
+              aria-hidden="true"
+            ></i>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Selecciona una incidencia para gestionarla.
+            </p>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

@@ -1,12 +1,15 @@
 import { Route, Routes } from '@angular/router';
 import { fieldGuard, logisticsGuard } from '../auth/public-api';
 import { ENVIO_REPOSITORY } from './repositories/envio.repository';
+import { INCIDENCIA_REPOSITORY } from './repositories/incidencia.repository';
 import { PERSONAL_REPOSITORY } from './repositories/personal.repository';
 import { RUTA_REPOSITORY } from './repositories/ruta.repository';
 import { EnvioService } from './services/envio/envio.service';
+import { IncidenciaService } from './services/incidencia/incidencia.service';
 import { PersonalService } from './services/personal/personal.service';
 import { RutaService } from './services/ruta/ruta.service';
 import { EnviosStore } from './state/envios/envios.store';
+import { IncidenciasStore } from './state/incidencias/incidencias.store';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
 import { PersonalStore } from './state/personal/personal.store';
 import { RutasStore } from './state/rutas/rutas.store';
@@ -79,12 +82,15 @@ export const LOGISTICA_ROUTES: Routes = [
         'La cobertura de entrega y sus límites.',
         'fa-solid fa-location-dot',
       ),
-      comingSoonRoute(
-        'incidencias',
-        'Incidencias',
-        'Los problemas de entrega y su seguimiento.',
-        'fa-solid fa-triangle-exclamation',
-      ),
+      {
+        path: 'incidencias',
+        canActivate: [fieldGuard],
+        providers: [
+          IncidenciasStore,
+          { provide: INCIDENCIA_REPOSITORY, useClass: IncidenciaService },
+        ],
+        loadComponent: () => import('./pages/incidencias/incidencias.component'),
+      },
       comingSoonRoute(
         'reportes',
         'Reportes',

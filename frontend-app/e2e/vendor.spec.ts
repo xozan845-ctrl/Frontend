@@ -246,3 +246,23 @@ test('R-E-34: el empresario consulta el personal de reparto', async ({ page }) =
   await page.getByTestId('personal-select-personal-2').click();
   await expect(page.getByTestId('personal-detail')).toContainText('Luis Méndez');
 });
+
+// R-E-35: el empresario consulta las incidencias de campo y actualiza su
+// estado y resolución (`GET/PATCH /field/incidencias`, ADR-41).
+test('R-E-35: el empresario gestiona una incidencia de campo', async ({ page }) => {
+  await login(page, '/logistica/incidencias', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('incidencias-page')).toBeVisible();
+  await expect(page.locator('[data-testid="incidencia-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('incidencia-detail')).toContainText('Llanta pinchada');
+
+  await page.getByTestId('incidencias-status-filter').selectOption('abierta');
+  await expect(page.locator('[data-testid="incidencia-row"]')).toHaveCount(1);
+
+  await page.getByTestId('incidencia-target-status').selectOption('en_progreso');
+  await page.getByTestId('incidencia-resolution').fill('En taller');
+  await page.getByTestId('incidencia-save').click();
+  await expect(page.getByTestId('incidencia-detail-status-incidencia-1')).toContainText(
+    'En progreso',
+  );
+});

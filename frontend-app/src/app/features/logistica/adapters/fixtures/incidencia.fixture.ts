@@ -1,0 +1,33 @@
+/** `IncidenciaResponseDto` real de `GET /field/incidencias`. */
+export const INCIDENCIAS_FIXTURE = [
+  {
+    id: 'incidencia-1',
+    tenant_id: 'tenant-1',
+    tipo: 'mecanica',
+    estado: 'abierta',
+    descripcion: 'Llanta pinchada en la ruta centro.',
+    personal_id: 'personal-1',
+    vehiculo_id: 'vehiculo-1',
+    ruta_id: 'ruta-1',
+    resolucion: null,
+    synced: true,
+    deleted_at: null,
+    created_at: '2026-10-23T09:00:00.000Z',
+    updated_at: '2026-10-23T09:00:00.000Z',
+  },
+  {
+    id: 'incidencia-2',
+    tenant_id: 'tenant-1',
+    tipo: 'clima',
+    estado: 'resuelta',
+    descripcion: 'Lluvia fuerte en la zona norte.',
+    personal_id: null,
+    vehiculo_id: null,
+    ruta_id: null,
+    resolucion: 'Se reprogramó la entrega.',
+    synced: true,
+    deleted_at: null,
+    created_at: '2026-10-22T15:00:00.000Z',
+    updated_at: '2026-10-22T16:00:00.000Z',
+  },
+] as const;
