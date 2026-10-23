@@ -42,7 +42,8 @@ que son verificables por máquina.
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
 > quitar o renombrar una capa exige actualizar el contrato y la documentación
-> del feature en el mismo PR (`R-AR-16`).
+> del feature en el mismo PR (`R-AR-16`). Ejemplo vigente: `logistica` incorpora
+> `adapters` y `repositories` para los envíos reales (ADR-37).
 > | `docs-sync` | `R-DO-8` | Si el PR cambia lógica/CI, exige documentación **del área** (no cualquier `.md`); se omite en `main`. |
 
 ### Modelo de capas
