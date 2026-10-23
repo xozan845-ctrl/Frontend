@@ -81,6 +81,12 @@ export class VendorSidebarComponent {
       testId: 'vendor-nav-inventario',
     },
     {
+      label: 'Almacenamiento',
+      icon: 'fa-solid fa-cloud-arrow-up',
+      link: '/vendedor/almacenamiento',
+      testId: 'vendor-nav-almacenamiento',
+    },
+    {
       label: 'Reportes',
       icon: 'fa-solid fa-chart-line',
       link: '/vendedor/reportes',

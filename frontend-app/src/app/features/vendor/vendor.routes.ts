@@ -1,5 +1,6 @@
 import { Route, Routes } from '@angular/router';
 import { EMPRESAS_ROUTES } from '../empresas/public-api';
+import { STORAGE_ROUTES } from '../storage/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
 import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
 import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
@@ -106,6 +107,7 @@ export const VENDOR_ROUTES: Routes = [
           'fa-solid fa-warehouse',
         ),
       },
+      ...STORAGE_ROUTES,
       {
         path: 'reportes',
         ...comingSoonRoute(

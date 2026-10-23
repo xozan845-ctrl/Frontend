@@ -13,6 +13,7 @@ export interface ApiEndpointsConfig {
   companyShipments: string;
   adminStorage: string;
   field: string;
+  storage: string;
 }
 
 export interface ApiConfiguration {
