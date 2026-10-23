@@ -996,6 +996,7 @@ contexto y consecuencias.
 - **Consecuencias**: el empresario consulta su equipo de reparto desde la
   consola. Quedan incidencias, tracking, asistencia y asignación de flota.
   Revertir es restaurar el placeholder y retirar store, página y puerto.
+
 ## ADR-41: Incidencias de logística de campo
 
 - **Fecha**: 2026-10-23
@@ -1016,6 +1017,7 @@ contexto y consecuencias.
 - **Consecuencias**: la consola permite cerrar el ciclo de una incidencia sin
   salir de logística. Quedan tracking, asistencia, visitas y asignación de
   flota. Revertir es restaurar el placeholder y retirar store/página/puerto.
+
 ## ADR-42: Almacenamiento del tenant
 
 - **Fecha**: 2026-10-23
@@ -1041,6 +1043,7 @@ contexto y consecuencias.
   feature sin recortar otros módulos. Queda para una siguiente fase la edición
   de metadatos/etiquetas y la integración con imágenes de catálogo. Revertir es
   retirar `STORAGE_ROUTES`, el ítem del sidebar y el feature.
+
 ## ADR-43: Workspaces separados por contexto y rol
 
 - **Fecha**: 2026-10-22
@@ -1084,11 +1087,12 @@ contexto y consecuencias.
   - Se centraliza la matriz en `authorization.model.ts` y se agregan
     `workspaceGuard`/`logisticsGuard` para evitar navegación fuera de scope.
   - `/empresa/logistica` y `/vendedor/logistica` cargan el mismo módulo con
-    contexto explícito; `/logistica` solo queda como compatibilidad y nunca se
-    concede a plataforma.
-  - Los contratos de sesión transportan `tenantId`, `storeId`, permisos y
-    `logisticsOwnership`. La autoridad final será RLS en API/DB, con políticas
-    por tenant, tienda, propietario de producto y propietario de flota.
+    contexto comercial; `/logistica` representa un tenant logístico
+    independiente creado por un empresario o vendedor.
+  - Los contratos de sesión transportan `tenantId`, `storeId`,
+    `logisticsCompanyId`, rol logístico, permisos y `logisticsOwnership`. La
+    autoridad final será RLS en API/DB, con políticas por tenant, tienda,
+    empresa logística, propietario de producto y propietario de flota.
 - **Consecuencias**: el vendedor puede delegar permisos sin elevarse a empresa
   o plataforma y el empresario puede asignar vendedores a tiendas cuando el
   backend exponga ese contrato. La especificación completa de RLS, políticas

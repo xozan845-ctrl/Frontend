@@ -74,4 +74,23 @@ describe('auth.contract', () => {
       logisticsOwnership: 'store',
     });
   });
+
+  it('debe conservar el tenant logístico independiente', () => {
+    const user = adaptUserFromBackend({
+      id: 'logistics-owner-1',
+      email: 'rutas@test.local',
+      rol: 'vendedor',
+      tenant_id: 'commerce-1',
+      tienda_id: 'store-1',
+      logistics_company_id: 'logistics-1',
+      logistics_company_role: 'owner',
+      logistics_ownership: 'logistics_company',
+    });
+
+    expect(user).toMatchObject({
+      logisticsCompanyId: 'logistics-1',
+      logisticsCompanyRole: 'owner',
+      logisticsOwnership: 'logistics_company',
+    });
+  });
 });

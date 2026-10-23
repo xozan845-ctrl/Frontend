@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { canEnterWorkspace } from '../../models/authorization.model';
 import { AuthStore } from '../../state/auth/auth.store';
 
 /** Roles con acceso a la logística de campo (espeja `ROLES_LOGISTICA`). */
@@ -11,6 +12,8 @@ const FIELD_ROLES: readonly string[] = [
   'coordinador',
   'supervisor',
   'operativo',
+  'vendedor',
+  'empresa_logistica',
 ];
 
 export function canViewField(role?: string): boolean {
@@ -30,7 +33,7 @@ export const fieldGuard: CanActivateFn = async (_route, state) => {
   }
 
   const user = authStore.user();
-  if (canViewField(user?.role)) {
+  if (canViewField(user?.role) && canEnterWorkspace(user, 'logistics')) {
     return true;
   }
 

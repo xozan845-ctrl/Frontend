@@ -16,31 +16,37 @@ real debe ejecutarse en la API y en la base de datos.
 3. `vendedor` pertenece a un `company_id` y a una sola `store_id`. Puede operar
    absolutamente su tienda: pedidos, clientes, catálogo propio, ofertas de
    catálogo empresarial, facturación, roles de tienda y logística propia.
-4. Un producto debe distinguir `owner_type = company | seller`. Un vendedor
+4. Tanto `empresario` como `vendedor` pueden crear un tenant logístico
+   independiente (`logistics_company_id`). Ese tenant no hereda productos,
+   tiendas, flota ni permisos de la empresa comercial; su propietario administra
+   exclusivamente operaciones logísticas y puede invitar personal logístico.
+5. Un producto debe distinguir `owner_type = company | seller`. Un vendedor
    puede leer y ofertar productos de empresa, pero no modificar el producto
    maestro de la empresa.
-5. Una flota tiene un único propietario: `logistics_owner_type = company` o
-   `store`. El empresario administra la flota de empresa; el vendedor administra
-   su flota de tienda. Si el vendedor usa la flota de empresa, puede operar
-   rutas asignadas, pero no modificar la flota empresarial.
-6. Ninguna tabla ni endpoint de negocio debe aceptar `platform` como propietario
+6. Una flota tiene un único propietario: `company`, `store` o
+   `logistics_company`. El dueño del tenant logístico administra su flota
+   independiente; los demás actores solo operan rutas asignadas.
+7. Ninguna tabla ni endpoint de negocio debe aceptar `platform` como propietario
    de logística. La plataforma puede auditar metadatos, no operar repartos.
-7. El `id` UUID es una clave interna. Los slugs de empresa/tienda son nombres
+8. El `id` UUID es una clave interna. Los slugs de empresa/tienda/logística son nombres
    públicos y no conceden autorización; la API siempre resuelve y comprueba el
    tenant a partir del token.
 
 ## Mapa de superficies
 
-| Superficie           | Ruta principal                                     | Actor                                 | Alcance                                        | Puede administrar logística |
-| -------------------- | -------------------------------------------------- | ------------------------------------- | ---------------------------------------------- | --------------------------- |
-| Plataforma           | `/admin/**`                                        | `super_admin`, `admin` delegado       | infraestructura, tenants, usuarios, auditoría  | No                          |
-| Empresa              | `/empresa/**`                                      | `empresario`                          | un `tenant_id`, todas sus tiendas y vendedores | Flota `company`             |
-| Tienda               | `/vendedor/**`                                     | `vendedor`                            | un `store_id` dentro de su empresa             | Flota `store`               |
-| Logística contextual | `/empresa/logistica/**` o `/vendedor/logistica/**` | empresario/vendedor/personal asignado | empresa o tienda, nunca plataforma             | Según propietario           |
-| Storefront           | `/tienda/:slug/**`                                 | público/comprador                     | lectura pública de una tienda                  | No                          |
+| Superficie          | Ruta principal                                     | Actor                                     | Alcance                                        | Puede administrar logística |
+| ------------------- | -------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- | --------------------------- |
+| Plataforma          | `/admin/**`                                        | `super_admin`, `admin` delegado           | infraestructura, tenants, usuarios, auditoría  | No                          |
+| Empresa             | `/empresa/**`                                      | `empresario`                              | un `tenant_id`, todas sus tiendas y vendedores | Flota `company`             |
+| Tienda              | `/vendedor/**`                                     | `vendedor`                                | un `store_id` dentro de su empresa             | Flota `store`               |
+| Logística comercial | `/empresa/logistica/**` o `/vendedor/logistica/**` | empresario/vendedor/personal asignado     | empresa o tienda comercial                     | Según propietario           |
+| Empresa logística   | `/logistica/**`                                    | empresario/vendedor propietario, personal | tenant `logistics_company_id` independiente    | Flota propia                |
+| Storefront          | `/tienda/:slug/**`                                 | público/comprador                         | lectura pública de una tienda                  | No                          |
 
-`/logistica/**` se conserva solo como compatibilidad. El guard lo resuelve al
-contexto de empresa o tienda y rechaza a usuarios de plataforma.
+`/logistica/**` es el workspace de un tenant logístico independiente. La ruta
+`/logistica/crear` permite iniciar ese tenant a un empresario o vendedor; una
+entrada comercial sin `logistics_company_id` se redirige a su workspace
+contextual. La plataforma nunca obtiene una flota global.
 
 ## Permisos
 
@@ -54,7 +60,8 @@ Los permisos se expresan como `dominio:acción` y se evalúan junto con el scope
   `store:manage-clients`, `store:manage-billing`, `store:manage-roles` y
   `store:manage-logistics`.
 - Logística: `logistics:read`, `logistics:manage-fleet`,
-  `logistics:manage-routes`, `logistics:manage-settings`.
+  `logistics:manage-routes`, `logistics:manage-settings`,
+  `logistics:manage-team`, `logistics:manage-billing`.
 
 Un permiso de tienda no permite cambiar el tenant, asignarse una empresa o
 convertirse en `super_admin`. El endpoint que crea roles debe impedir siempre
@@ -64,7 +71,7 @@ la elevación de scope.
 
 Cada tabla protegida debe tener, como mínimo, `company_id` y cuando aplique
 `store_id`. Las tablas logísticas agregan `logistics_owner_type` y una FK
-exclusiva a `company_id` o `store_id`.
+exclusiva a `company_id`, `store_id` o `logistics_company_id`.
 
 Al iniciar cada transacción autenticada, el API debe establecer variables de
 sesión con valores validados por el JWT y no por parámetros del cliente:
@@ -74,6 +81,7 @@ select set_config('app.user_id',    :user_id,    true);
 select set_config('app.role',       :role,       true);
 select set_config('app.company_id', :company_id, true);
 select set_config('app.store_id',   :store_id,   true);
+select set_config('app.logistics_company_id', :logistics_company_id, true);
 ```
 
 Políticas mínimas:
@@ -99,6 +107,9 @@ using ((logistics_owner_type = 'company'
         and app_has_permission('logistics:manage-fleet'))
     or (logistics_owner_type = 'store'
         and store_id = app_store_id()
+        and app_has_permission('logistics:manage-fleet'))
+    or (logistics_owner_type = 'logistics_company'
+        and logistics_company_id = app_logistics_company_id()
         and app_has_permission('logistics:manage-fleet')));
 ```
 
@@ -118,7 +129,8 @@ base de datos.
 - Al crear un rol, limitar sus permisos al conjunto permitido por el actor y
   registrar quién lo creó, cuándo y sobre qué `store_id`.
 - No aceptar un vendedor sin `tenant_id` ni `store_id` para endpoints de tienda.
-- No aceptar personal logístico sin tenant y asignación de empresa/tienda.
+- No aceptar personal logístico sin `logistics_company_id` cuando pertenezca a
+  una empresa logística independiente.
 - Auditar altas, cambios de permisos, cambios de propietario de flota y
   eliminación lógica de recursos.
 
@@ -126,18 +138,18 @@ base de datos.
 
 `auth/models/authorization.model.ts` centraliza la matriz, `workspaceGuard`
 protege rutas transversales y `logisticsGuard` bloquea logística de plataforma.
-El adapter de sesión conserva `tenantId`, `storeId`, permisos delegados y
-`logisticsOwnership`. Estos datos sirven para navegación y UX; nunca sustituyen
-las políticas RLS del backend.
+El adapter de sesión conserva `tenantId`, `storeId`, `logisticsCompanyId`, rol
+logístico, permisos delegados y `logisticsOwnership`. Estos datos sirven para
+navegación y UX; nunca sustituyen las políticas RLS del backend.
 
 ## Pendientes de backend antes de producción
 
-1. Emitir `store_id`, permisos efectivos y ownership logístico en `/auth/me`,
-   login y refresh.
+1. Emitir `store_id`, `logistics_company_id`, rol dentro del tenant logístico,
+   permisos efectivos y ownership logístico en `/auth/me`, login y refresh.
 2. Crear tablas de membresía/roles de tienda y políticas RLS de empresa,
    tienda, producto, pedido y logística.
-3. Separar endpoints de plataforma de endpoints de empresa/tienda; retirar la
-   semántica ambigua de `/logistica` global.
+3. Separar endpoints de plataforma, empresa comercial, tienda y tenant
+   logístico; `/logistica` debe resolver siempre por `logistics_company_id`.
 4. Añadir pruebas negativas de integración: cross-tenant, cross-store,
    vendedor modificando producto de empresa y superadmin intentando mutar una
    flota.

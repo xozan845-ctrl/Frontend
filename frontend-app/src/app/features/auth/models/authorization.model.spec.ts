@@ -43,6 +43,32 @@ describe('authorization policy', () => {
     expect(canManageLogistics(seller, 'company')).toBe(false);
   });
 
+  it('separa una empresa logística independiente del tenant comercial', () => {
+    const owner = user({
+      role: 'vendedor',
+      tenantId: 'company-1',
+      storeId: 'store-1',
+      logisticsCompanyId: 'logistics-1',
+      logisticsCompanyRole: 'owner',
+    });
+
+    expect(canEnterWorkspace(owner, 'logistics')).toBe(true);
+    expect(hasPermission(owner, 'logistics:manage-team')).toBe(true);
+    expect(canManageLogistics(owner, 'logistics_company')).toBe(true);
+  });
+
+  it('permite entrar a un miembro con rol de empresa logística', () => {
+    const member = user({
+      role: 'empresa_logistica',
+      logisticsCompanyId: 'logistics-1',
+      logisticsCompanyRole: 'member',
+    });
+
+    expect(canEnterWorkspace(member, 'logistics')).toBe(true);
+    expect(hasPermission(member, 'logistics:read')).toBe(true);
+    expect(canManageLogistics(member, 'logistics_company')).toBe(false);
+  });
+
   it('permite delegar solo los permisos explícitos de una tienda', () => {
     const seller = user({
       role: 'vendedor',

@@ -1,4 +1,7 @@
 import { Route, Routes } from '@angular/router';
+import { logisticsGuard } from './guards/logistics/logistics.guard';
+import { LOGISTICS_COMPANY_REPOSITORY } from './repositories/logistics-company.repository';
+import { LogisticsCompanyService } from './services/logistics-company/logistics-company.service';
 import { fieldGuard } from '../auth/public-api';
 import { ENVIO_REPOSITORY } from './repositories/envio.repository';
 import { INCIDENCIA_REPOSITORY } from './repositories/incidencia.repository';
@@ -10,8 +13,8 @@ import { PersonalService } from './services/personal/personal.service';
 import { RutaService } from './services/ruta/ruta.service';
 import { EnviosStore } from './state/envios/envios.store';
 import { IncidenciasStore } from './state/incidencias/incidencias.store';
-import { logisticsGuard } from './guards/logistics/logistics.guard';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
+import { LogisticsCompanyStore } from './state/logistics-company/logistics-company.store';
 import { PersonalStore } from './state/personal/personal.store';
 import { RutasStore } from './state/rutas/rutas.store';
 
@@ -44,6 +47,16 @@ export const LOGISTICA_ROUTES: Routes = [
     providers: [LogisticaDashboardStore],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: 'crear',
+        canActivate: [logisticsGuard],
+        providers: [
+          LogisticsCompanyStore,
+          { provide: LOGISTICS_COMPANY_REPOSITORY, useClass: LogisticsCompanyService },
+        ],
+        loadComponent: () =>
+          import('./pages/logistics-company-onboarding/logistics-company-onboarding.component'),
+      },
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/dashboard/dashboard.component'),

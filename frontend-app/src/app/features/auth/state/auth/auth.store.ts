@@ -130,6 +130,19 @@ export const AuthStore = signalStore(
         clearError() {
           patchState(store, { error: null });
         },
+        /** Activa el tenant logístico recién creado en la sesión local. */
+        setLogisticsCompanyContext(companyId: string, role: 'owner' | 'member' = 'owner'): void {
+          const user = store.user();
+          if (!user) return;
+          patchState(store, {
+            user: {
+              ...user,
+              logisticsCompanyId: companyId,
+              logisticsCompanyRole: role,
+              logisticsOwnership: 'logistics_company',
+            },
+          });
+        },
         /** Limpia la sesión local sin llamar al backend (p. ej. tras cambiar contraseña). */
         clearSession(): void {
           patchState(store, { user: null, token: null, refreshToken: null, error: null });

@@ -24,17 +24,28 @@ describe('fieldGuard', () => {
 
   it('debe permitir los roles de logística de campo', async () => {
     for (const role of [
-      'super_admin',
-      'admin',
       'empresario',
+      'vendedor',
       'logistica',
       'coordinador',
       'supervisor',
       'operativo',
+      'empresa_logistica',
     ]) {
       const { result, router } = run({
         isAuthenticated: () => true,
-        user: () => ({ id: 1, name: 'U', email: 'u@tienda.test', role }),
+        user: () => ({
+          id: 1,
+          name: 'U',
+          email: 'u@tienda.test',
+          role,
+          tenantId: 'company-1',
+          ...(role === 'vendedor' ? { storeId: 'store-1' } : {}),
+          ...(role !== 'empresario' && role !== 'vendedor'
+            ? { logisticsCompanyId: 'logistics-1' }
+            : {}),
+          ...(role === 'vendedor' ? { logisticsCompanyId: 'logistics-1' } : {}),
+        }),
         refreshToken: () => 'r',
         refreshTokenOnce: vi.fn(),
       });
@@ -49,7 +60,13 @@ describe('fieldGuard', () => {
     const refreshTokenOnce = vi.fn().mockResolvedValue(true);
     const { result } = run({
       isAuthenticated: () => false,
-      user: () => ({ id: 1, name: 'U', email: 'u@tienda.test', role: 'coordinador' }),
+      user: () => ({
+        id: 1,
+        name: 'U',
+        email: 'u@tienda.test',
+        role: 'coordinador',
+        logisticsCompanyId: 'logistics-1',
+      }),
       refreshToken: () => 'refresh-1',
       refreshTokenOnce,
     });
@@ -76,6 +93,18 @@ describe('fieldGuard', () => {
     const { result, router, tree } = run({
       isAuthenticated: () => true,
       user: () => ({ id: 1, name: 'C', email: 'c@tienda.test', role: 'comprador' }),
+      refreshToken: () => null,
+      refreshTokenOnce: vi.fn(),
+    });
+
+    expect(await result).toBe(tree);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/']);
+  });
+
+  it('debe rechazar la plataforma aunque tenga permisos administrativos', async () => {
+    const { result, router, tree } = run({
+      isAuthenticated: () => true,
+      user: () => ({ id: 1, name: 'Root', email: 'root@tienda.test', role: 'super_admin' }),
       refreshToken: () => null,
       refreshTokenOnce: vi.fn(),
     });

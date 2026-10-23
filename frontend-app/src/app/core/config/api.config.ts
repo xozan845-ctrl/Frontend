@@ -14,6 +14,7 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     cart: '/carrito',
     vendor: '/vendedores',
     companies: '/empresas',
+    logisticsCompanies: '/logistics/companies',
     inventory: '/admin/inventario',
     shipments: '/envios',
     adminShipments: '/admin/envios',

@@ -283,9 +283,11 @@ export class AuthService implements AuthRepository {
         ? 'admin'
         : credentials.email.startsWith('empresario')
           ? 'empresario'
-          : credentials.email.startsWith('vendedor')
-            ? 'vendedor'
-            : 'comprador';
+          : credentials.email.startsWith('logistica-empresa')
+            ? 'empresa_logistica'
+            : credentials.email.startsWith('vendedor')
+              ? 'vendedor'
+              : 'comprador';
       const mockUser: User = {
         id: Math.floor(Math.random() * 1000),
         email: credentials.email,
@@ -304,7 +306,25 @@ export class AuthService implements AuthRepository {
         ...(role === 'empresario' && credentials.email.startsWith('empresario-logistica')
           ? {
               tenantId: 'empresa-demo',
-              logisticsOwnership: 'company' as const,
+              logisticsCompanyId: 'logistics-demo',
+              logisticsCompanyRole: 'owner' as const,
+              logisticsOwnership: 'logistics_company' as const,
+            }
+          : {}),
+        ...(role === 'empresa_logistica'
+          ? {
+              logisticsCompanyId: 'logistics-demo',
+              logisticsCompanyRole: 'owner' as const,
+              logisticsOwnership: 'logistics_company' as const,
+            }
+          : {}),
+        ...(role === 'vendedor' && credentials.email.startsWith('vendedor-logistica')
+          ? {
+              tenantId: 'empresa-demo',
+              storeId: 'tienda-demo',
+              logisticsCompanyId: 'logistics-demo',
+              logisticsCompanyRole: 'owner' as const,
+              logisticsOwnership: 'logistics_company' as const,
             }
           : {}),
       };

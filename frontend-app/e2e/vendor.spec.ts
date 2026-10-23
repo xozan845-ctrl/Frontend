@@ -127,6 +127,20 @@ test('R-E-22: el empresario crea su empresa desde el workspace', async ({ page }
   await expect(page.getByTestId('company-logistics-mode')).toContainText('Híbrida');
 });
 
+// R-E-37: un vendedor puede crear un tenant logístico independiente; después
+// del alta, `/logistica/**` queda asociado a ese tenant y no a la tienda.
+test('R-E-37: el vendedor crea su empresa logística independiente', async ({ page }) => {
+  await login(page, '/logistica/crear');
+
+  await expect(page.getByTestId('logistics-company-onboarding')).toBeVisible();
+  await page.getByTestId('logistics-company-name').fill('Rutas del Pacífico');
+  await page.getByTestId('logistics-company-slug').fill('rutas-del-pacifico');
+  await page.getByTestId('create-logistics-company').click();
+
+  await expect(page).toHaveURL(/\/logistica\/dashboard/);
+  await expect(page.getByTestId('logistica-dashboard')).toBeVisible();
+});
+
 // R-E-23: el vendedor consulta sus ofertas y ajusta el margen de venta
 // (ADR-29). El mock devuelve la página real de `PaginaOfertasResponseDto`.
 test('R-E-23: el vendedor ajusta el margen de una oferta', async ({ page }) => {
@@ -239,7 +253,7 @@ test('R-E-34: el empresario consulta el personal de reparto', async ({ page }) =
 // R-E-35: el empresario consulta las incidencias de campo y actualiza su
 // estado y resolución (`GET/PATCH /field/incidencias`, ADR-41).
 test('R-E-35: el empresario gestiona una incidencia de campo', async ({ page }) => {
-  await login(page, '/logistica/incidencias', 'empresario@tienda.test');
+  await login(page, '/empresa/logistica/incidencias', 'empresario-logistica@tienda.test');
 
   await expect(page.getByTestId('incidencias-page')).toBeVisible();
   await expect(page.locator('[data-testid="incidencia-row"]')).toHaveCount(2);
@@ -256,10 +270,10 @@ test('R-E-35: el empresario gestiona una incidencia de campo', async ({ page }) 
   );
 });
 
-// R-E-36: el empresario consulta su almacenamiento, sube un archivo prefirmado
+// R-E-36: el vendedor consulta su almacenamiento, sube un archivo prefirmado
 // y elimina un objeto (ADR-42).
-test('R-E-36: el empresario sube y elimina archivos', async ({ page }) => {
-  await login(page, '/vendedor/almacenamiento', 'empresario@tienda.test');
+test('R-E-36: el vendedor sube y elimina archivos', async ({ page }) => {
+  await login(page, '/vendedor/almacenamiento');
 
   await expect(page.getByTestId('storage-page')).toBeVisible();
   await expect(page.getByTestId('storage-used')).toContainText('1.50 GB');

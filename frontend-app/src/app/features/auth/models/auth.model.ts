@@ -8,6 +8,7 @@ export type BackendRole =
   | 'empresario'
   | 'vendedor'
   | 'comprador'
+  | 'empresa_logistica'
   | 'logistica'
   | 'coordinador'
   | 'supervisor'
@@ -52,7 +53,11 @@ export interface User {
   /** Permisos delegados para roles de tienda o personal de logística. */
   permissions?: readonly string[];
   /** Contexto logístico que el backend asignó a la sesión. */
-  logisticsOwnership?: 'company' | 'store';
+  logisticsOwnership?: 'company' | 'store' | 'logistics_company';
+  /** Tenant independiente de una empresa logística, desacoplado del comercial. */
+  logisticsCompanyId?: string;
+  /** Rol dentro del tenant logístico independiente. */
+  logisticsCompanyRole?: 'owner' | 'member';
 }
 
 export interface AuthResponse {

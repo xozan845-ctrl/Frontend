@@ -1,0 +1,50 @@
+<section
+  class="mx-auto flex w-full max-w-2xl flex-col gap-6"
+  data-testid="logistics-company-onboarding"
+>
+  <header>
+    <p class="text-xs font-black tracking-[0.2em] text-accent-600 uppercase">Nuevo tenant</p>
+    <h1 class="font-heading mt-2 text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+      Crear empresa logística
+    </h1>
+    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+      Esta empresa es independiente de tu empresa comercial o tienda. Podrás administrar flota,
+      rutas, personal y clientes logísticos desde este workspace.
+    </p>
+  </header>
+
+  @if (store.error(); as message) {
+    <p class="rounded-xl bg-red-50 p-4 text-sm font-bold text-red-600" role="alert">
+      {{ message }}
+    </p>
+  }
+
+  <form class="card flex flex-col gap-4 p-6" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label class="flex flex-col gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+      Nombre de la empresa
+      <input
+        class="input"
+        formControlName="name"
+        autocomplete="organization"
+        data-testid="logistics-company-name"
+      />
+    </label>
+    <label class="flex flex-col gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+      Identificador público (opcional)
+      <input
+        class="input"
+        formControlName="slug"
+        placeholder="rutas-del-pacifico"
+        data-testid="logistics-company-slug"
+      />
+    </label>
+    <button
+      class="btn btn-primary self-start"
+      type="submit"
+      [disabled]="store.saving()"
+      data-testid="create-logistics-company"
+    >
+      {{ store.saving() ? 'Creando…' : 'Crear empresa logística' }}
+    </button>
+  </form>
+</section>

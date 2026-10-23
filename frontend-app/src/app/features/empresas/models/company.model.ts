@@ -30,7 +30,7 @@ export interface CompanySeller {
   storeId?: string;
   storeName?: string;
   permissions?: readonly string[];
-  logisticsOwnership?: 'company' | 'store';
+  logisticsOwnership?: 'company' | 'store' | 'logistics_company';
 }
 
 /** Datos para crear un vendedor con participación predeterminada. */
@@ -41,5 +41,5 @@ export interface CreateCompanySellerData {
   participationPercentage: number;
   storeId?: string;
   permissions?: readonly string[];
-  logisticsOwnership?: 'company' | 'store';
+  logisticsOwnership?: 'company' | 'store' | 'logistics_company';
 }
