@@ -1,0 +1,277 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="personal-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Logística</span>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Repartidores</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Repartidores
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Equipo de reparto, disponibilidad y ubicación reportada.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="personal.loading()"
+      data-testid="personal-refresh"
+      (click)="personal.load()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="personal.loading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (personal.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="personal-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button type="button" class="btn btn-secondary btn-sm self-start" (click)="personal.load()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumen de personal">
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Equipo</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="personal-total">
+        {{ personal.totalEmployees() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">En ruta</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="personal-on-route">
+        {{ personal.onRouteCount() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Disponibles</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="personal-available">
+        {{ personal.availableCount() }}
+      </p>
+    </div>
+    <div class="card p-5">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Fuera de turno</p>
+      <p class="mt-1 font-heading text-xl font-black tabular-nums" data-testid="personal-offline">
+        {{ personal.offlineCount() }}
+      </p>
+    </div>
+  </section>
+
+  @if (personal.loading()) {
+    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]" role="status" aria-live="polite">
+      <span class="sr-only">Cargando personal…</span>
+      <app-skeleton-loader height="220px" customClass="rounded-xl" />
+      <app-skeleton-loader height="260px" customClass="rounded-xl" />
+    </div>
+  } @else if (personal.totalEmployees() === 0) {
+    <div class="card p-8 text-center" data-testid="personal-empty">
+      <i class="fa-solid fa-users mb-3 text-2xl text-slate-300" aria-hidden="true"></i>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Todavía no hay personal de reparto para esta empresa.
+      </p>
+    </div>
+  } @else {
+    <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
+      <section class="card flex flex-col gap-4 p-5" aria-labelledby="personal-list-title">
+        <header class="flex flex-col gap-3">
+          <div>
+            <h2
+              id="personal-list-title"
+              class="font-heading text-lg font-black tracking-tight uppercase"
+            >
+              Equipo
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ personal.filteredEmployees().length }} de {{ personal.totalEmployees() }}
+            </p>
+          </div>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <div>
+              <label for="personal-search" class="sr-only">Buscar colaborador</label>
+              <input
+                id="personal-search"
+                type="search"
+                class="input"
+                placeholder="Buscar por nombre, correo o teléfono…"
+                [value]="personal.query()"
+                data-testid="personal-search"
+                (input)="onQueryInput($event)"
+              />
+            </div>
+            <div>
+              <label for="personal-status-filter" class="sr-only">Filtrar por estado</label>
+              <select
+                id="personal-status-filter"
+                class="input"
+                data-testid="personal-status-filter"
+                (change)="onStatusChange($event)"
+              >
+                <option value="">Todos los estados</option>
+                <option value="activo">Activo</option>
+                <option value="en_ruta">En ruta</option>
+                <option value="descansando">Descansando</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </header>
+
+        @if (personal.filteredEmployees().length === 0) {
+          <p class="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            No hay colaboradores para estos filtros.
+          </p>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (employee of personal.filteredEmployees(); track employee.id) {
+              <li data-testid="personal-row">
+                <button
+                  type="button"
+                  class="w-full rounded-xl border border-slate-200 p-4 text-left transition-colors hover:border-accent-400 hover:bg-accent-50/50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:border-surface-700 dark:hover:border-accent-500 dark:hover:bg-accent-900/10"
+                  [class.border-accent-500]="personal.selectedEmployeeId() === employee.id"
+                  [class.ring-2]="personal.selectedEmployeeId() === employee.id"
+                  [class.ring-accent-500]="personal.selectedEmployeeId() === employee.id"
+                  [attr.aria-current]="
+                    personal.selectedEmployeeId() === employee.id ? 'true' : null
+                  "
+                  [attr.data-testid]="'personal-select-' + employee.id"
+                  (click)="selectEmployee(employee)"
+                >
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="truncate text-sm font-bold text-slate-900 dark:text-white">
+                        {{ fullName(employee) }}
+                      </p>
+                      <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                        {{ cargoLabel(employee.cargo) }}
+                      </p>
+                    </div>
+                    <span
+                      [class]="statusBadgeClass(employee.status)"
+                      [attr.data-testid]="'personal-list-status-' + employee.id"
+                    >
+                      {{ statusLabel(employee.status) }}
+                    </span>
+                  </div>
+                  @if (employee.phone || employee.email) {
+                    <p class="mt-2 truncate text-[10px] text-slate-400">
+                      {{ employee.phone || employee.email }}
+                    </p>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="card flex flex-col gap-4 p-5" aria-labelledby="personal-detail-title">
+        @if (personal.selectedEmployee(); as employee) {
+          <div data-testid="personal-detail">
+            <header class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Ficha del colaborador
+                </p>
+                <h2
+                  id="personal-detail-title"
+                  class="font-heading text-xl font-black tracking-tight uppercase"
+                >
+                  {{ fullName(employee) }}
+                </h2>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ cargoLabel(employee.cargo) }}
+                </p>
+              </div>
+              <span
+                [class]="statusBadgeClass(employee.status)"
+                [attr.data-testid]="'personal-detail-status-' + employee.id"
+              >
+                {{ statusLabel(employee.status) }}
+              </span>
+            </header>
+
+            <dl class="mt-4 grid gap-3 text-xs sm:grid-cols-2">
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Contacto
+                </dt>
+                <dd class="mt-1 font-bold">{{ employee.phone || employee.email || '—' }}</dd>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Ruta asignada
+                </dt>
+                <dd class="mt-1 font-mono text-[10px] font-bold">
+                  {{ employee.assignedRouteId || 'Sin ruta' }}
+                </dd>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Vehículo
+                </dt>
+                <dd class="mt-1 font-mono text-[10px] font-bold">
+                  {{ employee.assignedVehicleId || 'Sin vehículo' }}
+                </dd>
+              </div>
+              <div class="rounded-xl border border-slate-200 p-3 dark:border-surface-700">
+                <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Check-in
+                </dt>
+                <dd class="mt-1 font-bold">
+                  @if (employee.checkIn) {
+                    {{ employee.checkIn | date: 'shortTime' }}
+                  } @else {
+                    Sin registro
+                  }
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-4 rounded-xl border border-slate-200 p-4 dark:border-surface-700">
+              <h3 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">
+                Última ubicación
+              </h3>
+              @if (hasLocation(employee)) {
+                <p class="mt-2 font-mono text-xs font-bold tabular-nums">
+                  {{ employee.lat }}, {{ employee.lng }}
+                </p>
+                @if (employee.locationTimestamp) {
+                  <p class="mt-1 text-[10px] text-slate-400">
+                    {{ employee.locationTimestamp | date: 'medium' }}
+                  </p>
+                }
+              } @else {
+                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  El colaborador no ha reportado ubicación.
+                </p>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="p-8 text-center" data-testid="personal-detail-empty">
+            <i class="fa-solid fa-user mb-3 text-2xl text-slate-300" aria-hidden="true"></i>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Selecciona un colaborador para ver su ficha.
+            </p>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

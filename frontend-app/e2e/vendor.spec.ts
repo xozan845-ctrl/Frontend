@@ -230,3 +230,19 @@ test('R-E-33: el empresario opera las rutas de campo', async ({ page }) => {
   await page.getByTestId('ruta-save-status').click();
   await expect(page.getByTestId('ruta-status-ruta-1')).toContainText('En curso');
 });
+
+// R-E-34: el empresario consulta el personal de campo, su disponibilidad y su
+// ubicación reportada (`GET /field/personal`, ADR-40).
+test('R-E-34: el empresario consulta el personal de reparto', async ({ page }) => {
+  await login(page, '/logistica/repartidores', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('personal-page')).toBeVisible();
+  await expect(page.locator('[data-testid="personal-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('personal-detail')).toBeVisible();
+  await expect(page.getByTestId('personal-detail')).toContainText('Ana Pérez');
+
+  await page.getByTestId('personal-status-filter').selectOption('descansando');
+  await expect(page.locator('[data-testid="personal-row"]')).toHaveCount(1);
+  await page.getByTestId('personal-select-personal-2').click();
+  await expect(page.getByTestId('personal-detail')).toContainText('Luis Méndez');
+});

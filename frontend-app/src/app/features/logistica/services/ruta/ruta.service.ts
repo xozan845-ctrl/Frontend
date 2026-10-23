@@ -18,7 +18,7 @@ import { RutaRepository } from '../../repositories/ruta.repository';
 })
 export class RutaService implements RutaRepository {
   private readonly http = inject(HttpClient);
-  private readonly endpoint = environment.apiConfig.endpoints.fieldRoutes;
+  private readonly endpoint = `${environment.apiConfig.endpoints.field}/rutas`;
 
   list(): Observable<Ruta[]> {
     if (!environment.apiUrl) return this.missingApiUrl();
