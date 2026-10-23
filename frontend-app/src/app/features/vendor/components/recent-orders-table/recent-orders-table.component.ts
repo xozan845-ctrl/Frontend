@@ -1,6 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { VendorOrder } from '../../models/vendor-order.model';
 import { OrderStatusBadgeComponent } from '../order-status-badge/order-status-badge.component';
@@ -34,7 +35,13 @@ export function formatOrderTime(timestamp: number): string {
 @Component({
   selector: 'app-recent-orders-table',
   standalone: true,
-  imports: [RouterLink, AppCurrencyPipe, SkeletonLoaderComponent, OrderStatusBadgeComponent],
+  imports: [
+    RouterLink,
+    AppCurrencyPipe,
+    AppDatePipe,
+    SkeletonLoaderComponent,
+    OrderStatusBadgeComponent,
+  ],
   templateUrl: './recent-orders-table.component.html',
 })
 export class RecentOrdersTableComponent {
@@ -57,8 +64,4 @@ export class RecentOrdersTableComponent {
     const updated = this.lastUpdatedAt();
     return updated ? `Actualizado ${formatOrderTime(updated)}` : '';
   });
-
-  protected formatDate(iso: string): string {
-    return formatOrderDate(iso);
-  }
 }

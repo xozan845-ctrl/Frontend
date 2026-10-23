@@ -62,6 +62,22 @@ describe('StorageStore', () => {
     expect(store.activeCount()).toBe(1);
   });
 
+  it('deriva la cuota editable y su validez con borradores', async () => {
+    const store = setup();
+    store.load();
+    await vi.waitFor(() => expect(store.tenants()).toHaveLength(1));
+
+    expect(store.quotaValues()['tenant-1']).toBe('5');
+    expect(store.quotaValid()['tenant-1']).toBe(true);
+
+    store.setQuotaDraft('tenant-1', '0');
+    expect(store.quotaValues()['tenant-1']).toBe('0');
+    expect(store.quotaValid()['tenant-1']).toBe(false);
+
+    store.clearQuotaDraft('tenant-1');
+    expect(store.quotaValues()['tenant-1']).toBe('5');
+  });
+
   it('debe actualizar la cuota y la fila', async () => {
     const store = setup();
     store.load();

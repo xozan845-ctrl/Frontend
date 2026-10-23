@@ -29,25 +29,23 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of items(); track $index) {
+          @for (row of rows(); track $index) {
             <tr class="border-t border-slate-100 dark:border-surface-800">
-              @for (column of columns(); track column) {
-                <td class="px-4 py-2.5 text-slate-700 dark:text-slate-200">
-                  {{ display(item, column) }}
-                </td>
+              @for (cell of row.cells; track $index) {
+                <td class="px-4 py-2.5 text-slate-700 dark:text-slate-200">{{ cell }}</td>
               }
               <td class="max-w-[16rem] truncate px-4 py-2.5 text-xs">
-                @if (item._source?.url) {
+                @if (row.item._source?.url) {
                   <a
-                    [href]="item._source!.url"
+                    [href]="row.item._source!.url"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-accent-600 hover:underline dark:text-accent-400"
                   >
-                    {{ source(item) }}
+                    {{ row.source }}
                   </a>
                 } @else {
-                  <span class="text-slate-400">{{ source(item) }}</span>
+                  <span class="text-slate-400">{{ row.source }}</span>
                 }
               </td>
             </tr>

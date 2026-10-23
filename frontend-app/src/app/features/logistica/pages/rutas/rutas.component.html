@@ -231,7 +231,7 @@
                   id="ruta-target-status"
                   class="input py-1.5 text-xs"
                   data-testid="ruta-target-status"
-                  [value]="statusFor(route)"
+                  [value]="statusDrafts()[route.id] ?? route.status"
                   [disabled]="rutas.savingRouteId() === route.id"
                   (change)="onRouteStatusChange(route, $event)"
                 >

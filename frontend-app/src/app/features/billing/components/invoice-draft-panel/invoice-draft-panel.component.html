@@ -85,7 +85,7 @@
             class="w-20 shrink-0 text-right text-sm font-black tabular-nums text-slate-900 dark:text-white"
             data-testid="billing-line-total"
           >
-            {{ lineTotal(line) | appCurrency }}
+            {{ line | lineTotal | appCurrency }}
           </span>
 
           <button

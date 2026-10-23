@@ -163,7 +163,9 @@
                         [id]="'envio-provider-' + shipment.id"
                         class="input py-1.5 text-xs"
                         [attr.data-testid]="'envio-provider-' + shipment.id"
-                        [value]="providerFor(shipment)"
+                        [value]="
+                          providerDrafts()[shipment.id] ?? shipment.providerType ?? 'plataforma'
+                        "
                         [disabled]="envios.assigningId() === shipment.id"
                         (change)="onProviderChange(shipment, $event)"
                       >
@@ -189,7 +191,14 @@
                         [id]="'envio-target-' + shipment.id"
                         class="input py-1.5 text-xs"
                         [attr.data-testid]="'envio-target-' + shipment.id"
-                        [value]="statusFor(shipment)"
+                        [value]="
+                          statusDrafts()[shipment.id] ??
+                          (shipment.status === 'en_preparacion'
+                            ? 'enviada'
+                            : shipment.status === 'enviada'
+                              ? 'entregada'
+                              : 'cancelada')
+                        "
                         [disabled]="envios.advancingId() === shipment.id"
                         (change)="onStatusChange(shipment, $event)"
                       >

@@ -13,6 +13,7 @@ export const baseline = {
   'architecture-config': [],
   'architecture-packaging': [],
   'presentation-guards': [],
+  'performance-guards': [],
 };
 
 /** Claves aceptadas para una suite (para validar el propio baseline). */

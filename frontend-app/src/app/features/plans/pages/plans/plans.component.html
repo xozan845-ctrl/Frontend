@@ -65,17 +65,17 @@
         <div class="p-8 font-bold uppercase tracking-widest text-slate-400 flex items-center">
           Especificaciones
         </div>
-        @for (plan of plans; track plan.id) {
+        @for (card of planCards(); track card.plan.id) {
           <div
             class="p-8 border-l border-slate-200 dark:border-surface-700 relative overflow-hidden"
-            [class.border-l-2]="plan.popular"
-            [class.border-accent-600]="plan.popular"
-            [class.bg-accent-50]="plan.popular"
-            [class.dark:bg-accent-900/10]="plan.popular"
-            [class.bg-white]="!plan.popular"
-            [class.dark:bg-surface-800]="!plan.popular"
+            [class.border-l-2]="card.plan.popular"
+            [class.border-accent-600]="card.plan.popular"
+            [class.bg-accent-50]="card.plan.popular"
+            [class.dark:bg-accent-900/10]="card.plan.popular"
+            [class.bg-white]="!card.plan.popular"
+            [class.dark:bg-surface-800]="!card.plan.popular"
           >
-            @if (plan.popular) {
+            @if (card.plan.popular) {
               <div
                 class="absolute top-0 right-0 bg-accent-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg shadow-lg shadow-accent-600/30 animate-pulse"
               >
@@ -84,40 +84,40 @@
             }
             <h3
               class="text-2xl font-black uppercase mb-2"
-              [class.text-accent-700]="plan.popular"
-              [class.dark:text-accent-400]="plan.popular"
-              [class.text-amber-600]="plan.id === 'premium'"
-              [class.dark:text-amber-500]="plan.id === 'premium'"
+              [class.text-accent-700]="card.plan.popular"
+              [class.dark:text-accent-400]="card.plan.popular"
+              [class.text-amber-600]="card.plan.id === 'premium'"
+              [class.dark:text-amber-500]="card.plan.id === 'premium'"
             >
-              {{ plan.name }}
+              {{ card.plan.name }}
             </h3>
             <div class="text-5xl font-black tracking-tighter mb-2">
-              {{ getPlanPrice(plan) | appCurrency }}
+              {{ card.price | appCurrency }}
               <span class="text-xs font-bold text-slate-400"
-                >/{{ plan.id === 'basic' ? 'MES' : getBillingCycleText() }}</span
+                >/{{ card.plan.id === 'basic' ? 'MES' : card.cycle }}</span
               >
             </div>
-            @if (plan.isCurrent) {
+            @if (card.plan.isCurrent) {
               <button
                 class="mt-6 w-full py-3.5 rounded-xl bg-slate-100 dark:bg-surface-700 text-xs font-bold uppercase tracking-widest text-slate-500 cursor-default"
                 data-testid="plans-select-current"
               >
-                {{ plan.buttonLabel }}
+                {{ card.plan.buttonLabel }}
               </button>
-            } @else if (plan.popular) {
+            } @else if (card.plan.popular) {
               <button
-                (click)="selectPlan(plan.name)"
+                (click)="selectPlan(card.plan.name)"
                 class="mt-6 w-full py-3.5 rounded-xl bg-accent-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-accent-700 transition-colors shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
                 data-testid="plans-select-pro"
               >
-                {{ plan.buttonLabel }}
+                {{ card.plan.buttonLabel }}
               </button>
             } @else {
               <button
-                (click)="selectPlan(plan.name)"
+                (click)="selectPlan(card.plan.name)"
                 class="mt-6 w-full py-3.5 rounded-xl border border-slate-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-700 dark:text-white text-xs font-bold uppercase tracking-widest hover:border-slate-500 transition-colors shadow-sm hover:shadow-md active:scale-95"
               >
-                {{ plan.buttonLabel }}
+                {{ card.plan.buttonLabel }}
               </button>
             }
           </div>

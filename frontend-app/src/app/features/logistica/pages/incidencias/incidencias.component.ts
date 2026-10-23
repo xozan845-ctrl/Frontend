@@ -32,8 +32,8 @@ export default class IncidenciasComponent {
   readonly incidentStates = INCIDENT_STATES;
   readonly typeLabel = incidenciaTypeLabel;
   readonly statusLabel = incidenciaStatusLabel;
-  readonly statusDrafts = signal<Record<string, string>>({});
-  readonly resolutionDrafts = signal<Record<string, string>>({});
+  readonly statusDrafts = signal<Partial<Record<string, string>>>({});
+  readonly resolutionDrafts = signal<Partial<Record<string, string>>>({});
 
   private readonly loadIncidents = this.incidencias.load();
 

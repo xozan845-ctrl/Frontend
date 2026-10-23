@@ -23,7 +23,7 @@ export default class VendorProductsComponent {
     'Consulta tus ofertas publicadas, su stock y ajusta el margen de venta.',
   );
 
-  readonly marginDrafts = signal<Record<string, number>>({});
+  readonly marginDrafts = signal<Partial<Record<string, number>>>({});
   readonly validationError = signal<string | null>(null);
 
   private readonly loadOffers = this.offers.loadPage(1);
@@ -47,10 +47,6 @@ export default class VendorProductsComponent {
 
     this.validationError.set(null);
     this.offers.updateMargin({ offerId: offer.id, margin });
-  }
-
-  isSaving(offerId: string): boolean {
-    return this.offers.savingId() === offerId;
   }
 
   previousPage(): void {

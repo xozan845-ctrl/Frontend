@@ -26,7 +26,7 @@
       <span
         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-600 font-heading text-sm font-black text-white"
         aria-hidden="true"
-        >{{ initials(client.name) }}</span
+        >{{ client.name | initials }}</span
       >
       <div class="min-w-0 flex-1">
         <p class="truncate text-sm font-bold text-slate-900 dark:text-white">{{ client.name }}</p>
@@ -105,7 +105,7 @@
               <span
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 font-heading text-xs font-black text-slate-600 dark:bg-surface-700 dark:text-slate-200"
                 aria-hidden="true"
-                >{{ initials(client.name) }}</span
+                >{{ client.name | initials }}</span
               >
               <span class="min-w-0 flex-1">
                 <span class="block truncate text-sm font-bold text-slate-900 dark:text-white">{{

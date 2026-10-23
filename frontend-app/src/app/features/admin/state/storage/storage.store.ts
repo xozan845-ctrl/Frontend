@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
-import { StorageTenantStatus } from '../../models/storage.model';
+import { StorageTenantStatus, bytesToGigabytes } from '../../models/storage.model';
 import { STORAGE_REPOSITORY } from '../../repositories/storage.repository';
 import type { StorageState } from './storage.state';
 
@@ -17,6 +17,7 @@ const initialState: StorageState = {
   total: 0,
   page: 1,
   pages: 0,
+  quotaDrafts: {},
 };
 
 /**
@@ -25,12 +26,32 @@ const initialState: StorageState = {
  */
 export const StorageStore = signalStore(
   withState(initialState),
-  withComputed(({ tenants, total }) => ({
+  withComputed(({ tenants, total, quotaDrafts }) => ({
     hasTenants: computed(() => tenants().length > 0),
     totalUsedBytes: computed(() => tenants().reduce((sum, tenant) => sum + tenant.usedBytes, 0)),
     totalQuotaBytes: computed(() => tenants().reduce((sum, tenant) => sum + tenant.quotaBytes, 0)),
     activeCount: computed(() => tenants().filter((tenant) => tenant.status === 'activo').length),
     totalTenants: computed(() => total()),
+    /** Cuota editable (GB) por tenant: borrador o valor del servidor. */
+    quotaValues: computed<Record<string, string>>(() => {
+      const drafts = quotaDrafts();
+      return Object.fromEntries(
+        tenants().map((tenant) => [
+          tenant.tenantId,
+          drafts[tenant.tenantId] ?? String(bytesToGigabytes(tenant.quotaBytes)),
+        ]),
+      );
+    }),
+    quotaValid: computed<Record<string, boolean>>(() => {
+      const drafts = quotaDrafts();
+      return Object.fromEntries(
+        tenants().map((tenant) => {
+          const value = drafts[tenant.tenantId] ?? String(bytesToGigabytes(tenant.quotaBytes));
+          const gigabytes = Number(value);
+          return [tenant.tenantId, Number.isFinite(gigabytes) && gigabytes > 0];
+        }),
+      );
+    }),
   })),
   withMethods(
     (
@@ -145,6 +166,18 @@ export const StorageStore = signalStore(
             ),
           ),
         ),
+
+        /** Guarda el borrador de cuota de un tenant. */
+        setQuotaDraft(tenantId: string, value: string): void {
+          patchState(store, { quotaDrafts: { ...store.quotaDrafts(), [tenantId]: value } });
+        },
+
+        /** Descarta el borrador cuando la cuota ya se guardó. */
+        clearQuotaDraft(tenantId: string): void {
+          const next = { ...store.quotaDrafts() };
+          delete next[tenantId];
+          patchState(store, { quotaDrafts: next });
+        },
 
         clearError(): void {
           patchState(store, { error: null });

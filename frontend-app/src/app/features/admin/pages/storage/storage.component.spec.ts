@@ -38,6 +38,7 @@ describe('AdminStorageComponent', () => {
   const total = signal(0);
   const page = signal(1);
   const pages = signal(0);
+  const quotaDrafts = signal<Record<string, string>>({});
   const store = {
     tenants: tenants.asReadonly(),
     loading: loading.asReadonly(),
@@ -52,6 +53,33 @@ describe('AdminStorageComponent', () => {
     totalQuotaBytes: computed(() => tenants().reduce((sum, item) => sum + item.quotaBytes, 0)),
     activeCount: computed(() => tenants().filter((item) => item.status === 'activo').length),
     totalTenants: total.asReadonly(),
+    quotaValues: computed<Record<string, string>>(() =>
+      Object.fromEntries(
+        tenants().map((item) => [
+          item.tenantId,
+          quotaDrafts()[item.tenantId] ?? String(item.quotaBytes / 1073741824),
+        ]),
+      ),
+    ),
+    quotaValid: computed<Record<string, boolean>>(() =>
+      Object.fromEntries(
+        tenants().map((item) => {
+          const value = quotaDrafts()[item.tenantId] ?? String(item.quotaBytes / 1073741824);
+          const gigabytes = Number(value);
+          return [item.tenantId, Number.isFinite(gigabytes) && gigabytes > 0];
+        }),
+      ),
+    ),
+    setQuotaDraft: vi.fn((tenantId: string, value: string) =>
+      quotaDrafts.update((drafts) => ({ ...drafts, [tenantId]: value })),
+    ),
+    clearQuotaDraft: vi.fn((tenantId: string) =>
+      quotaDrafts.update((drafts) => {
+        const next = { ...drafts };
+        delete next[tenantId];
+        return next;
+      }),
+    ),
     load: vi.fn(),
     updateQuota: vi.fn(),
     setStatus: vi.fn(),
@@ -83,6 +111,7 @@ describe('AdminStorageComponent', () => {
     total.set(0);
     page.set(1);
     pages.set(0);
+    quotaDrafts.set({});
     TestBed.resetTestingModule();
   });
 

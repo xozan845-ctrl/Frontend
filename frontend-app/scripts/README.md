@@ -25,7 +25,7 @@ que son verificables por máquina.
 | `architecture-guards`    | `R-AR-7/9/10`                                  | Sin `ngModel`, diálogos nativos ni `subscribe` sin limpieza.                                                                                     |
 | `architecture-ports`     | `R-AR-3`                                       | Repositorios con interfaz + `InjectionToken`; stores sin adapters ni `HttpClient`.                                                               |
 | `security-guards`        | `R-SE-3/4/7/9`                                 | Sin `innerHTML`/`console.log`, enlaces seguros y CSP presente.                                                                                   |
-| `performance-guards`     | `R-PF-6/7`                                     | Sin `setInterval`/`setTimeout` en features ni `zone.js`.                                                                                         |
+| `performance-guards`     | `R-PF-4/6/7`                                   | Sin métodos del componente en plantilla, sin `setInterval`/`setTimeout` en features ni `zone.js`.                                                |
 | `store-guards`           | `R-ST-1/2/4/5/7 + R-AR-5`                      | Stores con `signalStore`/`withMethods`/`patchState`/`withHooks`, sin `BehaviorSubject`.                                                          |
 | `presentation-guards`    | `R-SO-8 + R-ST-3`                              | Presentacionales sin stores; páginas sin derivados de dominio (viven en `withComputed`).                                                         |
 | `naming-guards`          | `R-NC-1/2/11`                                  | Sufijos por capa, plantillas hermanas y claves `localStorage` con `ecom_`.                                                                       |
@@ -199,7 +199,7 @@ para evitar falsos verdes por caché ESM.
 
 ## Estado
 
-Cobertura verificada: **43/252 IDs** de regla con check real; **sin
+Cobertura verificada: **44/252 IDs** de regla con check real; **sin
 contextuales** pendientes. `R-NC-10` (`any`) se verifica en ESLint
 (`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,
 `git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y

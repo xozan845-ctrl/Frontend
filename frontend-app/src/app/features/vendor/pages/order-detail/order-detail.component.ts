@@ -1,17 +1,18 @@
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
+import { LineTotalPipe } from '../../../../shared/pipes/line-total.pipe';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { OrderStatusBadgeComponent } from '../../components/order-status-badge/order-status-badge.component';
-import { formatOrderDate } from '../../components/recent-orders-table/recent-orders-table.component';
 import {
   ORDER_STATUS_ACTIONS,
   ORDER_STATUS_LABELS,
   ORDER_STATUS_TRANSITIONS,
 } from '../../constants/vendor.constants';
-import { OrderLine, OrderStatus } from '../../models/vendor-order.model';
+import { OrderStatus } from '../../models/vendor-order.model';
 import { VendorOrdersStore } from '../../state/vendor-orders/vendor-orders.store';
 import type { TimelineStep } from './order-detail.types';
 
@@ -27,6 +28,8 @@ import type { TimelineStep } from './order-detail.types';
   imports: [
     RouterLink,
     AppCurrencyPipe,
+    AppDatePipe,
+    LineTotalPipe,
     ConfirmModalComponent,
     OrderStatusBadgeComponent,
     SkeletonLoaderComponent,
@@ -48,6 +51,7 @@ export default class OrderDetailComponent {
     { status: 'en_proceso', label: ORDER_STATUS_LABELS.en_proceso },
     { status: 'completado', label: ORDER_STATUS_LABELS.completado },
   ];
+  protected readonly actionLabels = ORDER_STATUS_ACTIONS;
   protected readonly pendingStatus = signal<OrderStatus | null>(null);
   protected readonly isConfirmOpen = computed(() => this.pendingStatus() !== null);
   protected readonly confirmLabel = computed(() => {
@@ -102,10 +106,6 @@ export default class OrderDetailComponent {
     }
   }
 
-  protected actionLabel(status: OrderStatus): string {
-    return ORDER_STATUS_ACTIONS[status] ?? ORDER_STATUS_LABELS[status];
-  }
-
   protected actionTone(status: OrderStatus): 'primary' | 'danger' {
     return status === 'cancelado' ? 'danger' : 'primary';
   }
@@ -132,14 +132,6 @@ export default class OrderDetailComponent {
     if (this.isStepCurrent(current, step)) return `${base} text-accent-600 dark:text-accent-400`;
     if (this.isStepDone(current, step)) return `${base} text-emerald-700 dark:text-emerald-400`;
     return `${base} text-slate-400 dark:text-slate-500`;
-  }
-
-  protected lineTotal(line: OrderLine): number {
-    return Math.round(line.unitPrice * line.quantity * 100) / 100;
-  }
-
-  protected formatDate(iso: string): string {
-    return formatOrderDate(iso);
   }
 
   private stepIndex(status: OrderStatus): number {

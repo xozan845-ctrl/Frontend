@@ -139,7 +139,7 @@
                     max="90"
                     step="1"
                     class="input w-24 py-1.5 text-sm"
-                    [value]="marginOf(offer)"
+                    [value]="marginDrafts()[offer.id] ?? offer.margin"
                     data-testid="offer-margin"
                     (input)="onMarginInput(offer, $event)"
                   />
@@ -166,11 +166,11 @@
                   <button
                     type="button"
                     class="btn btn-primary btn-sm"
-                    [disabled]="isSaving(offer.id)"
+                    [disabled]="offers.savingId() === offer.id"
                     [attr.data-testid]="'save-offer-' + offer.id"
                     (click)="saveMargin(offer)"
                   >
-                    {{ isSaving(offer.id) ? 'Guardando…' : 'Guardar' }}
+                    {{ offers.savingId() === offer.id ? 'Guardando…' : 'Guardar' }}
                   </button>
                 </td>
               </tr>

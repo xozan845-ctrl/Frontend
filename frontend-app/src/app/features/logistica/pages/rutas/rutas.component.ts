@@ -38,7 +38,7 @@ export default class RutasComponent {
   readonly progress = rutaProgress;
   readonly statusFilter = this.rutas.statusFilter;
   readonly filteredRoutes = this.rutas.filteredRoutes;
-  readonly statusDrafts = signal<Record<string, string>>({});
+  readonly statusDrafts = signal<Partial<Record<string, string>>>({});
 
   private readonly loadRoutes = this.rutas.load();
 
