@@ -1,6 +1,7 @@
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
+import { InitialsPipe } from '../../../../shared/pipes/initials.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { CreateClientModalComponent } from '../../components/create-client-modal/create-client-modal.component';
 import { CreateClientPayload } from '../../models/vendor-order.model';
@@ -15,7 +16,7 @@ import { ClientSearchStore } from '../../state/client-search/client-search.store
 @Component({
   selector: 'app-vendor-clients',
   standalone: true,
-  imports: [RouterLink, CreateClientModalComponent, SkeletonLoaderComponent],
+  imports: [RouterLink, CreateClientModalComponent, InitialsPipe, SkeletonLoaderComponent],
   templateUrl: './clients.component.html',
 })
 export default class ClientsComponent {
@@ -55,14 +56,5 @@ export default class ClientsComponent {
 
   protected submitClient(payload: CreateClientPayload): void {
     this.clients.createClient(payload);
-  }
-
-  protected initials(name: string): string {
-    return name
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join('');
   }
 }

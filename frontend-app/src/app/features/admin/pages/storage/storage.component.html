@@ -171,7 +171,7 @@
                       class="input w-24 py-1.5 text-xs"
                       min="0.01"
                       step="0.1"
-                      [value]="quotaValue(tenant)"
+                      [value]="quotaValues()[tenant.tenantId]"
                       [disabled]="storage.savingId() === tenant.tenantId"
                       [attr.data-testid]="'storage-quota-input-' + tenant.tenantId"
                       (input)="onQuotaInput(tenant.tenantId, $event)"
@@ -179,7 +179,9 @@
                     <button
                       type="button"
                       class="btn btn-primary btn-sm"
-                      [disabled]="storage.savingId() === tenant.tenantId || !isQuotaValid(tenant)"
+                      [disabled]="
+                        storage.savingId() === tenant.tenantId || !quotaValid()[tenant.tenantId]
+                      "
                       [attr.data-testid]="'storage-save-' + tenant.tenantId"
                       (click)="saveQuota(tenant)"
                     >

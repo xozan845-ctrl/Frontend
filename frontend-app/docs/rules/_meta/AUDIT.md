@@ -8,14 +8,15 @@
   fase de **gobernanza y calidad** (presupuesto como gate, umbrales y diff
   coverage, axe en E2E, Lighthouse en CI y `docs-sync` por área) sobre los
   módulos acumulados hasta ADR-35.
-- **Actualización (2026-10-23):** se añade la suite `presentation-guards`
-  (`R-SO-8` + `R-ST-3`); la cobertura del motor sube a **43/252** sin deuda
-  nueva. Los demás gates no se re-auditan en esta actualización.
+- **Actualización (2026-10-23):** se añaden `presentation-guards`
+  (`R-SO-8` + `R-ST-3`) y `R-PF-4` a `performance-guards`; la cobertura del
+  motor sube a **44/252** sin deuda nueva. Los demás gates no se re-auditan en
+  esta actualización.
 - **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
   presupuesto inicial **513.09 kB** dentro del techo **515 kB** (error 560 kB),
   cobertura **95.31/89.55/94.84/96.11** sobre umbrales **94/88/93/95** más diff
   coverage **80%**, `npm audit` en **0**, **27 flujos E2E** (incluye axe en
-  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **43/252**
+  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **44/252**
   IDs de regla con check real; sin contextuales pendientes
   declaradas en `cites`. Sin deudas abiertas.
 
@@ -37,10 +38,10 @@
 
 ### Cobertura del motor de reglas (`R-DO-9`)
 
-- **43/252** IDs con check real; sin contextuales pendientes.
+- **44/252** IDs con check real; sin contextuales pendientes.
 - Suites nuevas de esta fase: `store-guards` (R-ST-1/2/4/7), `naming-guards`
   (R-NC-1/2/11), `coverage-guards` (R-COV-2), `presentation-guards` (R-SO-8 y
-  R-ST-3) y R-NC-9 en `architecture-types`.
+  R-ST-3), R-PF-4 en `performance-guards` y R-NC-9 en `architecture-types`.
 - Gates de calidad en CI: `check-budget` (R-PF-1), `coverage:diff` (R-COV-5),
   axe (R-E-25), Lighthouse (R-PF-8) y `docs-sync` por área (R-DO-8).
 
@@ -75,7 +76,7 @@
 | R-ST-1..7                   | ✅     | Stores con `withState/Computed/Methods/Hooks` + `rxMethod`; KPIs y filtros en `withComputed`; `store-guards` + `presentation-guards` (R-ST-3) |
 | R-PF-1/3/5                  | ✅     | Build **511.94 kB** (< 515 kB, sin aviso; gate `check-budget`); rutas lazy; sin preloading                                                    |
 | R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`                                                                   |
-| R-PF-4/6/7                  | ✅     | Derivados en `computed`; **sin** `setTimeout`/`setInterval` (sondeo del POS con `timer`); zoneless                                            |
+| R-PF-4/6/7                  | ✅     | Derivados en `computed`/pipes; **sin** métodos del componente en plantilla; **sin** `setTimeout`/`setInterval`; zoneless                      |
 | R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                                                                                    |
 
 ### UI (`R-AC`, `R-UX`)

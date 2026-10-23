@@ -23,7 +23,7 @@
           <app-invoice-status-badge [status]="current.status" />
         </div>
         <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Emitida el {{ formatDate(current.issuedAt) }} a {{ current.clientName }}.
+          Emitida el {{ current.issuedAt | appDate }} a {{ current.clientName }}.
         </p>
       </div>
 
@@ -86,7 +86,7 @@
               {{ current.number }}
             </p>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-              {{ formatDate(current.issuedAt) }}
+              {{ current.issuedAt | appDate }}
             </p>
           </div>
         </header>
@@ -108,7 +108,7 @@
             <p class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ paymentTerm() }}</p>
             @if (current.dueAt) {
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                Vence el {{ formatDate(current.dueAt) }}
+                Vence el {{ current.dueAt | appDate }}
               </p>
             }
           </div>
@@ -160,7 +160,11 @@
             <div class="flex items-center justify-between gap-3">
               <dt class="text-slate-500 dark:text-slate-400">Vencimiento</dt>
               <dd class="font-bold text-slate-900 dark:text-white">
-                {{ current.dueAt ? formatDate(current.dueAt) : 'Al contado' }}
+                @if (current.dueAt) {
+                  {{ current.dueAt | appDate }}
+                } @else {
+                  Al contado
+                }
               </dd>
             </div>
           </dl>

@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { InvoiceLine, invoiceLineTotal } from '../../models/billing.model';
+import { LineTotalPipe } from '../../../../shared/pipes/line-total.pipe';
+import { InvoiceLine } from '../../models/billing.model';
 
 /**
  * Tabla de líneas de la factura (presentacional, `R-SO-8`): vista de detalle y
@@ -9,13 +10,9 @@ import { InvoiceLine, invoiceLineTotal } from '../../models/billing.model';
 @Component({
   selector: 'app-invoice-lines-table',
   standalone: true,
-  imports: [AppCurrencyPipe],
+  imports: [AppCurrencyPipe, LineTotalPipe],
   templateUrl: './invoice-lines-table.component.html',
 })
 export class InvoiceLinesTableComponent {
   readonly lines = input.required<readonly InvoiceLine[]>();
-
-  protected lineTotal(line: InvoiceLine): number {
-    return invoiceLineTotal(line);
-  }
 }

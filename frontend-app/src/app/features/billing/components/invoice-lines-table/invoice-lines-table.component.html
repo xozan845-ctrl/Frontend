@@ -33,7 +33,7 @@
             class="py-3 text-right font-bold tabular-nums text-slate-900 dark:text-white"
             data-testid="invoice-line-total"
           >
-            {{ lineTotal(line) | appCurrency }}
+            {{ line | lineTotal | appCurrency }}
           </td>
         </tr>
       }

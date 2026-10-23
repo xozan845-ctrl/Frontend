@@ -1,6 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { InvoiceLine, invoiceLineTotal } from '../../models/billing.model';
+import { LineTotalPipe } from '../../../../shared/pipes/line-total.pipe';
+import { InvoiceLine } from '../../models/billing.model';
 import { InvoiceTotalsPanelComponent } from '../invoice-totals-panel/invoice-totals-panel.component';
 import type { InvoiceLineQuantityChange } from './invoice-draft-panel.types';
 
@@ -12,7 +13,7 @@ import type { InvoiceLineQuantityChange } from './invoice-draft-panel.types';
 @Component({
   selector: 'app-invoice-draft-panel',
   standalone: true,
-  imports: [AppCurrencyPipe, InvoiceTotalsPanelComponent],
+  imports: [AppCurrencyPipe, LineTotalPipe, InvoiceTotalsPanelComponent],
   templateUrl: './invoice-draft-panel.component.html',
 })
 export class InvoiceDraftPanelComponent {
@@ -37,10 +38,6 @@ export class InvoiceDraftPanelComponent {
     const count = this.lines().length;
     return `${count} ${count === 1 ? 'producto' : 'productos'}`;
   });
-
-  protected lineTotal(line: InvoiceLine): number {
-    return invoiceLineTotal(line);
-  }
 
   protected decrease(line: InvoiceLine): void {
     if (line.quantity > 1) {

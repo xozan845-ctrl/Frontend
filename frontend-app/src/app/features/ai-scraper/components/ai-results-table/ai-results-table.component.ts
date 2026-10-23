@@ -15,14 +15,18 @@ export class AiResultsTableComponent {
     return Object.keys(first).filter((key) => key !== '_source');
   });
 
-  display(item: AiResultItem, column: string): string {
+  readonly rows = computed(() =>
+    this.items().map((item) => ({
+      item,
+      cells: this.columns().map((column) => this.display(item, column)),
+      source: item._source?.url ?? '—',
+    })),
+  );
+
+  private display(item: AiResultItem, column: string): string {
     const value = item[column];
     if (value === null || value === undefined || value === '') return '—';
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
-  }
-
-  source(item: AiResultItem): string {
-    return item._source?.url ?? '—';
   }
 }

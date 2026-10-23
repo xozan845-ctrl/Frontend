@@ -32,8 +32,8 @@ export default class EnviosComponent {
   readonly targetStates = TARGET_STATES;
   readonly statusFilter = this.envios.statusFilter;
   readonly filteredShipments = this.envios.filteredShipments;
-  readonly providerDrafts = signal<Record<string, ShipmentProvider>>({});
-  readonly statusDrafts = signal<Record<string, string>>({});
+  readonly providerDrafts = signal<Partial<Record<string, ShipmentProvider>>>({});
+  readonly statusDrafts = signal<Partial<Record<string, string>>>({});
 
   readonly isAdmin = computed(() => {
     const role = this.authStore.user()?.role;
@@ -69,7 +69,8 @@ export default class EnviosComponent {
   }
 
   statusFor(shipment: Shipment): string {
-    if (this.statusDrafts()[shipment.id]) return this.statusDrafts()[shipment.id];
+    const draft = this.statusDrafts()[shipment.id];
+    if (draft) return draft;
     if (shipment.status === 'en_preparacion') return 'enviada';
     if (shipment.status === 'enviada') return 'entregada';
     return 'cancelada';

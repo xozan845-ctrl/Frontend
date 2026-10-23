@@ -1,11 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import {
   StorageTenant,
-  bytesToGigabytes,
   formatBytes,
   gigabytesToBytes,
   storageStatusLabel,
@@ -30,35 +29,22 @@ export default class AdminStorageComponent {
   readonly formatBytes = formatBytes;
   readonly statusLabel = storageStatusLabel;
   readonly usagePercent = storageUsagePercent;
-  readonly quotaDrafts = signal<Record<string, string>>({});
+  readonly quotaValues = this.storage.quotaValues;
+  readonly quotaValid = this.storage.quotaValid;
 
   private readonly loadStorage = this.storage.load();
 
-  quotaValue(tenant: StorageTenant): string {
-    return this.quotaDrafts()[tenant.tenantId] ?? String(bytesToGigabytes(tenant.quotaBytes));
-  }
-
   onQuotaInput(tenantId: string, event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.quotaDrafts.update((drafts) => ({ ...drafts, [tenantId]: value }));
-  }
-
-  isQuotaValid(tenant: StorageTenant): boolean {
-    const gigabytes = Number(this.quotaValue(tenant));
-    return Number.isFinite(gigabytes) && gigabytes > 0;
+    this.storage.setQuotaDraft(tenantId, (event.target as HTMLInputElement).value);
   }
 
   saveQuota(tenant: StorageTenant): void {
-    if (!this.isQuotaValid(tenant)) return;
+    if (!this.storage.quotaValid()[tenant.tenantId]) return;
     this.storage.updateQuota({
       tenantId: tenant.tenantId,
-      quotaBytes: gigabytesToBytes(Number(this.quotaValue(tenant))),
+      quotaBytes: gigabytesToBytes(Number(this.storage.quotaValues()[tenant.tenantId])),
     });
-    this.quotaDrafts.update((drafts) => {
-      const next = { ...drafts };
-      delete next[tenant.tenantId];
-      return next;
-    });
+    this.storage.clearQuotaDraft(tenant.tenantId);
   }
 
   toggleStatus(tenant: StorageTenant): void {

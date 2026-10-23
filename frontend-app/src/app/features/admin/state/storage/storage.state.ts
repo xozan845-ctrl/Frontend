@@ -11,4 +11,6 @@ export interface StorageState {
   total: number;
   page: number;
   pages: number;
+  /** Borradores de cuota (GB) por tenant; estado de UI de la página. */
+  quotaDrafts: Record<string, string>;
 }

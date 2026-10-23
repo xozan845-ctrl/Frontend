@@ -1,14 +1,13 @@
 import { Component, computed, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoCleanup } from '../../../../core/services/seo/seo.service';
+import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { BILLING_INVOICES, paymentTermLabel } from '../../constants/billing.fixtures';
 import { InvoiceLinesTableComponent } from '../../components/invoice-lines-table/invoice-lines-table.component';
 import { InvoiceStatusBadgeComponent } from '../../components/invoice-status-badge/invoice-status-badge.component';
 import { InvoiceTotalsPanelComponent } from '../../components/invoice-totals-panel/invoice-totals-panel.component';
 import { BILLING_STORE_NAME } from '../../constants/billing.constants';
-
-const LONG_DATE = new Intl.DateTimeFormat('es-NI', { dateStyle: 'long' });
 
 /**
  * Página "Detalle de factura" (`facturas/:id`, ADR-23): comprobante con datos
@@ -20,6 +19,7 @@ const LONG_DATE = new Intl.DateTimeFormat('es-NI', { dateStyle: 'long' });
   standalone: true,
   imports: [
     RouterLink,
+    AppDatePipe,
     EmptyStateComponent,
     InvoiceLinesTableComponent,
     InvoiceStatusBadgeComponent,
@@ -55,10 +55,6 @@ export default class InvoiceDetailComponent {
       );
     }
   });
-
-  formatDate(iso: string): string {
-    return LONG_DATE.format(new Date(`${iso}T12:00:00`));
-  }
 
   print(): void {
     window.print();

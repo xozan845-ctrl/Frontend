@@ -21,10 +21,12 @@ import {
   findPackagingViolations,
   findTypeDeclarations,
 } from './rules/architecture/checks.mjs';
+import { findPerformanceViolations } from './rules/frontend/checks.mjs';
 import {
   findPageDerivationViolations,
   findPresentationalStoreViolations,
 } from './rules/frontend/presentation-checks.mjs';
+import { findTemplateFunctionViolations } from './rules/frontend/template-checks.mjs';
 
 function parseFlags(args) {
   const flags = {};
@@ -67,6 +69,7 @@ async function baselineCommand() {
       ...findPresentationalStoreViolations(),
       ...findPageDerivationViolations(),
     ],
+    'performance-guards': [...findTemplateFunctionViolations(), ...findPerformanceViolations()],
   };
 
   const lines = [

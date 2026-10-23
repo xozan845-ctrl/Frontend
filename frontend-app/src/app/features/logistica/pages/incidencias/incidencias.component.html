@@ -236,7 +236,7 @@
                   id="incidencia-target-status"
                   class="input py-1.5 text-xs"
                   data-testid="incidencia-target-status"
-                  [value]="statusFor(incident)"
+                  [value]="statusDrafts()[incident.id] ?? incident.status"
                   [disabled]="incidencias.savingId() === incident.id"
                   (change)="onStatusChange(incident, $event)"
                 >
@@ -250,7 +250,7 @@
                   class="input min-h-20 py-2 text-xs"
                   placeholder="Describe cómo se resolvió o se está gestionando…"
                   data-testid="incidencia-resolution"
-                  [value]="resolutionFor(incident)"
+                  [value]="resolutionDrafts()[incident.id] ?? incident.resolution"
                   [disabled]="incidencias.savingId() === incident.id"
                   (input)="onResolutionInput(incident, $event)"
                 ></textarea>

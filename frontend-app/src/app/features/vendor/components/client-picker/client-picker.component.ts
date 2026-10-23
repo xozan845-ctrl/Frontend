@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { InitialsPipe } from '../../../../shared/pipes/initials.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { Client } from '../../models/vendor-order.model';
 
@@ -10,7 +11,7 @@ import { Client } from '../../models/vendor-order.model';
 @Component({
   selector: 'app-client-picker',
   standalone: true,
-  imports: [SkeletonLoaderComponent],
+  imports: [InitialsPipe, SkeletonLoaderComponent],
   templateUrl: './client-picker.component.html',
 })
 export class ClientPickerComponent {
@@ -29,14 +30,5 @@ export class ClientPickerComponent {
 
   onQueryInput(event: Event): void {
     this.queryChange.emit((event.target as HTMLInputElement).value);
-  }
-
-  initials(name: string): string {
-    return name
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join('');
   }
 }

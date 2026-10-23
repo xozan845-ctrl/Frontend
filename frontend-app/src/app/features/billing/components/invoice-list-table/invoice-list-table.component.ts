@@ -1,15 +1,10 @@
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { Invoice } from '../../models/billing.model';
 import { InvoiceStatusBadgeComponent } from '../invoice-status-badge/invoice-status-badge.component';
-
-const DATE_FORMATTER = new Intl.DateTimeFormat('es-NI', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-});
 
 /**
  * Tabla de facturas (presentacional, `R-SO-8`): listado completo y "recientes"
@@ -19,7 +14,13 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('es-NI', {
 @Component({
   selector: 'app-invoice-list-table',
   standalone: true,
-  imports: [RouterLink, AppCurrencyPipe, InvoiceStatusBadgeComponent, SkeletonLoaderComponent],
+  imports: [
+    RouterLink,
+    AppCurrencyPipe,
+    AppDatePipe,
+    InvoiceStatusBadgeComponent,
+    SkeletonLoaderComponent,
+  ],
   templateUrl: './invoice-list-table.component.html',
 })
 export class InvoiceListTableComponent {
@@ -37,8 +38,4 @@ export class InvoiceListTableComponent {
     const count = this.invoices().length;
     return `${count} ${count === 1 ? 'factura' : 'facturas'}`;
   });
-
-  formatDate(iso: string): string {
-    return DATE_FORMATTER.format(new Date(`${iso}T12:00:00`));
-  }
 }
