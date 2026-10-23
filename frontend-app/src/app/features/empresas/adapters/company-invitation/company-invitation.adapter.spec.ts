@@ -56,4 +56,39 @@ describe('company-invitation.adapter', () => {
       }),
     ).toMatchObject({ token: 'access', refreshToken: 'refresh', user: { role: 'vendedor' } });
   });
+
+  it('tolera payloads inválidos, envoltorios data y datos opcionales', () => {
+    expect(adaptSellerInvitationFromBackend(null)).toBeNull();
+    expect(adaptSellerInvitationFromBackend({})).toBeNull();
+    expect(
+      adaptSellerInvitationFromBackend({ data: { id: 'i-2', correo: 'v@test' } }),
+    ).toMatchObject({
+      id: 'i-2',
+      status: 'pendiente',
+      participationPercentage: 0,
+    });
+    expect(
+      adaptCompanyVendorsFromBackend({ data: { vendedores: null, invitaciones: null } }),
+    ).toEqual({
+      sellers: [],
+      invitations: [],
+    });
+    expect(
+      adaptCompanyVendorsFromBackend({
+        vendedores: [
+          { id: 'v-2', correo: 'b@test', participacion_porcentaje: 120, tienda_id: 't-2' },
+          {},
+        ],
+        invitaciones: [{ id: 'i-2', correo: 'c@test', participacion_porcentaje: -5 }, {}],
+      }),
+    ).toMatchObject({
+      sellers: [{ id: 'v-2', name: 'Vendedor', participationPercentage: 100, storeId: 't-2' }],
+      invitations: [{ id: 'i-2', participationPercentage: 0 }],
+    });
+    expect(adaptPublicSellerInvitationFromBackend({ valid: false })).toMatchObject({
+      valid: false,
+      participationPercentage: 0,
+    });
+    expect(adaptPublicSellerInvitationFromBackend('invalid')).toBeNull();
+  });
 });

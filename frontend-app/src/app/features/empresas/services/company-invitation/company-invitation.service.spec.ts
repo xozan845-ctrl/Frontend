@@ -8,18 +8,20 @@ describe('CompanyInvitationService', () => {
   let service: CompanyInvitationService;
   let httpMock: HttpTestingController;
   const originalApiUrl = environment.apiUrl;
+  const originalDataSource = environment.apiConfig.dataSource;
 
   beforeEach(() => {
+    environment.apiUrl = 'https://api.test';
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(CompanyInvitationService);
     httpMock = TestBed.inject(HttpTestingController);
-    environment.apiUrl = 'https://api.test';
   });
 
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
+    environment.apiConfig.dataSource = originalDataSource;
     httpMock.verify();
     TestBed.resetTestingModule();
   });
@@ -68,5 +70,81 @@ describe('CompanyInvitationService', () => {
       refresh_token: 'r',
       usuario: { id: 'v-1', nombre: 'Ana', correo: 'v@test', rol: 'vendedor' },
     });
+  });
+
+  it('usa el flujo mock para generar una invitación', async () => {
+    environment.apiConfig.dataSource = 'mock';
+
+    let result: unknown;
+    service
+      .create('c-1', { email: 'v@test', storeId: 't-1', participationPercentage: 25 })
+      .subscribe((value) => (result = value));
+
+    await vi.waitFor(() => expect(result).toMatchObject({ companyId: 'c-1', status: 'pendiente' }));
+
+    let listed: unknown;
+    service.list('c-1').subscribe((value) => (listed = value));
+    await vi.waitFor(() => expect(listed).toEqual({ sellers: [], invitations: [] }));
+
+    let revoked: unknown;
+    service.revoke('c-1', 'i-1').subscribe((value) => (revoked = value));
+    await vi.waitFor(() => expect(revoked).toBe(true));
+  });
+
+  it('lista, revoca y traduce errores del backend', () => {
+    let listResult: unknown;
+    service.list('c-1').subscribe((value) => (listResult = value));
+    httpMock.expectOne('https://api.test/empresas/c-1/vendedores').flush({
+      vendedores: [],
+      invitaciones: [],
+    });
+    expect(listResult).toEqual({ sellers: [], invitations: [] });
+
+    let revoked: unknown;
+    service.revoke('c-1', 'i-1').subscribe((value) => (revoked = value));
+    httpMock.expectOne('https://api.test/empresas/c-1/invitaciones/vendedores/i-1').flush({});
+    expect(revoked).toBe(true);
+
+    let error: Error | undefined;
+    service
+      .create('c-1', { email: 'v@test', storeId: 't-1', participationPercentage: 25 })
+      .subscribe({
+        error: (value: Error) => (error = value),
+      });
+    httpMock
+      .expectOne('https://api.test/empresas/c-1/invitaciones/vendedores')
+      .flush({ mensaje: 'Correo ya registrado.' }, { status: 409, statusText: 'Conflict' });
+    expect(error?.message).toBe('Correo ya registrado.');
+  });
+
+  it('rechaza una invitación pública inválida y errores de aceptación', () => {
+    let publicError: Error | undefined;
+    service.getPublic('expired').subscribe({ error: (value: Error) => (publicError = value) });
+    httpMock.expectOne('https://api.test/invitaciones/vendedores/expired').flush({ valida: false });
+    expect(publicError?.message).toBe('La invitación no es válida.');
+
+    let acceptError: Error | undefined;
+    service.accept('expired', { name: 'Ana', password: 'secreto123' }).subscribe({
+      error: (value: Error) => (acceptError = value),
+    });
+    httpMock
+      .expectOne('https://api.test/invitaciones/vendedores/expired/aceptar')
+      .flush({ mensaje: 'La invitación expiró.' }, { status: 410, statusText: 'Gone' });
+    expect(acceptError?.message).toBe('La invitación expiró.');
+  });
+
+  it('devuelve un error claro cuando el API no está configurado', () => {
+    environment.apiUrl = '';
+    const messages: string[] = [];
+    service.list('c-1').subscribe({ error: (error: Error) => messages.push(error.message) });
+    service
+      .revoke('c-1', 'i-1')
+      .subscribe({ error: (error: Error) => messages.push(error.message) });
+    service.getPublic('token').subscribe({ error: (error: Error) => messages.push(error.message) });
+    service.accept('token', { name: 'Ana', password: 'secreto123' }).subscribe({
+      error: (error: Error) => messages.push(error.message),
+    });
+    expect(messages).toHaveLength(4);
+    expect(messages[0]).toContain('apiUrl no configurado');
   });
 });
