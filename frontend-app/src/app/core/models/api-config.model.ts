@@ -1,7 +1,6 @@
 /** Contrato de configuración del API (tipos puros). */
 export interface ApiEndpointsConfig {
   products: string;
-  categories: string;
   storefront: string;
   auth: string;
   orders: string;

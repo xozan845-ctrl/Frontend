@@ -996,3 +996,24 @@ contexto y consecuencias.
 - **Consecuencias**: el empresario consulta su equipo de reparto desde la
   consola. Quedan incidencias, tracking, asistencia y asignación de flota.
   Revertir es restaurar el placeholder y retirar store, página y puerto.
+
+## ADR-41: Incidencias de logística de campo
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: `/logistica/incidencias` era una página "En construcción". Core
+  Engine expone `GET /field/incidencias` (filtros opcionales `estado` y
+  `rutaId`), `GET /field/incidencias/:id` y
+  `PATCH /field/incidencias/:id` con `estado` y/o `resolucion`.
+- **Decisión**:
+  - Sustituir el placeholder por una vista real protegida con `fieldGuard`.
+  - `IncidenciasStore` carga y autoselecciona la primera incidencia, filtra por
+    estado y resume abiertas, en progreso y resueltas.
+  - Ficha de detalle con descripción, personal/vehículo/ruta vinculados y
+    edición inline de estado y resolución. El `PATCH` solo envía los campos
+    modificados.
+  - Adapter tolerante a `snake_case`/`camelCase`, `created_at`/`updated_at` y
+    envelopes.
+- **Consecuencias**: la consola permite cerrar el ciclo de una incidencia sin
+  salir de logística. Quedan tracking, asistencia, visitas y asignación de
+  flota. Revertir es restaurar el placeholder y retirar store/página/puerto.

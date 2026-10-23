@@ -592,6 +592,39 @@ export async function mockApi(page: Page): Promise<void> {
     },
   ];
 
+  const fieldIncidencias = [
+    {
+      id: 'incidencia-1',
+      tenant_id: 'empresa-demo',
+      tipo: 'mecanica',
+      estado: 'abierta',
+      descripcion: 'Llanta pinchada en la ruta centro.',
+      personal_id: 'personal-1',
+      vehiculo_id: 'vehiculo-1',
+      ruta_id: 'ruta-1',
+      resolucion: null,
+      synced: true,
+      deleted_at: null,
+      created_at: '2026-10-23T09:00:00.000Z',
+      updated_at: '2026-10-23T09:00:00.000Z',
+    },
+    {
+      id: 'incidencia-2',
+      tenant_id: 'empresa-demo',
+      tipo: 'clima',
+      estado: 'resuelta',
+      descripcion: 'Lluvia fuerte en la zona norte.',
+      personal_id: null,
+      vehiculo_id: null,
+      ruta_id: null,
+      resolucion: 'Se reprogramó la entrega.',
+      synced: true,
+      deleted_at: null,
+      created_at: '2026-10-22T15:00:00.000Z',
+      updated_at: '2026-10-22T16:00:00.000Z',
+    },
+  ];
+
   /** `PATCH /field/rutas/:id` devuelve la ruta sin `paradas`. */
   const sinParadas = (ruta: (typeof fieldRutas)[number]) =>
     Object.fromEntries(Object.entries(ruta).filter(([key]) => key !== 'paradas'));
@@ -773,6 +806,29 @@ export async function mockApi(page: Page): Promise<void> {
 
       if (method === 'GET' && path === '/field/personal') {
         await route.fulfill({ json: fieldPersonal });
+        return;
+      }
+
+      if (method === 'GET' && path === '/field/incidencias') {
+        await route.fulfill({ json: fieldIncidencias });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/field\/incidencias\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as {
+          estado?: string;
+          resolucion?: string;
+        } | null;
+        const incident = fieldIncidencias.find((candidate) => candidate.id === id);
+        if (!incident) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Incidencia no encontrada.' } });
+          return;
+        }
+        if (payload?.estado !== undefined) incident.estado = payload.estado;
+        if (payload?.resolucion !== undefined) incident.resolucion = payload.resolucion;
+        incident.updated_at = '2026-10-23T10:00:00.000Z';
+        await route.fulfill({ json: incident });
         return;
       }
 

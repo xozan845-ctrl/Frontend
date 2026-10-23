@@ -8,7 +8,6 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
   withCredentials: false,
   endpoints: {
     products: '/catalog/productos',
-    categories: '/catalog/productos',
     storefront: '/tiendas',
     auth: '/auth',
     orders: '/orders',
