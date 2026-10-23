@@ -236,7 +236,7 @@
       }
     </section>
 
-    <section class="card flex flex-col gap-5 p-6" aria-labelledby="company-sellers-title">
+    <section class="card flex flex-col gap-4 p-6" aria-labelledby="company-sellers-title">
       <div>
         <h2
           id="company-sellers-title"
@@ -245,130 +245,17 @@
           Vendedores
         </h2>
         <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Crea vendedores y define su participación sobre las ventas.
+          Genera invitaciones desde el módulo de vendedores. Cada vendedor tendrá una única tienda.
         </p>
       </div>
-
-      @if (isEmpresario()) {
-        <form
-          [formGroup]="sellerForm"
-          (ngSubmit)="submitSeller()"
-          class="grid gap-3 sm:grid-cols-2"
-          novalidate
-          data-testid="seller-form"
-        >
-          <div class="flex flex-col gap-1">
-            <label for="seller-name" class="text-xs font-bold text-slate-600 dark:text-slate-300">
-              Nombre
-            </label>
-            <input
-              id="seller-name"
-              type="text"
-              class="input"
-              formControlName="name"
-              autocomplete="name"
-              data-testid="seller-name"
-            />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="seller-email" class="text-xs font-bold text-slate-600 dark:text-slate-300">
-              Correo
-            </label>
-            <input
-              id="seller-email"
-              type="email"
-              class="input"
-              formControlName="email"
-              autocomplete="email"
-              data-testid="seller-email"
-            />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label
-              for="seller-password"
-              class="text-xs font-bold text-slate-600 dark:text-slate-300"
-            >
-              Contraseña
-            </label>
-            <div class="relative">
-              <input
-                id="seller-password"
-                [type]="showPassword() ? 'text' : 'password'"
-                class="input pr-11"
-                formControlName="password"
-                autocomplete="new-password"
-                data-testid="seller-password"
-              />
-              <button
-                type="button"
-                class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:text-white"
-                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                (click)="showPassword.set(!showPassword())"
-              >
-                <i
-                  class="fa-solid text-sm"
-                  [class.fa-eye]="!showPassword()"
-                  [class.fa-eye-slash]="showPassword()"
-                  aria-hidden="true"
-                ></i>
-              </button>
-            </div>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label
-              for="seller-participation"
-              class="text-xs font-bold text-slate-600 dark:text-slate-300"
-            >
-              Participación (%)
-            </label>
-            <input
-              id="seller-participation"
-              type="number"
-              min="0"
-              max="100"
-              step="1"
-              class="input"
-              formControlName="participationPercentage"
-              data-testid="seller-participation"
-            />
-          </div>
-          <button
-            type="submit"
-            class="btn btn-primary self-start sm:col-span-2"
-            [disabled]="saving()"
-            data-testid="create-seller"
-          >
-            <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
-            {{ saving() ? 'Creando…' : 'Crear vendedor' }}
-          </button>
-        </form>
-      }
-
-      @if (sellers().length === 0) {
-        <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="sellers-empty">
-          Aún no hay vendedores creados desde esta sesión.
-        </p>
-      } @else {
-        <ul
-          class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
-          data-testid="sellers-list"
-        >
-          @for (seller of sellers(); track seller.id) {
-            <li
-              class="flex flex-wrap items-center justify-between gap-2 py-3"
-              data-testid="seller-row"
-            >
-              <div>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ seller.name }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">{{ seller.email }}</p>
-              </div>
-              <span class="text-xs font-black text-accent-600 dark:text-accent-400">
-                {{ seller.participationPercentage }} %
-              </span>
-            </li>
-          }
-        </ul>
-      }
+      <a
+        routerLink="/empresa/vendedores"
+        class="btn btn-primary self-start"
+        data-testid="manage-company-sellers"
+      >
+        <i class="fa-solid fa-user-tie text-xs" aria-hidden="true"></i>
+        Gestionar vendedores
+      </a>
     </section>
   }
 </div>

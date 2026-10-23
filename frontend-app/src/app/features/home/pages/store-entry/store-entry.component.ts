@@ -44,8 +44,8 @@ export default class StoreEntryComponent {
     this.router.navigate(['/tienda', storeId, 'shop']);
   }
 
-  /** Abre el asistente para crear una tienda (requiere cuenta de vendedor). */
+  /** Abre el asistente para crear una empresa y su primera tienda. */
   goToCreateStore(): void {
-    this.router.navigate(['/crear-tienda']);
+    this.router.navigate(['/crear-empresa']);
   }
 }

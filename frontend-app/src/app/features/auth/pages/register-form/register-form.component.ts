@@ -71,7 +71,7 @@ export class RegisterFormComponent {
     const fallback = this.isBillerIntent
       ? '/facturacion/nueva'
       : this.isSellerIntent
-        ? '/crear-tienda'
+        ? '/crear-empresa'
         : '/';
     const safeUrl = returnUrl && returnUrl.startsWith('/') ? returnUrl : fallback;
     this.router.navigateByUrl(safeUrl);

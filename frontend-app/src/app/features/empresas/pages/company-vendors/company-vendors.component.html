@@ -1,0 +1,288 @@
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-6" data-testid="company-vendors-page">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/empresa/inicio" class="transition-colors hover:text-accent-600">Inicio</a>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Vendedores</span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Vendedores
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Invita vendedores y asígnales una única tienda de tu empresa.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-secondary self-start sm:self-auto"
+      [disabled]="vendors.loading() || portal.storesLoading()"
+      data-testid="company-vendors-refresh"
+      (click)="refresh()"
+    >
+      <i
+        class="fa-solid fa-rotate text-xs"
+        [class.animate-spin]="vendors.loading() || portal.storesLoading()"
+        aria-hidden="true"
+      ></i>
+      Actualizar
+    </button>
+  </header>
+
+  @if (vendors.error(); as message) {
+    <div
+      class="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="company-vendors-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+    </div>
+  }
+
+  <section class="card flex flex-col gap-5 p-6" aria-labelledby="invite-seller-title">
+    <div>
+      <h2 id="invite-seller-title" class="font-heading text-lg font-black tracking-tight uppercase">
+        Invitar vendedor
+      </h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Genera una URL para que la persona cree su contraseña y se incorpore a la tienda elegida.
+      </p>
+    </div>
+
+    @if (availableStores().length === 0) {
+      <div
+        class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+        data-testid="no-available-stores"
+      >
+        <p class="font-bold">No hay tiendas disponibles para asignar.</p>
+        <p class="mt-1">Cada vendedor debe tener una única tienda sin otro vendedor asignado.</p>
+        <a routerLink="/crear-tienda" class="btn btn-secondary btn-sm mt-3">
+          Crear tienda disponible
+        </a>
+      </div>
+    } @else {
+      <form
+        [formGroup]="invitationForm"
+        (ngSubmit)="submitInvitation()"
+        class="grid gap-4 sm:grid-cols-2"
+        novalidate
+        data-testid="seller-invitation-form"
+      >
+        <div class="flex flex-col gap-1">
+          <label
+            for="invitation-email"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Correo del vendedor
+          </label>
+          <input
+            id="invitation-email"
+            type="email"
+            class="input"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="vendedor@correo.com"
+            data-testid="invitation-email"
+          />
+          @if (invalid('email')) {
+            <p class="text-xs font-bold text-red-600">Introduce un correo válido.</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="invitation-store"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Tienda asignada
+          </label>
+          <select
+            id="invitation-store"
+            class="input"
+            formControlName="storeId"
+            data-testid="invitation-store"
+          >
+            <option value="">Selecciona una tienda</option>
+            @for (store of availableStores(); track store.id) {
+              <option [value]="store.id">{{ store.name }}</option>
+            }
+          </select>
+          @if (invalid('storeId')) {
+            <p class="text-xs font-bold text-red-600">Selecciona una tienda disponible.</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="invitation-participation"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Participación (%)
+          </label>
+          <input
+            id="invitation-participation"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            class="input"
+            formControlName="participationPercentage"
+            data-testid="invitation-participation"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary self-end sm:col-span-2 sm:justify-self-start"
+          [disabled]="vendors.saving()"
+          data-testid="create-seller-invitation"
+        >
+          <i class="fa-solid fa-link text-xs" aria-hidden="true"></i>
+          {{ vendors.saving() ? 'Generando…' : 'Generar invitación' }}
+        </button>
+      </form>
+    }
+  </section>
+
+  @if (vendors.lastInvitation(); as invitation) {
+    <section
+      class="card flex flex-col gap-4 border-2 border-accent-200 p-6 dark:border-accent-800"
+      aria-labelledby="created-invitation-title"
+      data-testid="created-invitation"
+    >
+      <div>
+        <h2
+          id="created-invitation-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Invitación lista para compartir
+        </h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Expira el {{ invitation.expiresAt | date: 'medium' }}. Solo puede utilizarse una vez.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <input
+          readonly
+          class="input min-w-0 flex-1 font-mono text-xs"
+          [value]="invitation.invitationUrl"
+          aria-label="URL de invitación"
+          data-testid="invitation-url"
+        />
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="copyInvitation()"
+          data-testid="copy-invitation"
+        >
+          <i class="fa-solid fa-copy text-xs" aria-hidden="true"></i>
+          Copiar URL
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (vendors.loading()) {
+    <section class="card flex flex-col gap-3 p-6" role="status" aria-live="polite">
+      <span class="sr-only">Cargando vendedores…</span>
+      <app-skeleton-loader height="24px" width="40%" />
+      <app-skeleton-loader height="56px" customClass="rounded-xl" />
+    </section>
+  } @else {
+    <section class="card flex flex-col gap-5 p-6" aria-labelledby="active-sellers-title">
+      <div>
+        <h2
+          id="active-sellers-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Vendedores activos
+        </h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Cada vendedor tiene una sola tienda asignada.
+        </p>
+      </div>
+
+      @if (vendors.sellers().length === 0) {
+        <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="sellers-empty">
+          Todavía no hay vendedores activos.
+        </p>
+      } @else {
+        <ul
+          class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+          data-testid="sellers-list"
+        >
+          @for (seller of vendors.sellers(); track seller.id) {
+            <li
+              class="flex flex-wrap items-center justify-between gap-3 py-3"
+              data-testid="seller-row"
+            >
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ seller.name }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ seller.email }}</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  <i class="fa-solid fa-store mr-1" aria-hidden="true"></i>
+                  {{ seller.storeName || 'Tienda asignada' }}
+                </p>
+              </div>
+              <span class="text-xs font-black text-accent-600 dark:text-accent-400">
+                {{ seller.participationPercentage }} %
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="card flex flex-col gap-5 p-6" aria-labelledby="pending-invitations-title">
+      <div>
+        <h2
+          id="pending-invitations-title"
+          class="font-heading text-lg font-black tracking-tight uppercase"
+        >
+          Invitaciones pendientes
+        </h2>
+      </div>
+      @if (vendors.invitations().length === 0) {
+        <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="invitations-empty">
+          No hay invitaciones pendientes.
+        </p>
+      } @else {
+        <ul
+          class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+          data-testid="invitations-list"
+        >
+          @for (invitation of vendors.invitations(); track invitation.id) {
+            <li
+              class="flex flex-wrap items-center justify-between gap-3 py-3"
+              data-testid="invitation-row"
+            >
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">
+                  {{ invitation.email }}
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ invitation.storeName }} · {{ invitation.participationPercentage }} % · expira
+                  {{ invitation.expiresAt | date: 'mediumDate' }}
+                </p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                [disabled]="vendors.saving()"
+                (click)="revokeInvitation(invitation.id)"
+                [attr.data-testid]="'revoke-invitation-' + invitation.id"
+              >
+                Revocar
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</div>

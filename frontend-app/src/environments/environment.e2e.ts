@@ -7,6 +7,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 // pedidos) siguen en modo `mock`.
 export const environment = {
   production: false,
+  frontendUrl: 'http://localhost:4200',
   apiUrl: '/api/v1',
   aiScraperUrl: '/ai-api',
   apiConfig: {

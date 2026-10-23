@@ -150,6 +150,16 @@ export const AuthStore = signalStore(
         clearSession(): void {
           patchState(store, { user: null, token: null, refreshToken: null, error: null });
         },
+        /** Instala una sesión entregada por un flujo público, como una invitación aceptada. */
+        setSession(response: { user: User; token?: string; refreshToken?: string }): void {
+          patchState(store, {
+            user: response.user,
+            token: response.token ?? null,
+            refreshToken: response.refreshToken ?? null,
+            loading: false,
+            error: null,
+          });
+        },
         /**
          * Renueva la sesión una vez y devuelve si quedó autenticada (sin tocar
          * `loading`). La usa el interceptor ante un 401 (R-SE-1).

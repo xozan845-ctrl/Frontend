@@ -4,14 +4,13 @@
       <div
         class="inline-block bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
       >
-        Vende en Quantum
+        Crea tu empresa en Quantum
       </div>
       <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tighter font-heading mb-4">
-        Crea tu tienda
+        Crea tu empresa
       </h1>
       <p class="text-slate-500 dark:text-slate-400 font-medium">
-        Abre tu tienda en minutos y empieza a vender: crea tu cuenta, describe tu tienda y publica
-        tus productos.
+        Crea tu empresa comercial, configura tu primera tienda y publica tus productos.
       </p>
     </header>
 
@@ -22,18 +21,18 @@
       @case (1) {
         <section class="card p-8">
           <h2 class="text-2xl font-black uppercase tracking-tighter font-heading mb-2">
-            Crea tu cuenta de vendedor
+            Crea tu cuenta de empresario
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Necesitas una cuenta de vendedor para abrir tu tienda. Es gratis.
+            Necesitas una cuenta de empresario para crear y administrar tu empresa. Es gratis.
           </p>
 
           @if (isBuyer()) {
             <div
               class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 text-sm text-amber-800 dark:text-amber-300 mb-6"
             >
-              Iniciaste sesión con una cuenta de <b>comprador</b>. Para crear una tienda necesitas
-              una cuenta de vendedor.
+              Iniciaste sesión con una cuenta de <b>comprador</b>. Para crear una empresa necesitas
+              una cuenta de empresario.
               <button (click)="logout()" class="mt-3 btn btn-secondary btn-sm">
                 Cerrar sesión
               </button>
@@ -134,10 +133,10 @@
             </form>
 
             <p class="mt-6 text-center text-xs font-bold text-slate-500">
-              ¿Ya tienes cuenta de vendedor?
+              ¿Ya tienes cuenta de empresario?
               <a
                 [routerLink]="['/login']"
-                [queryParams]="{ returnUrl: '/crear-tienda' }"
+                [queryParams]="{ returnUrl: '/crear-empresa' }"
                 class="text-slate-900 dark:text-white hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-black"
                 >Inicia sesión</a
               >
@@ -264,7 +263,7 @@
                   ? 'Creando…'
                   : needsCompany()
                     ? 'Crear empresa y tienda'
-                    : 'Crear mi tienda'
+                    : 'Crear tienda'
               }}
             </button>
           </form>

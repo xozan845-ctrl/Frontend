@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,7 +6,7 @@ import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import { LOGISTICS_MODE_OPTIONS, logisticsModeLabel } from '../../constants/company.constants';
-import { CreateCompanySellerData, LogisticsMode } from '../../models/company.model';
+import { LogisticsMode } from '../../models/company.model';
 import { CompanyStore } from '../../state/company/company.store';
 
 /**
@@ -31,13 +31,11 @@ export default class CompanySettingsComponent {
 
   readonly logisticsModes = LOGISTICS_MODE_OPTIONS;
   readonly modeLabel = logisticsModeLabel;
-  readonly showPassword = signal(false);
 
   readonly user = this.authStore.user;
   readonly tenantId = computed(() => this.user()?.tenantId ?? null);
   readonly isEmpresario = computed(() => isCompanyOwnerRole(this.user()?.role));
   readonly company = this.companyStore.company;
-  readonly sellers = this.companyStore.sellers;
   readonly loading = this.companyStore.loading;
   readonly saving = this.companyStore.saving;
   readonly error = this.companyStore.error;
@@ -53,13 +51,6 @@ export default class CompanySettingsComponent {
     logisticsMode: this.fb.nonNullable.control<LogisticsMode>('plataforma', Validators.required),
   });
 
-  readonly sellerForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
-    participationPercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-  });
-
   /** Carga la empresa del `tenant_id` del JWT (login o refresh posterior al alta). */
   private readonly loadCompany = effect(() => {
     const id = this.tenantId();
@@ -73,23 +64,6 @@ export default class CompanySettingsComponent {
     if (company) {
       this.logisticsForm.controls.logisticsMode.setValue(company.logisticsMode);
     }
-  });
-
-  private lastSellerCount = this.companyStore.sellers().length;
-
-  /** Limpia el alta de vendedor cuando el store confirma uno nuevo. */
-  private readonly resetSellerForm = effect(() => {
-    const count = this.companyStore.sellers().length;
-    if (count > this.lastSellerCount) {
-      this.sellerForm.reset({
-        name: '',
-        email: '',
-        password: '',
-        participationPercentage: 0,
-      });
-      this.showPassword.set(false);
-    }
-    this.lastSellerCount = count;
   });
 
   submitCompany(): void {
@@ -109,22 +83,6 @@ export default class CompanySettingsComponent {
     }
 
     this.companyStore.updateLogistics(this.logisticsForm.getRawValue().logisticsMode);
-  }
-
-  submitSeller(): void {
-    if (!this.isEmpresario() || this.sellerForm.invalid || this.saving()) {
-      this.sellerForm.markAllAsTouched();
-      return;
-    }
-
-    const { name, email, password, participationPercentage } = this.sellerForm.getRawValue();
-    const payload: CreateCompanySellerData = {
-      name,
-      email,
-      password,
-      participationPercentage,
-    };
-    this.companyStore.createSeller(payload);
   }
 
   retry(): void {

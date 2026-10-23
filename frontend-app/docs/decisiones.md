@@ -1094,9 +1094,10 @@ contexto y consecuencias.
     autoridad final será RLS en API/DB, con políticas por tenant, tienda,
     empresa logística, propietario de producto y propietario de flota.
 - **Consecuencias**: el vendedor puede delegar permisos sin elevarse a empresa
-  o plataforma y el empresario puede asignar vendedores a tiendas cuando el
-  backend exponga ese contrato. La especificación completa de RLS, políticas
-  negativas y pendientes backend vive en `docs/workspaces-y-rls.md`.
+  o plataforma y el empresario puede invitar vendedores para asignarlos a una
+  única tienda mediante el contrato de invitaciones de ADR-46. La
+  especificación completa de RLS, políticas negativas y pendientes backend
+  vive en `docs/workspaces-y-rls.md`.
 
 ## ADR-45: Ventas y tiendas consolidadas del empresario
 
@@ -1124,3 +1125,29 @@ contexto y consecuencias.
   presupuesto siga siendo útil sin bloquear el feature. Quedan clientes,
   compras, gastos y reportes del workspace. Revertir es restaurar los
   placeholders y retirar store/páginas.
+
+## ADR-46: Invitaciones de vendedores con tienda única
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: Core Engine incorporó invitaciones de vendedores mediante
+  `POST /empresas/:empresaId/invitaciones/vendedores`, consulta y aceptación
+  pública por token, listado empresarial y revocación. La alta directa con
+  contraseña queda como endpoint legado.
+- **Decisión**:
+  - La raíz `/` presenta **Crear empresa** y usa `/crear-empresa`; la ruta
+    histórica `/crear-tienda` redirige para conservar enlaces existentes.
+  - `/empresa/vendedores` consume las tiendas disponibles, permite al
+    empresario generar invitaciones y muestra la URL copiable, vendedores
+    activos e invitaciones pendientes.
+  - `/registro/vendedor?token=...` consulta la invitación pública y envía solo
+    `nombre` y `contrasena` a la aceptación. La sesión devuelta por el backend
+    se instala en `AuthStore` y lleva al nuevo vendedor a su workspace.
+  - Una empresa puede tener múltiples vendedores y tiendas; cada vendedor se
+    asigna a una única tienda disponible. La autorización del empresario, la
+    expiración de 72 horas, el uso único y la asignación final siguen siendo
+    responsabilidad del backend.
+- **Consecuencias**: el frontend ya no solicita ni transmite contraseñas desde
+  el panel empresarial y no usa el endpoint legado para nuevas altas. Las
+  invitaciones pendientes pueden revocarse desde el workspace. Revertir es
+  restaurar el formulario directo y retirar las rutas/puertos de invitación.

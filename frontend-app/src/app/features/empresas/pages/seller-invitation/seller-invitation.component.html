@@ -1,0 +1,128 @@
+<div
+  class="flex min-h-[80vh] items-center justify-center bg-slate-50 px-4 py-16 dark:bg-surface-900"
+>
+  <main class="w-full max-w-lg">
+    @if (loading()) {
+      <section class="card flex flex-col gap-3 p-8" role="status" aria-live="polite">
+        <span class="sr-only">Validando invitación…</span>
+        <div class="h-8 w-2/3 animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
+        <div class="h-4 w-full animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
+        <div class="h-4 w-4/5 animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
+      </section>
+    } @else if (error()) {
+      <section
+        class="card flex flex-col gap-4 p-8 text-center"
+        role="alert"
+        data-testid="invalid-invitation"
+      >
+        <i class="fa-solid fa-link-slash text-4xl text-red-400" aria-hidden="true"></i>
+        <h1 class="font-heading text-2xl font-black tracking-tight uppercase">
+          Invitación no disponible
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ error() }}</p>
+        <a routerLink="/" class="btn btn-secondary self-center">Volver al inicio</a>
+      </section>
+    } @else if (invitation(); as invite) {
+      <section class="card flex flex-col gap-6 p-8" data-testid="seller-invitation-page">
+        <header class="text-center">
+          <div
+            class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-600 text-2xl text-white shadow-lg shadow-accent-600/30"
+          >
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+          </div>
+          <p class="text-[10px] font-black tracking-[0.25em] text-accent-600 uppercase">
+            Invitación de vendedor
+          </p>
+          <h1 class="mt-2 font-heading text-3xl font-black tracking-tighter uppercase">
+            Únete a {{ invite.companyName }}
+          </h1>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Serás responsable de la tienda <b>{{ invite.storeName }}</b> con una participación del
+            <b>{{ invite.participationPercentage }} %</b>.
+          </p>
+        </header>
+
+        <dl class="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm dark:bg-surface-900">
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-500">Correo</dt>
+            <dd class="font-bold text-slate-900 dark:text-white">{{ invite.email }}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-500">Válida hasta</dt>
+            <dd class="font-bold text-slate-900 dark:text-white">
+              {{ invite.expiresAt | date: 'medium' }}
+            </dd>
+          </div>
+        </dl>
+
+        <form [formGroup]="form" (ngSubmit)="accept()" class="flex flex-col gap-5" novalidate>
+          <div class="flex flex-col gap-2">
+            <label
+              for="seller-name"
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Tu nombre</label
+            >
+            <input
+              id="seller-name"
+              type="text"
+              class="input"
+              formControlName="name"
+              autocomplete="name"
+              placeholder="Ana Pérez"
+              data-testid="seller-name"
+            />
+            @if (invalid('name')) {
+              <span class="text-xs font-bold text-red-600">Introduce tu nombre.</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              for="seller-password"
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Crea tu contraseña</label
+            >
+            <div class="relative">
+              <input
+                id="seller-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="input pr-12"
+                formControlName="password"
+                autocomplete="new-password"
+                placeholder="Mínimo 8 caracteres"
+                data-testid="seller-password"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400"
+                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <i
+                  class="fa-solid"
+                  [class.fa-eye]="!showPassword()"
+                  [class.fa-eye-slash]="showPassword()"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+            @if (invalid('password')) {
+              <span class="text-xs font-bold text-red-600"
+                >La contraseña debe tener al menos 8 caracteres.</span
+              >
+            }
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+            [disabled]="accepting()"
+            data-testid="accept-seller-invitation"
+          >
+            {{ accepting() ? 'Creando tu cuenta…' : 'Aceptar invitación y continuar' }}
+          </button>
+        </form>
+      </section>
+    }
+  </main>
+</div>

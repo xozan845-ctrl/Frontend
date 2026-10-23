@@ -2,6 +2,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 
 export const environment = {
   production: true,
+  frontendUrl: 'https://kb-coleccion-internacional-ni.web.app',
   // Gateway del backend (Core Engine) en producción. Ver docs/dockploy-setup.md §4.
   apiUrl: 'https://api.kbcoleccion.com/api/v1',
   // Endpoint público del backend de IA `ai_scraper_executor`. Backend independiente:

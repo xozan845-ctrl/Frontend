@@ -17,8 +17,8 @@ import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import type { ProductRow } from './create-store.types';
 
 /**
- * Asistente para crear la tienda del vendedor, en 4 pasos: cuenta → tienda →
- * productos → listo (R-AR-12). Contenedor: orquesta el `StoreWizardStore` y el
+ * Asistente para crear una empresa y su primera tienda, en 4 pasos: cuenta →
+ * negocio → productos → listo (R-AR-12). Contenedor: orquesta el `StoreWizardStore` y el
  * `AuthStore`; el indicador de pasos es presentacional (R-SO-8).
  */
 @Component({
@@ -40,8 +40,8 @@ export default class CreateStoreComponent {
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly seoService = injectSeoPage(
-    'Crear mi tienda',
-    'Abre tu tienda en minutos: crea tu cuenta de vendedor, describe tu tienda y publica tus productos.',
+    'Crear empresa',
+    'Crea tu empresa y su primera tienda: configura el negocio y publica tus productos.',
   );
 
   readonly steps = WIZARD_STEPS;
@@ -55,7 +55,7 @@ export default class CreateStoreComponent {
   readonly hasCompany = computed(() => !!this.authStore.user()?.tenantId);
   readonly needsCompany = computed(() => this.isSeller() && !this.hasCompany());
 
-  // Paso 1 — cuenta de vendedor
+  // Paso 1 — cuenta de empresario
   readonly accountForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
