@@ -266,3 +266,30 @@ test('R-E-35: el empresario gestiona una incidencia de campo', async ({ page }) 
     'En progreso',
   );
 });
+
+// R-E-36: el empresario consulta su almacenamiento, sube un archivo prefirmado
+// y elimina un objeto (ADR-42).
+test('R-E-36: el empresario sube y elimina archivos', async ({ page }) => {
+  await login(page, '/vendedor/almacenamiento', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('storage-page')).toBeVisible();
+  await expect(page.getByTestId('storage-used')).toContainText('1.50 GB');
+  await expect(page.locator('[data-testid="storage-object-row"]')).toHaveCount(2);
+
+  await page.getByTestId('storage-upload-file').setInputFiles({
+    name: 'nuevo.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('hola'),
+  });
+  await page.getByTestId('storage-upload-folder').fill('productos');
+  await page.getByTestId('storage-upload-description').fill('Subido en E2E');
+  await page.getByTestId('storage-upload-submit').click();
+
+  await expect(page.locator('[data-testid="storage-object-row"]')).toHaveCount(3);
+  await expect(page.getByTestId('storage-table')).toContainText('nuevo.png');
+
+  await page.getByTestId('storage-delete-objeto-1').click();
+  await page.getByTestId('storage-delete-confirm-objeto-1').click();
+  await expect(page.locator('[data-testid="storage-object-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('storage-table')).not.toContainText('foto.png');
+});

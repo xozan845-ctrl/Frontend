@@ -1017,3 +1017,29 @@ contexto y consecuencias.
 - **Consecuencias**: la consola permite cerrar el ciclo de una incidencia sin
   salir de logística. Quedan tracking, asistencia, visitas y asignación de
   flota. Revertir es restaurar el placeholder y retirar store/página/puerto.
+
+## ADR-42: Almacenamiento del tenant
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: la consola de administración ya gestionaba cuotas por empresa,
+  pero el tenant no tenía acceso a su propio bucket ni a sus objetos. Core
+  Engine expone `GET /storage/bucket`, `GET /storage/objetos`,
+  `POST /storage/subidas` (URL prefirmada), `POST
+/storage/objetos/:id/confirmar`, `GET /storage/objetos/:id/descarga` y
+  `DELETE /storage/objetos/:id`.
+- **Decisión**:
+  - Nuevo feature lazy **`storage`** montado en el shell del vendedor en
+    **`/vendedor/almacenamiento`**; el `vendorGuard` existente protege la ruta.
+  - Resumen de uso, disponible, cuota y objetos; barra de consumo y bucket.
+  - Subida en tres pasos: solicitud prefirmada, `PUT` directo con `fetch` (sin
+    interceptor de auth) y confirmación; después se refrescan bucket y objetos.
+  - Búsqueda/filtro por estado, descarga con URL prefirmada y borrado con
+    confirmación inline (sin diálogos nativos).
+  - Adapter tolerante a `snake_case`/`camelCase`, números string y envelopes.
+- **Consecuencias**: el tenant gestiona sus archivos desde el panel. La subida
+  directa depende de CORS de MinIO en el entorno. El inicial queda en 515.26 kB;
+  se ajusta el techo de aviso de 515 a 516 kB (error 560 kB) para absorber este
+  feature sin recortar otros módulos. Queda para una siguiente fase la edición
+  de metadatos/etiquetas y la integración con imágenes de catálogo. Revertir es
+  retirar `STORAGE_ROUTES`, el ítem del sidebar y el feature.

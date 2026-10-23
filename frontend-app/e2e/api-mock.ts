@@ -592,6 +592,69 @@ export async function mockApi(page: Page): Promise<void> {
     },
   ];
 
+  const storageBucket = {
+    tenant_id: 'empresa-demo',
+    bucket: 't-empresa-demo',
+    cuota_bytes: 5368709120,
+    usado_bytes: 1610612736,
+    disponible_bytes: 3758096384,
+    objetos: 2,
+    estado: 'activo',
+    creado_en: '2026-10-21T10:00:00.000Z',
+    actualizado_en: '2026-10-23T10:00:00.000Z',
+  };
+
+  const storageObjects = [
+    {
+      id: 'objeto-1',
+      tenant_id: 'empresa-demo',
+      bucket: 't-empresa-demo',
+      objeto: 'productos/objeto-1/foto.png',
+      nombre: 'foto.png',
+      content_type: 'image/png',
+      carpeta: 'productos',
+      descripcion: 'Foto del producto',
+      etiquetas: { fuente: 'catalogo' },
+      tamano_bytes: 204800,
+      etag: 'etag-1',
+      estado: 'activo',
+      subido_por: 'user-1',
+      creado_en: '2026-10-22T10:00:00.000Z',
+      confirmado_en: '2026-10-22T10:01:00.000Z',
+      eliminado_en: null,
+    },
+    {
+      id: 'objeto-2',
+      tenant_id: 'empresa-demo',
+      bucket: 't-empresa-demo',
+      objeto: 'documentos/objeto-2/factura.pdf',
+      nombre: 'factura.pdf',
+      content_type: 'application/pdf',
+      carpeta: 'documentos',
+      descripcion: '',
+      etiquetas: {},
+      tamano_bytes: 1024,
+      etag: null,
+      estado: 'activo',
+      subido_por: null,
+      creado_en: '2026-10-21T10:00:00.000Z',
+      confirmado_en: '2026-10-21T10:01:00.000Z',
+      eliminado_en: null,
+    },
+  ];
+
+  const syncStorageBucket = () => {
+    storageBucket.objetos = storageObjects.length;
+    storageBucket.usado_bytes = storageObjects.reduce(
+      (sum, object) => sum + object.tamano_bytes,
+      0,
+    );
+    storageBucket.disponible_bytes = Math.max(
+      0,
+      storageBucket.cuota_bytes - storageBucket.usado_bytes,
+    );
+  };
+
   const fieldIncidencias = [
     {
       id: 'incidencia-1',
@@ -859,6 +922,110 @@ export async function mockApi(page: Page): Promise<void> {
         ruta.estado = payload.estado;
         ruta.actualizado_en = '2026-10-23T10:00:00.000Z';
         await route.fulfill({ json: sinParadas(ruta) });
+        return;
+      }
+
+      if (method === 'GET' && path === '/storage/bucket') {
+        await route.fulfill({ json: storageBucket });
+        return;
+      }
+
+      if (method === 'GET' && path === '/storage/objetos') {
+        await route.fulfill({
+          json: {
+            items: storageObjects,
+            total: storageObjects.length,
+            pagina: 1,
+            limite: 20,
+            paginas: 1,
+          },
+        });
+        return;
+      }
+
+      if (method === 'POST' && path === '/storage/subidas') {
+        const payload = request.postDataJSON() as {
+          nombre?: string;
+          content_type?: string;
+          tamano_bytes?: number;
+          carpeta?: string;
+          descripcion?: string;
+        } | null;
+        await route.fulfill({
+          status: 201,
+          json: {
+            objeto_id: 'objeto-3',
+            bucket: storageBucket.bucket,
+            objeto: 'productos/objeto-3/nuevo.png',
+            url_subida: '/api/v1/storage/subida-mock',
+            metodo: 'PUT',
+            headers: { 'Content-Type': payload?.content_type ?? 'image/png' },
+            expira_en: '2026-10-23T10:10:00.000Z',
+            max_bytes: 10485760,
+          },
+        });
+        return;
+      }
+
+      if (method === 'PUT' && path === '/storage/subida-mock') {
+        await route.fulfill({ status: 200, body: '' });
+        return;
+      }
+
+      if (method === 'POST' && /^\/storage\/objetos\/[^/]+\/confirmar$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        let object = storageObjects.find((candidate) => candidate.id === id);
+        if (!object && id === 'objeto-3') {
+          object = {
+            id: 'objeto-3',
+            tenant_id: 'empresa-demo',
+            bucket: storageBucket.bucket,
+            objeto: 'productos/objeto-3/nuevo.png',
+            nombre: 'nuevo.png',
+            content_type: 'image/png',
+            carpeta: 'productos',
+            descripcion: 'Subido en E2E',
+            etiquetas: {},
+            tamano_bytes: 4,
+            etag: 'etag-3',
+            estado: 'activo',
+            subido_por: 'user-1',
+            creado_en: '2026-10-23T10:00:00.000Z',
+            confirmado_en: '2026-10-23T10:01:00.000Z',
+            eliminado_en: null,
+          };
+          storageObjects.push(object);
+          syncStorageBucket();
+        }
+        if (!object) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Objeto no encontrado.' } });
+          return;
+        }
+        await route.fulfill({ json: object });
+        return;
+      }
+
+      if (method === 'DELETE' && /^\/storage\/objetos\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const index = storageObjects.findIndex((candidate) => candidate.id === id);
+        if (index >= 0) {
+          storageObjects.splice(index, 1);
+          syncStorageBucket();
+        }
+        await route.fulfill({ status: 204, body: '' });
+        return;
+      }
+
+      if (method === 'GET' && /^\/storage\/objetos\/[^/]+\/descarga$/.test(path)) {
+        await route.fulfill({
+          json: {
+            url_descarga: 'https://minio.test/t-empresa-demo/objeto-1',
+            expira_en: '2026-10-23T10:10:00.000Z',
+            nombre: 'foto.png',
+            content_type: 'image/png',
+            tamano_bytes: 204800,
+          },
+        });
         return;
       }
 

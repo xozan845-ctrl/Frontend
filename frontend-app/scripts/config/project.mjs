@@ -189,6 +189,11 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: true,
   },
+  storage: {
+    layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   stores: {
     layers: ['adapters', 'components', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: true,
