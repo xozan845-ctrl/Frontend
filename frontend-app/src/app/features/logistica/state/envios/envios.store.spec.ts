@@ -77,6 +77,21 @@ describe('EnviosStore', () => {
     await vi.waitFor(() => expect(store.error()).toBe('Tu rol no puede consultar envíos.'));
   });
 
+  it('deriva la lista filtrada por estado', async () => {
+    const store = setup();
+    store.load();
+    await vi.waitFor(() => expect(store.shipments()).toHaveLength(1));
+
+    store.setStatusFilter('enviada');
+    expect(store.filteredShipments()).toEqual([]);
+
+    store.setStatusFilter('en_preparacion');
+    expect(store.filteredShipments()).toEqual([shipment]);
+
+    store.setStatusFilter('');
+    expect(store.filteredShipments()).toEqual([shipment]);
+  });
+
   it('debe asignar flota y actualizar la fila', async () => {
     const store = setup();
     store.load();

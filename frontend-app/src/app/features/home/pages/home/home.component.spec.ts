@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Product } from '../../../products/public-api';
@@ -42,6 +42,7 @@ describe('HomeComponent', () => {
   const productList = signal(products);
   const productStore = {
     products: productList,
+    featuredProducts: computed(() => productList().slice(0, 4)),
     storeId: signal(''),
     loading: signal(false),
     error: signal<string | null>(null),

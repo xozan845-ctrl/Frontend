@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
@@ -36,15 +36,9 @@ export default class RutasComponent {
   readonly statusLabel = rutaStatusLabel;
   readonly stopTypeLabel = paradaTypeLabel;
   readonly progress = rutaProgress;
-  readonly statusFilter = signal<string>('');
+  readonly statusFilter = this.rutas.statusFilter;
+  readonly filteredRoutes = this.rutas.filteredRoutes;
   readonly statusDrafts = signal<Record<string, string>>({});
-
-  readonly filteredRoutes = computed(() => {
-    const status = this.statusFilter();
-    return status
-      ? this.rutas.routes().filter((route) => route.status === status)
-      : this.rutas.routes();
-  });
 
   private readonly loadRoutes = this.rutas.load();
 
@@ -63,7 +57,7 @@ export default class RutasComponent {
   }
 
   onStatusFilterChange(event: Event): void {
-    this.statusFilter.set((event.target as HTMLSelectElement).value);
+    this.rutas.setStatusFilter((event.target as HTMLSelectElement).value);
   }
 
   selectRoute(route: Ruta): void {

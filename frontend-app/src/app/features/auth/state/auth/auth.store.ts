@@ -16,6 +16,7 @@ import {
   LoginCredentials,
   RegisterData,
   User,
+  isSellerRole,
 } from '../../models/auth.model';
 import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
@@ -38,6 +39,8 @@ export const AuthStore = signalStore(
   withState(initialState),
   withComputed(({ user, token }) => ({
     isAuthenticated: () => !!token() && !!user(),
+    /** Sesión de vendedor/empresario (`R-ST-3`). */
+    isSeller: () => isSellerRole(user()?.role),
   })),
   withMethods(
     (

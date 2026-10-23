@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import EnviosComponent from './envios.component';
@@ -26,15 +26,22 @@ describe('EnviosComponent', () => {
   const error = signal<string | null>(null);
   const assigningId = signal<string | null>(null);
   const advancingId = signal<string | null>(null);
+  const statusFilter = signal('');
   const store = {
     shipments: shipments.asReadonly(),
     loading: loading.asReadonly(),
     error: error.asReadonly(),
+    statusFilter: statusFilter.asReadonly(),
+    filteredShipments: computed(() => {
+      const status = statusFilter();
+      return status ? shipments().filter((item) => item.status === status) : shipments();
+    }),
     assigningId: assigningId.asReadonly(),
     advancingId: advancingId.asReadonly(),
     load: vi.fn(),
     assignProvider: vi.fn(),
     advanceStatus: vi.fn(),
+    setStatusFilter: vi.fn((status: string) => statusFilter.set(status)),
   };
   const authUser = signal<{ id: string; role: string }>({ id: 'u-1', role: 'admin' });
   const authStore = { user: authUser.asReadonly() };
@@ -60,6 +67,7 @@ describe('EnviosComponent', () => {
     shipments.set([]);
     loading.set(false);
     error.set(null);
+    statusFilter.set('');
     assigningId.set(null);
     advancingId.set(null);
     authUser.set({ id: 'u-1', role: 'admin' });

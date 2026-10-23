@@ -10,4 +10,6 @@ export interface AiSessionState {
   statusError: string | null;
   detailLoading: boolean;
   sending: boolean;
+  /** Búsqueda del historial de sesiones. */
+  search: string;
 }

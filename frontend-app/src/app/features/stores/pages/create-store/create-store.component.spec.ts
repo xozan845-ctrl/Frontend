@@ -22,6 +22,7 @@ describe('CreateStoreComponent', () => {
   const authStore = {
     user: () => currentUser,
     isAuthenticated: () => currentUser !== null,
+    isSeller: () => currentUser?.role === 'vendedor' || currentUser?.role === 'empresario',
     loading: () => false,
     error: () => null,
     register: vi.fn(),

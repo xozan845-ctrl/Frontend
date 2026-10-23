@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
@@ -23,7 +23,7 @@ export default class DashboardComponent {
     'El resumen de tu tienda: ventas de hoy, pedidos pendientes y accesos rápidos.',
   );
 
-  protected readonly recentOrders = computed(() => this.orders.orders().slice(0, 5));
+  protected readonly recentOrders = this.orders.recentOrders;
 
   private readonly loadOrders = this.orders.loadOrders();
 }

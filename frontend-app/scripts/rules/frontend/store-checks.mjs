@@ -1,7 +1,8 @@
 /**
- * Guardas de estado (R-ST-1/2/4/5/7 + R-AR-5): los `*.store.ts` usan `signalStore` con
- * `withMethods`, mutan con `patchState`, persisten en `withHooks` y no usan
- * `BehaviorSubject`.
+ * Guardas de estado (R-ST-1/2/4/5/7 + R-AR-5): los `*.store.ts` usan `signalStore`
+ * con `withMethods` si tienen estado mutable, mutan con `patchState`, persisten
+ * en `withHooks` y no usan `BehaviorSubject`. Un store de solo proyección
+ * (`withComputed`) no necesita `withMethods`.
  */
 import { relative, sep } from 'node:path';
 import { appRoot, resolveInApp } from '../../engine/lib/paths.mjs';
@@ -41,8 +42,8 @@ export function findStoreViolations() {
       add('R-ST-2', rel, 0, 'el store no usa signalStore', 'signalStore');
       add('R-AR-5', rel, 0, 'el estado compartido no vive en un signalStore', 'signalStore');
     }
-    if (!/\bwithMethods\s*\(/.test(masked)) {
-      add('R-ST-2', rel, 0, 'el store no declara withMethods', 'withMethods');
+    if (/\bwithState\s*\(/.test(masked) && !/\bwithMethods\s*\(/.test(masked)) {
+      add('R-ST-2', rel, 0, 'el store con estado no declara withMethods', 'withMethods');
     }
     if (/\bwithState\s*\(/.test(masked) && !/\bpatchState\s*\(/.test(masked)) {
       add('R-ST-4', rel, 0, 'withState sin mutaciones con patchState', 'patchState');

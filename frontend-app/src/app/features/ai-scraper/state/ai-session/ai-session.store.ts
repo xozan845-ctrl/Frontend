@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, of, pipe, timer, Observable } from 'rxjs';
@@ -32,6 +32,7 @@ const initialState: AiSessionState = {
   statusError: null,
   detailLoading: false,
   sending: false,
+  search: '',
 };
 
 /**
@@ -41,12 +42,20 @@ const initialState: AiSessionState = {
  */
 export const AiSessionStore = signalStore(
   withState(initialState),
-  withComputed(({ current, status, sending }) => ({
+  withComputed(({ current, status, sending, sessions, search }) => ({
     messages: () => current()?.messages ?? [],
     profile: () => current()?.profile ?? null,
     isReady: () => status() === 'READY',
     isFailed: () => status() === 'FAILED',
     canSend: () => status() === 'READY' && !sending(),
+    /** Historial filtrado por dominio o URL (`R-ST-3`). */
+    filteredSessions: computed(() => {
+      const term = search().trim().toLowerCase();
+      if (!term) return sessions();
+      return sessions().filter((session) =>
+        `${session.domain} ${session.url}`.toLowerCase().includes(term),
+      );
+    }),
   })),
   withMethods(
     (
@@ -191,6 +200,11 @@ export const AiSessionStore = signalStore(
         createSession,
         openSession,
         sendMessage,
+
+        /** Actualiza la búsqueda del historial. */
+        setSearch(search: string): void {
+          patchState(store, { search });
+        },
 
         /** Limpia la sesión activa (al salir del chat). */
         clearCurrent(): void {

@@ -59,6 +59,8 @@ function isSameLocalDay(iso: string, today: Date): boolean {
 export const VendorOrdersStore = signalStore(
   withState(initialState),
   withComputed((store) => ({
+    /** Últimos pedidos para el inicio y el POS (`R-ST-3`). */
+    recentOrders: computed(() => store.orders().slice(0, 5)),
     /** Lista filtrada por estado para la página "Pedidos" (`R-SO-8`). */
     filteredOrders: computed(() => {
       const status = store.statusFilter();

@@ -85,6 +85,21 @@ describe('RutasStore', () => {
     expect(store.selectedRoute()).toBeNull();
   });
 
+  it('deriva la lista filtrada por estado', async () => {
+    const store = setup();
+    store.load();
+    await vi.waitFor(() => expect(store.routes()).toHaveLength(1));
+
+    store.setStatusFilter('en_curso');
+    expect(store.filteredRoutes()).toEqual([]);
+
+    store.setStatusFilter('pendiente');
+    expect(store.filteredRoutes()).toEqual([route]);
+
+    store.setStatusFilter('');
+    expect(store.filteredRoutes()).toEqual([route]);
+  });
+
   it('debe cambiar el estado y conservar las paradas', async () => {
     const store = setup();
     store.load();
