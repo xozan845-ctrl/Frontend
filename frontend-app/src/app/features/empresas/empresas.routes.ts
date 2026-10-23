@@ -1,7 +1,10 @@
 import { Route, Routes } from '@angular/router';
 import { companyGuard } from './guards/company/company.guard';
+import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
 import { COMPANY_REPOSITORY } from './repositories/company.repository';
+import { CompanyPortalService } from './services/company-portal/company-portal.service';
 import { CompanyService } from './services/company/company.service';
+import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -28,12 +31,14 @@ export const EMPRESAS_ROUTES: Routes = [
         path: 'inicio',
         loadComponent: () => import('./pages/company-settings/company-settings.component'),
       },
-      companySoonRoute(
-        'ventas',
-        'Ventas',
-        'Resumen consolidado de ventas de todas tus tiendas.',
-        'fa-solid fa-cart-shopping',
-      ),
+      {
+        path: 'ventas',
+        loadComponent: () => import('./pages/company-orders/company-orders.component'),
+        providers: [
+          CompanyPortalStore,
+          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
+        ],
+      },
       companySoonRoute(
         'clientes',
         'Clientes',
@@ -111,12 +116,14 @@ export const EMPRESAS_ROUTES: Routes = [
         'Alertas relevantes de tu empresa.',
         'fa-solid fa-bell',
       ),
-      companySoonRoute(
-        'tiendas',
-        'Tiendas',
-        'Crea y administra las tiendas de la empresa.',
-        'fa-solid fa-store',
-      ),
+      {
+        path: 'tiendas',
+        loadComponent: () => import('./pages/company-stores/company-stores.component'),
+        providers: [
+          CompanyPortalStore,
+          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
+        ],
+      },
       companySoonRoute(
         'vendedores',
         'Vendedores',

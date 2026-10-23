@@ -22,5 +22,7 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     adminStorage: '/admin/storage',
     field: '/field',
     storage: '/storage',
+    companyStores: '/empresarios/me/tiendas',
+    companySales: '/empresarios/me/ventas',
   },
 };

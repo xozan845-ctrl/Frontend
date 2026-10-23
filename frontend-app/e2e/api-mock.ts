@@ -452,6 +452,45 @@ export async function mockApi(page: Page): Promise<void> {
       actualizado_en: '2026-10-22T15:00:00.000Z',
     },
   ];
+  const companyStores = [
+    {
+      id: 'tienda-demo',
+      empresa_id: 'empresa-demo',
+      propietario_usuario_id: 'vendedor-demo',
+      participacion_porcentaje: 100,
+      vendedor_id: 'vendedor-demo',
+      nombre: 'Tienda Demo',
+      descripcion: 'Storefront de demostración para pruebas E2E.',
+      creado_en: '2026-10-21T10:00:00.000Z',
+    },
+    {
+      id: 'tienda-norte',
+      empresa_id: 'empresa-demo',
+      propietario_usuario_id: 'vendedor-2',
+      participacion_porcentaje: 40,
+      vendedor_id: 'vendedor-2',
+      nombre: 'Tienda Norte',
+      descripcion: 'Sucursal norte.',
+      creado_en: '2026-10-22T10:00:00.000Z',
+    },
+  ];
+
+  const companySales = {
+    empresa_id: 'empresa-demo',
+    ventas: [
+      {
+        order_id: 'o-100',
+        venta: '2300.00',
+        comision: '276.00',
+        monto_empresario: '2024.00',
+        estado: 'acreditada',
+        fecha: '2026-10-22T15:00:00.000Z',
+      },
+    ],
+    comisiones_pendientes: '138.00',
+    liquidaciones: [],
+  };
+
   const envios = [
     {
       id: 'e-1',
@@ -735,6 +774,28 @@ export async function mockApi(page: Page): Promise<void> {
         await route.fulfill({
           json: estado ? ordenes.filter((orden) => orden.estado === estado) : ordenes,
         });
+        return;
+      }
+
+      if (method === 'GET' && path === '/orders/empresa') {
+        const tiendaId = url.searchParams.get('tiendaId');
+        const estado = url.searchParams.get('estado');
+        await route.fulfill({
+          json: ordenes.filter(
+            (orden) =>
+              (!tiendaId || orden.tienda_id === tiendaId) && (!estado || orden.estado === estado),
+          ),
+        });
+        return;
+      }
+
+      if (method === 'GET' && path === '/empresarios/me/ventas') {
+        await route.fulfill({ json: companySales });
+        return;
+      }
+
+      if (method === 'GET' && path === '/empresarios/me/tiendas') {
+        await route.fulfill({ json: companyStores });
         return;
       }
 

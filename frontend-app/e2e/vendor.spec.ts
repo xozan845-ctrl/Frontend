@@ -198,6 +198,39 @@ test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) 
   await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText('Producto Nuevo');
 });
 
+// R-E-38: el empresario consulta las ventas consolidadas de su empresa
+// (`GET /orders/empresa` + `/empresarios/me/ventas`, ADR-45).
+test('R-E-38: el empresario consulta las ventas de la empresa', async ({ page }) => {
+  await login(page, '/empresa/ventas', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('company-orders-page')).toBeVisible();
+  await expect(page.locator('[data-testid="company-order-row"]')).toHaveCount(1);
+  await expect(page.getByTestId('company-sales-total')).toContainText('C$2,300.00');
+  await expect(page.getByTestId('company-sales-pending')).toContainText('C$138.00');
+
+  await page.getByTestId('company-orders-store-filter').selectOption('tienda-demo');
+  await page.getByTestId('company-orders-status-filter').selectOption('pagada');
+  await expect(page.locator('[data-testid="company-order-row"]')).toHaveCount(1);
+
+  await page.getByTestId('company-order-select-o-100').click();
+  await expect(page.getByTestId('company-order-detail')).toContainText(
+    'Ultra-Comfort Wireless Headphones',
+  );
+});
+
+// R-E-39: el empresario consulta las tiendas de su empresa
+// (`GET /empresarios/me/tiendas`, ADR-45).
+test('R-E-39: el empresario consulta las tiendas de la empresa', async ({ page }) => {
+  await login(page, '/empresa/tiendas', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('company-stores-page')).toBeVisible();
+  await expect(page.locator('[data-testid="company-store-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('company-store-link-tienda-demo')).toHaveAttribute(
+    'href',
+    '/tienda/tienda-demo/shop',
+  );
+});
+
 // R-E-31: el empresario consulta los envíos de su empresa
 // (`GET /empresarios/me/envios`) y asigna la flota de un envío híbrido
 // (`POST /empresarios/me/envios/:id/asignacion`, ADR-37).

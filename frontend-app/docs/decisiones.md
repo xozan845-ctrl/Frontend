@@ -1097,3 +1097,30 @@ contexto y consecuencias.
   o plataforma y el empresario puede asignar vendedores a tiendas cuando el
   backend exponga ese contrato. La especificación completa de RLS, políticas
   negativas y pendientes backend vive en `docs/workspaces-y-rls.md`.
+
+## ADR-45: Ventas y tiendas consolidadas del empresario
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: el workspace `/empresa/*` ya separaba el contexto de empresa,
+  pero Ventas y Tiendas seguían como "En construcción". Core Engine expone
+  `GET /orders/empresa` (filtros `tiendaId`, `estado`, `limite`),
+  `GET /empresarios/me/ventas` (estado de cuenta de comisiones) y
+  `GET /empresarios/me/tiendas`.
+- **Decisión**:
+  - `/empresa/ventas` consume las órdenes consolidadas y el estado de cuenta:
+    total vendido, comisión, neto empresa y comisiones pendientes.
+  - Filtros por tienda y estado que vuelven a consultar `/orders/empresa`; el
+    detalle de la orden reutiliza el modelo del checkout (`OrderResponse`).
+  - `/empresa/tiendas` lista las sucursales de `/empresarios/me/tiendas`, su
+    participación y un enlace al storefront público.
+  - Un único `CompanyPortalStore`/puerto cubre órdenes, ventas y tiendas. Los
+    adapters toleran `snake_case`/`camelCase`, montos string y envelopes.
+  - El panel del vendedor (`/vendedor/pedidos`) no se toca: sigue siendo el POS
+    de tienda; el consolidado de empresa vive en `/empresa/ventas`.
+- **Consecuencias**: el empresario ya tiene la vista consolidada sin mezclar
+  roles de tienda y empresa. El workspace base deja el inicial en 534.57 kB;
+  este PR ajusta el techo de aviso a 540 kB (error 560 kB) para que el gate de
+  presupuesto siga siendo útil sin bloquear el feature. Quedan clientes,
+  compras, gastos y reportes del workspace. Revertir es restaurar los
+  placeholders y retirar store/páginas.

@@ -15,6 +15,8 @@ export interface ApiEndpointsConfig {
   adminStorage: string;
   field: string;
   storage: string;
+  companyStores: string;
+  companySales: string;
 }
 
 export interface ApiConfiguration {
