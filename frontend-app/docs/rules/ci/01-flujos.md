@@ -14,6 +14,8 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | R-CI-7 | **Gates obligatorios en `main`**: la protección de rama exige PR y los checks `Security Gate`, `Format (Prettier)`, `ESLint`, `Typecheck`, `Governance Rules`, `Unit Tests + Coverage`, `Build`, `E2E (Playwright)`, `Actionlint`, `Shellcheck`, `Hadolint` y `Gitleaks` en verde sobre la cabeza. Aprobaciones obligatorias: **0** (repo de un solo mantenedor; la revisión sigue recomendada por `R-GB-1`). Squash y merge commit deshabilitados; solo `--rebase` (`R-PR-7`). |
 | R-CI-8 | **Supply chain en CI**: `dependency-review` bloquea vulnerabilidades nuevas en PRs; `codeql.yml` ejecuta SAST; `gitleaks` busca secretos; `actionlint`, `shellcheck` y `hadolint` validan workflows, scripts y Dockerfile; el job de seguridad publica un **SBOM** CycloneDX como artifact. Dependabot agrupa todo Angular (`@angular/*`, `@angular-devkit/*`) en un único PR y `dev-minor-patch` los excluye para no separar `compiler` de `compiler-cli`.                     |
 
+> **CodeQL coherente:** `init` y `analyze` de `github/codeql-action` se actualizan en el mismo PR; mezclar versiones invalida la configuración del workflow.
+
 ## Jobs esperados (contrato)
 
 | Job                 | Comando                                                  | Gate                    |
