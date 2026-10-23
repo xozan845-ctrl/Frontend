@@ -952,3 +952,28 @@ contexto y consecuencias.
   consola. Quedan para una siguiente fase el panel de objetos del tenant
   (`/storage/bucket`, `/storage/objetos`, descarga y flujo de subida
   prefirmada). Revertir es retirar la ruta, la página, el store y los enlaces.
+
+## ADR-39: Rutas y paradas de logística de campo
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: `/logistica/rutas` era una página "En construcción". Core Engine
+  expone `GET /field/rutas` (rutas del tenant con sus paradas),
+  `PATCH /field/rutas/:id` (estado) y
+  `PATCH /field/rutas/:id/paradas/:paradaId` (actualizar una parada). El
+  `PATCH` de parada exige `nombre` además de `completada`.
+- **Decisión**:
+  - Sustituir el placeholder por la ruta lazy real, protegida con `fieldGuard`
+    (admin, super_admin, empresario, logística, coordinador, supervisor y
+    operativo; espeja `ROLES_LOGISTICA`).
+  - `RutasStore` carga las rutas con sus paradas, autoselecciona la primera,
+    permite filtrar por estado, actualizar el estado de la ruta y
+    completar/reabrir paradas.
+  - Al cambiar el estado, el backend no devuelve `paradas`; el store conserva
+    las existentes al fusionar la respuesta. La actualización de parada envía
+    `{ nombre, completada }` para respetar la validación del servicio.
+  - Adapter tolerante a `snake_case`/`camelCase`, envelopes y paradas sin
+    orden explícito.
+- **Consecuencias**: primera fase de field-service cubierta con rutas y paradas.
+  Quedan personal, incidencias, tracking, asistencia y asignación de flota.
+  Revertir es restaurar el placeholder y retirar el store, la página y el puerto.

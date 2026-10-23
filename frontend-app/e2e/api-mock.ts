@@ -483,6 +483,72 @@ export async function mockApi(page: Page): Promise<void> {
   const sinMonto = (envio: (typeof envios)[number]) =>
     Object.fromEntries(Object.entries(envio).filter(([key]) => key !== 'monto'));
 
+  const fieldRutas = [
+    {
+      id: 'ruta-1',
+      tenant_id: 'empresa-demo',
+      nombre: 'Ruta Centro',
+      descripcion: 'Entregas del casco urbano',
+      estado: 'pendiente',
+      personal_asignado_ids: ['personal-1'],
+      vehiculo_asignado_id: 'vehiculo-1',
+      fecha_inicio: '2026-10-24T08:00:00.000Z',
+      fecha_fin: null,
+      synced: true,
+      deleted_at: null,
+      creado_en: '2026-10-21T10:00:00.000Z',
+      actualizado_en: '2026-10-22T10:00:00.000Z',
+      paradas: [
+        {
+          id: 'parada-1',
+          ruta_id: 'ruta-1',
+          orden: 1,
+          nombre: 'Farmacia Central',
+          direccion: 'Calle 1 #100',
+          lat: 12.136,
+          lng: -86.251,
+          completada: false,
+          tipo: 'cliente',
+          telefono: '+505 8888 1111',
+          referencias: 'Frente al parque',
+          horario_atencion: '8:00–17:00',
+          notas: null,
+          pedido_id: null,
+          cliente_id: 'cliente-1',
+          synced: true,
+          deleted_at: null,
+          creado_en: '2026-10-21T10:00:00.000Z',
+          actualizado_en: '2026-10-22T10:00:00.000Z',
+        },
+        {
+          id: 'parada-2',
+          ruta_id: 'ruta-1',
+          orden: 2,
+          nombre: 'Bodega Norte',
+          direccion: 'Carretera Norte km 5',
+          lat: null,
+          lng: null,
+          completada: true,
+          tipo: 'logistica',
+          telefono: null,
+          referencias: null,
+          horario_atencion: null,
+          notas: 'Recoger devolución',
+          pedido_id: null,
+          cliente_id: null,
+          synced: true,
+          deleted_at: null,
+          creado_en: '2026-10-21T10:00:00.000Z',
+          actualizado_en: '2026-10-22T10:00:00.000Z',
+        },
+      ],
+    },
+  ];
+
+  /** `PATCH /field/rutas/:id` devuelve la ruta sin `paradas`. */
+  const sinParadas = (ruta: (typeof fieldRutas)[number]) =>
+    Object.fromEntries(Object.entries(ruta).filter(([key]) => key !== 'paradas'));
+
   const almacenamiento = [
     {
       tenant_id: 'tenant-1',
@@ -650,6 +716,41 @@ export async function mockApi(page: Page): Promise<void> {
         }
         envio.estado = payload.estado;
         await route.fulfill({ json: sinMonto(envio) });
+        return;
+      }
+
+      if (method === 'GET' && path === '/field/rutas') {
+        await route.fulfill({ json: fieldRutas });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/field\/rutas\/[^/]+\/paradas\/[^/]+$/.test(path)) {
+        const routeId = decodeURIComponent(path.split('/')[3]);
+        const stopId = decodeURIComponent(path.split('/')[5]);
+        const payload = request.postDataJSON() as { completada?: boolean } | null;
+        const ruta = fieldRutas.find((candidate) => candidate.id === routeId);
+        const parada = ruta?.paradas.find((candidate) => candidate.id === stopId);
+        if (!parada || payload?.completada === undefined) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Parada no encontrada.' } });
+          return;
+        }
+        parada.completada = payload.completada;
+        parada.actualizado_en = '2026-10-23T10:00:00.000Z';
+        await route.fulfill({ json: parada });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/field\/rutas\/[^/]+$/.test(path)) {
+        const routeId = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as { estado?: string } | null;
+        const ruta = fieldRutas.find((candidate) => candidate.id === routeId);
+        if (!ruta || !payload?.estado) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Ruta no encontrada.' } });
+          return;
+        }
+        ruta.estado = payload.estado;
+        ruta.actualizado_en = '2026-10-23T10:00:00.000Z';
+        await route.fulfill({ json: sinParadas(ruta) });
         return;
       }
 

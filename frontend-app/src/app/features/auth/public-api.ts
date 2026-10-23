@@ -5,3 +5,4 @@ export { AuthStore } from './state/auth/auth.store';
 export { AUTH_REPOSITORY, type AuthRepository } from './repositories/auth.repository';
 export { adminGuard, isAdminRole } from './guards/admin/admin.guard';
 export { canViewShipments, logisticsGuard } from './guards/logistics/logistics.guard';
+export { canViewField, fieldGuard } from './guards/field/field.guard';

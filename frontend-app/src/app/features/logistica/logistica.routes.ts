@@ -1,9 +1,12 @@
 import { Route, Routes } from '@angular/router';
-import { logisticsGuard } from '../auth/public-api';
+import { fieldGuard, logisticsGuard } from '../auth/public-api';
 import { ENVIO_REPOSITORY } from './repositories/envio.repository';
+import { RUTA_REPOSITORY } from './repositories/ruta.repository';
 import { EnvioService } from './services/envio/envio.service';
+import { RutaService } from './services/ruta/ruta.service';
 import { EnviosStore } from './state/envios/envios.store';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
+import { RutasStore } from './state/rutas/rutas.store';
 
 /** Secciones del módulo sin fase: página real "En construcción" (`R-UX-1`, `R-UX-6`). */
 const comingSoonRoute = (
@@ -49,12 +52,12 @@ export const LOGISTICA_ROUTES: Routes = [
         'La geolocalización de tus clientes y sus rutas asignadas.',
         'fa-solid fa-map',
       ),
-      comingSoonRoute(
-        'rutas',
-        'Rutas',
-        'La planificación y el seguimiento de las rutas de reparto.',
-        'fa-solid fa-route',
-      ),
+      {
+        path: 'rutas',
+        canActivate: [fieldGuard],
+        providers: [RutasStore, { provide: RUTA_REPOSITORY, useClass: RutaService }],
+        loadComponent: () => import('./pages/rutas/rutas.component'),
+      },
       comingSoonRoute(
         'pedidos',
         'Pedidos en ruta',
