@@ -977,3 +977,22 @@ contexto y consecuencias.
 - **Consecuencias**: primera fase de field-service cubierta con rutas y paradas.
   Quedan personal, incidencias, tracking, asistencia y asignación de flota.
   Revertir es restaurar el placeholder y retirar el store, la página y el puerto.
+
+## ADR-40: Personal de logística de campo
+
+- **Fecha**: 2026-10-23
+- **Estado**: Aceptado
+- **Contexto**: `/logistica/repartidores` era una página "En construcción". Core
+  Engine expone `GET /field/personal` con el equipo del tenant, su cargo,
+  disponibilidad, contacto, ruta/vehículo asignado, check-in y última ubicación.
+- **Decisión**:
+  - Sustituir el placeholder por una vista real protegida con `fieldGuard`.
+  - `PersonalStore` carga el equipo, autoselecciona el primero, permite buscar
+    por nombre/correo/teléfono y filtrar por estado; resume equipo, en ruta,
+    disponibles y fuera de turno.
+  - Vista maestro-detalle con ficha de contacto, ruta/vehículo, check-in y
+    coordenadas reportadas. Sin mutaciones en esta fase.
+  - Adapter tolerante a `snake_case`/`camelCase`, números string y envelopes.
+- **Consecuencias**: el empresario consulta su equipo de reparto desde la
+  consola. Quedan incidencias, tracking, asistencia y asignación de flota.
+  Revertir es restaurar el placeholder y retirar store, página y puerto.

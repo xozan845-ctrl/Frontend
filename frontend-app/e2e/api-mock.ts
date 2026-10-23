@@ -545,6 +545,53 @@ export async function mockApi(page: Page): Promise<void> {
     },
   ];
 
+  const fieldPersonal = [
+    {
+      id: 'personal-1',
+      tenant_id: 'empresa-demo',
+      nombre: 'Ana',
+      apellido: 'Pérez',
+      cargo: 'conductor',
+      estado: 'en_ruta',
+      telefono: '+505 7777 2222',
+      email: 'ana@tienda.test',
+      ruta_asignada_id: 'ruta-1',
+      vehiculo_asignado_id: 'vehiculo-1',
+      hora_check_in: '2026-10-23T08:00:00.000Z',
+      hora_check_out: null,
+      ubicacion_lat: 12.136,
+      ubicacion_lng: -86.251,
+      ubicacion_precision: 8,
+      ubicacion_ts: '2026-10-23T10:30:00.000Z',
+      synced: true,
+      deleted_at: null,
+      created_at: '2026-10-21T10:00:00.000Z',
+      updated_at: '2026-10-23T10:30:00.000Z',
+    },
+    {
+      id: 'personal-2',
+      tenant_id: 'empresa-demo',
+      nombre: 'Luis',
+      apellido: 'Méndez',
+      cargo: 'auxiliar',
+      estado: 'descansando',
+      telefono: null,
+      email: null,
+      ruta_asignada_id: null,
+      vehiculo_asignado_id: null,
+      hora_check_in: null,
+      hora_check_out: null,
+      ubicacion_lat: null,
+      ubicacion_lng: null,
+      ubicacion_precision: null,
+      ubicacion_ts: null,
+      synced: true,
+      deleted_at: null,
+      created_at: '2026-10-20T10:00:00.000Z',
+      updated_at: '2026-10-22T10:00:00.000Z',
+    },
+  ];
+
   /** `PATCH /field/rutas/:id` devuelve la ruta sin `paradas`. */
   const sinParadas = (ruta: (typeof fieldRutas)[number]) =>
     Object.fromEntries(Object.entries(ruta).filter(([key]) => key !== 'paradas'));
@@ -721,6 +768,11 @@ export async function mockApi(page: Page): Promise<void> {
 
       if (method === 'GET' && path === '/field/rutas') {
         await route.fulfill({ json: fieldRutas });
+        return;
+      }
+
+      if (method === 'GET' && path === '/field/personal') {
+        await route.fulfill({ json: fieldPersonal });
         return;
       }
 

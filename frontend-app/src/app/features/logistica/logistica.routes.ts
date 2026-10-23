@@ -1,11 +1,14 @@
 import { Route, Routes } from '@angular/router';
 import { fieldGuard, logisticsGuard } from '../auth/public-api';
 import { ENVIO_REPOSITORY } from './repositories/envio.repository';
+import { PERSONAL_REPOSITORY } from './repositories/personal.repository';
 import { RUTA_REPOSITORY } from './repositories/ruta.repository';
 import { EnvioService } from './services/envio/envio.service';
+import { PersonalService } from './services/personal/personal.service';
 import { RutaService } from './services/ruta/ruta.service';
 import { EnviosStore } from './state/envios/envios.store';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
+import { PersonalStore } from './state/personal/personal.store';
 import { RutasStore } from './state/rutas/rutas.store';
 
 /** Secciones del módulo sin fase: página real "En construcción" (`R-UX-1`, `R-UX-6`). */
@@ -64,12 +67,12 @@ export const LOGISTICA_ROUTES: Routes = [
         'El detalle de cada pedido que va camino al cliente.',
         'fa-solid fa-box',
       ),
-      comingSoonRoute(
-        'repartidores',
-        'Repartidores',
-        'El equipo de reparto, sus turnos y su desempeño.',
-        'fa-solid fa-user',
-      ),
+      {
+        path: 'repartidores',
+        canActivate: [fieldGuard],
+        providers: [PersonalStore, { provide: PERSONAL_REPOSITORY, useClass: PersonalService }],
+        loadComponent: () => import('./pages/personal/personal.component'),
+      },
       comingSoonRoute(
         'zonas',
         'Zonas',
