@@ -483,6 +483,31 @@ export async function mockApi(page: Page): Promise<void> {
   const sinMonto = (envio: (typeof envios)[number]) =>
     Object.fromEntries(Object.entries(envio).filter(([key]) => key !== 'monto'));
 
+  const almacenamiento = [
+    {
+      tenant_id: 'tenant-1',
+      bucket: 't-tenant-1',
+      cuota_bytes: 5368709120,
+      usado_bytes: 1610612736,
+      disponible_bytes: 3758096384,
+      objetos: 3,
+      estado: 'activo',
+      creado_en: '2026-10-21T10:00:00.000Z',
+      actualizado_en: '2026-10-22T10:00:00.000Z',
+    },
+    {
+      tenant_id: 'tenant-2',
+      bucket: 't-tenant-2',
+      cuota_bytes: 2147483648,
+      usado_bytes: 2147483648,
+      disponible_bytes: 0,
+      objetos: 5,
+      estado: 'suspendido',
+      creado_en: '2026-10-20T10:00:00.000Z',
+      actualizado_en: '2026-10-22T09:00:00.000Z',
+    },
+  ];
+
   await page.route(
     (url) => url.pathname.startsWith('/api/v1/'),
     async (route) => {
@@ -625,6 +650,51 @@ export async function mockApi(page: Page): Promise<void> {
         }
         envio.estado = payload.estado;
         await route.fulfill({ json: sinMonto(envio) });
+        return;
+      }
+
+      if (method === 'GET' && path === '/admin/storage/tenants') {
+        await route.fulfill({
+          json: {
+            items: almacenamiento,
+            total: almacenamiento.length,
+            pagina: 1,
+            limite: 20,
+            paginas: 1,
+          },
+        });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/admin\/storage\/tenants\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[4]);
+        const payload = request.postDataJSON() as {
+          cuota_bytes?: number;
+          estado?: 'activo' | 'suspendido';
+        } | null;
+        const tenant = almacenamiento.find((candidate) => candidate.tenant_id === id);
+        if (!tenant) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Tenant no encontrado.' } });
+          return;
+        }
+        if (payload?.cuota_bytes !== undefined) tenant.cuota_bytes = payload.cuota_bytes;
+        if (payload?.estado !== undefined) tenant.estado = payload.estado;
+        tenant.disponible_bytes = Math.max(0, tenant.cuota_bytes - tenant.usado_bytes);
+        tenant.actualizado_en = '2026-10-22T11:00:00.000Z';
+        await route.fulfill({ json: tenant });
+        return;
+      }
+
+      if (method === 'POST' && /^\/admin\/storage\/tenants\/[^/]+\/recalcular$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[4]);
+        const tenant = almacenamiento.find((candidate) => candidate.tenant_id === id);
+        if (!tenant) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Tenant no encontrado.' } });
+          return;
+        }
+        tenant.disponible_bytes = Math.max(0, tenant.cuota_bytes - tenant.usado_bytes);
+        tenant.actualizado_en = '2026-10-22T11:00:00.000Z';
+        await route.fulfill({ json: tenant });
         return;
       }
 

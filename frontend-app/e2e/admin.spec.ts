@@ -88,3 +88,20 @@ test('R-E-30: el admin consulta envíos y avanza su estado', async ({ page }) =>
 
   await expect(page.getByTestId('envio-status-e-2')).toContainText('Entregada');
 });
+
+// R-E-32: el admin consulta el almacenamiento por empresa
+// (`GET /admin/storage/tenants`), ajusta la cuota (`PATCH`) y reactiva un tenant.
+test('R-E-32: el admin administra la cuota de almacenamiento', async ({ page }) => {
+  await login(page, '/admin/almacenamiento');
+
+  await expect(page.getByTestId('admin-storage-page')).toBeVisible();
+  await expect(page.locator('[data-testid="storage-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('storage-row').first()).toContainText('t-tenant-1');
+
+  await page.getByTestId('storage-quota-input-tenant-1').fill('6');
+  await page.getByTestId('storage-save-tenant-1').click();
+  await expect(page.getByTestId('storage-row').first()).toContainText('6.00 GB');
+
+  await page.getByTestId('storage-toggle-tenant-2').click();
+  await expect(page.getByTestId('storage-status-tenant-2')).toContainText('Activo');
+});
