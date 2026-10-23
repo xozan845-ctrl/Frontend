@@ -72,3 +72,19 @@ test('R-E-29: el admin avanza el estado de una orden', async ({ page }) => {
 
   await expect(page.getByTestId('admin-order-detail')).toContainText('Enviada');
 });
+
+// R-E-30: el admin consulta todas las guías de despacho con su monto
+// (`GET /admin/envios`) y avanza el estado de una guía (`PATCH /envios/:id/estado`).
+test('R-E-30: el admin consulta envíos y avanza su estado', async ({ page }) => {
+  await login(page, '/logistica/envios');
+
+  await expect(page.getByTestId('envios-page')).toBeVisible();
+  await expect(page.locator('[data-testid="envio-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('envio-row').first()).toContainText('C$2,300.00');
+  await expect(page.getByTestId('envio-status-e-2')).toContainText('Enviada');
+
+  await page.getByTestId('envio-target-e-2').selectOption('entregada');
+  await page.getByTestId('envio-advance-e-2').click();
+
+  await expect(page.getByTestId('envio-status-e-2')).toContainText('Entregada');
+});

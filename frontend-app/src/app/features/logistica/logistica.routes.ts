@@ -1,4 +1,8 @@
 import { Route, Routes } from '@angular/router';
+import { logisticsGuard } from '../auth/public-api';
+import { ENVIO_REPOSITORY } from './repositories/envio.repository';
+import { EnvioService } from './services/envio/envio.service';
+import { EnviosStore } from './state/envios/envios.store';
 import { LogisticaDashboardStore } from './state/logistica-dashboard/logistica-dashboard.store';
 
 /** Secciones del módulo sin fase: página real "En construcción" (`R-UX-1`, `R-UX-6`). */
@@ -31,6 +35,13 @@ export const LOGISTICA_ROUTES: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/dashboard/dashboard.component'),
+      },
+      {
+        path: 'envios',
+        canActivate: [logisticsGuard],
+        // El store y su puerto viven al alcance de la ruta y se liberan al salir.
+        providers: [EnviosStore, { provide: ENVIO_REPOSITORY, useClass: EnvioService }],
+        loadComponent: () => import('./pages/envios/envios.component'),
       },
       comingSoonRoute(
         'mapa-clientes',

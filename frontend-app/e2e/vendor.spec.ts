@@ -194,3 +194,20 @@ test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) 
   await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(7);
   await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText('Producto Nuevo');
 });
+
+// R-E-31: el empresario consulta los envíos de su empresa
+// (`GET /empresarios/me/envios`) y asigna la flota de un envío híbrido
+// (`POST /empresarios/me/envios/:id/asignacion`, ADR-37).
+test('R-E-31: el empresario asigna la flota de un envío híbrido', async ({ page }) => {
+  await login(page, '/logistica/envios', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('envios-page')).toBeVisible();
+  await expect(page.locator('[data-testid="envio-row"]')).toHaveCount(2);
+  await expect(page.getByTestId('envio-provider-label-e-1')).toContainText('Sin asignar');
+  await expect(page.getByTestId('envio-provider-e-1')).toBeVisible();
+
+  await page.getByTestId('envio-provider-e-1').selectOption('empresa');
+  await page.getByTestId('envio-assign-e-1').click();
+
+  await expect(page.getByTestId('envio-provider-label-e-1')).toContainText('empresa');
+});

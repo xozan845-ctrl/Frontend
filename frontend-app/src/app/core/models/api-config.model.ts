@@ -9,6 +9,9 @@ export interface ApiEndpointsConfig {
   vendor: string;
   companies: string;
   inventory: string;
+  shipments: string;
+  adminShipments: string;
+  companyShipments: string;
 }
 
 export interface ApiConfiguration {

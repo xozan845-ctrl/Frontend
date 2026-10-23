@@ -452,6 +452,36 @@ export async function mockApi(page: Page): Promise<void> {
       actualizado_en: '2026-10-22T15:00:00.000Z',
     },
   ];
+  const envios = [
+    {
+      id: 'e-1',
+      guia: 'BGH-ABC123-DEF456',
+      order_id: 'o-100',
+      empresa_id: 'empresa-demo',
+      modalidad_logistica: 'hibrida',
+      proveedor_tipo: null as 'plataforma' | 'empresa' | null,
+      proveedor_tenant_id: null as string | null,
+      estado: 'en_preparacion',
+      creado_en: '2026-10-22T15:00:00.000Z',
+      monto: '2300.00',
+    },
+    {
+      id: 'e-2',
+      guia: 'BGH-XYZ789-GHI012',
+      order_id: 'o-101',
+      empresa_id: 'empresa-demo',
+      modalidad_logistica: 'plataforma',
+      proveedor_tipo: 'plataforma' as 'plataforma' | 'empresa' | null,
+      proveedor_tenant_id: 'tenant-plataforma',
+      estado: 'enviada',
+      creado_en: '2026-10-22T14:00:00.000Z',
+      monto: '1500.00',
+    },
+  ];
+
+  /** `GET /empresarios/me/envios` responde `EnvioResponseDto`, sin `monto`. */
+  const sinMonto = (envio: (typeof envios)[number]) =>
+    Object.fromEntries(Object.entries(envio).filter(([key]) => key !== 'monto'));
 
   await page.route(
     (url) => url.pathname.startsWith('/api/v1/'),
@@ -552,6 +582,49 @@ export async function mockApi(page: Page): Promise<void> {
             },
           ],
         });
+        return;
+      }
+
+      if (method === 'GET' && path === '/admin/envios') {
+        await route.fulfill({ json: envios });
+        return;
+      }
+
+      if (method === 'GET' && path === '/empresarios/me/envios') {
+        await route.fulfill({ json: envios.map((envio) => sinMonto(envio)) });
+        return;
+      }
+
+      if (method === 'POST' && /^\/empresarios\/me\/envios\/[^/]+\/asignacion$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[4]);
+        const payload = request.postDataJSON() as {
+          proveedor_tipo?: 'plataforma' | 'empresa';
+        } | null;
+        const envio = envios.find((candidate) => candidate.id === id);
+        if (!envio || !payload?.proveedor_tipo) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Envío no encontrado.' } });
+          return;
+        }
+        envio.proveedor_tipo = payload.proveedor_tipo;
+        envio.proveedor_tenant_id =
+          payload.proveedor_tipo === 'empresa' ? 'empresa-demo' : 'tenant-plataforma';
+        await route.fulfill({ json: sinMonto(envio) });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/envios\/[^/]+\/estado$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[2]);
+        const payload = request.postDataJSON() as {
+          estado?: 'enviada' | 'entregada' | 'cancelada';
+          motivo?: string;
+        } | null;
+        const envio = envios.find((candidate) => candidate.id === id);
+        if (!envio || !payload?.estado) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Envío no encontrado.' } });
+          return;
+        }
+        envio.estado = payload.estado;
+        await route.fulfill({ json: sinMonto(envio) });
         return;
       }
 

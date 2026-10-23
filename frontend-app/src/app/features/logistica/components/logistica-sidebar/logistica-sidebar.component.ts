@@ -26,6 +26,12 @@ export class LogisticaSidebarComponent {
       testId: 'logistica-nav-dashboard',
     },
     {
+      label: 'Envíos',
+      icon: 'fa-solid fa-truck-fast',
+      link: '/logistica/envios',
+      testId: 'logistica-nav-envios',
+    },
+    {
       label: 'Mapa de clientes',
       icon: 'fa-solid fa-map',
       link: '/logistica/mapa-clientes',
