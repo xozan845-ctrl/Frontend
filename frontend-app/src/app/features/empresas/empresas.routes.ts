@@ -6,6 +6,10 @@ import { CompanyPortalService } from './services/company-portal/company-portal.s
 import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { CompanyStore } from './state/company/company.store';
+import { COMPANY_INVITATION_REPOSITORY } from './repositories/company-invitation.repository';
+import { CompanyInvitationService } from './services/company-invitation/company-invitation.service';
+import { CompanyInvitationsStore } from './state/company-invitations/company-invitations.store';
+import { SellerInvitationStore } from './state/seller-invitation/seller-invitation.store';
 
 const companySoonRoute = (
   path: string,
@@ -20,6 +24,14 @@ const companySoonRoute = (
 
 /** Rutas del workspace del propietario (`R-AR-12`, `R-SE-6`). */
 export const EMPRESAS_ROUTES: Routes = [
+  {
+    path: 'registro/vendedor',
+    loadComponent: () => import('./pages/seller-invitation/seller-invitation.component'),
+    providers: [
+      SellerInvitationStore,
+      { provide: COMPANY_INVITATION_REPOSITORY, useClass: CompanyInvitationService },
+    ],
+  },
   {
     path: 'empresa',
     canActivate: [companyGuard],
@@ -124,12 +136,16 @@ export const EMPRESAS_ROUTES: Routes = [
           { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
         ],
       },
-      companySoonRoute(
-        'vendedores',
-        'Vendedores',
-        'Invita y administra vendedores por tienda.',
-        'fa-solid fa-user-tie',
-      ),
+      {
+        path: 'vendedores',
+        loadComponent: () => import('./pages/company-vendors/company-vendors.component'),
+        providers: [
+          CompanyInvitationsStore,
+          { provide: COMPANY_INVITATION_REPOSITORY, useClass: CompanyInvitationService },
+          CompanyPortalStore,
+          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
+        ],
+      },
       {
         path: 'logistica',
         loadChildren: () =>

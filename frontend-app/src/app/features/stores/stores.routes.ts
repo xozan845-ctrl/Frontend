@@ -17,7 +17,7 @@ import { CatalogService } from './services/catalog/catalog.service';
  */
 export const STORES_ROUTES: Routes = [
   {
-    path: 'crear-tienda',
+    path: 'crear-empresa',
     loadComponent: () => import('./pages/create-store/create-store.component'),
     providers: [
       StoreWizardStore,
@@ -25,5 +25,10 @@ export const STORES_ROUTES: Routes = [
       { provide: CATALOG_REPOSITORY, useClass: CatalogService },
       { provide: COMPANY_REPOSITORY, useClass: CompanyService },
     ],
+  },
+  {
+    path: 'crear-tienda',
+    redirectTo: 'crear-empresa',
+    pathMatch: 'full',
   },
 ];

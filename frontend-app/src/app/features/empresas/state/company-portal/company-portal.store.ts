@@ -45,6 +45,7 @@ export const CompanyPortalStore = signalStore(
     }),
     pendingCommissions: computed(() => sales()?.pendingCommissions ?? 0),
     storeCount: computed(() => stores().length),
+    availableStores: computed(() => stores().filter((store) => !store.sellerId)),
     hasOrders: computed(() => orders().length > 0),
   })),
   withMethods(

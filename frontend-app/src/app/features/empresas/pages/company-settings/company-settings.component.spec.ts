@@ -5,7 +5,7 @@ import CompanySettingsComponent from './company-settings.component';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
 import { SeoService } from '../../../../core/services/seo/seo.service';
-import { Company, CompanySeller, LogisticsMode } from '../../models/company.model';
+import { Company, LogisticsMode } from '../../models/company.model';
 
 const company: Company = {
   id: 'c-1',
@@ -14,14 +14,6 @@ const company: Company = {
   status: 'activa',
   createdBy: 'u-1',
   createdAt: '2026-10-21T00:00:00.000Z',
-};
-
-const seller: CompanySeller = {
-  id: 's-1',
-  name: 'Vera Vendedora',
-  email: 'vera@tienda.test',
-  role: 'vendedor',
-  participationPercentage: 25,
 };
 
 describe('CompanySettingsComponent', () => {
@@ -33,14 +25,12 @@ describe('CompanySettingsComponent', () => {
     tenantId?: string;
   } | null>(null);
   const companySignal = signal<Company | null>(null);
-  const sellersSignal = signal<CompanySeller[]>([]);
   const loading = signal(false);
   const saving = signal(false);
   const error = signal<string | null>(null);
 
   const companyStore = {
     company: companySignal.asReadonly(),
-    sellers: sellersSignal.asReadonly(),
     loading: loading.asReadonly(),
     saving: saving.asReadonly(),
     error: error.asReadonly(),
@@ -75,7 +65,6 @@ describe('CompanySettingsComponent', () => {
     vi.clearAllMocks();
     user.set(null);
     companySignal.set(null);
-    sellersSignal.set([]);
     loading.set(false);
     saving.set(false);
     error.set(null);
@@ -186,7 +175,7 @@ describe('CompanySettingsComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="logistics-form"]')).toBeNull();
   });
 
-  it('debe crear un vendedor con nombre, correo, contraseña y participación', async () => {
+  it('debe enlazar al módulo dedicado de vendedores', async () => {
     user.set({
       id: 'u-1',
       name: 'Eva',
@@ -197,38 +186,9 @@ describe('CompanySettingsComponent', () => {
     companySignal.set(company);
     const fixture = await setup();
 
-    fixture.componentInstance.sellerForm.setValue({
-      name: 'Vera Vendedora',
-      email: 'vera@tienda.test',
-      password: 'secreto123',
-      participationPercentage: 25,
-    });
-    fixture.componentInstance.submitSeller();
-
-    expect(companyStore.createSeller).toHaveBeenCalledWith({
-      name: 'Vera Vendedora',
-      email: 'vera@tienda.test',
-      password: 'secreto123',
-      participationPercentage: 25,
-    });
-  });
-
-  it('debe listar los vendedores creados en la sesión', async () => {
-    user.set({
-      id: 'u-1',
-      name: 'Eva',
-      email: 'eva@tienda.test',
-      role: 'empresario',
-      tenantId: 'c-1',
-    });
-    companySignal.set(company);
-    sellersSignal.set([seller]);
-    const fixture = await setup();
-
-    const rows = fixture.nativeElement.querySelectorAll('[data-testid="seller-row"]');
-    expect(rows).toHaveLength(1);
-    expect(rows[0].textContent).toContain('Vera Vendedora');
-    expect(rows[0].textContent).toContain('25');
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="manage-company-sellers"]'),
+    ).not.toBeNull();
   });
 
   it('debe mostrar el estado de carga', async () => {

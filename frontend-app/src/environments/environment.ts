@@ -2,6 +2,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 
 export const environment = {
   production: false,
+  frontendUrl: 'http://localhost:4200',
   // Backend local (gateway de Core Engine) para desarrollo.
   apiUrl: 'http://localhost:8080/api/v1',
   // Endpoint del backend de IA `ai_scraper_executor` (independiente). El frontend
