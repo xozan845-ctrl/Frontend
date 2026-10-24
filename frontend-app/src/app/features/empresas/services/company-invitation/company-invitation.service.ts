@@ -20,6 +20,26 @@ import type {
 } from '../../models/company-invitation.model';
 import { CompanyInvitationRepository } from '../../repositories/company-invitation.repository';
 
+const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1']);
+
+export function normalizeInvitationUrl(
+  invitationUrl: string,
+  frontendUrl: string,
+  production: boolean,
+): string {
+  if (!production || !invitationUrl || !frontendUrl) return invitationUrl;
+
+  try {
+    const invitation = new URL(invitationUrl);
+    if (!LOOPBACK_HOSTNAMES.has(invitation.hostname)) return invitationUrl;
+
+    const publicOrigin = frontendUrl.replace(/\/+$/, '');
+    return `${publicOrigin}${invitation.pathname}${invitation.search}${invitation.hash}`;
+  } catch {
+    return invitationUrl;
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class CompanyInvitationService implements CompanyInvitationRepository {
   private readonly http = inject(HttpClient);
@@ -53,7 +73,14 @@ export class CompanyInvitationService implements CompanyInvitationRepository {
         map((response) => adaptSellerInvitationFromBackend(response)),
         map((invitation) => {
           if (!invitation) throw new Error('No se pudo interpretar la invitación creada.');
-          return invitation;
+          return {
+            ...invitation,
+            invitationUrl: normalizeInvitationUrl(
+              invitation.invitationUrl,
+              environment.frontendUrl,
+              environment.production,
+            ),
+          };
         }),
         catchError((error: unknown) =>
           throwError(() => new Error(toUserMessage(error, 'No se pudo generar la invitación.'))),
