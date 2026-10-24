@@ -1,0 +1,13 @@
+# Entorno y secretos (nunca versionar credenciales)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+serviceAccount*.json
+
+# Artefactos locales
+*.log
+.firebase/
+.DS_Store
+Thumbs.db

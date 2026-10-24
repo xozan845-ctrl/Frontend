@@ -5,3 +5,14 @@
 **/.angular
 **/coverage
 **/out-tsc
+**/.firebase
+**/playwright-report
+**/test-results
+**/blob-report
+**/*.log
+**/.env
+**/.env.*
+!**/.env.example
+**/*.pem
+**/*.key
+**/serviceAccount*.json
