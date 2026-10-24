@@ -472,6 +472,28 @@ describe('AuthService', () => {
       expect(result?.user.name).toBe('Nuevo');
     });
 
+    it('debe conservar el empresario y activar su tenant al renovar en mock', async () => {
+      build();
+      let registration: AuthResponse | undefined;
+      let result: AuthResponse | undefined;
+
+      service
+        .register({
+          name: 'Empresario Demo',
+          email: 'empresario@tienda.test',
+          password: 'secreto1',
+          role: 'seller',
+        })
+        .subscribe((response) => (registration = response));
+      await vi.waitFor(() => expect(registration).toBeDefined(), { timeout: 2000 });
+
+      service.refresh('refresh-1').subscribe((response) => (result = response));
+      await vi.waitFor(() => expect(result).toBeDefined(), { timeout: 2000 });
+
+      expect(result?.user.role).toBe('empresario');
+      expect(result?.user.tenantId).toBe('empresa-demo');
+    });
+
     it('debe cerrar sesión en mock', async () => {
       build();
       let result: boolean | undefined;

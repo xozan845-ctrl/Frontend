@@ -16,6 +16,7 @@ import {
   LoginCredentials,
   RegisterData,
   User,
+  isCompanyOwnerRole,
   isSellerRole,
 } from '../../models/auth.model';
 import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
@@ -41,6 +42,10 @@ export const AuthStore = signalStore(
     isAuthenticated: () => !!token() && !!user(),
     /** Sesión de vendedor/empresario (`R-ST-3`). */
     isSeller: () => isSellerRole(user()?.role),
+    /** Rol propietario de empresa para navegación contextual (`R-ST-3`). */
+    isCompanyOwner: () => isCompanyOwnerRole(user()?.role),
+    /** Empresa activa disponible para el usuario autenticado (`R-ST-3`). */
+    hasActiveCompany: () => isCompanyOwnerRole(user()?.role) && !!user()?.tenantId,
   })),
   withMethods(
     (

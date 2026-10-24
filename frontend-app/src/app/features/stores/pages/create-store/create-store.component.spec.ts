@@ -23,6 +23,7 @@ describe('CreateStoreComponent', () => {
     user: () => currentUser,
     isAuthenticated: () => currentUser !== null,
     isSeller: () => currentUser?.role === 'vendedor' || currentUser?.role === 'empresario',
+    isCompanyOwner: () => currentUser?.role === 'empresario',
     loading: () => false,
     error: () => null,
     register: vi.fn(),
@@ -245,6 +246,53 @@ describe('CreateStoreComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.hasSelection()).toBe(true);
+  });
+
+  it('exige cinco productos para habilitar la publicación inicial', async () => {
+    const catalog = Array.from({ length: 5 }, (_, index) => ({
+      id: `p-${index + 1}`,
+      name: `Producto ${index + 1}`,
+      sku: `SKU-${index + 1}`,
+    }));
+    const fixture = await setup();
+    vi.mocked(catalogRepo.listCatalog).mockReturnValue(of(catalog));
+
+    fixture.componentInstance.wizard.goToProductsStep();
+    await vi.waitFor(() => expect(fixture.componentInstance.productRows.length).toBe(5));
+    fixture.detectChanges();
+
+    const publishButton = fixture.nativeElement.querySelector(
+      '[data-testid="publish-products"]',
+    ) as HTMLButtonElement;
+    expect(publishButton.disabled).toBe(true);
+
+    for (let index = 0; index < 5; index += 1) {
+      fixture.componentInstance.toggleRow(index);
+    }
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.selectedProductCount()).toBe(5);
+    expect(fixture.componentInstance.hasMinimumProducts()).toBe(true);
+    expect(publishButton.disabled).toBe(false);
+  });
+
+  it('redirige al panel cuando un empresario termina el onboarding', async () => {
+    currentUser = {
+      id: 2,
+      email: 'e@e.com',
+      name: 'Eva',
+      role: 'empresario',
+      tenantId: 'c-1',
+    };
+    const fixture = await setup();
+    const router = TestBed.inject(Router);
+    const navigateByUrl = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    fixture.componentInstance.wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
+    fixture.componentInstance.skipProducts();
+
+    await vi.waitFor(() => expect(navigateByUrl).toHaveBeenCalledWith('/empresa/inicio'));
   });
 
   it('debe mostrar el estado de error del catálogo con reintento', async () => {

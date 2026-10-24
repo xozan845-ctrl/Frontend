@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
-import { AuthStore } from '../../features/auth/public-api';
+import { AuthStore, isCompanyOwnerRole } from '../../features/auth/public-api';
 import { CartStore, CartUiStore } from '../../features/cart/public-api';
 import { ProductStore } from '../../features/products/public-api';
 import { WishlistStore } from '../../features/wishlist/public-api';
@@ -24,7 +24,15 @@ export class Navbar {
   /** Tienda activa (de la URL); los enlaces del storefront la incluyen. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
   readonly storeName = computed(() => this.productStore.store()?.name ?? '');
-  readonly homeLink = computed(() => (this.storeId() ? ['/tienda', this.storeId()] : ['/']));
+  readonly isCompanyOwner = computed(() => isCompanyOwnerRole(this.authStore.user()?.role));
+  readonly homeLink = computed(() =>
+    this.isCompanyOwner()
+      ? ['/empresa/inicio']
+      : this.storeId()
+        ? ['/tienda', this.storeId()]
+        : ['/'],
+  );
+  readonly companyWorkspaceLink = ['/empresa/inicio'];
   readonly shopLink = computed(() =>
     this.storeId() ? ['/tienda', this.storeId(), 'shop'] : ['/'],
   );
