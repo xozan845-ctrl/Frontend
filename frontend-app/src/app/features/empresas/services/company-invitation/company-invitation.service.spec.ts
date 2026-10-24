@@ -133,6 +133,25 @@ describe('CompanyInvitationService', () => {
     expect(acceptError?.message).toBe('La invitación expiró.');
   });
 
+  it('envía el nombre opcional normalizado', () => {
+    service
+      .create('c-1', {
+        name: '  Ana  ',
+        email: 'ana@test',
+        storeId: 't-1',
+        participationPercentage: 25,
+      })
+      .subscribe();
+    const request = httpMock.expectOne('https://api.test/empresas/c-1/invitaciones/vendedores');
+    expect(request.request.body).toEqual({
+      nombre: 'Ana',
+      correo: 'ana@test',
+      tienda_id: 't-1',
+      participacion_porcentaje: 25,
+    });
+    request.flush({ id: 'i-2', correo: 'ana@test', tienda_id: 't-1' });
+  });
+
   it('devuelve un error claro cuando el API no está configurado', () => {
     environment.apiUrl = '';
     const messages: string[] = [];
