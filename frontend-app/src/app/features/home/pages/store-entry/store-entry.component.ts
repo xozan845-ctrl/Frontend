@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 
 /** Un `storeId` válido: alfanumérico con guiones (UUID/slug), 1–100 caracteres. */
@@ -19,12 +20,17 @@ const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
 export default class StoreEntryComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly authStore = inject(AuthStore);
   private readonly seoService = injectSeoPage(
     'Tu tienda',
     'Plataforma multi-tienda: encuentra tu tienda o crea la tuya en minutos.',
   );
 
   readonly storeId = signal('');
+  readonly hasActiveCompany = computed(() => {
+    const user = this.authStore.user();
+    return isCompanyOwnerRole(user?.role) && !!user?.tenantId;
+  });
 
   private readonly init = this.openFromQuery();
 
@@ -47,5 +53,10 @@ export default class StoreEntryComponent {
   /** Abre el asistente para crear una empresa y su primera tienda. */
   goToCreateStore(): void {
     this.router.navigate(['/crear-empresa']);
+  }
+
+  /** Abre el workspace del empresario que ya tiene una empresa activa. */
+  goToCompanyWorkspace(): void {
+    this.router.navigate(['/empresa/inicio']);
   }
 }

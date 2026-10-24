@@ -1,15 +1,24 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import StoreEntryComponent from './store-entry.component';
 import { SeoService } from '../../../../core/services/seo/seo.service';
+import { AuthStore } from '../../../auth/public-api';
+import type { User } from '../../../auth/public-api';
 
 describe('StoreEntryComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };
+  const currentUser = signal<User | null>(null);
+  const authStoreStub = { user: currentUser.asReadonly() };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [StoreEntryComponent],
-      providers: [provideRouter([]), { provide: SeoService, useValue: seo }],
+      providers: [
+        provideRouter([]),
+        { provide: SeoService, useValue: seo },
+        { provide: AuthStore, useValue: authStoreStub },
+      ],
     }).compileComponents();
     const fixture = TestBed.createComponent(StoreEntryComponent);
     fixture.detectChanges();
@@ -18,6 +27,7 @@ describe('StoreEntryComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    currentUser.set(null);
     TestBed.resetTestingModule();
   });
 
@@ -74,5 +84,45 @@ describe('StoreEntryComponent', () => {
     fixture.destroy();
 
     expect(seo.reset).toHaveBeenCalled();
+  });
+
+  it('mantiene la raíz accesible y reemplaza crear empresa por el panel para empresarios', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const fixture = await setup();
+
+    expect(fixture.componentInstance.hasActiveCompany()).toBe(true);
+    expect(fixture.nativeElement.textContent).not.toContain('¿Tienes una empresa?');
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="company-workspace-link"]'),
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="create-logistics-company-link"]'),
+    ).not.toBeNull();
+  });
+
+  it('navega al workspace desde el card del empresario', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    (
+      fixture.nativeElement.querySelector(
+        '[data-testid="company-workspace-link"]',
+      ) as HTMLButtonElement
+    ).click();
+
+    expect(navigate).toHaveBeenCalledWith(['/empresa/inicio']);
   });
 });

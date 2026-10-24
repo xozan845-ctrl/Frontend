@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import {
   CatalogProductOption,
@@ -15,6 +15,8 @@ import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-sta
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import type { ProductRow } from './create-store.types';
+
+const MIN_INITIAL_PRODUCTS = 5;
 
 /**
  * Asistente para crear una empresa y su primera tienda, en 4 pasos: cuenta →
@@ -51,6 +53,8 @@ export default class CreateStoreComponent {
   /** Sesión actual: de vendedor/empresario (puede crear tienda) o de comprador (no). */
   readonly isSeller = this.authStore.isSeller;
   readonly isBuyer = computed(() => this.authStore.isAuthenticated() && !this.isSeller());
+  readonly isCompanyOwner = computed(() => isCompanyOwnerRole(this.authStore.user()?.role));
+  readonly minimumProducts = MIN_INITIAL_PRODUCTS;
   /** El JWT ya trae la empresa activa; si no, el onboarding la crea antes de la tienda. */
   readonly hasCompany = computed(() => !!this.authStore.user()?.tenantId);
   readonly needsCompany = computed(() => this.isSeller() && !this.hasCompany());
@@ -74,9 +78,13 @@ export default class CreateStoreComponent {
   readonly productRows = this.fb.array<ProductRow>([]);
   /** Señal de apoyo para derivar `hasSelection` de un `FormArray` (R-PF-4/R-ST-3). */
   private readonly selectionRevision = signal(0);
-  readonly hasSelection = computed(() => {
+  readonly selectedProductCount = computed(() => {
     this.selectionRevision();
-    return this.productRows.controls.some((row) => row.controls.selected.value);
+    return this.productRows.controls.filter((row) => row.controls.selected.value).length;
+  });
+  readonly hasMinimumProducts = computed(() => this.selectedProductCount() >= this.minimumProducts);
+  readonly hasSelection = computed(() => {
+    return this.selectedProductCount() > 0;
   });
 
   /** Con sesión de vendedor, avanza automáticamente del paso de cuenta. */
@@ -90,6 +98,16 @@ export default class CreateStoreComponent {
     if (this.wizard.step() === 3 && catalog.length > 0 && this.productRows.length === 0) {
       this.buildProductRows(catalog);
     }
+  });
+
+  private redirectedToWorkspace = false;
+  /** Al completar el onboarding, el propietario continúa trabajando en su workspace. */
+  private readonly redirectCompanyOwner = effect(() => {
+    const completed = this.wizard.step() === 4 && !!this.wizard.store();
+    if (!completed || !this.isCompanyOwner() || this.redirectedToWorkspace) return;
+
+    this.redirectedToWorkspace = true;
+    void this.router.navigateByUrl('/empresa/inicio');
   });
 
   // ── Paso 1: cuenta ─────────────────────────────────────────────────────────
@@ -144,6 +162,8 @@ export default class CreateStoreComponent {
   };
 
   publish(): void {
+    if (!this.hasMinimumProducts()) return;
+
     const offers: OfferDraft[] = this.productRows.controls
       .filter((row) => row.controls.selected.value && row.controls.margin.valid)
       .map((row) => ({
@@ -162,6 +182,10 @@ export default class CreateStoreComponent {
   goToStore(): void {
     const store = this.wizard.store();
     if (store) this.router.navigate(['/tienda', store.id, 'shop']);
+  }
+
+  goToWorkspace(): void {
+    void this.router.navigateByUrl('/empresa/inicio');
   }
 
   // ── Utilidades de plantilla ────────────────────────────────────────────────

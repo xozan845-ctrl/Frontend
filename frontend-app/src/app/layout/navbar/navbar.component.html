@@ -101,6 +101,16 @@
         <!-- Auth -->
         <div class="flex items-center pl-6 border-l border-slate-200 dark:border-surface-600 gap-4">
           @if (authStore.isAuthenticated()) {
+            @if (isCompanyOwner()) {
+              <a
+                [routerLink]="companyWorkspaceLink"
+                routerLinkActive="text-accent-600 dark:text-accent-400"
+                class="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+                data-testid="navbar-company-link"
+              >
+                Panel empresa
+              </a>
+            }
             <a
               routerLink="/cuenta"
               class="flex items-center gap-3 hover:opacity-80 transition-opacity"
@@ -252,6 +262,16 @@
               }}</span>
             </div>
           </div>
+          @if (isCompanyOwner()) {
+            <a
+              [routerLink]="companyWorkspaceLink"
+              (click)="isMobileMenuOpen.set(false)"
+              class="w-full text-center text-xs font-bold uppercase tracking-widest bg-accent-600 text-white py-3 rounded-xl hover:bg-accent-700 transition-colors mb-3 block"
+              data-testid="navbar-company-link-mobile"
+            >
+              Panel empresa
+            </a>
+          }
           <a
             routerLink="/cuenta"
             (click)="isMobileMenuOpen.set(false)"

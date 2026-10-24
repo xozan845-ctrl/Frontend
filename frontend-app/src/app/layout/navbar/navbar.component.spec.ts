@@ -83,4 +83,20 @@ describe('Navbar', () => {
     expect(fixture.debugElement.query(By.css('[data-testid="navbar-billing-link"]'))).toBeNull();
     expect(fixture.debugElement.query(By.css('[data-testid="navbar-logistica-link"]'))).toBeNull();
   });
+
+  it('muestra el acceso al panel de empresa para un empresario', () => {
+    currentUser.set({
+      id: 3,
+      name: 'Eva',
+      email: 'e@e.com',
+      role: 'empresario',
+      tenantId: 'company-1',
+    });
+    fixture.detectChanges();
+
+    const link = fixture.debugElement.query(By.css('[data-testid="navbar-company-link"]'));
+    expect(link).not.toBeNull();
+    expect(link.nativeElement.textContent).toContain('Panel empresa');
+    expect(component.homeLink()).toEqual(['/empresa/inicio']);
+  });
 });
