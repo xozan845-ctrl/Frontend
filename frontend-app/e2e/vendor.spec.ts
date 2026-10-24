@@ -108,8 +108,8 @@ test('R-E-21: la portada separa el onboarding de los módulos internos', async (
   await expect(page.getByTestId('navbar-billing-link')).toHaveCount(0);
   await expect(page.getByTestId('navbar-logistica-link')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Crear mi tienda' }).click();
-  await expect(page).toHaveURL(/\/crear-tienda/);
+  await page.getByRole('button', { name: 'Crear empresa' }).click();
+  await expect(page).toHaveURL(/\/crear-empresa/);
 });
 
 // R-E-22: un empresario sin empresa la crea desde el panel y ve su ficha
