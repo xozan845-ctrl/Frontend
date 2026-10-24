@@ -142,11 +142,11 @@ test('R-E-8: una ruta inexistente muestra el 404', async ({ page }) => {
   await expect(page.getByText('404 - Página no encontrada')).toBeVisible();
 });
 
-test('R-E-15: se puede crear una tienda paso a paso', async ({ page }) => {
-  await open(page, '/crear-tienda');
+test('R-E-15: se puede crear una empresa paso a paso', async ({ page }) => {
+  await open(page, '/crear-empresa');
 
-  // Paso 1 · cuenta de vendedor
-  await expect(page.getByRole('heading', { name: 'Crea tu cuenta de vendedor' })).toBeVisible();
+  // Paso 1 · cuenta de empresario
+  await expect(page.getByRole('heading', { name: 'Crea tu cuenta de empresario' })).toBeVisible();
   await page.locator('#name').fill('Vendedor Demo');
   await page.locator('#email').fill('vendedor@tienda.test');
   await page.locator('#password').fill('secreto123');
@@ -179,11 +179,11 @@ test('R-E-20: la raíz lleva a la tienda y al asistente de alta', async ({ page 
   await page.waitForURL(/\/tienda\/tienda-demo\/shop/, { timeout: 30_000 });
   await expect(page.locator('app-product-card').first()).toBeVisible({ timeout: 30_000 });
 
-  // Alta: el botón abre el asistente público de creación de tienda.
+  // Alta: el botón abre el asistente público de creación de empresa.
   await open(page, '/');
-  await page.getByRole('button', { name: 'Crear mi tienda' }).click();
-  await expect(page).toHaveURL(/\/crear-tienda/);
-  await expect(page.getByRole('heading', { name: 'Crea tu cuenta de vendedor' })).toBeVisible();
+  await page.getByRole('button', { name: 'Crear empresa' }).click();
+  await expect(page).toHaveURL(/\/crear-empresa/);
+  await expect(page.getByRole('heading', { name: 'Crea tu cuenta de empresario' })).toBeVisible();
 });
 
 // R-E-28: el comprador confirma la orden desde el checkout y llega a la
