@@ -1200,3 +1200,24 @@ contexto y consecuencias.
   empresa. Los productos creados pertenecen al catálogo de la empresa y se
   publican en su tienda; la carga de imágenes queda pendiente de un contrato
   backend específico.
+
+## ADR-49: Origen público para invitaciones de vendedores en producción
+
+- **Fecha**: 2026-10-24
+- **Estado**: Aceptado
+- **Contexto**: Core Engine puede generar la URL de una invitación usando su
+  `FRONTEND_URL`. Si esa variable no está configurada en producción, devuelve
+  el fallback local `http://localhost:5173`, que no es utilizable por el
+  vendedor invitado.
+- **Decisión**:
+  - Producción debe configurar Core Engine con
+    `FRONTEND_URL=https://kb-coleccion-internacional-ni.web.app` para que el
+    backend genere el enlace correcto desde el origen.
+  - Como protección adicional, el frontend reemplaza únicamente orígenes
+    loopback (`localhost`, `127.0.0.1` o `::1`) por `environment.frontendUrl`
+    cuando adapta una invitación en producción.
+  - Los enlaces públicos válidos y todo el flujo local permanecen intactos.
+- **Consecuencias**: el panel empresarial deja de mostrar enlaces locales en
+  producción, sin ocultar configuraciones incorrectas del backend ni alterar
+  URLs públicas legítimas. La variable de entorno del backend sigue siendo
+  obligatoria para evitar que otros consumidores reciban el fallback local.

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { CompanyInvitationService } from './company-invitation.service';
+import { CompanyInvitationService, normalizeInvitationUrl } from './company-invitation.service';
 import { environment } from '../../../../../environments/environment';
 
 describe('CompanyInvitationService', () => {
@@ -50,6 +50,36 @@ describe('CompanyInvitationService', () => {
       url_invitacion: 'https://app.test/invite',
     });
     expect(result).toMatchObject({ id: 'i-1', invitationUrl: 'https://app.test/invite' });
+  });
+
+  it('reemplaza el origen loopback en producción y conserva el token', () => {
+    expect(
+      normalizeInvitationUrl(
+        'http://localhost:5173/registro/vendedor?token=abc#inicio',
+        'https://kb-coleccion-internacional-ni.web.app/',
+        true,
+      ),
+    ).toBe('https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc#inicio');
+    expect(
+      normalizeInvitationUrl(
+        'http://127.0.0.1:5173/registro/vendedor?token=abc',
+        'https://kb-coleccion-internacional-ni.web.app',
+        true,
+      ),
+    ).toBe('https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc');
+  });
+
+  it('conserva URLs públicas, desarrollo y valores inválidos', () => {
+    const publicUrl = 'https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc';
+    expect(normalizeInvitationUrl(publicUrl, 'https://app.test', true)).toBe(publicUrl);
+    expect(
+      normalizeInvitationUrl(
+        'http://localhost:5173/registro/vendedor?token=abc',
+        'https://app.test',
+        false,
+      ),
+    ).toBe('http://localhost:5173/registro/vendedor?token=abc');
+    expect(normalizeInvitationUrl('not-a-url', 'https://app.test', true)).toBe('not-a-url');
   });
 
   it('consulta y acepta una invitación pública', () => {
