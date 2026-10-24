@@ -25,6 +25,7 @@ export class AuthService implements AuthRepository {
   private readonly http = inject(HttpClient);
   private readonly authEndpoint = environment.apiConfig?.endpoints?.auth || '/auth';
   private readonly apiUrl = `${environment.apiUrl}${this.authEndpoint}`;
+  private mockSessionUser: User | null = null;
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     if (environment.apiConfig?.dataSource === 'mock') {
@@ -256,8 +257,17 @@ export class AuthService implements AuthRepository {
 
   refresh(refreshToken: string): Observable<AuthResponse> {
     if (environment.apiConfig?.dataSource === 'mock') {
+      const user = this.mockSessionUser
+        ? {
+            ...this.mockSessionUser,
+            ...(this.mockSessionUser.role === 'empresario' && !this.mockSessionUser.tenantId
+              ? { tenantId: 'empresa-demo' }
+              : {}),
+          }
+        : { id: 'mock-user', email: 'mock@tienda.com', name: 'Mock' };
+      this.mockSessionUser = user;
       return of({
-        user: { id: 'mock-user', email: 'mock@tienda.com', name: 'Mock' },
+        user,
         token: 'mock-jwt-token-xyz-123456789',
         refreshToken,
       }).pipe(delay(300));
@@ -328,6 +338,7 @@ export class AuthService implements AuthRepository {
             }
           : {}),
       };
+      this.mockSessionUser = mockUser;
       return of({
         user: mockUser,
         token: 'mock-jwt-token-xyz-123456789',
@@ -347,6 +358,7 @@ export class AuthService implements AuthRepository {
       name: userData.name,
       role: userData.role === 'seller' || userData.role === 'biller' ? 'empresario' : 'comprador',
     };
+    this.mockSessionUser = mockUser;
     return of({
       user: mockUser,
       token: 'mock-jwt-token-xyz-123456789',

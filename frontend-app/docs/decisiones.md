@@ -1153,3 +1153,26 @@ contexto y consecuencias.
   invitación cargan sus providers mediante entradas lazy para no aumentar el
   bundle inicial. Revertir es restaurar el formulario directo y retirar las
   rutas/puertos de invitación.
+
+## ADR-47: Raíz pública con entrada contextual para empresarios
+
+- **Fecha**: 2026-10-24
+- **Estado**: Aceptado
+- **Contexto**: después de completar el alta de empresa, un empresario podía
+  volver a la raíz pública y seguir viendo la invitación para crear otra
+  empresa. La raíz también debía continuar disponible para buscar tiendas y
+  crear una empresa logística.
+- **Decisión**:
+  - `/` permanece pública y siempre conserva las entradas de buscar tienda y
+    crear empresa logística.
+  - Cuando `AuthStore` tiene un usuario con rol `empresario` y `tenantId`, la
+    raíz reemplaza únicamente la tarjeta de creación de empresa por un acceso
+    al workspace `/empresa/inicio`.
+  - Los derivados `isCompanyOwner` y `hasActiveCompany` viven en
+    `AuthStore.withComputed`; las páginas solo consumen esas señales.
+  - `/crear-empresa` mantiene un guard que evita repetir el onboarding de una
+    empresa ya activa, sin bloquear la navegación pública de `/`.
+- **Consecuencias**: el empresario conserva una entrada pública útil y recibe
+  una ruta contextual hacia su workspace; el vendedor y el visitante anónimo
+  mantienen el flujo de búsqueda y registro existente. El backend sigue siendo
+  la autoridad de tenant y permisos.

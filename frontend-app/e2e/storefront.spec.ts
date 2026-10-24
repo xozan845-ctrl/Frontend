@@ -163,8 +163,9 @@ test('R-E-15: se puede crear una empresa paso a paso', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Publica tus primeros productos' })).toBeVisible();
   await page.getByTestId('skip-products').click();
 
-  // Paso 4 · listo
-  await expect(page.getByText('¡Tu tienda está lista!')).toBeVisible();
+  // Un empresario termina el onboarding en su workspace de gestión.
+  await expect(page).toHaveURL(/\/empresa\/inicio/);
+  await expect(page.getByTestId('company-nav-inicio')).toBeVisible();
 });
 
 test('R-E-20: la raíz lleva a la tienda y al asistente de alta', async ({ page }) => {

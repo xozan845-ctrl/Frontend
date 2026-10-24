@@ -45,6 +45,8 @@ describe('AuthStore', () => {
     const store = setup();
 
     expect(store.isAuthenticated()).toBe(false);
+    expect(store.isCompanyOwner()).toBe(false);
+    expect(store.hasActiveCompany()).toBe(false);
     expect(store.user()).toBeNull();
     expect(store.token()).toBeNull();
     expect(store.refreshToken()).toBeNull();
@@ -58,6 +60,21 @@ describe('AuthStore', () => {
     await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
     expect(store.user()?.name).toBe('Ana');
     expect(store.token()).toBe('jwt-token');
+  });
+
+  it('debe derivar el rol y la empresa activa desde la sesión', async () => {
+    const store = setup();
+    const ownerResponse = {
+      ...authResponse,
+      user: { ...authResponse.user, role: 'empresario', tenantId: 'empresa-1' },
+    };
+    repo.login = vi.fn(() => of(ownerResponse));
+
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+    expect(store.isCompanyOwner()).toBe(true);
+    expect(store.hasActiveCompany()).toBe(true);
   });
 
   it('debe persistir SOLO el refresh token en sessionStorage (R-SE-1)', async () => {

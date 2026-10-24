@@ -5,6 +5,7 @@ import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
 import { StoreService } from './services/store/store.service';
 import { CatalogService } from './services/catalog/catalog.service';
+import { companyOwnerRedirectGuard } from '../auth/public-api';
 
 /**
  * Rutas de la tienda del vendedor (`R-AR-12`). `/crear-tienda` es **pública**:
@@ -18,6 +19,7 @@ import { CatalogService } from './services/catalog/catalog.service';
 export const STORES_ROUTES: Routes = [
   {
     path: 'crear-empresa',
+    canActivate: [companyOwnerRedirectGuard],
     loadComponent: () => import('./pages/create-store/create-store.component'),
     providers: [
       StoreWizardStore,
