@@ -61,8 +61,9 @@ plan gratuito.
   permitido en el **CORS del backend**.
 - **Override en runtime sin recompilar** (`/config.json`): la app descarga
   `config.json` al arrancar y aplica los valores no vacíos sobre `environment`.
-  El archivo vive en `public/config.json` y se copia al build. Para apuntar a
-  otro API o al backend de IA **en este entorno**, edítalo antes de desplegar:
+  El archivo vive en `public/config.json` y se copia al build. En este repo ya
+  lleva el API de producción; para apuntar a otro API o al backend de IA **en
+  este entorno**, edítalo antes de desplegar:
 
   ```json
   {
