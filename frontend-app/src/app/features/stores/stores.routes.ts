@@ -5,6 +5,7 @@ import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
 import { StoreService } from './services/store/store.service';
 import { CatalogService } from './services/catalog/catalog.service';
+import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../products/public-api';
 import { companyOwnerRedirectGuard } from '../auth/public-api';
 
 /**
@@ -25,6 +26,7 @@ export const STORES_ROUTES: Routes = [
       StoreWizardStore,
       { provide: STORE_REPOSITORY, useClass: StoreService },
       { provide: CATALOG_REPOSITORY, useClass: CatalogService },
+      { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
       { provide: COMPANY_REPOSITORY, useClass: CompanyService },
     ],
   },
