@@ -2,10 +2,12 @@ import { inject, untracked } from '@angular/core';
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, from, of, pipe, Observable, throwError } from 'rxjs';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/public-api';
 import { COMPANY_REPOSITORY } from '../../../empresas/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
 import {
+  CreateStoreProductDraft,
   OfferDraft,
   StoreCompanySetup,
   StoreDraft,
@@ -46,6 +48,7 @@ export const StoreWizardStore = signalStore(
       storeRepo = inject(STORE_REPOSITORY),
       catalogRepo = inject(CATALOG_REPOSITORY),
       companyRepo = inject(COMPANY_REPOSITORY),
+      catalogProductRepo = inject(CATALOG_PRODUCT_REPOSITORY),
       authStore = inject(AuthStore),
       notificationService = inject(NotificationService),
     ) => {
@@ -180,6 +183,58 @@ export const StoreWizardStore = signalStore(
                 }),
                 catchError((err: Error) => {
                   const message = err.message || 'No se pudieron publicar los productos.';
+                  patchState(store, { loading: false, error: message });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
+
+        /** Crea productos maestros y los publica como ofertas de la tienda. */
+        createAndPublishProducts: rxMethod<CreateStoreProductDraft[]>(
+          pipe(
+            tap((products) => patchState(store, { loading: products.length > 0, error: null })),
+            switchMap((drafts) => {
+              const storeId = untracked(() => store.store())?.id;
+              if (drafts.length === 0) {
+                patchState(store, { loading: false, error: 'Agrega al menos un producto.' });
+                return EMPTY;
+              }
+              if (!storeId) {
+                const message = 'Primero crea tu tienda.';
+                patchState(store, { loading: false, error: message });
+                notificationService.showError(message);
+                return EMPTY;
+              }
+
+              return forkJoin(
+                drafts.map(({ margin: _margin, ...product }) => catalogProductRepo.create(product)),
+              ).pipe(
+                switchMap((products) =>
+                  forkJoin(
+                    products.map((product, index) =>
+                      storeRepo.publishOffer(storeId, {
+                        productId: product.id,
+                        margin: drafts[index].margin,
+                      }),
+                    ),
+                  ).pipe(map(() => products.length)),
+                ),
+                tap((publishedCount) => {
+                  patchState(store, {
+                    loading: false,
+                    publishedCount,
+                    step: 4,
+                    error: null,
+                  });
+                  notificationService.showSuccess(
+                    `${publishedCount} producto(s) creado(s) y publicado(s).`,
+                  );
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'No se pudieron crear los productos.';
                   patchState(store, { loading: false, error: message });
                   notificationService.showError(message);
                   return EMPTY;

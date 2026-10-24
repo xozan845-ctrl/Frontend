@@ -41,3 +41,14 @@ export interface OfferDraft {
   productId: string;
   margin: number;
 }
+
+/** Producto maestro que el empresario crea durante el onboarding. */
+export interface CreateStoreProductDraft {
+  sku: string;
+  name: string;
+  description: string;
+  category: string;
+  basePrice: string;
+  stock: number;
+  margin: number;
+}

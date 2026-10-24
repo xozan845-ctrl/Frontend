@@ -6,7 +6,7 @@ import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalo
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
-import { Store } from '../../../products/public-api';
+import { CATALOG_PRODUCT_REPOSITORY, Store } from '../../../products/public-api';
 
 const store: Store = { id: 't-1', vendorId: 'v-1', name: 'Mi Tienda', description: '' };
 const company = {
@@ -22,6 +22,7 @@ describe('StoreWizardStore', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
   let companyRepo: CompanyRepository;
+  let catalogProductRepo: { create: ReturnType<typeof vi.fn> };
   let authStore: { user: ReturnType<typeof vi.fn>; refreshTokenOnce: ReturnType<typeof vi.fn> };
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
@@ -48,6 +49,9 @@ describe('StoreWizardStore', () => {
         }),
       ),
     };
+    catalogProductRepo = {
+      create: vi.fn((data) => of({ id: `created-${data.sku}`, name: data.name })),
+    };
     authStore = {
       user: vi.fn(() => null),
       refreshTokenOnce: vi.fn().mockResolvedValue(true),
@@ -58,6 +62,7 @@ describe('StoreWizardStore', () => {
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: COMPANY_REPOSITORY, useValue: companyRepo },
+        { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogProductRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
       ],
@@ -266,6 +271,101 @@ describe('StoreWizardStore', () => {
 
     expect(repo.publishOffer).toHaveBeenCalledWith('t-1', { productId: 'p-1', margin: 15 });
     expect(wizard.publishedCount()).toBe(1);
+  });
+
+  it('debe crear y publicar productos iniciales', async () => {
+    const wizard = setup();
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+
+    wizard.createAndPublishProducts([
+      {
+        sku: 'SKU-1',
+        name: 'Producto 1',
+        description: 'Descripción',
+        category: 'General',
+        basePrice: '100.00',
+        stock: 10,
+        margin: 15,
+      },
+    ]);
+    await vi.waitFor(() => expect(wizard.step()).toBe(4));
+
+    expect(catalogProductRepo.create).toHaveBeenCalledWith({
+      sku: 'SKU-1',
+      name: 'Producto 1',
+      description: 'Descripción',
+      category: 'General',
+      basePrice: '100.00',
+      stock: 10,
+    });
+    expect(repo.publishOffer).toHaveBeenCalledWith('t-1', {
+      productId: 'created-SKU-1',
+      margin: 15,
+    });
+    expect(wizard.publishedCount()).toBe(1);
+  });
+
+  it('debe rechazar productos iniciales sin tienda o sin datos', async () => {
+    const wizard = setup();
+    const draft = {
+      sku: 'SKU-1',
+      name: 'Producto 1',
+      description: '',
+      category: '',
+      basePrice: '100.00',
+      stock: 1,
+      margin: 15,
+    };
+
+    wizard.createAndPublishProducts([draft]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('Primero crea tu tienda.'));
+    expect(catalogProductRepo.create).not.toHaveBeenCalled();
+
+    wizard.createAndPublishProducts([]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('Agrega al menos un producto.'));
+  });
+
+  it('debe conservar el error si falla la creación de un producto inicial', async () => {
+    const wizard = setup();
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+    vi.mocked(catalogProductRepo.create).mockReturnValue(throwError(() => new Error('boom')));
+
+    wizard.createAndPublishProducts([
+      {
+        sku: 'SKU-1',
+        name: 'Producto 1',
+        description: '',
+        category: '',
+        basePrice: '100.00',
+        stock: 1,
+        margin: 15,
+      },
+    ]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('boom'));
+    expect(repo.publishOffer).not.toHaveBeenCalled();
+  });
+
+  it('debe conservar el error si falla la publicación de un producto inicial', async () => {
+    const wizard = setup();
+    wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+    vi.mocked(repo.publishOffer).mockReturnValue(throwError(() => new Error('boom')));
+
+    wizard.createAndPublishProducts([
+      {
+        sku: 'SKU-1',
+        name: 'Producto 1',
+        description: '',
+        category: '',
+        basePrice: '100.00',
+        stock: 1,
+        margin: 15,
+      },
+    ]);
+    await vi.waitFor(() => expect(wizard.error()).toBe('boom'));
+    expect(catalogProductRepo.create).toHaveBeenCalled();
   });
 
   it('sin ofertas solo avanza a "Listo"', async () => {
