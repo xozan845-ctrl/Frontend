@@ -1149,5 +1149,7 @@ contexto y consecuencias.
     responsabilidad del backend.
 - **Consecuencias**: el frontend ya no solicita ni transmite contraseñas desde
   el panel empresarial y no usa el endpoint legado para nuevas altas. Las
-  invitaciones pendientes pueden revocarse desde el workspace. Revertir es
-  restaurar el formulario directo y retirar las rutas/puertos de invitación.
+  invitaciones pendientes pueden revocarse desde el workspace. Las rutas de
+  invitación cargan sus providers mediante entradas lazy para no aumentar el
+  bundle inicial. Revertir es restaurar el formulario directo y retirar las
+  rutas/puertos de invitación.
