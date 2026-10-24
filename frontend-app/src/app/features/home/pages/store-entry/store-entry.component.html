@@ -1,7 +1,7 @@
 <section
   class="min-h-[80vh] flex items-center justify-center px-4 py-24 bg-slate-50 dark:bg-surface-900 transition-colors duration-300"
 >
-  <div class="w-full max-w-4xl grid md:grid-cols-2 gap-6">
+  <div class="w-full max-w-7xl grid md:grid-cols-2 xl:grid-cols-3 gap-6">
     <!-- Buscar tienda -->
     <div class="card p-10 text-center flex flex-col justify-center">
       <div
@@ -52,21 +52,31 @@
         <i class="fa-solid fa-rocket mr-2"></i> Crear empresa
       </button>
     </div>
-  </div>
 
-  <div class="card mx-auto mt-6 w-full max-w-4xl p-6 text-center">
-    <p class="text-xs font-black tracking-[0.2em] text-slate-500 uppercase">¿Operas entregas?</p>
-    <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-      Crea una empresa logística independiente para administrar flota, rutas y personal sin
-      acoplarla a una tienda comercial.
-    </p>
-    <a
-      class="btn btn-secondary mt-4"
-      href="/logistica/crear"
-      data-testid="create-logistics-company-link"
-    >
-      <i class="fa-solid fa-truck-fast mr-2" aria-hidden="true"></i>
-      Crear empresa logística
-    </a>
+    <!-- Crear empresa logística -->
+    <div class="card p-10 text-center flex flex-col justify-center">
+      <div
+        class="w-16 h-16 mx-auto rounded-2xl bg-accent-600 text-white flex items-center justify-center text-2xl mb-6 shadow-lg shadow-accent-600/30"
+      >
+        <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
+      </div>
+
+      <h2 class="text-3xl font-black uppercase tracking-tighter font-heading mb-4">
+        ¿Operas entregas?
+      </h2>
+      <p class="text-slate-600 dark:text-slate-400 font-medium mb-8">
+        Crea una empresa logística independiente para administrar flota, rutas y personal sin
+        acoplarla a una tienda comercial.
+      </p>
+
+      <a
+        class="btn btn-primary btn-lg w-full"
+        href="/logistica/crear"
+        data-testid="create-logistics-company-link"
+      >
+        <i class="fa-solid fa-truck-fast mr-2" aria-hidden="true"></i>
+        Crear empresa logística
+      </a>
+    </div>
   </div>
 </section>
