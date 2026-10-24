@@ -1176,3 +1176,27 @@ contexto y consecuencias.
   una ruta contextual hacia su workspace; el vendedor y el visitante anónimo
   mantienen el flujo de búsqueda y registro existente. El backend sigue siendo
   la autoridad de tenant y permisos.
+
+## ADR-48: Productos iniciales creados durante el onboarding empresarial
+
+- **Fecha**: 2026-10-24
+- **Estado**: Aceptado
+- **Contexto**: el paso de productos solo permitía seleccionar productos ya
+  existentes en `GET /catalog/productos`. Cuando el catálogo global estaba
+  vacío, el empresario no tenía nada que seleccionar y el botón de publicar
+  permanecía inactivo.
+- **Decisión**:
+  - El empresario puede crear cinco productos maestros dentro del paso 3 con
+    SKU, nombre, descripción, categoría, precio base y stock.
+  - El frontend usa `POST /catalog/productos` para crear cada producto y luego
+    `POST /vendedores/productos` para publicar cada oferta en la tienda recién
+    creada.
+  - El proceso es atómico desde la experiencia del asistente: solo avanza a
+    "Listo" cuando los productos y sus ofertas se completan; si falla una
+    operación se conserva el paso y se muestra el error para reintentar.
+  - Las imágenes no forman parte de este flujo porque el contrato actual de
+    Core Engine no expone un campo ni un endpoint de carga de imágenes.
+- **Consecuencias**: un catálogo global vacío ya no bloquea el alta de una
+  empresa. Los productos creados pertenecen al catálogo de la empresa y se
+  publican en su tienda; la carga de imágenes queda pendiente de un contrato
+  backend específico.

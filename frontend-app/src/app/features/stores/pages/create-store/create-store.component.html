@@ -277,11 +277,134 @@
             Publica tus primeros productos
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Elige productos del catálogo y define tu margen. Puedes omitir este paso y hacerlo más
-            tarde.
+            @if (isCompanyOwner()) {
+              Crea tus primeros cinco productos con los datos de tu negocio y define el margen de
+              cada uno.
+            } @else {
+              Elige productos del catálogo y define tu margen. Puedes omitir este paso y hacerlo más
+              tarde.
+            }
           </p>
 
-          @if (wizard.catalogLoading()) {
+          @if (isCompanyOwner()) {
+            <div
+              class="mb-5 rounded-2xl border border-accent-200 bg-accent-50 p-4 text-sm dark:border-accent-900/60 dark:bg-accent-900/20"
+              data-testid="new-products-summary"
+            >
+              <span class="font-black text-accent-800 dark:text-accent-300">
+                Agrega {{ minimumProducts }} productos para publicar tu tienda
+              </span>
+              <p class="mt-1 text-xs text-accent-700 dark:text-accent-400">
+                Estos productos se guardarán en el catálogo de tu empresa y quedarán disponibles
+                para tu tienda.
+              </p>
+            </div>
+
+            <div class="flex flex-col gap-5 mb-8" data-testid="new-products-form">
+              @for (row of newProductRows.controls; track $index; let i = $index) {
+                <article
+                  class="rounded-2xl border border-slate-200 p-4 dark:border-surface-700"
+                  [formGroup]="row"
+                >
+                  <h3 class="mb-4 text-sm font-black uppercase tracking-widest">
+                    Producto {{ i + 1 }}
+                  </h3>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-sku-' + i" class="text-xs font-bold">SKU</label>
+                      <input
+                        [id]="'new-product-sku-' + i"
+                        type="text"
+                        formControlName="sku"
+                        class="input"
+                        placeholder="SKU-001"
+                        [class.input-error]="row.controls.sku.invalid && row.controls.sku.touched"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-name-' + i" class="text-xs font-bold"
+                        >Nombre</label
+                      >
+                      <input
+                        [id]="'new-product-name-' + i"
+                        type="text"
+                        formControlName="name"
+                        class="input"
+                        placeholder="Nombre del producto"
+                        [class.input-error]="row.controls.name.invalid && row.controls.name.touched"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-category-' + i" class="text-xs font-bold"
+                        >Categoría</label
+                      >
+                      <input
+                        [id]="'new-product-category-' + i"
+                        type="text"
+                        formControlName="category"
+                        class="input"
+                        placeholder="Categoría"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-price-' + i" class="text-xs font-bold"
+                        >Precio base (C$)</label
+                      >
+                      <input
+                        [id]="'new-product-price-' + i"
+                        type="text"
+                        inputmode="decimal"
+                        formControlName="basePrice"
+                        class="input"
+                        placeholder="1000.00"
+                        [class.input-error]="
+                          row.controls.basePrice.invalid && row.controls.basePrice.touched
+                        "
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-stock-' + i" class="text-xs font-bold"
+                        >Stock inicial</label
+                      >
+                      <input
+                        [id]="'new-product-stock-' + i"
+                        type="number"
+                        min="0"
+                        step="1"
+                        formControlName="stock"
+                        class="input"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label [for]="'new-product-margin-' + i" class="text-xs font-bold"
+                        >Margen (%)</label
+                      >
+                      <input
+                        [id]="'new-product-margin-' + i"
+                        type="number"
+                        min="0"
+                        max="90"
+                        formControlName="margin"
+                        class="input"
+                      />
+                    </div>
+                    <div class="flex flex-col gap-1 sm:col-span-2">
+                      <label [for]="'new-product-description-' + i" class="text-xs font-bold"
+                        >Descripción</label
+                      >
+                      <textarea
+                        [id]="'new-product-description-' + i"
+                        rows="2"
+                        formControlName="description"
+                        class="input resize-none"
+                        placeholder="Describe brevemente el producto"
+                      ></textarea>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else if (wizard.catalogLoading()) {
             <div
               class="flex flex-col gap-3 mb-8"
               role="status"
@@ -375,7 +498,10 @@
               type="button"
               (click)="publish()"
               class="btn btn-primary btn-lg flex-1"
-              [disabled]="wizard.loading() || !hasMinimumProducts()"
+              [disabled]="
+                wizard.loading() ||
+                (isCompanyOwner() ? newProductRows.invalid : !hasMinimumProducts())
+              "
               data-testid="publish-products"
             >
               {{ wizard.loading() ? 'Publicando…' : 'Publicar y finalizar' }}

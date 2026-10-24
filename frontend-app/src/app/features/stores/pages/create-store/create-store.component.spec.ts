@@ -8,6 +8,7 @@ import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalo
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../core/services/seo/seo.service';
 import type { User } from '../../../auth/public-api';
@@ -18,6 +19,11 @@ describe('CreateStoreComponent', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
   let companyRepo: CompanyRepository;
+  const catalogProductRepo = {
+    create: vi.fn((data: { sku: string; name: string }) =>
+      of({ id: `created-${data.sku}`, name: data.name }),
+    ),
+  };
   let currentUser: User | null;
   const authStore = {
     user: () => currentUser,
@@ -65,6 +71,7 @@ describe('CreateStoreComponent', () => {
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: COMPANY_REPOSITORY, useValue: companyRepo },
+        { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogProductRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
@@ -274,6 +281,37 @@ describe('CreateStoreComponent', () => {
     expect(fixture.componentInstance.selectedProductCount()).toBe(5);
     expect(fixture.componentInstance.hasMinimumProducts()).toBe(true);
     expect(publishButton.disabled).toBe(false);
+  });
+
+  it('permite al empresario crear y publicar cinco productos en el onboarding', async () => {
+    currentUser = { id: 2, email: 'e@e.com', name: 'Eva', role: 'empresario', tenantId: 'c-1' };
+    const fixture = await setup();
+    fixture.componentInstance.wizard.createStore({ name: 'Mi Tienda', description: '' });
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
+    fixture.componentInstance.wizard.goToProductsStep();
+    fixture.detectChanges();
+
+    for (const [index, row] of fixture.componentInstance.newProductRows.controls.entries()) {
+      row.setValue({
+        sku: `SKU-${index + 1}`,
+        name: `Producto ${index + 1}`,
+        description: 'Descripción',
+        category: 'General',
+        basePrice: '100.00',
+        stock: 10,
+        margin: 15,
+      });
+    }
+
+    expect(fixture.componentInstance.isCompanyOwner()).toBe(true);
+    expect(fixture.componentInstance.newProductRows.valid).toBe(true);
+    fixture.componentInstance.publish();
+    await vi.waitFor(() => expect(catalogProductRepo.create).toHaveBeenCalledTimes(5));
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(4));
+
+    expect(catalogProductRepo.create).toHaveBeenCalledTimes(5);
+    expect(repo.publishOffer).toHaveBeenCalledTimes(5);
+    expect(fixture.componentInstance.wizard.publishedCount()).toBe(5);
   });
 
   it('redirige al panel cuando un empresario termina el onboarding', async () => {

@@ -6,6 +6,7 @@ import { AuthStore } from '../../../auth/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import {
   CatalogProductOption,
+  CreateStoreProductDraft,
   OfferDraft,
   StoreCompanyMode,
   WIZARD_STEPS,
@@ -14,7 +15,7 @@ import { CreateStoreStepperComponent } from '../../components/create-store-stepp
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
-import type { ProductRow } from './create-store.types';
+import type { NewProductRow, ProductRow } from './create-store.types';
 
 const MIN_INITIAL_PRODUCTS = 5;
 
@@ -76,6 +77,9 @@ export default class CreateStoreComponent {
 
   // Paso 3 — productos a ofertar (margen por producto, 0–90)
   readonly productRows = this.fb.array<ProductRow>([]);
+  readonly newProductRows = this.fb.array<NewProductRow>(
+    Array.from({ length: MIN_INITIAL_PRODUCTS }, () => this.createNewProductRow()),
+  );
   /** Señal de apoyo para derivar `hasSelection` de un `FormArray` (R-PF-4/R-ST-3). */
   private readonly selectionRevision = signal(0);
   readonly selectedProductCount = computed(() => {
@@ -162,6 +166,17 @@ export default class CreateStoreComponent {
   };
 
   publish(): void {
+    if (this.isCompanyOwner()) {
+      if (this.newProductRows.invalid) {
+        this.newProductRows.markAllAsTouched();
+        return;
+      }
+
+      const drafts: CreateStoreProductDraft[] = this.newProductRows.getRawValue();
+      this.wizard.createAndPublishProducts(drafts);
+      return;
+    }
+
     if (!this.hasMinimumProducts()) return;
 
     const offers: OfferDraft[] = this.productRows.controls
@@ -172,6 +187,24 @@ export default class CreateStoreComponent {
       }));
 
     this.wizard.publishOffers(offers);
+  }
+
+  private createNewProductRow(): NewProductRow {
+    return this.fb.group({
+      sku: this.fb.nonNullable.control('', [
+        Validators.required,
+        Validators.pattern(/^[A-Za-z0-9-]{2,32}$/),
+      ]),
+      name: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(2)]),
+      description: this.fb.nonNullable.control(''),
+      category: this.fb.nonNullable.control(''),
+      basePrice: this.fb.nonNullable.control('', [
+        Validators.required,
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      ]),
+      stock: this.fb.nonNullable.control(0, [Validators.required, Validators.min(0)]),
+      margin: this.fb.nonNullable.control(15, [Validators.min(0), Validators.max(90)]),
+    });
   }
 
   skipProducts(): void {
