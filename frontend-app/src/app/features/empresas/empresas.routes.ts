@@ -6,10 +6,6 @@ import { CompanyPortalService } from './services/company-portal/company-portal.s
 import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { CompanyStore } from './state/company/company.store';
-import { COMPANY_INVITATION_REPOSITORY } from './repositories/company-invitation.repository';
-import { CompanyInvitationService } from './services/company-invitation/company-invitation.service';
-import { CompanyInvitationsStore } from './state/company-invitations/company-invitations.store';
-import { SellerInvitationStore } from './state/seller-invitation/seller-invitation.store';
 
 const companySoonRoute = (
   path: string,
@@ -26,11 +22,8 @@ const companySoonRoute = (
 export const EMPRESAS_ROUTES: Routes = [
   {
     path: 'registro/vendedor',
-    loadComponent: () => import('./pages/seller-invitation/seller-invitation.component'),
-    providers: [
-      SellerInvitationStore,
-      { provide: COMPANY_INVITATION_REPOSITORY, useClass: CompanyInvitationService },
-    ],
+    loadChildren: () =>
+      import('./seller-invitation.routes').then((module) => module.SELLER_INVITATION_ROUTES),
   },
   {
     path: 'empresa',
@@ -138,13 +131,8 @@ export const EMPRESAS_ROUTES: Routes = [
       },
       {
         path: 'vendedores',
-        loadComponent: () => import('./pages/company-vendors/company-vendors.component'),
-        providers: [
-          CompanyInvitationsStore,
-          { provide: COMPANY_INVITATION_REPOSITORY, useClass: CompanyInvitationService },
-          CompanyPortalStore,
-          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
-        ],
+        loadChildren: () =>
+          import('./company-vendors.routes').then((module) => module.COMPANY_VENDORS_ROUTES),
       },
       {
         path: 'logistica',

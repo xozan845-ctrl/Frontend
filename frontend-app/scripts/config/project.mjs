@@ -91,7 +91,13 @@ export const FEATURE_ALLOWED_LAYERS = new Set([
 ]);
 
 /** Archivos admitidos en la raíz de un feature, además de `<feature>.routes.ts`. */
-export const FEATURE_ALLOWED_ROOT_FILES = new Set(['public-api.ts', 'public-ui.ts', 'README.md']);
+export const FEATURE_ALLOWED_ROOT_FILES = new Set([
+  'public-api.ts',
+  'public-ui.ts',
+  'README.md',
+  'company-vendors.routes.ts',
+  'seller-invitation.routes.ts',
+]);
 
 /**
  * Contrato estructural de cada feature (R-AR-16): capas obligatorias y API
