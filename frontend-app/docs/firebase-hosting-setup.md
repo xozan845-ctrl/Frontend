@@ -55,8 +55,10 @@ plan gratuito.
 
 ## 3. Configuración de la app
 
-- **API del backend**: `environment.prod.ts` ya apunta a
-  `https://api.kbcoleccion.com/api/v1`. Como el origen del sitio en Firebase es
+- **API del backend**: `environment.prod.ts` y `public/config.json` apuntan al
+  proxy público `https://api.kbcoleccion.com/api-proxy/api/v1` (ADR-50). El
+  proxy añade el Basic del gate de staging en el servidor; el navegador no lleva
+  credenciales. Como el origen del sitio en Firebase es
   `https://kb-coleccion-internacional-ni.web.app`, ese origen debe estar
   permitido en el **CORS del backend**.
 - **Override en runtime sin recompilar** (`/config.json`): la app descarga
@@ -67,7 +69,7 @@ plan gratuito.
 
   ```json
   {
-    "apiUrl": "https://api.kbcoleccion.com/api/v1",
+    "apiUrl": "https://api.kbcoleccion.com/api-proxy/api/v1",
     "aiScraperUrl": "https://<backend-ia-publico>/api/v1"
   }
   ```
