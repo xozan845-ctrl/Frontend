@@ -1221,3 +1221,26 @@ contexto y consecuencias.
   producción, sin ocultar configuraciones incorrectas del backend ni alterar
   URLs públicas legítimas. La variable de entorno del backend sigue siendo
   obligatoria para evitar que otros consumidores reciban el fallback local.
+
+## ADR-50: API pública a través del proxy del gateway
+
+- **Fecha**: 2026-10-25
+- **Estado**: Aceptado
+- **Contexto**: el frontend de Firebase es público y el gateway de staging exige
+  `EDGE_BASIC_AUTH` para las rutas directas. Enviar esa credencial desde Angular
+  obligaría a publicarla en `environment`, `config.json` o el bundle, lo que
+  contradice `R-SE-2`/`R-CD-2`. Core Engine expone un proxy público
+  `/api-proxy/api/v1/**` que añade el Basic en el servidor y reenvía al gateway
+  interno.
+- **Decisión**:
+  - `environment.prod.ts` y `public/config.json` apuntan a
+    `https://api.kbcoleccion.com/api-proxy/api/v1`.
+  - El navegador no recibe ni envía el Basic; el proxy lo inyecta server-side.
+  - Las rutas con sesión siguen usando `Bearer`; el gateway valida el JWT y RLS.
+  - El proxy es público y **no** es una frontera de seguridad: la autorización
+    real es el JWT. Debe estar en `CORS_ORIGINS` el origen de Firebase.
+  - El rollback consiste en volver a `https://api.kbcoleccion.com/api/v1` y
+    desplegar, solo si el cliente deja de necesitar el proxy.
+- **Consecuencias**: se elimina el secreto del frontend y se mantiene el gate de
+  staging para el resto de clientes. El detalle operativo vive en
+  [`api-proxy.md`](./api-proxy.md).
