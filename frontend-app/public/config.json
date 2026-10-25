@@ -1,4 +1,4 @@
 {
-  "apiUrl": "https://api.kbcoleccion.com/api/v1",
+  "apiUrl": "https://api.kbcoleccion.com/api-proxy/api/v1",
   "aiScraperUrl": ""
 }
