@@ -28,6 +28,11 @@ export class RuntimeConfigService {
 
   /** Descarga `config.json` y fusiona sus valores no vacíos sobre `environment`. */
   async load(): Promise<void> {
+    // E2E/mock: la suite es hermética y usa `environment` + fixtures de
+    // Playwright. El config.json de despliegue apuntaría al API real y rompería
+    // el aislamiento (R-E-12).
+    if (environment.apiConfig.dataSource === 'mock') return;
+
     const config = await firstValueFrom(
       this.http.get<RuntimeConfig>(CONFIG_URL).pipe(
         timeout(CONFIG_TIMEOUT_MS),
@@ -40,6 +45,10 @@ export class RuntimeConfigService {
 
   private apply(config: RuntimeConfig | null | undefined): void {
     if (!config) return;
+
+    // E2E y desarrollo con `dataSource: 'mock'` no deben apuntar al backend
+    // real por un `config.json` de despliegue (R-E-12).
+    if (environment.apiConfig?.dataSource === 'mock') return;
 
     if (config.apiUrl) {
       environment.apiUrl = config.apiUrl;
