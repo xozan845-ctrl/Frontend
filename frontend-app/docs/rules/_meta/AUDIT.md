@@ -34,7 +34,7 @@
 | Seguridad (R-QA-6)  | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                                                   |
 | CI                  | `gh pr checks`                 | ✅ 14 checks obligatorios en verde (incluye Lighthouse, Gitleaks y CodeQL)                  |
 | `main` protegida    | `gh api .../protection`        | ✅ PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins: true`             |
-| Release             | `git tag`                      | ✅ `v1.25.0` sobre `main` (`R-CD-3`)                                                        |
+| Release             | `git tag`                      | ✅ `v1.25.1` sobre `main` (`R-CD-3`)                                                        |
 
 ### Cobertura del motor de reglas (`R-DO-9`)
 
@@ -120,7 +120,7 @@
 | Regla                   | Estado | Evidencia                                                                               |
 | ----------------------- | ------ | --------------------------------------------------------------------------------------- |
 | R-GB-1 `main` protegida | ✅     | PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins`                  |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.25.0` sobre `main` validado por `release.yml`    |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.25.1` sobre `main` validado por `release.yml`    |
 | R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                                 |
 | R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                            |
 | R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase`           |
