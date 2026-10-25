@@ -15,3 +15,31 @@ export const VERSION_MATCH_FROM = 'v1.24.0';
 
 /** Rama de producción contra la que se valida la procedencia. */
 export const DEFAULT_MAIN_REF = 'origin/main';
+
+/**
+ * Rutas que forman parte del artefacto de la app. Un cambio fuera de estas
+ * rutas (CI, docs, tests, scripts) no exige una release de frontend.
+ */
+export const APP_ARTIFACT_PATTERNS = [
+  /^frontend-app\/src\//,
+  /^frontend-app\/public\//,
+  /^frontend-app\/angular\.json$/,
+  /^frontend-app\/tsconfig(?:\.[^/]+)?\.json$/,
+  /^frontend-app\/ngsw-config\.json$/,
+  /^frontend-app\/postcss\.config\.json$/,
+  /^frontend-app\/tailwind\.config\.js$/,
+  /^frontend-app\/firebase\.json$/,
+  /^frontend-app\/\.firebaserc$/,
+  /^Dockerfile$/,
+  /^nginx\.conf$/,
+  /^docker-entrypoint\.d\//,
+];
+
+/** Archivos dentro de `src/` que no forman parte del bundle de producción. */
+export const APP_ARTIFACT_EXCLUDES = [/\.spec\.ts$/, /\/test-setup\.ts$/, /\/mocks\//];
+
+/** Dependencias: solo cuentan si el commit es `build(deps)`/`fix(deps)`. */
+export const DEPENDENCY_ARTIFACT_PATTERNS = [
+  /^frontend-app\/package\.json$/,
+  /^frontend-app\/package-lock\.json$/,
+];

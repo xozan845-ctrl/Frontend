@@ -21,6 +21,9 @@ grep -riE "api[_-]?key|secret|password" dist/frontend-app/browser   # R-CD-2: va
 # R-CD-3: validación local de un tag ya creado (anotado y sobre main)
 npm run release:check -- --tag v1.24.0
 
+# ¿Hay cambios de artefacto desde el último tag? (informativo)
+npm run release:readiness
+
 # Estado del gate de release en GitHub
 gh run list --workflow release.yml --limit 3
 ```

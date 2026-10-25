@@ -41,6 +41,31 @@ jobs:
           path: frontend-app/sbom.json
           if-no-files-found: error
 
+  release-readiness:
+    name: Release Readiness
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Check release readiness (informative)
+        run: |
+          set -o pipefail
+          node scripts/release-readiness.mjs --main-ref origin/main | tee release-readiness.txt
+      - name: Publish release readiness summary
+        if: always()
+        run: |
+          if [ -f release-readiness.txt ]; then
+            cat release-readiness.txt >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   format:
     name: Format (Prettier)
     needs: security-gate
