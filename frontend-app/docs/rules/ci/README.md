@@ -8,9 +8,10 @@ aquí**: son reglas de testing y siguen en
 > **Estado:** CI implementada en `.github/workflows/ci.yml` con jobs de calidad y
 > supply chain (`security-gate` con SBOM, `format`, `lint`, `typecheck`, `rules`,
 > `test`, `build`, `e2e`, `actionlint`, `shellcheck`, `hadolint`, `gitleaks` y
-> `dependency-review`), más `codeql.yml` como SAST. Disparo en push a `main` y en
-> **todo PR** (incluidos los apilados). `main` protegida con los checks
-> obligatorios (`R-CI-7`) y Dependabot activo para npm, actions y docker.
+> `dependency-review`), más `codeql.yml` como SAST y `release.yml` para validar
+> tags de release. Disparo en push a `main` y en **todo PR** (incluidos los
+> apilados). `main` protegida con los checks obligatorios (`R-CI-7`) y Dependabot
+> activo para npm, actions y docker.
 
 ## Archivos
 
@@ -44,14 +45,15 @@ aquí**: son reglas de testing y siguen en
 `gh` es la **única forma verificable desde terminal** de ver el estado real de la
 CI después de crear el workflow:
 
-| Comando                            | Cuándo y qué aporta                                                        |
-| ---------------------------------- | -------------------------------------------------------------------------- |
-| `gh run list --limit 5`            | ¿El push ya corrió?, ¿verde o rojo?                                        |
-| `gh run view <id>`                 | Jobs concretos: qué gate se rompió                                         |
-| `gh run watch <id>`                | Seguir en vivo un run en curso                                             |
-| `gh run view <id> --log-failed`    | Log del job fallido → punto de partida del fix-forward                     |
-| `gh auth status` / `gh auth login` | Estado / autenticación (una vez por máquina)                               |
-| `gh release list`                  | ¿Hay ya una release para este tag? Un tag publicado no se mueve (`R-GB-3`) |
+| Comando                              | Cuándo y qué aporta                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| `gh run list --limit 5`              | ¿El push ya corrió?, ¿verde o rojo?                                        |
+| `gh run view <id>`                   | Jobs concretos: qué gate se rompió                                         |
+| `gh run watch <id>`                  | Seguir en vivo un run en curso                                             |
+| `gh run view <id> --log-failed`      | Log del job fallido → punto de partida del fix-forward                     |
+| `gh auth status` / `gh auth login`   | Estado / autenticación (una vez por máquina)                               |
+| `gh release list`                    | ¿Hay ya una release para este tag? Un tag publicado no se mueve (`R-GB-3`) |
+| `gh run list --workflow release.yml` | Estado del gate de release y del artifact de build (`R-CD-3`)              |
 
 La importancia es cerrar la evidencia: un cambio "terminado" es un commit con
 `completed success` en **su** run (`R-CI-6`). Todo lo demás es opinión.
@@ -60,4 +62,5 @@ La importancia es cerrar la evidencia: un cambio "terminado" es un commit con
 
 - Estado de cumplimiento y deudas en [`../_meta/AUDIT.md`](../_meta/AUDIT.md)
   (`R-COV-3`). La CI implementada cumple gatillos, concurrencia y artifact de
-  cobertura (`R-CI-1..6`, `R-EN-3`).
+  cobertura (`R-CI-1..6`, `R-EN-3`). La validación de tags vive en
+  `release.yml` (`R-CD-3`), no en el pipeline de PR.

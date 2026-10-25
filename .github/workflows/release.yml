@@ -1,0 +1,137 @@
+name: Release
+
+# Validación de releases por tag (R-CD-3 / R-GB-3). No es un pipeline de PR:
+# se dispara al publicar un tag `v*.*.*` y comprueba que el tag es anotado,
+# semver, está en `main`, las versiones coinciden y el SHA tiene `ci.yml` verde.
+# Después construye el artefacto de producción y lo deja como artifact.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: "Tag de release existente a validar (p. ej. v1.24.0)"
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: frontend-app
+
+jobs:
+  gate:
+    name: Release gate (tag + procedencia)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      sha: ${{ steps.tag.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve the release tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.source_tag }}
+        run: |
+          REF="${{ github.ref_name }}"
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            REF="${INPUT_TAG}"
+          fi
+          if [[ ! "$REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "ERROR: '$REF' no es un tag semver válido v<major>.<minor>.<patch>[-pre] (R-CD-3)."
+            exit 1
+          fi
+          # En un push de tag, checkout puede dejar un tag lightweight local:
+          # se reemplaza por el objeto anotado que vive en origin.
+          git tag -d "$REF" >/dev/null 2>&1 || true
+          git fetch --quiet --force origin "refs/tags/${REF}:refs/tags/${REF}"
+          SHA=$(git rev-list -n1 "$REF")
+          echo "tag=$REF" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "OK: tag $REF → $SHA"
+
+      - name: Verify the release commit is on main
+        run: |
+          git fetch --quiet origin main
+          SHA="${{ steps.tag.outputs.sha }}"
+          if ! git merge-base --is-ancestor "$SHA" origin/main; then
+            echo "ERROR: $SHA no está en main; no se valida una release fuera de main (R-CD-3)."
+            exit 1
+          fi
+          echo "OK: $SHA es ancestro de origin/main"
+
+      - name: Validate tag, versions and remote tag
+        run: |
+          node scripts/release-check.mjs \
+            --tag "${{ steps.tag.outputs.tag }}" \
+            --main-ref origin/main \
+            --check-remote
+
+      - name: Verify a successful ci.yml run on this SHA
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA="${{ steps.tag.outputs.sha }}"
+          count=$(gh run list --workflow=ci.yml --commit "$SHA" \
+            --status success --limit 1 --json databaseId --jq 'length')
+          if [[ "$count" == "0" ]]; then
+            echo "ERROR: no hay un run de ci.yml en 'success' para $SHA (R-CD-3)."
+            echo "Runs disponibles para el SHA:"
+            gh run list --commit "$SHA" --limit 10 || true
+            exit 1
+          fi
+          echo "OK: ci.yml verde en $SHA"
+
+  build:
+    name: Release build
+    needs: gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.gate.outputs.tag }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend-app/package-lock.json
+
+      - run: npm ci --prefer-offline
+
+      - name: Build production artifact
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee build.log
+
+      - run: node scripts/check-budget.mjs
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-release-${{ needs.gate.outputs.tag }}
+          path: frontend-app/dist/frontend-app/browser
+          if-no-files-found: error
+
+      - name: Release summary
+        run: |
+          {
+            echo "### Release ${{ needs.gate.outputs.tag }}"
+            echo "- commit: \`${{ needs.gate.outputs.sha }}\`"
+            echo "- bundle: \`$(grep -o 'main-[A-Za-z0-9_-]*\.js' dist/frontend-app/browser/index.html | head -1)\`"
+            echo "- artifact: \`frontend-release-${{ needs.gate.outputs.tag }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

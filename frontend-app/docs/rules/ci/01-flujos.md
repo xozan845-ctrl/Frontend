@@ -8,7 +8,7 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | R-CI-1 | **Gatillos**: la CI completa corre en todo **push a `main`** y en **todo PR, cualquiera que sea su base** (incluidos los PRs apilados), además de `workflow_dispatch` manual. Cambiar este reparto exige enmienda explícita de esta regla.                                                                                                                                                                                                                                      |
 | R-CI-2 | **Concurrencia**: el workflow declara un grupo por ref con `cancel-in-progress: true`; un push nuevo cancela el run anterior de la misma rama. Prohibido apilar runs obsoletos.                                                                                                                                                                                                                                                                                                 |
 | R-CI-3 | **Sin filtros `paths`**: todo push/PR ejecuta la CI completa, aunque el cambio sea solo de docs (decisión deliberada: nada pasa desapercibido). Introducir filtrado = enmienda de esta regla.                                                                                                                                                                                                                                                                                   |
-| R-CI-4 | **Pipeline único**: `.github/workflows/ci.yml` es el único pipeline de integración. Un workflow adicional solo se acepta con un caso de uso que este archivo no cubra, documentado aquí antes de existir. Excepción documentada: `codeql.yml` (SAST de GitHub, requiere `security-events: write` y no encaja en el pipeline principal).                                                                                                                                         |
+| R-CI-4 | **Pipeline único**: `.github/workflows/ci.yml` es el único pipeline de integración. Un workflow adicional solo se acepta con un caso de uso que este archivo no cubra, documentado aquí antes de existir. Excepciones documentadas: `codeql.yml` (SAST de GitHub, requiere `security-events: write` y no encaja en el pipeline principal) y `release.yml` (validación y build de tags de release; no corre en PR ni sustituye la CI de integración).                            |
 | R-CI-5 | Los cambios en `.github/workflows/**` se revisan como código: stage con rutas explícitas (`R-GA-1`), sin secretos (`R-GA-4`), comandos idénticos a los verificables en local, y el commit cita las reglas tocadas (`R-GC-4`).                                                                                                                                                                                                                                                   |
 | R-CI-6 | **Verificación con `gh`**: tras cada push, el resultado se comprueba con `gh run list` y `gh run view <id>`; mientras corre, `gh run watch <id>`; si falla, `gh run view <id> --log-failed`. Un trabajo no se da por terminado hasta ver `completed success` en el run del commit (`R-GP-6`). Run rojo ⇒ fix-forward con commit nuevo (`R-GP-3`).                                                                                                                               |
 | R-CI-7 | **Gates obligatorios en `main`**: la protección de rama exige PR y los checks `Security Gate`, `Format (Prettier)`, `ESLint`, `Typecheck`, `Governance Rules`, `Unit Tests + Coverage`, `Build`, `E2E (Playwright)`, `Actionlint`, `Shellcheck`, `Hadolint` y `Gitleaks` en verde sobre la cabeza. Aprobaciones obligatorias: **0** (repo de un solo mantenedor; la revisión sigue recomendada por `R-GB-1`). Squash y merge commit deshabilitados; solo `--rebase` (`R-PR-7`). |
@@ -34,3 +34,20 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | `dependency-review` | `actions/dependency-review-action` (PR)                  | `R-CI-8`                |
 | `e2e`               | `playwright install chromium` → `npm run e2e`            | `G-6`, `R-E-25`         |
 | `lighthouse`        | `npm run build` → `npm run lighthouse`                   | `R-PF-8`                |
+
+## Release por tag (`release.yml`)
+
+`release.yml` se dispara con `push` de un tag `v*.*.*` (o manualmente con
+`source_tag`) y **no es un pipeline de PR**. Su job `gate` valida:
+
+- tag semver y **anotado** (`git tag -a`), no lightweight;
+- commit del tag **ancestro de `main`**;
+- `package.json` y `package-lock.json` con la misma versión que el tag (desde
+  `v1.24.0`; los tags anteriores se eximen como históricos);
+- tag estrictamente mayor que el último release;
+- tag remoto ya publicado que no apunte a otro commit;
+- un run de `ci.yml` en `success` para el **mismo SHA**.
+
+Después, el job `build` compila el artefacto de producción, ejecuta
+`check-budget` y lo publica como artifact del run. El despliegue a Firebase o
+Dockploy sigue siendo un paso separado.

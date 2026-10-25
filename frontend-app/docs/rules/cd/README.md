@@ -3,9 +3,11 @@
 Entrega del frontend en **Dockploy**, el mismo VPS que sirve el backend Core
 Engine. Cómo se construye la SPA, qué se despliega y cómo se revierte.
 
-> **Estado:** el repo no tiene aún `Dockerfile`, `nginx.conf` ni configuración de
-> Dockploy; estas reglas son el **contrato** del despliegue. El guion operativo
-> vive en [`../../dockploy-setup.md`](../../dockploy-setup.md).
+> **Estado:** el repo incluye `Dockerfile`, `nginx.conf`, el despliegue en
+> Firebase Hosting (staging/demo) y el contrato de Dockploy. `release.yml` valida
+> los tags de release y construye el artefacto de producción; el despliegue sigue
+> siendo un paso separado. El guion operativo vive en
+> [`../../dockploy-setup.md`](../../dockploy-setup.md).
 
 ## Archivos
 
