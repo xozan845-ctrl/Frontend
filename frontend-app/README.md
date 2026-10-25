@@ -101,6 +101,7 @@ permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
 | `npm run og-image`                      | Regenera la imagen Open Graph por defecto             |
 | `npm run deploy` / `deploy:preview`     | Despliega en Firebase Hosting (live / staging)        |
 | `npm run release:check -- --tag vX.Y.Z` | Valida tag, versiones y procedencia antes de publicar |
+| `npm run release:readiness`             | Avisa si hay cambios de artefacto sin release/tag     |
 | `npm run patch` / `minor` / `major`     | Prepara el bump de versión (sin commit ni tag)        |
 
 ---

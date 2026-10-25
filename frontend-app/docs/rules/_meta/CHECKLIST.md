@@ -134,6 +134,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 ## 13. Release ([`rules/cd/`](../cd/README.md))
 
 - [ ] **R-GB-3/R-CD-3** — Versión preparada en rama `chore/release-X.Y.Z`, mergeada por PR; tag **anotado** `vX.Y.Z` sobre `main`.
+- [ ] **R-CD-3** — `npm run release:readiness` sin release pendiente (o release/tag preparado).
 - [ ] **R-CD-3** — `npm run release:check -- --tag vX.Y.Z` en verde.
 - [ ] **R-CD-3** — `release.yml` en verde: tag/procedencia/versiones y `ci.yml` del mismo SHA.
 - [ ] **R-CD-1/2** — Artefacto de release construido con `npm ci` + `npm run build`; sin secretos.

@@ -214,6 +214,14 @@ npm run release:check -- --tag vX.Y.Z
 un run de `ci.yml` en verde para el mismo SHA y construye el artefacto de
 producción. No es un pipeline de PR (`R-CI-4`).
 
+`scripts/release-readiness.mjs` es informativo y corre en `ci.yml` solo en push a
+`main`: compara el último tag con los commits que tocaron el artefacto de la app
+y avisa si falta versión o tag. No bloquea el merge.
+
+```bash
+npm run release:readiness
+```
+
 ## Estado
 
 Cobertura verificada: **44/252 IDs** de regla con check real; **sin

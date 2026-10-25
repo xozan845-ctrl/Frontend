@@ -117,15 +117,15 @@
 
 ### Git / CI / CD
 
-| Regla                   | Estado | Evidencia                                                                                |
-| ----------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| R-GB-1 `main` protegida | ✅     | PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins`                   |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.24.0` sobre `main` validado por `release.yml`     |
-| R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                                  |
-| R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                             |
-| R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase`            |
-| R-CI-1..6 / R-EN-1..4   | ✅     | `ci.yml` (14 jobs incl. Lighthouse y supply chain) + `release.yml` (tag gate), artifacts |
-| R-CD-1/2/3/9            | ✅     | `release-check.mjs` + `release.yml`; `Dockerfile`/`nginx.conf`; sin secretos; smoke      |
+| Regla                   | Estado | Evidencia                                                                               |
+| ----------------------- | ------ | --------------------------------------------------------------------------------------- |
+| R-GB-1 `main` protegida | ✅     | PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins`                  |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.24.0` sobre `main` validado por `release.yml`    |
+| R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                                 |
+| R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                            |
+| R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase`           |
+| R-CI-1..6 / R-EN-1..4   | ✅     | `ci.yml` (jobs + `release-readiness` informativo) + `release.yml` (tag gate), artifacts |
+| R-CD-1/2/3/9            | ✅     | `release-check.mjs` + `release.yml`; `Dockerfile`/`nginx.conf`; sin secretos; smoke     |
 
 ### Documentación / IA
 

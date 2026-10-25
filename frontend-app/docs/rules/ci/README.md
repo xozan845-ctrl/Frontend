@@ -9,9 +9,10 @@ aquí**: son reglas de testing y siguen en
 > supply chain (`security-gate` con SBOM, `format`, `lint`, `typecheck`, `rules`,
 > `test`, `build`, `e2e`, `actionlint`, `shellcheck`, `hadolint`, `gitleaks` y
 > `dependency-review`), más `codeql.yml` como SAST y `release.yml` para validar
-> tags de release. Disparo en push a `main` y en **todo PR** (incluidos los
-> apilados). `main` protegida con los checks obligatorios (`R-CI-7`) y Dependabot
-> activo para npm, actions y docker.
+> tags de release. En push a `main`, `release-readiness` avisa (sin bloquear) si
+> hay cambios de artefacto sin versión/tag. Disparo en push a `main` y en **todo
+> PR** (incluidos los apilados). `main` protegida con los checks obligatorios
+> (`R-CI-7`) y Dependabot activo para npm, actions y docker.
 
 ## Archivos
 

@@ -21,6 +21,7 @@
     "format:check": "prettier --check .",
     "og-image": "node scripts/generate-og-image.mjs",
     "release:check": "node scripts/release-check.mjs",
+    "release:readiness": "node scripts/release-readiness.mjs",
     "patch": "npm version patch --no-git-tag-version",
     "minor": "npm version minor --no-git-tag-version",
     "major": "npm version major --no-git-tag-version"
