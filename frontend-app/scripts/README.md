@@ -40,6 +40,10 @@ que son verificables por máquina.
 | `docs-readmes`           | `R-DO-7`                                       | README.md en los directorios importantes (`REQUIRED_READMES`).                                                                                   |
 | `governance-coverage`    | `R-DO-9`                                       | Suites honestas (rules vs cites) y suelo de cobertura verificada.                                                                                |
 
+> **Ámbitos de commit:** la lista canónica vive en `config/project.mjs`
+> (`ALLOWED_COMMIT_SCOPES`). `pwa` se añadió para cambios de service worker y
+> configuración de despliegue del frontend (R-GC-1, R-AR-11).
+>
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
 > quitar o renombrar una capa exige actualizar el contrato y la documentación
