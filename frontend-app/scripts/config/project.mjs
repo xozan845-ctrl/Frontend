@@ -332,6 +332,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'logistica',
   'plans',
   'products',
+  'pwa',
   'stores',
   'vendor',
   'wishlist',
