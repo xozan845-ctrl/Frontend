@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 describe('RuntimeConfigService', () => {
   let httpMock: HttpTestingController;
   const originalApiUrl = environment.apiUrl;
+  const originalDataSource = environment.apiConfig.dataSource;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -18,6 +19,7 @@ describe('RuntimeConfigService', () => {
   afterEach(() => {
     httpMock.verify();
     environment.apiUrl = originalApiUrl;
+    environment.apiConfig.dataSource = originalDataSource;
   });
 
   it('aplica apiUrl desde config.json', async () => {
@@ -47,6 +49,16 @@ describe('RuntimeConfigService', () => {
     httpMock.expectOne('config.json').flush({ apiUrl: '' });
     await pending;
 
+    expect(environment.apiUrl).toBe(originalApiUrl);
+  });
+
+  it('no carga ni aplica config.json en modo mock (E2E)', async () => {
+    environment.apiConfig.dataSource = 'mock';
+    const service = TestBed.inject(RuntimeConfigService);
+
+    await service.load();
+
+    httpMock.expectNone('config.json');
     expect(environment.apiUrl).toBe(originalApiUrl);
   });
 });
