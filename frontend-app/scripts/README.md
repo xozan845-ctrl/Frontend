@@ -200,6 +200,20 @@ para evitar falsos verdes por caché ESM.
 5. La regla normativa sigue viviendo en `docs/rules/<area>/NN-tema.md`; el motor
    sólo la **verifica**. La regla y su check entran en el **mismo PR**.
 
+## Release
+
+`scripts/release-check.mjs` valida un tag antes de publicarlo: formato semver,
+tag anotado, commit en `main`, monotonicidad, `package.json`/lockfile alineados y
+tag remoto inmutable. Se ejecuta en local con:
+
+```bash
+npm run release:check -- --tag vX.Y.Z
+```
+
+`.github/workflows/release.yml` lo ejecuta en cada `push` de tag `v*.*.*`, exige
+un run de `ci.yml` en verde para el mismo SHA y construye el artefacto de
+producción. No es un pipeline de PR (`R-CI-4`).
+
 ## Estado
 
 Cobertura verificada: **44/252 IDs** de regla con check real; **sin

@@ -86,21 +86,22 @@ permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
 
 ## 📜 Scripts
 
-| Comando                             | Descripción                                          |
-| :---------------------------------- | :--------------------------------------------------- |
-| `npm start`                         | Servidor de desarrollo en `http://localhost:4200`    |
-| `npm run build`                     | Build de producción en `dist/frontend-app/browser/`  |
-| `npm run watch`                     | Build de desarrollo con watch                        |
-| `npm test`                          | Pruebas unitarias/componentes con Vitest (`ng test`) |
-| `npm run e2e`                       | Pruebas E2E con Playwright                           |
-| `npm run lint`                      | Lint con ESLint                                      |
-| `npm run format` / `format:check`   | Formatea / verifica formato con Prettier             |
-| `npm run rules:check`               | Valida las reglas de gobernanza del repo             |
-| `npm run rules:baseline`            | Regenera la deuda aceptada del motor de reglas       |
-| `npm run test:engine`               | Tests del motor de gobernanza                        |
-| `npm run og-image`                  | Regenera la imagen Open Graph por defecto            |
-| `npm run deploy` / `deploy:preview` | Despliega en Firebase Hosting (live / staging)       |
-| `npm run patch` / `minor` / `major` | Sube la versión y publica el tag semver              |
+| Comando                                 | Descripción                                           |
+| :-------------------------------------- | :---------------------------------------------------- |
+| `npm start`                             | Servidor de desarrollo en `http://localhost:4200`     |
+| `npm run build`                         | Build de producción en `dist/frontend-app/browser/`   |
+| `npm run watch`                         | Build de desarrollo con watch                         |
+| `npm test`                              | Pruebas unitarias/componentes con Vitest (`ng test`)  |
+| `npm run e2e`                           | Pruebas E2E con Playwright                            |
+| `npm run lint`                          | Lint con ESLint                                       |
+| `npm run format` / `format:check`       | Formatea / verifica formato con Prettier              |
+| `npm run rules:check`                   | Valida las reglas de gobernanza del repo              |
+| `npm run rules:baseline`                | Regenera la deuda aceptada del motor de reglas        |
+| `npm run test:engine`                   | Tests del motor de gobernanza                         |
+| `npm run og-image`                      | Regenera la imagen Open Graph por defecto             |
+| `npm run deploy` / `deploy:preview`     | Despliega en Firebase Hosting (live / staging)        |
+| `npm run release:check -- --tag vX.Y.Z` | Valida tag, versiones y procedencia antes de publicar |
+| `npm run patch` / `minor` / `major`     | Prepara el bump de versión (sin commit ni tag)        |
 
 ---
 

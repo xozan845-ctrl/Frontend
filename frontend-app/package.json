@@ -20,9 +20,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "og-image": "node scripts/generate-og-image.mjs",
-    "patch": "npm version patch && git push --tags",
-    "minor": "npm version minor && git push --tags",
-    "major": "npm version major && git push --tags"
+    "release:check": "node scripts/release-check.mjs",
+    "patch": "npm version patch --no-git-tag-version",
+    "minor": "npm version minor --no-git-tag-version",
+    "major": "npm version major --no-git-tag-version"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
