@@ -280,9 +280,11 @@ contexto y consecuencias.
   (`R-E-9`). La **tienda** no vive aquí: se resuelve por URL (ADR-15).
 - **Consecuencias**: el mismo build sirve a cualquier entorno cambiando solo
   variables del contenedor (alineado con `R-CD-4`); `config.json` se versiona
-  vacío como plantilla y se añade al `assetGroups` del service worker. Revertir
-  es volver a fijar los valores en `environment.prod.ts` y quitar el
-  `provideAppInitializer`.
+  vacío como plantilla y se añade al `assetGroups` del service worker. El
+  override solo se aplica en builds de producción: en `ng serve` manda
+  `environment.ts` (API local), porque el CORS del API público no incluye
+  `localhost`. Revertir es volver a fijar los valores en `environment.prod.ts`
+  y quitar el `provideAppInitializer`.
 
 ## ADR-14: Moneda del storefront en córdobas (NIO)
 

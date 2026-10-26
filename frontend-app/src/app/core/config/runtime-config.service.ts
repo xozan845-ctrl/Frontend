@@ -11,9 +11,10 @@ const CONFIG_URL = 'config.json';
 const CONFIG_TIMEOUT_MS = 5000;
 
 /**
- * Carga la configuración de despliegue (`config.json`) durante el arranque y
- * la aplica sobre `environment`, de modo que los servicios (que leen
- * `environment.apiUrl` al construirse) vean los valores efectivos.
+ * Carga la configuración de despliegue (`config.json`) durante el arranque de
+ * un build de producción y la aplica sobre `environment`, de modo que los
+ * servicios (que leen `environment.apiUrl` al construirse) vean los valores
+ * efectivos.
  *
  * Se registra con `provideAppInitializer` en `app.config.ts`: los servicios de
  * `features/` se crean después del arranque, por lo que ya leen la config
@@ -28,6 +29,11 @@ export class RuntimeConfigService {
 
   /** Descarga `config.json` y fusiona sus valores no vacíos sobre `environment`. */
   async load(): Promise<void> {
+    // Solo los builds de despliegue aplican config.json. En `ng serve` manda
+    // `environment.ts` (API local): el config.json versionado apunta al API
+    // público y su CORS no incluye localhost (ADR-13).
+    if (!environment.production) return;
+
     // E2E/mock: la suite es hermética y usa `environment` + fixtures de
     // Playwright. El config.json de despliegue apuntaría al API real y rompería
     // el aislamiento (R-E-12).

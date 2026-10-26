@@ -8,8 +8,10 @@ describe('RuntimeConfigService', () => {
   let httpMock: HttpTestingController;
   const originalApiUrl = environment.apiUrl;
   const originalDataSource = environment.apiConfig.dataSource;
+  const originalProduction = environment.production;
 
   beforeEach(() => {
+    environment.production = true;
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
@@ -20,6 +22,7 @@ describe('RuntimeConfigService', () => {
     httpMock.verify();
     environment.apiUrl = originalApiUrl;
     environment.apiConfig.dataSource = originalDataSource;
+    environment.production = originalProduction;
   });
 
   it('aplica apiUrl desde config.json', async () => {
@@ -54,6 +57,16 @@ describe('RuntimeConfigService', () => {
 
   it('no carga ni aplica config.json en modo mock (E2E)', async () => {
     environment.apiConfig.dataSource = 'mock';
+    const service = TestBed.inject(RuntimeConfigService);
+
+    await service.load();
+
+    httpMock.expectNone('config.json');
+    expect(environment.apiUrl).toBe(originalApiUrl);
+  });
+
+  it('no carga config.json en desarrollo (ng serve)', async () => {
+    environment.production = false;
     const service = TestBed.inject(RuntimeConfigService);
 
     await service.load();
