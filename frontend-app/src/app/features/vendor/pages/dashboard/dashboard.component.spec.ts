@@ -2,8 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { NEVER, Observable, of, throwError } from 'rxjs';
 import DashboardComponent from './dashboard.component';
+import { createVendorOrdersSource } from '../../services/vendor-orders-source/vendor-orders-source.service';
 import {
   VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
@@ -53,6 +55,7 @@ describe('DashboardComponent (inicio)', () => {
         provideRouter([]),
         VendorOrdersStore,
         { provide: VENDOR_ORDER_REPOSITORY, useValue: repo },
+        { provide: VENDOR_ORDERS_SOURCE, useValue: createVendorOrdersSource(repo) },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
       ],

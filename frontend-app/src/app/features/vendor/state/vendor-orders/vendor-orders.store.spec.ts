@@ -3,8 +3,10 @@ import { of, throwError } from 'rxjs';
 import { VendorOrdersStore } from './vendor-orders.store';
 import {
   VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
+import { createVendorOrdersSource } from '../../services/vendor-orders-source/vendor-orders-source.service';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { VENDOR_POLL_INTERVAL_MS } from '../../constants/vendor.constants';
 import { VendorOrder } from '../../models/vendor-order.model';
@@ -35,6 +37,7 @@ describe('VendorOrdersStore', () => {
       providers: [
         VendorOrdersStore,
         { provide: VENDOR_ORDER_REPOSITORY, useValue: repo },
+        { provide: VENDOR_ORDERS_SOURCE, useValue: createVendorOrdersSource(repo) },
         { provide: NotificationService, useValue: notification },
       ],
     });

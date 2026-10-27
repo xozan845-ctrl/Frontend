@@ -2,8 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import OrderDetailComponent from './order-detail.component';
+import { createVendorOrdersSource } from '../../services/vendor-orders-source/vendor-orders-source.service';
 import {
   VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
@@ -57,6 +59,7 @@ describe('OrderDetailComponent', () => {
         provideRouter([]),
         VendorOrdersStore,
         { provide: VENDOR_ORDER_REPOSITORY, useValue: orderRepo },
+        { provide: VENDOR_ORDERS_SOURCE, useValue: createVendorOrdersSource(orderRepo) },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
       ],
