@@ -233,24 +233,33 @@ test('R-E-40: el empresario administra servicios de la empresa', async ({ page }
   await expect(page.getByTestId('services-empty')).toBeVisible();
 });
 
-// R-E-38: el empresario consulta las ventas consolidadas de su empresa
-// (`GET /orders/empresa` + `/empresarios/me/ventas`, ADR-45).
+// R-E-38: el empresario consulta y opera las ventas consolidadas de su empresa
+// (`GET /orders/empresa` + `/empresarios/me/ventas`, ADR-45/ADR-54).
 test('R-E-38: el empresario consulta las ventas de la empresa', async ({ page }) => {
   await login(page, '/empresa/ventas', 'empresario@tienda.test');
 
-  await expect(page.getByTestId('company-orders-page')).toBeVisible();
-  await expect(page.locator('[data-testid="company-order-row"]')).toHaveCount(1);
-  await expect(page.getByTestId('company-sales-total')).toContainText('C$2,300.00');
-  await expect(page.getByTestId('company-sales-pending')).toContainText('C$138.00');
+  await expect(page.getByTestId('company-sales-page')).toBeVisible();
+  await expect(page.locator('[data-testid="company-sales-row"]')).toHaveCount(1);
+  await expect(page.getByTestId('company-sales-kpi-month')).toContainText('C$2,300.00');
+  await expect(page.getByTestId('company-sales-kpi-count')).toContainText('1');
+  await expect(page.getByTestId('company-sales-row')).toContainText('Tienda Demo');
 
-  await page.getByTestId('company-orders-store-filter').selectOption('tienda-demo');
-  await page.getByTestId('company-orders-status-filter').selectOption('pagada');
-  await expect(page.locator('[data-testid="company-order-row"]')).toHaveCount(1);
+  await page.getByTestId('company-sales-period-today').click();
+  await expect(page.getByTestId('company-sales-empty')).toBeVisible();
+  await page.getByTestId('company-sales-period-month').click();
+  await expect(page.locator('[data-testid="company-sales-row"]')).toHaveCount(1);
 
-  await page.getByTestId('company-order-select-o-100').click();
-  await expect(page.getByTestId('company-order-detail')).toContainText(
-    'Ultra-Comfort Wireless Headphones',
-  );
+  await page.getByTestId('company-sales-new').click();
+  await expect(page.getByTestId('company-new-sale-dialog')).toBeVisible();
+  await expect(page.getByTestId('new-sale-step-1')).toBeVisible();
+  await page.getByTestId('close-company-new-sale').click();
+  await expect(page.getByTestId('company-new-sale-dialog')).toBeHidden();
+
+  await page.getByTestId('company-sales-quick').click();
+  await expect(page.getByTestId('company-quick-sale-dialog')).toBeVisible();
+  await expect(page.getByTestId('quick-sale-scan')).toBeVisible();
+  await page.getByTestId('close-company-quick-sale').click();
+  await expect(page.getByTestId('company-quick-sale-dialog')).toBeHidden();
 });
 
 // R-E-39: el empresario consulta las tiendas de su empresa
