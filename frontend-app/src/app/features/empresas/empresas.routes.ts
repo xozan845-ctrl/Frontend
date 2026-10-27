@@ -5,6 +5,7 @@ import { COMPANY_REPOSITORY } from './repositories/company.repository';
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
 import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
+import { CompanyClientsStore } from './state/company-clients/company-clients.store';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -44,12 +45,14 @@ export const EMPRESAS_ROUTES: Routes = [
           { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
         ],
       },
-      companySoonRoute(
-        'clientes',
-        'Clientes',
-        'La cartera de clientes de tu empresa.',
-        'fa-solid fa-user-group',
-      ),
+      {
+        path: 'clientes',
+        loadComponent: () => import('./pages/company-clients/company-clients.component'),
+        providers: [
+          CompanyClientsStore,
+          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
+        ],
+      },
       {
         path: 'productos',
         loadComponent: () => import('./pages/company-catalog/company-catalog.component'),
