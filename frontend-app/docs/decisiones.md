@@ -1498,3 +1498,29 @@ contexto y consecuencias.
   guard, sin duplicar menús. Los módulos “soon” ya aparecen según sesión y se
   implementan después. La separación por carpetas `features/modules` se podrá
   hacer más adelante para la composición de módulos, sin mover el dominio.
+
+## ADR-59: Capa de composición `features/modules` y dominios `domainOnly`
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: `features/clients` mezclaba dominio reutilizable (modelo,
+  adaptador, store, fuente HTTP) con la composición de workspace (página,
+  modal y rutas). Al aparecer más módulos, esa mezcla impide reutilizar el
+  dominio sin arrastrar UI y obliga a que todo feature tenga rutas, incluso los
+  que solo exponen lógica.
+- **Decisión**:
+  - `features/<dominio>/` puede declarar `domainOnly: true`: conserva modelos,
+    adapters, constants, repositories, services y state, sin páginas ni rutas.
+  - `features/modules/<módulo>/` es la capa de composición: páginas, componentes
+    y `<módulo>.routes.ts`. Consume dominios por su `public-api.ts`.
+  - `R-AR-16` descubre módulos anidados bajo `features/modules` y omite la
+    exigencia de rutas para features `domainOnly`.
+  - Piloto: `features/modules/clients` contiene la página, el modal y las rutas;
+    `features/clients` queda como dominio. Empresa y vendedor apuntan sus rutas
+    al módulo y siguen inyectando `CLIENTS_PAGE_CONFIG`/`CLIENTS_SCOPE_CONFIG`.
+  - `cart` no es un módulo de workspace y permanece fuera.
+- **Consecuencias**: el dominio de clientes se puede consumir desde otros
+  módulos sin cargar la página. Los próximos módulos (Ventas, Productos,
+  Compras, etc.) podrán seguir el mismo patrón. El motor de reglas gana el
+  concepto de feature de dominio y módulo anidado; añadir un módulo exige
+  declarar su contrato, sus páginas y sus rutas, sin duplicar dominio.

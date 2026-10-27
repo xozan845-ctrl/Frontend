@@ -15,23 +15,24 @@ features/<feature>/
 └── <feature>.routes.ts
 ```
 
-| Feature      | Propósito                                                                          |
-| ------------ | ---------------------------------------------------------------------------------- |
-| `account`    | Perfil, cambio de contraseña e historial de pedidos.                               |
-| `admin`      | Inventario de bodega y pantallas de administración.                                |
-| `ai-scraper` | Jobs y chat de scraping con IA (ADR-18).                                           |
-| `auth`       | Login, registro, autorización por workspace y guards de sesión.                    |
-| `billing`    | Facturación: nueva factura, listado y detalle (ADR-23).                            |
-| `cart`       | Carrito, checkout y confirmación de pedido.                                        |
-| `clients`    | Cartera de clientes compartida por empresa y vendedor (ADR-56).                    |
-| `empresas`   | Empresa, modalidad logística y vendedores (ADR-27).                                |
-| `home`       | Inicio, entrada multi-tienda y 404.                                                |
-| `logistica`  | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
-| `plans`      | Planes y suscripciones.                                                            |
-| `products`   | Catálogo, detalle, búsqueda y reseñas.                                             |
-| `stores`     | Asistente de creación de tienda.                                                   |
-| `vendor`     | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
-| `wishlist`   | Lista de deseos persistida localmente.                                             |
+| Feature           | Propósito                                                                          |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `account`         | Perfil, cambio de contraseña e historial de pedidos.                               |
+| `admin`           | Inventario de bodega y pantallas de administración.                                |
+| `ai-scraper`      | Jobs y chat de scraping con IA (ADR-18).                                           |
+| `auth`            | Login, registro, autorización por workspace y guards de sesión.                    |
+| `billing`         | Facturación: nueva factura, listado y detalle (ADR-23).                            |
+| `cart`            | Carrito, checkout y confirmación de pedido.                                        |
+| `clients`         | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
+| `modules/clients` | Composición de la página/modal de Clientes (ADR-59).                               |
+| `empresas`        | Empresa, modalidad logística y vendedores (ADR-27).                                |
+| `home`            | Inicio, entrada multi-tienda y 404.                                                |
+| `logistica`       | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
+| `plans`           | Planes y suscripciones.                                                            |
+| `products`        | Catálogo, detalle, búsqueda y reseñas.                                             |
+| `stores`          | Asistente de creación de tienda.                                                   |
+| `vendor`          | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
+| `wishlist`        | Lista de deseos persistida localmente.                                             |
 
 ## Contratos de capas
 
@@ -44,6 +45,9 @@ por su API pública; sus capas locales son `pages`, `state`, `components` y
 
 - Un feature consume a otro solo por `public-api.ts`/`public-ui.ts`
   (`R-CX-6`).
+- Los features `domainOnly` exponen lógica reutilizable sin páginas ni rutas.
+- `features/modules/<módulo>` compone dominios para un workspace; no duplica
+  modelos, stores ni adapters.
 - `pages/` consume estado del store; `components/` es presentacional
   (`R-SO-8`).
 - Las rutas se declaran en `<feature>.routes.ts` y se componen en
