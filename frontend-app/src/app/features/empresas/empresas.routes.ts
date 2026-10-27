@@ -26,6 +26,13 @@ export const EMPRESAS_ROUTES: Routes = [
       import('./seller-invitation.routes').then((module) => module.SELLER_INVITATION_ROUTES),
   },
   {
+    // Enlace corto para compartir: `/i/<token>`. La ruta anterior se mantiene
+    // para no romper invitaciones ya enviadas.
+    path: 'i/:token',
+    loadChildren: () =>
+      import('./seller-invitation.routes').then((module) => module.SELLER_INVITATION_ROUTES),
+  },
+  {
     path: 'empresa',
     canActivate: [companyGuard],
     loadComponent: () => import('./pages/company-shell/company-shell.component'),

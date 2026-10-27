@@ -2,7 +2,11 @@
   "hosting": {
     "public": "dist/frontend-app/browser",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "rewrites": [
+      { "source": "/i/**", "destination": "/invitacion.html" },
+      { "source": "/registro/vendedor", "destination": "/invitacion.html" },
+      { "source": "**", "destination": "/index.html" }
+    ],
     "headers": [
       {
         "source": "**",

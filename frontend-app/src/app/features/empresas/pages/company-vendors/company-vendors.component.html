@@ -50,7 +50,8 @@
         Invitar vendedor
       </h2>
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Genera una URL para que la persona cree su contraseña y se incorpore a la tienda elegida.
+        Genera una invitación personalizada. El vendedor solo tendrá que crear su contraseña y
+        entrar a su tienda.
       </p>
     </div>
 
@@ -73,24 +74,90 @@
         novalidate
         data-testid="seller-invitation-form"
       >
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1 sm:col-span-2">
           <label
-            for="invitation-email"
+            for="invitation-email-local"
             class="text-xs font-bold text-slate-600 dark:text-slate-300"
           >
             Correo del vendedor
           </label>
-          <input
-            id="invitation-email"
-            type="email"
-            class="input"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="vendedor@correo.com"
-            data-testid="invitation-email"
-          />
-          @if (invalid('email')) {
-            <p class="text-xs font-bold text-red-600">Introduce un correo válido.</p>
+
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <div
+              class="flex min-w-0 flex-1 items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-800"
+            >
+              <input
+                id="invitation-email-local"
+                type="text"
+                class="min-w-0 flex-1 border-0 bg-transparent px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
+                formControlName="emailLocal"
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                placeholder="ana.perez"
+                aria-describedby="invitation-email-help"
+                data-testid="invitation-email"
+                (input)="onEmailLocalInput()"
+              />
+              <span
+                class="flex items-center text-sm font-bold text-slate-400 dark:text-slate-500"
+                aria-hidden="true"
+                >@</span
+              >
+              <select
+                class="border-0 border-l border-slate-200 bg-transparent px-2 py-2.5 text-sm font-bold text-slate-700 outline-none dark:border-surface-700 dark:text-slate-200"
+                formControlName="emailDomain"
+                aria-label="Dominio del correo"
+                data-testid="invitation-email-domain"
+              >
+                @for (domain of emailDomains; track domain) {
+                  <option [value]="domain">{{ domain }}</option>
+                }
+                <option [value]="customDomain">Otro…</option>
+              </select>
+            </div>
+
+            @if (isCustomDomain) {
+              <div
+                class="flex min-w-0 items-center overflow-hidden rounded-xl border border-slate-200 bg-white focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/20 sm:w-56 dark:border-surface-700 dark:bg-surface-800"
+              >
+                <span class="pl-3 text-sm font-bold text-slate-400" aria-hidden="true">@</span>
+                <input
+                  id="invitation-email-domain"
+                  type="text"
+                  class="min-w-0 flex-1 border-0 bg-transparent px-1.5 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
+                  formControlName="emailDomainCustom"
+                  autocomplete="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  placeholder="dominio.com"
+                  aria-label="Dominio personalizado"
+                  data-testid="invitation-email-custom-domain"
+                />
+              </div>
+            }
+          </div>
+
+          <p id="invitation-email-help" class="text-[11px] text-slate-400">
+            Escribe solo la parte antes de @. Gmail viene seleccionado por defecto y puedes
+            cambiarlo.
+          </p>
+
+          @if (emailPreview()) {
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+              Se enviará a
+              <b
+                class="text-slate-700 dark:text-slate-200"
+                data-testid="invitation-email-preview"
+                >{{ emailPreview() }}</b
+              >
+            </p>
+          }
+
+          @if (showEmailError()) {
+            <p class="text-xs font-bold text-red-600" data-testid="invitation-email-error">
+              {{ emailError() }}
+            </p>
           }
         </div>
 
@@ -142,7 +209,7 @@
           [disabled]="vendors.saving()"
           data-testid="create-seller-invitation"
         >
-          <i class="fa-solid fa-link text-xs" aria-hidden="true"></i>
+          <i class="fa-solid fa-paper-plane text-xs" aria-hidden="true"></i>
           {{ vendors.saving() ? 'Generando…' : 'Generar invitación' }}
         </button>
       </form>
@@ -151,21 +218,35 @@
 
   @if (vendors.lastInvitation(); as invitation) {
     <section
-      class="card flex flex-col gap-4 border-2 border-accent-200 p-6 dark:border-accent-800"
+      class="card flex flex-col gap-5 border-2 border-accent-200 p-6 dark:border-accent-800"
       aria-labelledby="created-invitation-title"
       data-testid="created-invitation"
     >
-      <div>
-        <h2
-          id="created-invitation-title"
-          class="font-heading text-lg font-black tracking-tight uppercase"
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p
+            class="text-[10px] font-black tracking-[0.2em] text-emerald-600 uppercase dark:text-emerald-400"
+          >
+            Invitación generada
+          </p>
+          <h2
+            id="created-invitation-title"
+            class="mt-1 font-heading text-lg font-black tracking-tight uppercase"
+          >
+            Lista para compartir
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Expira el {{ invitation.expiresAt | date: 'medium' }}. Solo puede utilizarse una vez.
+          </p>
+        </div>
+        <span
+          class="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
         >
-          Invitación lista para compartir
-        </h2>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Expira el {{ invitation.expiresAt | date: 'medium' }}. Solo puede utilizarse una vez.
-        </p>
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          {{ invitation.email }}
+        </span>
       </div>
+
       <div class="flex flex-col gap-3 sm:flex-row">
         <input
           readonly
@@ -176,14 +257,75 @@
         />
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-secondary"
           (click)="copyInvitation()"
           data-testid="copy-invitation"
         >
           <i class="fa-solid fa-copy text-xs" aria-hidden="true"></i>
-          Copiar URL
+          Copiar enlace
         </button>
       </div>
+
+      <div class="flex flex-wrap gap-2">
+        <a
+          class="btn bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
+          [href]="whatsappShareUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-testid="share-whatsapp"
+        >
+          <i class="fa-brands fa-whatsapp text-base" aria-hidden="true"></i>
+          Compartir por WhatsApp
+        </a>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="copyMessage()"
+          data-testid="copy-invitation-message"
+        >
+          <i class="fa-solid fa-comment-dots text-xs" aria-hidden="true"></i>
+          Copiar mensaje
+        </button>
+        <a class="btn btn-ghost" [href]="mailtoShareUrl()" data-testid="share-email">
+          <i class="fa-solid fa-envelope text-xs" aria-hidden="true"></i>
+          Enviar por correo
+        </a>
+      </div>
+
+      <div class="rounded-2xl bg-[#e5ddd5] p-4 dark:bg-surface-800">
+        <p
+          class="mb-2 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase dark:text-slate-400"
+        >
+          Así se verá en WhatsApp
+        </p>
+        <div class="mx-auto flex max-w-md flex-col gap-2">
+          <div class="rounded-2xl rounded-tr-sm bg-[#dcf8c6] p-3 shadow-sm">
+            <p class="text-[13px] leading-relaxed break-words whitespace-pre-line text-slate-900">
+              {{ shareMessage() }}
+            </p>
+            <p class="mt-1 text-right text-[10px] text-slate-500">8:35 a. m. ✓✓</p>
+          </div>
+          <div class="overflow-hidden rounded-xl bg-white shadow-sm">
+            <img
+              src="og-invitacion.png"
+              alt="Vista previa de la tarjeta de invitación"
+              class="h-36 w-full object-cover"
+            />
+            <div class="p-3">
+              <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                Quantum Store
+              </p>
+              <p class="mt-0.5 text-sm font-black text-slate-900">Tu tienda te espera</p>
+              <p class="mt-0.5 text-xs text-slate-500">Acepta la invitación y empieza a vender.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-slate-400">
+        <i class="fa-solid fa-lock mr-1" aria-hidden="true"></i>
+        Guarda este enlace. Por seguridad no volveremos a mostrarlo después de recargar la página.
+      </p>
     </section>
   }
 
@@ -239,15 +381,27 @@
     </section>
 
     <section class="card flex flex-col gap-5 p-6" aria-labelledby="pending-invitations-title">
-      <div>
-        <h2
-          id="pending-invitations-title"
-          class="font-heading text-lg font-black tracking-tight uppercase"
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <h2
+            id="pending-invitations-title"
+            class="font-heading text-lg font-black tracking-tight uppercase"
+          >
+            Invitaciones pendientes
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Enlaces que aún no han sido aceptados.
+          </p>
+        </div>
+        <span
+          class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-500 dark:bg-surface-700 dark:text-slate-300"
+          data-testid="pending-invitations-count"
         >
-          Invitaciones pendientes
-        </h2>
+          {{ vendors.pendingInvitations().length }}
+        </span>
       </div>
-      @if (vendors.invitations().length === 0) {
+
+      @if (vendors.pendingInvitations().length === 0) {
         <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="invitations-empty">
           No hay invitaciones pendientes.
         </p>
@@ -256,7 +410,7 @@
           class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
           data-testid="invitations-list"
         >
-          @for (invitation of vendors.invitations(); track invitation.id) {
+          @for (invitation of vendors.pendingInvitations(); track invitation.id) {
             <li
               class="flex flex-wrap items-center justify-between gap-3 py-3"
               data-testid="invitation-row"
@@ -270,19 +424,74 @@
                   {{ invitation.expiresAt | date: 'mediumDate' }}
                 </p>
               </div>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                [disabled]="vendors.saving()"
-                (click)="revokeInvitation(invitation.id)"
-                [attr.data-testid]="'revoke-invitation-' + invitation.id"
-              >
-                Revocar
-              </button>
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                  [ngClass]="invitation.status | invitationStatus: 'class'"
+                >
+                  {{ invitation.status | invitationStatus }}
+                </span>
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  [disabled]="vendors.saving()"
+                  (click)="revokeInvitation(invitation.id)"
+                  [attr.data-testid]="'revoke-invitation-' + invitation.id"
+                >
+                  Revocar
+                </button>
+              </div>
             </li>
           }
         </ul>
       }
     </section>
+
+    @if (vendors.pastInvitations().length > 0) {
+      <details class="card group p-6" data-testid="invitation-history">
+        <summary
+          class="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black text-slate-700 dark:text-slate-200"
+        >
+          <span>
+            Historial de invitaciones
+            <span class="ml-1 text-xs font-bold text-slate-400"
+              >({{ vendors.pastInvitations().length }})</span
+            >
+          </span>
+          <i
+            class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform group-open:rotate-180"
+            aria-hidden="true"
+          ></i>
+        </summary>
+
+        <ul
+          class="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
+          data-testid="invitation-history-list"
+        >
+          @for (invitation of vendors.pastInvitations(); track invitation.id) {
+            <li
+              class="flex flex-wrap items-center justify-between gap-3 py-3"
+              data-testid="invitation-history-row"
+            >
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">
+                  {{ invitation.email }}
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ invitation.storeName }} · {{ invitation.participationPercentage }} % · expiró
+                  {{ invitation.expiresAt | date: 'mediumDate' }}
+                </p>
+              </div>
+              <span
+                class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                [ngClass]="invitation.status | invitationStatus: 'class'"
+              >
+                {{ invitation.status | invitationStatus }}
+              </span>
+            </li>
+          }
+        </ul>
+      </details>
+    }
   }
 </div>

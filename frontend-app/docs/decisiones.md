@@ -1141,10 +1141,17 @@ contexto y consecuencias.
     histórica `/crear-tienda` redirige para conservar enlaces existentes.
   - `/empresa/vendedores` consume las tiendas disponibles, permite al
     empresario generar invitaciones y muestra la URL copiable, vendedores
-    activos e invitaciones pendientes.
-  - `/registro/vendedor?token=...` consulta la invitación pública y envía solo
-    `nombre` y `contrasena` a la aceptación. La sesión devuelta por el backend
-    se instala en `AuthStore` y lleva al nuevo vendedor a su workspace.
+    activos e invitaciones pendientes. El correo se captura como parte local +
+    dominio (Gmail por defecto) para que el empresario solo escriba lo esencial.
+  - La ruta corta `/i/<token>` es la forma nueva de compartir; la histórica
+    `/registro/vendedor?token=...` se mantiene para no romper enlaces ya
+    enviados. Ambas consultan la invitación pública y envían solo `nombre` y
+    `contrasena` a la aceptación. La sesión devuelta por el backend se instala
+    en `AuthStore` y lleva al nuevo vendedor a su workspace.
+  - La aceptación muestra el correo como verificado y de solo lectura: la
+    invitación está atada a ese correo y el backend no acepta cambiarlo.
+  - El panel genera un mensaje de WhatsApp con empresa, tienda, participación,
+    vencimiento y enlace, además de una tarjeta de vista previa.
   - Una empresa puede tener múltiples vendedores y tiendas; cada vendedor se
     asigna a una única tienda disponible. La autorización del empresario, la
     expiración de 72 horas, el uso único y la asignación final siguen siendo
@@ -1215,14 +1222,19 @@ contexto y consecuencias.
   - Producción debe configurar Core Engine con
     `FRONTEND_URL=https://kb-coleccion-internacional-ni.web.app` para que el
     backend genere el enlace correcto desde el origen.
-  - Como protección adicional, el frontend reemplaza únicamente orígenes
-    loopback (`localhost`, `127.0.0.1` o `::1`) por `environment.frontendUrl`
-    cuando adapta una invitación en producción.
-  - Los enlaces públicos válidos y todo el flujo local permanecen intactos.
+  - Como protección adicional, el frontend reemplaza orígenes loopback
+    (`localhost`, `127.0.0.1` o `::1`) por `environment.frontendUrl` en
+    **cualquier entorno**, no solo en producción. Así `ng serve` también
+    comparte enlaces utilizables.
+  - Al adaptar la URL, el enlace histórico
+    `/registro/vendedor?token=...` se convierte en la ruta corta `/i/<token>`;
+    si ya viene corto, se conserva.
+  - Los enlaces públicos válidos permanecen intactos.
 - **Consecuencias**: el panel empresarial deja de mostrar enlaces locales en
-  producción, sin ocultar configuraciones incorrectas del backend ni alterar
-  URLs públicas legítimas. La variable de entorno del backend sigue siendo
-  obligatoria para evitar que otros consumidores reciban el fallback local.
+  producción y en desarrollo, sin ocultar configuraciones incorrectas del
+  backend ni alterar URLs públicas legítimas. La variable de entorno del backend
+  sigue siendo obligatoria para evitar que otros consumidores reciban el
+  fallback local.
 
 ## ADR-50: API pública a través del proxy del gateway
 
@@ -1246,3 +1258,26 @@ contexto y consecuencias.
 - **Consecuencias**: se elimina el secreto del frontend y se mantiene el gate de
   staging para el resto de clientes. El detalle operativo vive en
   [`api-proxy.md`](./api-proxy.md).
+
+## ADR-51: Vista previa de invitaciones con HTML estático
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: WhatsApp y otros crawlers no ejecutan JavaScript. Firebase
+  Hosting sirve la SPA con un único `index.html` para todas las rutas, así que
+  una invitación compartida mostraba el host y la URL cruda, sin imagen ni
+  título útil. El plan Spark no permite Cloud Functions ni SSR para generar
+  metadatos por token.
+- **Decisión**:
+  - El `postbuild` genera `invitacion.html` copiando el shell compilado y
+    reemplazando solo título, Open Graph, Twitter y `robots` (`noindex`).
+  - `firebase.json` sirve `/i/**` y `/registro/vendedor` desde ese archivo; el
+    resto de rutas sigue con `index.html`.
+  - `public/og-invitacion.png` (1200 × 630) se genera desde
+    `docs/assets/og-invitacion.html` con `npm run og-image`.
+  - La tarjeta es genérica (“Tu tienda te espera”); la personalización de
+    empresa, tienda y participación viaja en el mensaje de WhatsApp.
+- **Consecuencias**: se obtiene una vista previa atractiva sin SSR ni plan Blaze.
+  Una tarjeta distinta por empresa requeriría SSR, Cloud Functions o un Worker
+  externo. Hay que mantener sincronizado el dominio público en `index.html` y
+  en `scripts/generate-invitation-html.mjs`.

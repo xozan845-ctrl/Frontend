@@ -40,6 +40,8 @@ describe('CompanyInvitationsStore', () => {
     });
     await vi.waitFor(() => expect(store.lastInvitation()?.id).toBe('i-1'));
     expect(repository.create).toHaveBeenCalled();
+    expect(store.pendingInvitations()).toHaveLength(1);
+    expect(store.pastInvitations()).toHaveLength(0);
   });
 
   it('revoca invitaciones y maneja errores de carga y guardado', async () => {
