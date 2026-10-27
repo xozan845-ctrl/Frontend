@@ -1674,3 +1674,30 @@ contexto y consecuencias.
   (`new-order` ~39 kB, `vendor-routes` ~26 kB). El inicio del vendedor y la
   tabla reciente permanecen en su feature para no acoplar el dashboard al
   módulo.
+
+## ADR-65: Módulo de composición del catálogo
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: la página de productos/servicios de empresa, la tabla del
+  catálogo y el modal de alta/edición vivían en `features/empresas` junto a los
+  stores, modelos, constantes y adaptadores. El patrón de módulos ya estaba
+  probado con Clientes y Ventas/Pedidos.
+- **Decisión**:
+  - Se crea `features/modules/catalog` con la página `company-products`, la
+    tabla `company-catalog-table`, el modal `company-product-modal` y
+    `CATALOG_ROUTES`.
+  - Los providers (`CompanyProductsStore`, `CompanyServicesStore` y
+    `CATALOG_PRODUCT_REPOSITORY`) se mueven de la página a las rutas del módulo.
+  - `features/empresas` conserva stores, modelos, constantes, adaptadores y
+    servicios; su API pública expone stores, constantes y tipos del catálogo.
+  - `EMPRESAS_ROUTES` carga `CATALOG_ROUTES` con `loadChildren` en
+    `/empresa/productos`, manteniendo la página lazy.
+  - El módulo declara su contrato `modules/catalog` (`components`, `pages`) y su
+    README.
+- **Consecuencias**: la administración del catálogo queda separada de la
+  infraestructura de empresa y reutiliza el mismo patrón que Ventas/Pedidos. El
+  bundle inicial pasa a 552.46 kB (techo 555 kB) y el chunk del catálogo sigue
+  lazy (~60 kB). El vendedor conserva sus ofertas y el POS en `modules/sales`;
+  una composición de catálogo del vendedor podrá reutilizar este módulo cuando
+  exista la vista correspondiente.
