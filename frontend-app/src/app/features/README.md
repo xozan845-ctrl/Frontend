@@ -25,6 +25,7 @@ features/<feature>/
 | `cart`            | Carrito, checkout y confirmación de pedido.                                        |
 | `clients`         | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
 | `modules/clients` | Composición de la página/modal de Clientes (ADR-59).                               |
+| `modules/sales`   | Composición de la página y modales de Ventas de empresa (ADR-63).                  |
 | `orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
 | `empresas`        | Empresa, modalidad logística y vendedores (ADR-27).                                |
 | `home`            | Inicio, entrada multi-tienda y 404.                                                |
