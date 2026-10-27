@@ -1600,15 +1600,19 @@ contexto y consecuencias.
     `VendorOrdersStore` conserva su tipo `VendorOrder`, su API pública
     (`orders`, `selectedOrder`, filtros, KPIs y sondeo) y solo delega la
     carga/detalle/estado en la feature.
-  - El tipo y el estado del pedido son parámetros del workspace, de modo que
-    empresa podrá reutilizar la feature con `OrderResponse` y su propio token
-    sin cambiar el contrato común.
+  - El tipo y el estado del pedido son parámetros del workspace. Empresa la
+    reutiliza con `OrderResponse` y su propio token; como su pantalla es de
+    solo lectura, su fuente implementa únicamente `list`.
+  - `OrdersFeatureOptions` permite adaptar los mensajes al vocabulario de cada
+    panel; empresa conserva "No se pudieron cargar las ventas.".
+  - Los ids del contrato de empresa son `string | number`; el store los
+    normaliza con `String` al llamar al detalle o al cambio de estado.
   - El estado compartido se queda en `shared/orders`, no en `features/orders`:
     el dominio sigue siendo `domainOnly` y las piezas de estado no entran en el
     grafo eager que consumen los adaptadores de empresa (el store solo aparece
     en el chunk lazy del vendedor).
-- **Consecuencias**: una sola semántica de carga, detalle y cambio de estado.
-  El bundle inicial pasa de 551.98 a 552.08 kB (techo de aviso 555 kB) porque
-  el dominio expone la fábrica del token; la feature del store permanece lazy.
-  Queda migrar `CompanySalesStore` a la feature y mover la composición de
+- **Consecuencias**: una sola semántica de carga, detalle y cambio de estado
+  para vendedor y empresa. El bundle inicial pasa de 551.98 a 552.08 kB en la
+  primera migración y a 552.27 kB al migrar empresa (techo de aviso 555 kB);
+  la feature del store permanece lazy. Queda mover la composición de
   Ventas/Pedidos a `features/modules/sales`.
