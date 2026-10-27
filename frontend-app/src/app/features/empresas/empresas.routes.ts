@@ -44,12 +44,13 @@ export const EMPRESAS_ROUTES: Routes = [
           { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
         ],
       },
-      companySoonRoute(
-        'clientes',
-        'Clientes',
-        'La cartera de clientes de tu empresa.',
-        'fa-solid fa-user-group',
-      ),
+      {
+        path: 'clientes',
+        loadChildren: () =>
+          import('./pages/company-clients/company-clients.routes').then(
+            (module) => module.COMPANY_CLIENTS_ROUTES,
+          ),
+      },
       {
         path: 'productos',
         loadComponent: () => import('./pages/company-catalog/company-catalog.component'),
