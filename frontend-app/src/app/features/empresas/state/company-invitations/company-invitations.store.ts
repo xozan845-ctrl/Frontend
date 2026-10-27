@@ -1,5 +1,5 @@
-import { inject, untracked } from '@angular/core';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { computed, inject, untracked } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
@@ -23,6 +23,15 @@ const initialState: CompanyInvitationsState = {
 /** Estado de vendedores e invitaciones del workspace empresarial. */
 export const CompanyInvitationsStore = signalStore(
   withState(initialState),
+  withComputed(({ invitations }) => ({
+    /** Enlaces todavía utilizables; el resto pasa al historial. */
+    pendingInvitations: computed(() =>
+      invitations().filter((invitation) => invitation.status === 'pendiente'),
+    ),
+    pastInvitations: computed(() =>
+      invitations().filter((invitation) => invitation.status !== 'pendiente'),
+    ),
+  })),
   withMethods(
     (
       store,

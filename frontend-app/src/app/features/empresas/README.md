@@ -18,5 +18,7 @@ La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
 Crear la empresa cambia el `tenant_id`/rol del usuario en el backend, así que el
 store **renueva la sesión** después del alta para que el JWT lleve el tenant
 (ADR-27). El empresario genera invitaciones desde `/empresa/vendedores`; el
-backend devuelve una URL de un solo uso y el invitado completa su cuenta en
-`/registro/vendedor?token=...`. Cada vendedor se asigna a una única tienda.
+backend devuelve una URL corta de un solo uso (`/i/<token>`) y el invitado
+completa su cuenta en una landing de bienvenida. El enlace histórico
+`/registro/vendedor?token=...` sigue funcionando. Cada vendedor se asigna a una
+única tienda.

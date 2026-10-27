@@ -52,34 +52,38 @@ describe('CompanyInvitationService', () => {
     expect(result).toMatchObject({ id: 'i-1', invitationUrl: 'https://app.test/invite' });
   });
 
-  it('reemplaza el origen loopback en producción y conserva el token', () => {
+  it('reemplaza el origen loopback y convierte el enlace antiguo a la ruta corta', () => {
     expect(
       normalizeInvitationUrl(
         'http://localhost:5173/registro/vendedor?token=abc#inicio',
         'https://kb-coleccion-internacional-ni.web.app/',
-        true,
       ),
-    ).toBe('https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc#inicio');
+    ).toBe('https://kb-coleccion-internacional-ni.web.app/i/abc#inicio');
     expect(
       normalizeInvitationUrl(
         'http://127.0.0.1:5173/registro/vendedor?token=abc',
         'https://kb-coleccion-internacional-ni.web.app',
-        true,
       ),
-    ).toBe('https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc');
+    ).toBe('https://kb-coleccion-internacional-ni.web.app/i/abc');
   });
 
-  it('conserva URLs públicas, desarrollo y valores inválidos', () => {
-    const publicUrl = 'https://kb-coleccion-internacional-ni.web.app/registro/vendedor?token=abc';
-    expect(normalizeInvitationUrl(publicUrl, 'https://app.test', true)).toBe(publicUrl);
+  it('funciona en desarrollo y conserva enlaces ya cortos', () => {
     expect(
       normalizeInvitationUrl(
         'http://localhost:5173/registro/vendedor?token=abc',
-        'https://app.test',
-        false,
+        'http://localhost:4200',
       ),
-    ).toBe('http://localhost:5173/registro/vendedor?token=abc');
-    expect(normalizeInvitationUrl('not-a-url', 'https://app.test', true)).toBe('not-a-url');
+    ).toBe('http://localhost:4200/i/abc');
+    expect(normalizeInvitationUrl('http://localhost:5173/i/abc', 'http://localhost:4200')).toBe(
+      'http://localhost:4200/i/abc',
+    );
+    expect(
+      normalizeInvitationUrl(
+        'https://kb-coleccion-internacional-ni.web.app/i/abc',
+        'https://app.test',
+      ),
+    ).toBe('https://kb-coleccion-internacional-ni.web.app/i/abc');
+    expect(normalizeInvitationUrl('not-a-url', 'https://app.test')).toBe('not-a-url');
   });
 
   it('consulta y acepta una invitación pública', () => {

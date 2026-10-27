@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Genera `public/og-image.png` (1200 × 630) a partir de
- * `docs/assets/og-image.html`, la imagen Open Graph por defecto.
+ * Genera las imágenes Open Graph (1200 × 630) a partir de sus fuentes HTML:
+ *
+ * - `docs/assets/og-image.html`       → `public/og-image.png` (sitio)
+ * - `docs/assets/og-invitacion.html`  → `public/og-invitacion.png` (invitación)
  *
  * Uso: npm run og-image
  * Requiere los navegadores de Playwright: npx playwright install chromium
@@ -15,10 +17,16 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const source = join(root, 'docs/assets/og-image.html');
-const output = join(root, 'public/og-image.png');
-
-const html = await readFile(source, 'utf8');
+const images = [
+  {
+    source: join(root, 'docs/assets/og-image.html'),
+    output: join(root, 'public/og-image.png'),
+  },
+  {
+    source: join(root, 'docs/assets/og-invitacion.html'),
+    output: join(root, 'public/og-invitacion.png'),
+  },
+];
 
 let browser;
 try {
@@ -32,16 +40,22 @@ try {
 }
 
 try {
-  const page = await browser.newPage({
-    viewport: { width: WIDTH, height: HEIGHT },
-    deviceScaleFactor: 1,
-  });
-  await page.setContent(html, { waitUntil: 'load' });
-  await page.evaluate(() => document.fonts.ready);
-  await page.screenshot({ path: output, type: 'png' });
+  for (const image of images) {
+    const html = await readFile(image.source, 'utf8');
+    const page = await browser.newPage({
+      viewport: { width: WIDTH, height: HEIGHT },
+      deviceScaleFactor: 1,
+    });
+    await page.setContent(html, { waitUntil: 'load' });
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: image.output, type: 'png' });
+    await page.close();
+
+    const { size } = await stat(image.output);
+    console.log(
+      `OG image generada: ${image.output} (${WIDTH}×${HEIGHT}, ${Math.round(size / 1024)} KB)`,
+    );
+  }
 } finally {
   await browser.close();
 }
-
-const { size } = await stat(output);
-console.log(`OG image generada: ${output} (${WIDTH}×${HEIGHT}, ${Math.round(size / 1024)} KB)`);

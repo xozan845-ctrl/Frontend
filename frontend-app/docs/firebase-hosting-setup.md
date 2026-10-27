@@ -38,7 +38,9 @@ plan gratuito.
   - `public`: `dist/frontend-app/browser` (misma salida que nginx, `R-CD-4`).
   - **Fallback SPA** (`rewrites: ** → /index.html`): refrescar `/tienda/<id>/shop`,
     `/carrito`, etc. devuelve 200 en lugar de 404 (equivalente al `try_files` de
-    `nginx.conf`).
+    `nginx.conf`). Las rutas de invitación (`/i/**` y `/registro/vendedor`) se
+    sirven desde `invitacion.html`, una copia del shell con metadatos Open Graph
+    propios; se genera en el `postbuild`.
   - **Caché**: `index.html`, `ngsw-worker.js`, `ngsw.json`, `manifest.webmanifest`
     y `config.json` sin cache; assets con hash (`outputHashing: all`) con cache
     larga (`max-age=31536000, immutable`).
@@ -78,6 +80,36 @@ plan gratuito.
   Deja un valor en `""` para conservar el de `environment` (`R-AR-11`). Tras
   editarlo hay que **reconstruir** (`npm run build`), porque en Hosting no hay
   entrypoint que lo regenere.
+
+### Vista previa de invitaciones en WhatsApp
+
+WhatsApp (y la mayoría de crawlers) **no ejecuta JavaScript**: lee el HTML que
+devuelve Hosting. Como la SPA reescribe todo a `index.html`, una invitación
+compartida mostraba el host y la URL cruda, sin imagen.
+
+- `scripts/generate-invitation-html.mjs` corre como `postbuild`: copia el
+  `index.html` compilado, le cambia el título y los metadatos OG/Twitter y lo
+  escribe como `invitacion.html`.
+- `firebase.json` sirve ese archivo en `/i/**` y `/registro/vendedor`; el resto
+  sigue usando `index.html`.
+- `public/og-invitacion.png` (1200 × 630) se genera con `npm run og-image` desde
+  `docs/assets/og-invitacion.html`.
+- La tarjeta es **genérica** (no incluye empresa/tienda): el crawler no puede
+  leer el token. La personalización viaja en el mensaje de WhatsApp que arma el
+  panel del empresario.
+- Si cambia el dominio público, actualiza las URLs absolutas de `src/index.html`
+  y el valor por defecto de `PUBLIC_ORIGIN` en
+  `scripts/generate-invitation-html.mjs`. También puedes definir
+  `FRONTEND_URL` al ejecutar el build.
+
+Para regenerar la imagen y comprobar el HTML:
+
+```bash
+cd frontend-app
+npm run og-image
+npm run build
+grep -E 'og:(title|image)|twitter:card' dist/frontend-app/browser/invitacion.html
+```
 
 ### CSP y el script inline de Angular (crítico)
 
