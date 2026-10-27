@@ -9,9 +9,11 @@ import { NotificationService } from '../../../../core/services/notification/noti
 import { AuthStore } from '../../../auth/public-api';
 import { CompanySalesStore } from './company-sales.store';
 import {
+  COMPANY_ORDERS_SOURCE,
   COMPANY_PORTAL_REPOSITORY,
   type CompanyPortalRepository,
 } from '../../repositories/company-portal.repository';
+import { createCompanyOrdersSource } from '../../services/company-orders-source/company-orders-source.service';
 import { clientsStorageKey } from '../../../clients/public-api';
 import { companySalesStorageKey } from '../../constants/company-sales.constants';
 import type { CompanySaleRecord, CreateCompanySalePayload } from '../../models/company-sale.model';
@@ -177,6 +179,7 @@ describe('CompanySalesStore', () => {
       providers: [
         CompanySalesStore,
         { provide: COMPANY_PORTAL_REPOSITORY, useValue: portalRepo },
+        { provide: COMPANY_ORDERS_SOURCE, useValue: createCompanyOrdersSource(portalRepo) },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogRepo },
         { provide: NotificationService, useValue: notification },
         { provide: AuthStore, useValue: authStore },
@@ -249,6 +252,7 @@ describe('CompanySalesStore', () => {
       providers: [
         CompanySalesStore,
         { provide: COMPANY_PORTAL_REPOSITORY, useValue: portalRepo },
+        { provide: COMPANY_ORDERS_SOURCE, useValue: createCompanyOrdersSource(portalRepo) },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogRepo },
         { provide: NotificationService, useValue: notification },
         { provide: AuthStore, useValue: authStore },
@@ -356,6 +360,7 @@ describe('CompanySalesStore', () => {
       providers: [
         CompanySalesStore,
         { provide: COMPANY_PORTAL_REPOSITORY, useValue: portalRepo },
+        { provide: COMPANY_ORDERS_SOURCE, useValue: createCompanyOrdersSource(portalRepo) },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogRepo },
         { provide: NotificationService, useValue: notification },
         { provide: AuthStore, useValue: authStore },
@@ -373,6 +378,16 @@ describe('CompanySalesStore', () => {
     expect(store.productsLoading()).toBe(false);
   });
 
+  it('debe usar el mensaje de ventas por defecto al fallar las órdenes', async () => {
+    const store = setup();
+    vi.mocked(portalRepo.orders).mockReturnValue(throwError(() => new Error('')));
+
+    store.loadOrders();
+    await vi.waitFor(() => expect(store.error()).toBe('No se pudieron cargar las ventas.'));
+
+    expect(notification.showError).toHaveBeenCalledWith('No se pudieron cargar las ventas.');
+  });
+
   it('debe tolerar fallos de tiendas y estado de cuenta', async () => {
     const catalog = { list: vi.fn(), getById: vi.fn(), create: vi.fn(), update: vi.fn() };
     portalRepo = {
@@ -385,6 +400,7 @@ describe('CompanySalesStore', () => {
       providers: [
         CompanySalesStore,
         { provide: COMPANY_PORTAL_REPOSITORY, useValue: portalRepo },
+        { provide: COMPANY_ORDERS_SOURCE, useValue: createCompanyOrdersSource(portalRepo) },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalog },
         { provide: NotificationService, useValue: notification },
         { provide: AuthStore, useValue: authStore },

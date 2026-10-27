@@ -11,7 +11,9 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { withOrders } from '../../../../shared/orders/state/with-orders/with-orders.state';
 import { AuthStore } from '../../../auth/public-api';
+import type { OrderResponse } from '../../../cart/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
 import {
   buildCompanySaleRows,
@@ -41,19 +43,19 @@ import type {
   CompanySaleRecord,
   CreateCompanySalePayload,
 } from '../../models/company-sale.model';
-import { COMPANY_PORTAL_REPOSITORY } from '../../repositories/company-portal.repository';
+import {
+  COMPANY_ORDERS_SOURCE,
+  COMPANY_PORTAL_REPOSITORY,
+} from '../../repositories/company-portal.repository';
 import type { CompanySalesState } from './company-sales.state';
 
 const initialState: CompanySalesState = {
-  orders: [],
   products: [],
   stores: [],
   salesAccount: null,
   localSales: [],
   localClients: [],
-  loading: false,
   productsLoading: false,
-  error: null,
   period: 'month',
   payment: 'all',
   search: '',
@@ -98,13 +100,16 @@ function loadStoredClients(storageKey: string): CompanySalesState['localClients'
  * `withComputed`; la página solo consume señales.
  */
 export const CompanySalesStore = signalStore(
+  withOrders<OrderResponse>(COMPANY_ORDERS_SOURCE, {
+    loadErrorMessage: 'No se pudieron cargar las ventas.',
+  }),
   withState(initialState),
   withComputed((store) => {
-    const clients = computed(() => buildClients(store.orders(), store.localClients()));
+    const clients = computed(() => buildClients(store.orderRecords(), store.localClients()));
 
     const rows = computed(() =>
       buildCompanySaleRows({
-        orders: store.orders(),
+        orders: store.orderRecords(),
         clients: clients(),
         stores: store.stores(),
         salesAccount: store.salesAccount(),
@@ -129,6 +134,8 @@ export const CompanySalesStore = signalStore(
     const currentPage = computed(() => Math.min(Math.max(1, store.page()), pageCount()));
 
     return {
+      /** Órdenes de empresa normalizadas que consume la pantalla. */
+      orders: computed(() => store.orderRecords()),
       clients,
       rows,
       filteredRows,
@@ -168,23 +175,6 @@ export const CompanySalesStore = signalStore(
       catalogRepo = inject(CATALOG_PRODUCT_REPOSITORY),
       notificationService = inject(NotificationService),
     ) => ({
-      loadOrders: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() =>
-            portalRepo.orders({ limit: 100 }).pipe(
-              tap((orders) => patchState(store, { orders, loading: false, error: null })),
-              catchError((error: Error) => {
-                const message = error.message || 'No se pudieron cargar las ventas.';
-                patchState(store, { loading: false, error: message });
-                notificationService.showError(message);
-                return EMPTY;
-              }),
-            ),
-          ),
-        ),
-      ),
-
       loadProducts: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { productsLoading: true, error: null })),

@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
-import type { OrdersState } from '../../models/orders-state.model';
+import type { OrdersFeatureOptions, OrdersState } from '../../models/orders-state.model';
 import type { OrdersDataSource } from '../../repositories/orders-data-source/orders-data-source.repository';
 
 const LOAD_ERROR = 'No se pudieron cargar los pedidos.';
@@ -19,9 +19,14 @@ const UPDATE_ERROR = 'No se pudo actualizar el estado del pedido.';
  * qué capacidades expone mediante `OrdersDataSource`; los derivados de cada
  * pantalla (filtros, KPIs, filas) quedan en su propio store.
  */
-export function withOrders<T extends { id: string }, S extends string = string>(
+export function withOrders<T extends { id: string | number }, S extends string = string>(
   sourceToken: InjectionToken<OrdersDataSource<T, S>>,
+  options: OrdersFeatureOptions = {},
 ) {
+  const loadError = options.loadErrorMessage ?? LOAD_ERROR;
+  const detailError = options.detailErrorMessage ?? DETAIL_ERROR;
+  const updateError = options.updateErrorMessage ?? UPDATE_ERROR;
+
   return signalStoreFeature(
     withState<OrdersState<T>>({
       orderRecords: [],
@@ -50,7 +55,7 @@ export function withOrders<T extends { id: string }, S extends string = string>(
                   }),
                 ),
                 catchError((error: Error) => {
-                  const message = error.message || LOAD_ERROR;
+                  const message = error.message || loadError;
                   patchState(store, { loading: false, error: message });
                   notificationService.showError(message);
                   return EMPTY;
@@ -73,7 +78,7 @@ export function withOrders<T extends { id: string }, S extends string = string>(
                   }),
                 ),
                 catchError((error: Error) => {
-                  patchState(store, { error: error.message || LOAD_ERROR });
+                  patchState(store, { error: error.message || loadError });
                   return EMPTY;
                 }),
               ),
@@ -103,7 +108,7 @@ export function withOrders<T extends { id: string }, S extends string = string>(
                   });
                 }),
                 catchError((error: Error) => {
-                  const message = error.message || DETAIL_ERROR;
+                  const message = error.message || detailError;
                   patchState(store, { selectedLoading: false, selectedError: message });
                   notificationService.showError(message);
                   return EMPTY;
@@ -122,11 +127,11 @@ export function withOrders<T extends { id: string }, S extends string = string>(
             tap(() => patchState(store, { updatingStatus: true, selectedError: null })),
             switchMap((status) => {
               const id = untracked(() => store.selectedRecord())?.id;
-              if (!id || !source.updateStatus) {
+              if (id === undefined || id === null || !source.updateStatus) {
                 patchState(store, { updatingStatus: false });
                 return EMPTY;
               }
-              return source.updateStatus(id, status).pipe(
+              return source.updateStatus(String(id), status).pipe(
                 tap((order) => {
                   patchState(store, {
                     selectedRecord: order,
@@ -136,10 +141,13 @@ export function withOrders<T extends { id: string }, S extends string = string>(
                     ),
                     lastUpdatedAt: Date.now(),
                   });
-                  notificationService.showSuccess(`Pedido ${order.id} actualizado.`);
+                  notificationService.showSuccess(
+                    options.updateSuccessMessage?.(String(order.id)) ??
+                      `Pedido ${order.id} actualizado.`,
+                  );
                 }),
                 catchError((error: Error) => {
-                  const message = error.message || UPDATE_ERROR;
+                  const message = error.message || updateError;
                   patchState(store, { updatingStatus: false, selectedError: message });
                   notificationService.showError(message);
                   return EMPTY;

@@ -1,5 +1,5 @@
 /** Estado común de la lista y el detalle de pedidos. */
-export interface OrdersState<T extends { id: string }> {
+export interface OrdersState<T extends { id: string | number }> {
   orderRecords: T[];
   loading: boolean;
   error: string | null;
@@ -10,4 +10,12 @@ export interface OrdersState<T extends { id: string }> {
   selectedError: string | null;
   /** Cambio de estado en curso; deshabilita las acciones del detalle. */
   updatingStatus: boolean;
+}
+
+/** Mensajes que cada workspace puede adaptar a su vocabulario (ventas/pedidos). */
+export interface OrdersFeatureOptions {
+  loadErrorMessage?: string;
+  detailErrorMessage?: string;
+  updateErrorMessage?: string;
+  updateSuccessMessage?: (orderId: string) => string;
 }
