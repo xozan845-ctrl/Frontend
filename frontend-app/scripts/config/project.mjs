@@ -160,6 +160,12 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  orders: {
+    layers: ['adapters', 'models'],
+    publicApi: true,
+    publicUi: false,
+    domainOnly: true,
+  },
   cart: {
     layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: true,

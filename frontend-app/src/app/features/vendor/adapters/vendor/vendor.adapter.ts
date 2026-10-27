@@ -6,17 +6,14 @@ import {
   BackendClienteDTO,
   BackendOfertaVendedorDTO,
   BackendPaginaOfertasDTO,
-  BackendPedidoDTO,
-  BackendPedidoItemDTO,
   BackendProductoVendedorDTO,
 } from '../../models/vendor.dto';
 import {
-  Client,
-  OrderLine,
-  OrderStatus,
-  VendorOrder,
-  VendorProduct,
-} from '../../models/vendor-order.model';
+  adaptOrderFromBackend as adaptSharedOrder,
+  adaptOrdersFromBackend as adaptSharedOrders,
+  type Order as SharedOrder,
+} from '../../../orders/public-api';
+import { Client, OrderStatus, VendorOrder, VendorProduct } from '../../models/vendor-order.model';
 import { VendorOffer, VendorOfferPage } from '../../models/vendor-offer.model';
 
 /** Alias tolerados del `estado` del backend hacia los estados del dominio. */
@@ -56,70 +53,33 @@ function toAmount(value: unknown): number {
   return Math.round(n * 100) / 100;
 }
 
-/** Cantidad entera ≥ 1; inválida o menor que 1 → 1 (la línea existe, luego hay pieza). */
-function toQuantity(value: unknown): number {
-  const n = typeof value === 'string' ? Number(value) : value;
-  if (typeof n !== 'number' || !Number.isFinite(n)) return 1;
-  return Math.max(1, Math.round(n));
-}
-
 /** Texto no vacío o el fallback dado. */
 function toText(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.trim() ? value : fallback;
 }
 
-/** Línea del pedido o `null` si no tiene forma de producto (se descarta). */
-function adaptOrderLine(raw: unknown): OrderLine | null {
-  const item = toObject<BackendPedidoItemDTO>(raw);
-  if (!item) return null;
-  const productId = item.producto_id ?? item.productoId ?? item.sku ?? item.codigo;
-  if (!hasId(productId)) return null;
-
+function toVendorOrder(order: SharedOrder): VendorOrder {
   return {
-    productId: String(productId),
-    name: toText(item.nombre, 'Producto'),
-    sku: toText(item.sku ?? item.codigo, ''),
-    unitPrice: toAmount(item.precio ?? item.precio_unitario),
-    quantity: toQuantity(item.cantidad),
+    id: order.id,
+    clientId: order.clientId ?? order.buyerId ?? null,
+    clientName: order.clientName,
+    createdAt: order.createdAt,
+    status: normalizeOrderStatus(order.status),
+    total: order.total,
+    lines: order.lines,
+    notes: order.notes,
   };
 }
 
-/**
- * Pedido del vendedor (`GET /vendedores/pedidos`, `POST /vendedores/pedidos`).
- * Tolerante a `snake_case`/`camelCase`, al envelope `{ data }` y a ids
- * numéricos; `null` si no hay id (no es un pedido interpretable).
- */
+/** Pedido del vendedor normalizado por el adaptador compartido de pedidos. */
 export function adaptOrderFromBackend(raw: unknown): VendorOrder | null {
-  const pedido = unwrapApiSingleResponse<BackendPedidoDTO>(raw);
-  if (!pedido || typeof pedido !== 'object') return null;
-  if (!hasId(pedido.id)) return null;
-
-  const clienteDto = toObject<BackendClienteDTO>(pedido.cliente);
-  const client = adaptClientFromBackend(clienteDto);
-
-  return {
-    id: String(pedido.id),
-    clientId: client?.id ?? (hasId(pedido.cliente_id) ? String(pedido.cliente_id) : null),
-    clientName:
-      client?.name ??
-      toText(clienteDto?.nombre, toText(pedido.cliente_nombre, 'Cliente ocasional')),
-    createdAt: toText(pedido.creado_en ?? pedido.fecha, ''),
-    status: normalizeOrderStatus(pedido.estado),
-    total: toAmount(pedido.total),
-    lines: Array.isArray(pedido.items)
-      ? pedido.items
-          .map((item) => adaptOrderLine(item))
-          .filter((line): line is OrderLine => line !== null)
-      : [],
-    notes: toText(pedido.observaciones ?? pedido.notas, ''),
-  };
+  const order = adaptSharedOrder(raw);
+  return order ? toVendorOrder(order) : null;
 }
 
-/** Lista de pedidos tolerante a array directo o envelopes `{ data }`/`{ items }`. */
+/** Lista de pedidos tolerante a array directo o envelopes. */
 export function adaptOrdersFromBackend(response: unknown): VendorOrder[] {
-  return unwrapApiListResponse<unknown>(response)
-    .map((raw) => adaptOrderFromBackend(raw))
-    .filter((order): order is VendorOrder => order !== null);
+  return adaptSharedOrders(response).map(toVendorOrder);
 }
 
 /**
