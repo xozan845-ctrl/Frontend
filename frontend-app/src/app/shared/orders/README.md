@@ -7,6 +7,8 @@ Componentes y metadatos de pedidos reutilizados por **Ventas de empresa** y por
 | -------------------- | ------------------------------------------------------------------------- |
 | `models/`            | Tono/estado y contrato de la tabla (`OrderTableRow`, `OrderTableColumn`). |
 | `constants/`         | `ORDER_STATUS_META` para estados de empresa y vendedor.                   |
+| `repositories/`      | `OrdersDataSource` y fábrica del token de cada fuente de pedidos.         |
+| `state/with-orders`  | Store compartido de lista, detalle, recarga y cambio de estado.           |
 | `order-status-badge` | Badge accesible con etiqueta y color por estado.                          |
 | `order-totals`       | Subtotal, descuento, IVA opcional y total; descuento editable o fijo.     |
 | `order-table`        | Tabla configurable de pedidos por columnas y filas normalizadas.          |
@@ -21,6 +23,13 @@ empresa configura las nueve columnas de su tabla; Pedidos recientes del vendedor
 usa el subconjunto pedido/cliente/total/estado/fecha y añade el enlace al
 detalle mediante `numberHref` (ADR-61).
 
-> Fase 2: estado, badge, totales y tabla compartidos; el modelo/adaptador vive
-> en `features/orders`. El store compartido y la composición del módulo siguen
-> pendientes.
+`withOrders<T, S>` es la feature de estado común: recibe el token de un
+`OrdersDataSource` y aporta `orderRecords`, carga visible, recarga silenciosa,
+detalle y cambio de estado con avisos. Solo `list` es obligatorio
+(`detail`/`updateStatus` son capacidades opcionales). El tipo `T` y el estado
+`S` son los del workspace; los derivados de cada pantalla siguen en su store.
+Pedidos del vendedor ya la usa; Ventas de empresa lo hará en la siguiente fase
+(ADR-62).
+
+> Fase 2: estado, badge, totales, tabla y store compartidos; el modelo/adaptador
+> vive en `features/orders`. La composición del módulo sigue pendiente.
