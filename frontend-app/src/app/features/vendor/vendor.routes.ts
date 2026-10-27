@@ -1,10 +1,18 @@
 import { Route, Routes } from '@angular/router';
 import { STORAGE_ROUTES } from '../storage/public-api';
 import { workspaceGuard } from '../auth/public-api';
+import {
+  CLIENTS_PAGE_CONFIG,
+  CLIENTS_SCOPE_CONFIG,
+} from '../../shared/clients/constants/clients-config.tokens';
 import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
 import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
 import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
+import {
+  VENDOR_CLIENTS_PAGE_CONFIG,
+  VENDOR_CLIENTS_SCOPE_CONFIG,
+} from './constants/vendor-clients-page.config';
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -83,7 +91,12 @@ export const VENDOR_ROUTES: Routes = [
       { path: 'empresa', pathMatch: 'full', redirectTo: '/empresa' },
       {
         path: 'clientes',
-        loadComponent: () => import('./pages/clients/clients.component'),
+        loadChildren: () =>
+          import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
+        providers: [
+          { provide: CLIENTS_PAGE_CONFIG, useValue: VENDOR_CLIENTS_PAGE_CONFIG },
+          { provide: CLIENTS_SCOPE_CONFIG, useValue: VENDOR_CLIENTS_SCOPE_CONFIG },
+        ],
       },
       {
         path: 'catalogo',
