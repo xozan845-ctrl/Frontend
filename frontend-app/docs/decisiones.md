@@ -1403,7 +1403,7 @@ contexto y consecuencias.
   - La página ofrece KPIs, pestañas Productos/Servicios/Materia Prima, filtros,
     orden, paginación, exportación CSV y plantilla descargable. La importación
     de Excel queda como aviso explícito de próxima fase.
-  - El presupuesto de advertencia del bundle inicial sube de 540 kB a 545 kB
+  - El presupuesto de advertencia del bundle inicial sube de 545 kB a 550 kB
     por los estilos de la nueva UI; el límite de error permanece en 560 kB.
 - **Consecuencias**: el módulo se aproxima al diseño de inventario solicitado
   sin inventar contratos de backend. Los metadatos y los servicios quedan
