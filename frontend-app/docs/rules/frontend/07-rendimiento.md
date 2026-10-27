@@ -25,5 +25,5 @@ grep -rn "zone.js" package.json angular.json           # R-PF-7: no debe aparece
 
 > **Lighthouse y la invitación.** `lighthouserc.json` audita explícitamente
 > `index.html`. La tarjeta `invitacion.html` lleva `noindex, nofollow` por diseño
-> (ADR-51), así que su puntuación SEO de Lighthouse no aplica; su vista previa y
+> (ADR-52), así que su puntuación SEO de Lighthouse no aplica; su vista previa y
 > su flujo se validan en la suite de navegador/manual.
