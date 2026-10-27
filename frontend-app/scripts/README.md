@@ -54,7 +54,8 @@ que son verificables por máquina.
 > El feature `clients` es un dominio compartido por empresa y vendedor
 > (`domainOnly`); su composición vive en `features/modules/clients`. Los
 > módulos anidados se descubren bajo `features/modules/<módulo>` y los features
-> `domainOnly` no exigen rutas (ADR-59).
+> `domainOnly` no exigen rutas (ADR-59). `orders` es un dominio `domainOnly`
+> consumido por los adaptadores de empresa y vendedor (ADR-60).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz

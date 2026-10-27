@@ -1524,3 +1524,30 @@ contexto y consecuencias.
   Compras, etc.) podrán seguir el mismo patrón. El motor de reglas gana el
   concepto de feature de dominio y módulo anidado; añadir un módulo exige
   declarar su contrato, sus páginas y sus rutas, sin duplicar dominio.
+
+## ADR-60: Dominio y adaptador compartidos de pedidos
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: empresa y vendedor normalizaban pedidos por caminos distintos
+  (`cart/adapters/order` y `vendor/adapters/vendor`). Ambos toleraban
+  `snake_case`/`camelCase`, envelopes, centavos y líneas con nombres distintos,
+  pero con reglas duplicadas y divergentes.
+- **Decisión**:
+  - Se crea `features/orders` como dominio `domainOnly` con `Order` y
+    `OrderLine`.
+  - `adaptOrder(s)FromBackend` acepta los contratos de empresa (`OrderView`,
+    `oferta_id`, `precio_unitario_cents`, `comprador_id`) y de vendedor
+    (`producto_id`, `precio`, `cliente` anidado, `cliente_id`), además de
+    envelopes, total/total_cents y líneas inválidas.
+  - El adaptador de empresa conserva `OrderResponse` para no romper sus stores;
+    el de vendedor conserva `VendorOrder` y normaliza su estado. Las páginas,
+    stores y tablas actuales no cambian en esta fase.
+  - El estado compartido se queda como texto; la presentación usa
+    `shared/orders` (ADR-57) para etiqueta, tono, badge y totales.
+- **Consecuencias**: una sola normalización de pedidos para ambos workspaces.
+  El adaptador compartido entra en el bundle inicial porque los servicios de
+  empresa/vendedor se importan eager; el aviso de presupuesto sube de 550 a
+  555 kB (el error permanece en 560 kB, R-PF-1). La siguiente fase puede
+  extraer el store/tabla compartidos y mover la composición de Ventas/Pedidos a
+  `features/modules/sales` sin volver a tocar el contrato de entrada.
