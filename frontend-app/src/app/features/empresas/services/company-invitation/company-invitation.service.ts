@@ -20,21 +20,37 @@ import type {
 } from '../../models/company-invitation.model';
 import { CompanyInvitationRepository } from '../../repositories/company-invitation.repository';
 
-const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1']);
+const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
+const LEGACY_INVITATION_PATH = '/registro/vendedor';
 
-export function normalizeInvitationUrl(
-  invitationUrl: string,
-  frontendUrl: string,
-  production: boolean,
-): string {
-  if (!production || !invitationUrl || !frontendUrl) return invitationUrl;
+/**
+ * Normaliza la URL que devuelve el backend:
+ *
+ * - Reemplaza un origen loopback (`localhost:5173`) por el frontend real, también
+ *   en desarrollo. Así `ng serve` comparte enlaces que funcionan.
+ * - Convierte el enlace anterior (`/registro/vendedor?token=…`) en la ruta corta
+ *   `/i/<token>`. La ruta antigua sigue viva para los enlaces ya enviados.
+ */
+export function normalizeInvitationUrl(invitationUrl: string, frontendUrl: string): string {
+  if (!invitationUrl || !frontendUrl) return invitationUrl;
+  if (!/^https?:\/\//i.test(invitationUrl) && !invitationUrl.startsWith('/')) {
+    return invitationUrl;
+  }
 
   try {
-    const invitation = new URL(invitationUrl);
-    if (!LOOPBACK_HOSTNAMES.has(invitation.hostname)) return invitationUrl;
-
     const publicOrigin = frontendUrl.replace(/\/+$/, '');
-    return `${publicOrigin}${invitation.pathname}${invitation.search}${invitation.hash}`;
+    const invitation = new URL(invitationUrl, publicOrigin);
+    const origin = LOOPBACK_HOSTNAMES.has(invitation.hostname) ? publicOrigin : invitation.origin;
+    const token = invitation.searchParams.get('token')?.trim();
+
+    if (invitation.pathname.replace(/\/+$/, '') === LEGACY_INVITATION_PATH && token) {
+      const params = new URLSearchParams(invitation.search);
+      params.delete('token');
+      const extra = params.toString();
+      return `${origin}/i/${encodeURIComponent(token)}${extra ? `?${extra}` : ''}${invitation.hash}`;
+    }
+
+    return `${origin}${invitation.pathname}${invitation.search}${invitation.hash}`;
   } catch {
     return invitationUrl;
   }
@@ -57,7 +73,7 @@ export class CompanyInvitationService implements CompanyInvitationRepository {
         participationPercentage: data.participationPercentage,
         status: 'pendiente',
         expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
-        invitationUrl: `${globalThis.location?.origin ?? environment.frontendUrl}/registro/vendedor?token=mock-token`,
+        invitationUrl: `${globalThis.location?.origin ?? environment.frontendUrl}/i/mock-token`,
       }).pipe(delay(250));
     }
     if (!environment.apiUrl) return this.missingApiUrl();
@@ -78,7 +94,6 @@ export class CompanyInvitationService implements CompanyInvitationRepository {
             invitationUrl: normalizeInvitationUrl(
               invitation.invitationUrl,
               environment.frontendUrl,
-              environment.production,
             ),
           };
         }),
