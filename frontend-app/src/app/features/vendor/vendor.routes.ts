@@ -89,17 +89,17 @@ export const VENDOR_ROUTES: Routes = [
       {
         path: 'ventas/nuevo',
         canActivate: [moduleGuard('store.sales')],
-        loadComponent: () => import('./pages/new-order/new-order.component'),
+        loadComponent: () => import('../modules/sales/pages/new-order/new-order.component'),
       },
       {
         path: 'pedidos',
         canActivate: [moduleGuard('store.orders')],
-        loadComponent: () => import('./pages/orders/orders.component'),
+        loadComponent: () => import('../modules/sales/pages/orders/orders.component'),
       },
       {
         path: 'pedidos/:id',
         canActivate: [moduleGuard('store.orders')],
-        loadComponent: () => import('./pages/order-detail/order-detail.component'),
+        loadComponent: () => import('../modules/sales/pages/order-detail/order-detail.component'),
       },
       {
         path: 'tienda',
