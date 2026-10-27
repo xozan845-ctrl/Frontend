@@ -4,6 +4,7 @@ import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.dir
 import type { CatalogProduct } from '../../../products/public-api';
 import { createCompanySaleLineId } from '../../constants/company-sales.constants';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
+import { OrderTotalsComponent } from '../../../../shared/orders/components/order-totals/order-totals.component';
 import type {
   CompanySaleLine,
   CompanySalePaymentMethod,
@@ -28,7 +29,12 @@ function todayInput(): string {
 @Component({
   selector: 'app-company-quick-sale-modal',
   standalone: true,
-  imports: [AppCurrencyPipe, FocusTrapDirective, CompanySalePaymentMethodsComponent],
+  imports: [
+    AppCurrencyPipe,
+    FocusTrapDirective,
+    CompanySalePaymentMethodsComponent,
+    OrderTotalsComponent,
+  ],
   templateUrl: './company-quick-sale-modal.component.html',
 })
 export class CompanyQuickSaleModalComponent {

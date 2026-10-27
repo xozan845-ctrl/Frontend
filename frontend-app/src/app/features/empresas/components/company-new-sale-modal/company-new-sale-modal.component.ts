@@ -7,6 +7,7 @@ import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.dir
 import type { CatalogProduct } from '../../../products/public-api';
 import { createCompanySaleLineId } from '../../constants/company-sales.constants';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
+import { OrderTotalsComponent } from '../../../../shared/orders/components/order-totals/order-totals.component';
 import type { Client } from '../../../clients/public-api';
 import type { CompanyService } from '../../models/company-service.model';
 import type {
@@ -51,6 +52,7 @@ function todayInput(): string {
     AppCurrencyPipe,
     FocusTrapDirective,
     CompanySalePaymentMethodsComponent,
+    OrderTotalsComponent,
   ],
   templateUrl: './company-new-sale-modal.component.html',
 })

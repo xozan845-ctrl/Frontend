@@ -505,26 +505,14 @@
                     (input)="setDiscount($event)"
                   />
                 </div>
-                <dl class="flex flex-col justify-end gap-1 text-xs">
-                  <div class="flex items-center justify-between gap-3">
-                    <dt class="text-slate-500 dark:text-slate-400">Subtotal</dt>
-                    <dd class="font-bold tabular-nums">{{ subtotal() | appCurrency }}</dd>
-                  </div>
-                  <div class="flex items-center justify-between gap-3">
-                    <dt class="text-slate-500 dark:text-slate-400">Descuento</dt>
-                    <dd class="font-bold tabular-nums">-{{ discount() | appCurrency }}</dd>
-                  </div>
-                  <div
-                    class="flex items-center justify-between gap-3 border-t border-slate-100 pt-1 dark:border-surface-700"
-                  >
-                    <dt class="font-black uppercase">Total</dt>
-                    <dd
-                      class="font-heading text-lg font-black tabular-nums text-accent-600 dark:text-accent-400"
-                    >
-                      {{ total() | appCurrency }}
-                    </dd>
-                  </div>
-                </dl>
+                <app-order-totals
+                  [subtotal]="subtotal()"
+                  [discountPercent]="discountPercent()"
+                  [discountAmount]="discount()"
+                  [total]="total()"
+                  [showTax]="false"
+                  [discountEditable]="false"
+                />
               </div>
             </section>
           }

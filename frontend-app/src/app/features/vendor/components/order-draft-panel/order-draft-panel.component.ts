@@ -1,7 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { OrderDraftLine } from '../../models/vendor-order.model';
 import { OrderLineComponent } from '../order-line/order-line.component';
-import { OrderTotalsComponent } from '../order-totals/order-totals.component';
+import { VENDOR_TAX_RATE } from '../../constants/vendor.constants';
+import { OrderTotalsComponent } from '../../../../shared/orders/components/order-totals/order-totals.component';
 import type { OrderLineQuantityChange } from './order-draft-panel.types';
 
 /**
@@ -33,6 +34,7 @@ export class OrderDraftPanelComponent {
   readonly saveDraft = output<void>();
 
   protected readonly isEmpty = computed(() => this.lines().length === 0);
+  protected readonly taxLabel = `IVA (${Math.round(VENDOR_TAX_RATE * 100)} %)`;
   protected readonly submitDisabled = computed(() => this.isEmpty() || this.submitting());
   protected readonly countLabel = computed(() => {
     const count = this.lines().length;

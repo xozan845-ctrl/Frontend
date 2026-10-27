@@ -7,6 +7,7 @@ import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyNewSaleModalComponent } from '../../components/company-new-sale-modal/company-new-sale-modal.component';
 import { CompanyQuickSaleModalComponent } from '../../components/company-quick-sale-modal/company-quick-sale-modal.component';
+import { OrderStatusBadgeComponent } from '../../../../shared/orders/components/order-status-badge/order-status-badge.component';
 import {
   COMPANY_SALE_PAYMENT_FILTERS,
   COMPANY_SALE_PERIODS,
@@ -44,6 +45,7 @@ const CHIP_CLASSES = {
     SkeletonLoaderComponent,
     CompanyNewSaleModalComponent,
     CompanyQuickSaleModalComponent,
+    OrderStatusBadgeComponent,
   ],
   templateUrl: './company-sales.component.html',
 })

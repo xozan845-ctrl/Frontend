@@ -1,4 +1,5 @@
-import { orderStatusLabel, type OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../cart/public-api';
+import { orderStatusLabel } from '../../../../shared/orders/constants/order-status.constants';
 import {
   COMPANY_SALE_DEFAULT_PROVIDER,
   COMPANY_SALE_MAX_RECORDS,

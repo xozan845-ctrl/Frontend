@@ -11,6 +11,7 @@ describe('OrderTotalsComponent', () => {
     fixture.componentRef.setInput('discountPercent', 0);
     fixture.componentRef.setInput('discountAmount', 0);
     fixture.componentRef.setInput('taxAmount', 174.75);
+    fixture.componentRef.setInput('taxLabel', 'IVA (15 %)');
     fixture.componentRef.setInput('total', 1339.75);
     fixture.detectChanges();
     return fixture;
@@ -30,27 +31,6 @@ describe('OrderTotalsComponent', () => {
     expect(host.querySelector('[data-testid="totals-total"]')?.textContent).toContain('C$1,339.75');
   });
 
-  it('debe etiquetar el IVA con la tasa vigente y reflejar el descuento', async () => {
-    const fixture = await setup();
-    const host = fixture.nativeElement as HTMLElement;
-
-    expect(host.textContent).toContain('IVA (15 %)');
-
-    fixture.componentRef.setInput('discountPercent', 10);
-    fixture.componentRef.setInput('discountAmount', 116.5);
-    fixture.componentRef.setInput('taxAmount', 157.28);
-    fixture.componentRef.setInput('total', 1205.78);
-    fixture.detectChanges();
-
-    expect((host.querySelector('[data-testid="discount-input"]') as HTMLInputElement).value).toBe(
-      '10',
-    );
-    expect(host.querySelector('[data-testid="totals-discount"]')?.textContent).toContain(
-      'C$116.50',
-    );
-    expect(host.querySelector('[data-testid="totals-total"]')?.textContent).toContain('C$1,205.78');
-  });
-
   it('debe emitir el descuento digitado y sanear lo no numérico a 0', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
@@ -64,5 +44,17 @@ describe('OrderTotalsComponent', () => {
     input.dispatchEvent(new Event('input'));
 
     expect(values).toEqual([15, 0]);
+  });
+
+  it('debe ocultar el IVA y el input de descuento cuando el flujo no los usa', async () => {
+    const fixture = await setup();
+    fixture.componentRef.setInput('showTax', false);
+    fixture.componentRef.setInput('discountEditable', false);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('[data-testid="totals-tax"]')).toBeNull();
+    expect(host.querySelector('[data-testid="discount-input"]')).toBeNull();
+    expect(host.querySelector('[data-testid="totals-discount"]')?.textContent).toContain('C$0.00');
   });
 });

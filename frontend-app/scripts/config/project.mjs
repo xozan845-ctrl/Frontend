@@ -366,6 +366,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'mocks',
   'models',
   'navbar',
+  'orders',
   'repositories',
   'resolvers',
   'routing',

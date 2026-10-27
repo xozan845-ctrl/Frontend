@@ -6,7 +6,7 @@ import { LineTotalPipe } from '../../../../shared/pipes/line-total.pipe';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
-import { OrderStatusBadgeComponent } from '../../components/order-status-badge/order-status-badge.component';
+import { OrderStatusBadgeComponent } from '../../../../shared/orders/components/order-status-badge/order-status-badge.component';
 import {
   ORDER_STATUS_ACTIONS,
   ORDER_STATUS_LABELS,
