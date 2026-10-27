@@ -3,7 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { CatalogProductsStore } from '../../../products/public-api';
+import {
+  CATALOG_PRODUCT_REPOSITORY,
+  CatalogProductService,
+  CatalogProductsStore,
+} from '../../../products/public-api';
 import { CatalogComponent } from '../../../products/public-ui';
 import { COMPANY_SERVICE_MAX_DURATION_MINUTES } from '../../constants/company-services.constants';
 import type {
@@ -23,6 +27,11 @@ import { CompanyServicesStore } from '../../state/company-services/company-servi
   selector: 'app-company-products',
   standalone: true,
   imports: [ReactiveFormsModule, CatalogComponent, AppCurrencyPipe, FocusTrapDirective],
+  providers: [
+    CatalogProductsStore,
+    CompanyServicesStore,
+    { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
+  ],
   templateUrl: './company-products.component.html',
 })
 export default class CompanyProductsComponent {
