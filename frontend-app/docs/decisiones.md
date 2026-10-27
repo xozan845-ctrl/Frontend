@@ -1642,3 +1642,35 @@ contexto y consecuencias.
   empresas y no hay ciclos. El bundle inicial pasa a 552.43 kB (techo 555 kB) y
   el chunk de Ventas sigue lazy (~68 kB). Pedidos del vendedor permanece en
   `features/vendor`; mover su composición al módulo queda como siguiente fase.
+
+## ADR-64: Composición de Pedidos y POS del vendedor
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: la lista de pedidos, el detalle y el punto de venta del
+  vendedor vivían en `features/vendor` mezclados con el dominio, los stores y
+  los adaptadores. El módulo `modules/sales` ya componía Ventas de empresa
+  (ADR-63) y era el lugar natural para esta experiencia.
+- **Decisión**:
+  - Se mueven a `features/modules/sales` las páginas `orders`, `order-detail` y
+    `new-order`, junto con los componentes del POS (`client-picker`,
+    `create-client-modal`, `order-draft-panel`, `order-info-fields`,
+    `order-line`, `product-pick-card`, `product-pick-grid`,
+    `quantity-stepper` y `confirm-modal`).
+  - `features/vendor` conserva el dominio, los tipos, las constantes, los
+    repositorios, los servicios y los stores (`VendorOrdersStore`,
+    `OrderDraftStore`, `ClientSearchStore`, `VendorCatalogStore`).
+  - `VENDOR_ROUTES` mantiene los providers de esos stores en el shell para que
+    sobrevivan a la navegación y los libere al salir del panel; solo cambian
+    las rutas lazy de las páginas al módulo.
+  - `recent-orders-table` se queda en `features/vendor` porque también lo usa
+    el inicio del panel; se expone por `vendor/public-api` para el POS y la
+    lista del módulo.
+  - `vendor/public-api` amplía su superficie con stores, tokens, servicios,
+    constantes, tipos y la tabla reciente que consume la composición.
+- **Consecuencias**: `modules/sales` compone las dos experiencias de venta y
+  `features/vendor` queda como dominio/estado del panel. El bundle inicial se
+  mantiene en 552.43 kB y las páginas siguen en chunks lazy
+  (`new-order` ~39 kB, `vendor-routes` ~26 kB). El inicio del vendedor y la
+  tabla reciente permanecen en su feature para no acoplar el dashboard al
+  módulo.

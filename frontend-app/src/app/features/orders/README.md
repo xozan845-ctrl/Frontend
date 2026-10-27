@@ -19,6 +19,5 @@ El estado reutilizable no vive aquí: `shared/orders/state/with-orders` aporta e
 store común y `shared/orders/order-table` la tabla, para que el dominio siga sin
 dependencias de UI ni de estado y no arrastre esas piezas al bundle inicial
 (ADR-62). Pedidos del vendedor y Ventas de empresa ya usan el store; empresa
-solo implementa la capacidad de listado. La composición de Ventas vive en
-`features/modules/sales` (ADR-63); la de Pedidos del vendedor sigue en su
-feature hasta la siguiente fase.
+solo implementa la capacidad de listado. La composición de Ventas y de Pedidos/POS del vendedor vive en
+`features/modules/sales` (ADR-63/64).
