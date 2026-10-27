@@ -82,46 +82,11 @@
       </p>
     </div>
   } @else {
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm">
-        <thead>
-          <tr
-            class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
-          >
-            <th scope="col" class="py-2 pr-3 font-bold">Pedido</th>
-            <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
-            <th scope="col" class="py-2 pr-3 font-bold">Total</th>
-            <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
-            <th scope="col" class="py-2 font-bold">Fecha</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-50 dark:divide-surface-800">
-          @for (order of orders(); track order.id) {
-            <tr
-              class="transition-colors hover:bg-slate-50/70 dark:hover:bg-surface-800/60"
-              data-testid="recent-order-row"
-            >
-              <td class="py-3 pr-3 font-mono text-xs font-bold">
-                <a
-                  [routerLink]="['/vendedor/pedidos', order.id]"
-                  class="text-slate-900 transition-colors hover:text-accent-600 dark:text-white dark:hover:text-accent-400"
-                  [attr.data-testid]="'order-link-' + order.id"
-                >
-                  {{ order.id }}
-                </a>
-              </td>
-              <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">{{ order.clientName }}</td>
-              <td class="py-3 pr-3 font-bold tabular-nums text-slate-900 dark:text-white">
-                {{ order.total | appCurrency }}
-              </td>
-              <td class="py-3 pr-3"><app-order-status-badge [status]="order.status" /></td>
-              <td class="py-3 text-xs text-slate-500 dark:text-slate-400" data-testid="order-date">
-                {{ order.createdAt | appDate: 'datetime' }}
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    <app-order-table
+      [rows]="rows()"
+      [columns]="columns"
+      dateFormat="datetime"
+      rowTestId="recent-order-row"
+    />
   }
 </section>

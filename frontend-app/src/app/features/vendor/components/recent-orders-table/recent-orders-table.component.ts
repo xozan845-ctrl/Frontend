@@ -1,10 +1,12 @@
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { VendorOrder } from '../../models/vendor-order.model';
-import { OrderStatusBadgeComponent } from '../../../../shared/orders/components/order-status-badge/order-status-badge.component';
+import { OrderTableComponent } from '../../../../shared/orders/components/order-table/order-table.component';
+import type {
+  OrderTableColumn,
+  OrderTableRow,
+} from '../../../../shared/orders/models/order-table.model';
 
 /** Fecha corta del pedido para la tabla; `—` si la API no la trae (`R-RB-4`). */
 export function formatOrderDate(iso: string): string {
@@ -35,13 +37,7 @@ export function formatOrderTime(timestamp: number): string {
 @Component({
   selector: 'app-recent-orders-table',
   standalone: true,
-  imports: [
-    RouterLink,
-    AppCurrencyPipe,
-    AppDatePipe,
-    SkeletonLoaderComponent,
-    OrderStatusBadgeComponent,
-  ],
+  imports: [RouterLink, SkeletonLoaderComponent, OrderTableComponent],
   templateUrl: './recent-orders-table.component.html',
 })
 export class RecentOrdersTableComponent {
@@ -58,6 +54,26 @@ export class RecentOrdersTableComponent {
   readonly emptyTitle = input('Aún no hay pedidos');
   readonly emptySubtitle = input('Los pedidos que registres aparecerán aquí.');
   readonly retry = output<void>();
+
+  protected readonly columns: readonly OrderTableColumn[] = [
+    { key: 'number', label: 'Pedido' },
+    { key: 'client', label: 'Cliente' },
+    { key: 'total', label: 'Total', align: 'right' },
+    { key: 'status', label: 'Estado' },
+    { key: 'date', label: 'Fecha' },
+  ];
+
+  protected readonly rows = computed<OrderTableRow[]>(() =>
+    this.orders().map((order) => ({
+      id: order.id,
+      number: order.id,
+      numberHref: `/vendedor/pedidos/${order.id}`,
+      date: order.createdAt,
+      clientName: order.clientName,
+      total: order.total,
+      status: order.status,
+    })),
+  );
 
   protected readonly retryClick = (): void => this.retry.emit();
   protected readonly updatedLabel = computed(() => {

@@ -7,7 +7,8 @@ import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyNewSaleModalComponent } from '../../components/company-new-sale-modal/company-new-sale-modal.component';
 import { CompanyQuickSaleModalComponent } from '../../components/company-quick-sale-modal/company-quick-sale-modal.component';
-import { OrderStatusBadgeComponent } from '../../../../shared/orders/components/order-status-badge/order-status-badge.component';
+import { OrderTableComponent } from '../../../../shared/orders/components/order-table/order-table.component';
+import type { OrderTableColumn } from '../../../../shared/orders/models/order-table.model';
 import {
   COMPANY_SALE_PAYMENT_FILTERS,
   COMPANY_SALE_PERIODS,
@@ -45,7 +46,7 @@ const CHIP_CLASSES = {
     SkeletonLoaderComponent,
     CompanyNewSaleModalComponent,
     CompanyQuickSaleModalComponent,
-    OrderStatusBadgeComponent,
+    OrderTableComponent,
   ],
   templateUrl: './company-sales.component.html',
 })
@@ -59,6 +60,17 @@ export default class CompanySalesComponent {
   );
 
   readonly periods = COMPANY_SALE_PERIODS;
+  readonly saleColumns: readonly OrderTableColumn[] = [
+    { key: 'number', label: '# Venta' },
+    { key: 'date', label: 'Fecha' },
+    { key: 'client', label: 'Cliente' },
+    { key: 'payment', label: 'Método' },
+    { key: 'products', label: 'Productos' },
+    { key: 'provider', label: 'Proveedor' },
+    { key: 'total', label: 'Total', align: 'right' },
+    { key: 'profit', label: 'Ganancia', align: 'right' },
+    { key: 'status', label: 'Estado' },
+  ];
   readonly paymentFilters = COMPANY_SALE_PAYMENT_FILTERS;
   readonly newSaleOpen = signal(false);
   readonly quickSaleOpen = signal(false);
