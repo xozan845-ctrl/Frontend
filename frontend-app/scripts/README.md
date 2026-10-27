@@ -56,8 +56,8 @@ que son verificables por máquina.
 > módulos anidados se descubren bajo `features/modules/<módulo>` y los features
 > `domainOnly` no exigen rutas (ADR-59). `orders` es un dominio `domainOnly`
 > consumido por los adaptadores de empresa y vendedor (ADR-60). `modules/sales`
-> compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64) y el catálogo
-> administrable de empresa (ADR-65).
+> compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64), el catálogo
+> administrable de empresa (ADR-65) y Compras/Gastos/Caja (ADR-66).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz
