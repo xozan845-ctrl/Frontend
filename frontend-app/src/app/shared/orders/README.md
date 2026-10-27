@@ -28,8 +28,9 @@ detalle mediante `numberHref` (ADR-61).
 detalle y cambio de estado con avisos. Solo `list` es obligatorio
 (`detail`/`updateStatus` son capacidades opcionales). El tipo `T` y el estado
 `S` son los del workspace; los derivados de cada pantalla siguen en su store.
-Pedidos del vendedor ya la usa; Ventas de empresa lo hará en la siguiente fase
-(ADR-62).
+`OrdersFeatureOptions` permite adaptar los mensajes (por ejemplo, "ventas" en
+empresa). Pedidos del vendedor y Ventas de empresa ya la usan; empresa solo
+implementa `list` porque su pantalla es de lectura (ADR-62).
 
 > Fase 2: estado, badge, totales, tabla y store compartidos; el modelo/adaptador
 > vive en `features/orders`. La composición del módulo sigue pendiente.
