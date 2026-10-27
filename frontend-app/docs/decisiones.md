@@ -1275,3 +1275,33 @@ contexto y consecuencias.
   clientes, el registro local podrá migrarse y el adaptador de pedidos quedará
   como respaldo. La importación `.xlsx` y la sincronización de contactos
   requieren contrato backend o una librería adicional.
+
+## ADR-52: Productos y servicios en el workspace de empresa
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: el sidebar del workspace de empresa ofrecía "Productos /
+  Servicios" (`/empresa/productos`), pero la página solo embebía el catálogo
+  maestro de productos. No existía forma de registrar servicios ni de
+  distinguirlos de los productos; Core Engine tampoco expone un endpoint de
+  servicios.
+- **Decisión**:
+  - La página pasa a tener dos pestañas: **Productos**, que reutiliza
+    `CatalogComponent` en modo embebido (`embedded`), y **Servicios**, con su
+    propio formulario, tabla, búsqueda, filtros y paginación.
+  - Un servicio se identifica por un código inmutable, nombre, descripción,
+    categoría, precio, duración en minutos y estado (`activo`/`inactivo`). El
+    código se normaliza a mayúsculas y es único por empresa.
+  - Mientras Core Engine no exponga el contrato de servicios, se persisten en
+    `localStorage` bajo `ecom_company_services_<tenant>`, aislados por empresa y
+    saneados al leerlos (`R-RB-4`). La lógica vive en
+    `CompanyServicesStore` y en el adapter puro del feature.
+  - Los productos siguen consumiendo `GET/POST/PATCH /catalog/productos`; no se
+    inventa un `DELETE` de productos porque el contrato no lo documenta.
+  - `CatalogComponent` acepta `embedded` para ocultar la miga de pan, usar `h2`
+    y delegar el SEO a la página contenedora.
+- **Consecuencias**: el empresario administra productos y servicios desde un
+  único apartado sin cambios de backend. Los servicios quedan ligados al
+  navegador del empresario hasta que exista endpoint; migrarlos será sustituir
+  el almacenamiento local por un repositorio HTTP manteniendo el store y la UI.
+  Revertir es eliminar la pestaña, el store, el adapter y el ítem de pruebas.

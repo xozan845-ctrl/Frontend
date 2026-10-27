@@ -9,8 +9,8 @@ empresa, consulta, modalidad logística, tiendas e invitaciones de vendedores.
 | `adapters/`     | Normalización de empresa, tiendas, vendedores e invitaciones (R-AR-4).   |
 | `repositories/` | Puertos `COMPANY_REPOSITORY` y `COMPANY_INVITATION_REPOSITORY`.          |
 | `services/`     | HTTP contra `/empresas` e invitaciones y traducción de errores (R-AR-9). |
-| `state/`        | Empresa, portal consolidado e invitaciones de vendedores.                |
-| `pages/`        | Configuración, vendedores, invitación pública y tiendas.                 |
+| `state/`        | Empresa, portal consolidado, servicios de la empresa e invitaciones.     |
+| `pages/`        | Configuración, vendedores, invitación pública, tiendas y productos.      |
 
 ## Decisión
 

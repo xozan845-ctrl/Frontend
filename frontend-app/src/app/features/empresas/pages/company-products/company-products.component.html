@@ -1,0 +1,575 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="company-products-page">
+  <header class="flex flex-col gap-4">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <span>Empresa</span>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">
+          Productos y servicios
+        </span>
+      </nav>
+      <h1
+        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+      >
+        Productos y servicios
+      </h1>
+      <p class="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+        Administra el catálogo de productos y los servicios que ofrece tu empresa.
+      </p>
+    </div>
+
+    <div
+      class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"
+      role="group"
+      aria-label="Sección de productos y servicios"
+    >
+      <button
+        type="button"
+        class="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
+        [class]="
+          activeTab() === 'productos'
+            ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
+            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:border-surface-500 dark:hover:text-white'
+        "
+        [attr.aria-pressed]="activeTab() === 'productos'"
+        data-testid="products-tab"
+        (click)="setTab('productos')"
+      >
+        <i class="fa-solid fa-cube" aria-hidden="true"></i>
+        Productos
+        <span
+          class="rounded-full bg-black/10 px-2 py-0.5 text-[10px] tabular-nums dark:bg-white/10"
+          data-testid="products-tab-count"
+        >
+          {{ catalog.total() }}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
+        [class]="
+          activeTab() === 'servicios'
+            ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
+            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:border-surface-500 dark:hover:text-white'
+        "
+        [attr.aria-pressed]="activeTab() === 'servicios'"
+        data-testid="services-tab"
+        (click)="setTab('servicios')"
+      >
+        <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
+        Servicios
+        <span
+          class="rounded-full bg-black/10 px-2 py-0.5 text-[10px] tabular-nums dark:bg-white/10"
+          data-testid="services-tab-count"
+        >
+          {{ services.total() }}
+        </span>
+      </button>
+    </div>
+  </header>
+
+  @if (activeTab() === 'productos') {
+    <section aria-label="Productos">
+      <app-catalog-page [embedded]="true" />
+    </section>
+  } @else {
+    <section class="flex flex-col gap-6" aria-labelledby="services-title">
+      <div class="card flex flex-col gap-5 p-5">
+        <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2
+              id="services-title"
+              class="font-heading text-2xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+            >
+              Servicios
+            </h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Servicios que tu empresa ofrece a sus clientes, con precio y duración estimada.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary self-start sm:self-auto"
+            data-testid="new-service"
+            (click)="openCreateService()"
+          >
+            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+            Nuevo servicio
+          </button>
+        </header>
+
+        @if (serviceFormOpen()) {
+          <section
+            class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-surface-600 dark:bg-surface-700/40"
+            aria-labelledby="service-form-title"
+            data-testid="service-form"
+          >
+            <h3
+              id="service-form-title"
+              class="font-heading text-lg font-black tracking-tight uppercase dark:text-white"
+            >
+              {{ editingService() ? 'Editar servicio' : 'Nuevo servicio' }}
+            </h3>
+
+            @if (serviceError(); as message) {
+              <div
+                class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-700 dark:border-amber-800 dark:bg-amber-900/10 dark:text-amber-300"
+                role="alert"
+                data-testid="service-form-error"
+              >
+                {{ message }}
+              </div>
+            }
+
+            <form
+              [formGroup]="serviceForm"
+              (ngSubmit)="submitService()"
+              class="mt-3 grid gap-4 sm:grid-cols-2"
+              novalidate
+            >
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-code"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Código *
+                </label>
+                <input
+                  id="service-code"
+                  type="text"
+                  class="input"
+                  formControlName="code"
+                  autocomplete="off"
+                  placeholder="SRV-001"
+                  data-testid="service-code"
+                />
+                @if (isServiceInvalid('code')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    Usa de 2 a 32 letras, números o guiones.
+                  </p>
+                } @else if (editingService()) {
+                  <p class="text-[10px] text-slate-400">El código no se puede cambiar.</p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-name"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Nombre *
+                </label>
+                <input
+                  id="service-name"
+                  type="text"
+                  class="input"
+                  formControlName="name"
+                  placeholder="Ej. Mantenimiento preventivo"
+                  data-testid="service-name"
+                />
+                @if (isServiceInvalid('name')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    El nombre debe tener entre 2 y 200 caracteres.
+                  </p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1 sm:col-span-2">
+                <label
+                  for="service-description"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Descripción
+                </label>
+                <textarea
+                  id="service-description"
+                  rows="2"
+                  class="input resize-none"
+                  formControlName="description"
+                  placeholder="Qué incluye el servicio…"
+                  data-testid="service-description"
+                ></textarea>
+                @if (isServiceInvalid('description')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    La descripción no puede superar 500 caracteres.
+                  </p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-category"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Categoría
+                </label>
+                <input
+                  id="service-category"
+                  type="text"
+                  class="input"
+                  formControlName="category"
+                  placeholder="Ej. Soporte técnico"
+                  data-testid="service-category"
+                />
+                @if (isServiceInvalid('category')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    La categoría no puede superar 80 caracteres.
+                  </p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-price"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Precio (C$) *
+                </label>
+                <input
+                  id="service-price"
+                  type="text"
+                  inputmode="decimal"
+                  class="input"
+                  formControlName="price"
+                  placeholder="1500.00"
+                  data-testid="service-price"
+                />
+                @if (isServiceInvalid('price')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    Usa un decimal válido, por ejemplo 1500.00.
+                  </p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-duration"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Duración (minutos) *
+                </label>
+                <input
+                  id="service-duration"
+                  type="number"
+                  min="1"
+                  max="10080"
+                  step="1"
+                  class="input"
+                  formControlName="durationMinutes"
+                  data-testid="service-duration"
+                />
+                @if (isServiceInvalid('durationMinutes')) {
+                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                    La duración debe estar entre 1 y 10 080 minutos.
+                  </p>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label
+                  for="service-status"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Estado
+                </label>
+                <select
+                  id="service-status"
+                  class="input"
+                  formControlName="status"
+                  data-testid="service-status"
+                >
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                </select>
+              </div>
+
+              <div class="flex gap-2 sm:col-span-2">
+                <button type="submit" class="btn btn-primary" data-testid="save-service">
+                  {{ editingService() ? 'Guardar cambios' : 'Crear servicio' }}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-testid="cancel-service"
+                  (click)="closeServiceForm()"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </section>
+        }
+
+        <div
+          class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_auto]"
+          data-testid="services-filters"
+        >
+          <div class="flex flex-col gap-1">
+            <label for="services-search" class="sr-only">Buscar servicios</label>
+            <input
+              id="services-search"
+              type="search"
+              class="input"
+              placeholder="Buscar por nombre, código o categoría…"
+              [value]="services.search()"
+              data-testid="services-search"
+              (input)="onSearchInput($event)"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="services-category-filter" class="sr-only">Categoría</label>
+            <select
+              id="services-category-filter"
+              class="input"
+              [value]="services.category()"
+              data-testid="services-category-filter"
+              (change)="onCategoryFilter($event)"
+            >
+              <option value="">Todas las categorías</option>
+              @for (category of services.categories(); track category) {
+                <option [value]="category">{{ category }}</option>
+              }
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="services-status-filter" class="sr-only">Estado</label>
+            <select
+              id="services-status-filter"
+              class="input"
+              [value]="services.status() ?? ''"
+              data-testid="services-status-filter"
+              (change)="onStatusFilter($event)"
+            >
+              <option value="">Todos los estados</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-testid="clear-services-filters"
+              (click)="services.clearFilters()"
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        @if (!services.hasServices() && !serviceFormOpen()) {
+          <div
+            class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 p-10 text-center dark:border-surface-600"
+            data-testid="services-empty"
+          >
+            <i
+              class="fa-solid fa-briefcase text-3xl text-slate-300 dark:text-surface-600"
+              aria-hidden="true"
+            ></i>
+            <p class="text-sm font-bold text-slate-600 dark:text-slate-300">
+              Aún no hay servicios registrados
+            </p>
+            <p class="max-w-md text-xs text-slate-500 dark:text-slate-400">
+              Agrega el primer servicio para que tu equipo conozca qué ofrece la empresa y a qué
+              precio.
+            </p>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm mt-2"
+              (click)="openCreateService()"
+            >
+              Crear el primer servicio
+            </button>
+          </div>
+        } @else if (!services.hasFilteredServices()) {
+          <p
+            class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
+            data-testid="services-no-results"
+          >
+            No hay servicios que coincidan con los filtros.
+            <button
+              type="button"
+              class="font-bold text-accent-600"
+              (click)="services.clearFilters()"
+            >
+              Limpiar filtros
+            </button>
+          </p>
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm" data-testid="services-table">
+              <thead>
+                <tr
+                  class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+                >
+                  <th scope="col" class="py-2 pr-3 font-bold">Código</th>
+                  <th scope="col" class="py-2 pr-3 font-bold">Servicio</th>
+                  <th scope="col" class="py-2 pr-3 font-bold">Categoría</th>
+                  <th scope="col" class="py-2 pr-3 font-bold">Precio</th>
+                  <th scope="col" class="py-2 pr-3 font-bold">Duración</th>
+                  <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+                  <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+                @for (service of services.pagedServices(); track service.id) {
+                  <tr data-testid="service-row" [attr.data-service-id]="service.id">
+                    <td
+                      class="py-3 pr-3 font-mono text-xs whitespace-nowrap text-slate-500 dark:text-slate-400"
+                    >
+                      {{ service.code }}
+                    </td>
+                    <td class="py-3 pr-3">
+                      <p class="font-bold text-slate-900 dark:text-white">{{ service.name }}</p>
+                      <p class="max-w-md truncate text-xs text-slate-400">
+                        {{ service.description || '—' }}
+                      </p>
+                    </td>
+                    <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                      {{ service.category || '—' }}
+                    </td>
+                    <td
+                      class="py-3 pr-3 tabular-nums whitespace-nowrap text-slate-600 dark:text-slate-300"
+                    >
+                      {{ service.price | appCurrency }}
+                    </td>
+                    <td
+                      class="py-3 pr-3 tabular-nums whitespace-nowrap text-slate-600 dark:text-slate-300"
+                    >
+                      {{ service.durationMinutes }} min
+                    </td>
+                    <td class="py-3 pr-3">
+                      <span
+                        class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                        [class]="
+                          service.status === 'activo'
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                            : 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300'
+                        "
+                      >
+                        {{ serviceStatusLabels[service.status] }}
+                      </span>
+                    </td>
+                    <td class="py-3 text-right">
+                      <div class="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          class="btn btn-secondary btn-sm"
+                          [attr.data-testid]="'edit-service-' + service.id"
+                          (click)="openEditService(service)"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-danger btn-sm"
+                          [attr.data-testid]="'delete-service-' + service.id"
+                          (click)="confirmDelete(service)"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <footer
+            class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-surface-700"
+          >
+            <p class="text-xs text-slate-500 dark:text-slate-400" data-testid="services-count">
+              {{ services.filteredCount() }} de {{ services.total() }}
+              {{ services.total() === 1 ? 'servicio' : 'servicios' }}
+            </p>
+            <div class="flex items-center gap-2">
+              <span
+                class="text-xs text-slate-500 dark:text-slate-400"
+                data-testid="services-page-indicator"
+              >
+                Página {{ services.currentPage() }} de {{ services.pageCount() }}
+              </span>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                [disabled]="services.isFirstPage()"
+                data-testid="services-prev-page"
+                (click)="services.previousPage()"
+              >
+                Anterior
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                [disabled]="services.isLastPage()"
+                data-testid="services-next-page"
+                (click)="services.nextPage()"
+              >
+                Siguiente
+              </button>
+            </div>
+          </footer>
+        }
+
+        <p class="text-[10px] text-slate-400 dark:text-slate-500">
+          Los servicios se guardan en este dispositivo hasta que el servidor habilite el catálogo de
+          servicios.
+        </p>
+      </div>
+    </section>
+  }
+</div>
+
+@if (serviceToDelete(); as service) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="service-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="service-delete-title"
+      tabindex="-1"
+      [appFocusTrap]="true"
+      (escape)="cancelDelete()"
+    >
+      <h2
+        id="service-delete-title"
+        class="font-heading text-xl font-black tracking-tight text-slate-900 uppercase dark:text-white"
+      >
+        Eliminar servicio
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ service.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-service"
+          (click)="cancelDelete()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-service"
+          (click)="deleteService()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
