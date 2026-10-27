@@ -1340,3 +1340,36 @@ contexto y consecuencias.
   Una tarjeta distinta por empresa requeriría SSR, Cloud Functions o un Worker
   externo. Hay que mantener sincronizado el dominio público en `index.html` y
   en `scripts/generate-invitation-html.mjs`.
+
+## ADR-54: Centro de ventas con POS local en el workspace de empresa
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: `/empresa/ventas` solo permitía consultar las órdenes
+  consolidadas y el estado de cuenta. El empresario necesitaba registrar ventas
+  desde el panel con un asistente guiado y una venta rápida tipo POS. Core
+  Engine no expone un POST de ventas de empresa: solo `GET /orders/empresa`,
+  `GET /empresarios/me/ventas`, el catálogo de productos y los servicios
+  locales del feature.
+- **Decisión**:
+  - La página se rediseña como centro operativo: KPIs de ventas del día/mes,
+    cantidad, ticket promedio y ganancia estimada; clientes recurrentes;
+    historial por periodo, forma de pago, búsqueda y paginación.
+  - `CompanySalesStore` combina las órdenes reales con las ventas locales.
+    Las ventas nuevas se persisten por tenant en
+    `localStorage` bajo `ecom_company_sales_<tenant>` y se sanean al leerlas.
+  - **Nueva Venta** es un asistente de seis pasos: cliente (existente,
+    consumidor final o rápido), productos del catálogo, servicios locales,
+    resumen con descuento, pago/fecha y observaciones.
+  - **Venta rápida** permite escanear o escribir un SKU/nombre, acumular líneas,
+    elegir fecha y forma de pago, y cobrar en un solo paso.
+  - Formas de pago: efectivo, tarjeta, transferencia, PayPal, otro y pago
+    separado. El pago separado se registra como pendiente.
+  - La ganancia local queda en cero porque el contrato no expone costo; en las
+    órdenes del backend se usa `monto_empresario` del estado de cuenta.
+  - La ruta hija se carga de forma lazy para no aumentar el bundle inicial.
+- **Consecuencias**: el empresario puede operar ventas sin cambios de backend y
+  el historial combina datos reales con registros locales. Migrar a un endpoint
+  futuro implica sustituir la persistencia local por un repositorio HTTP
+  manteniendo el store y la UI. Los recurrentes se derivan de los clientes
+  frecuentes hasta que exista una marca explícita de recurrencia.
