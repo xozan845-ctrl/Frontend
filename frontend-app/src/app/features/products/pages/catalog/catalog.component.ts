@@ -1,6 +1,6 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { injectSeoPage } from '../../../../core/services/seo/seo.service';
+import { SeoService } from '../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { AuthStore } from '../../../auth/public-api';
@@ -19,13 +19,29 @@ import { CatalogProductsStore } from '../../state/catalog-product/catalog-produc
   templateUrl: './catalog.component.html',
 })
 export default class CatalogComponent {
+  /**
+   * Cuando el catálogo se embebe en otra página (p. ej. el apartado
+   * "Productos / Servicios" de empresa), oculta la miga de pan y usa `h2` para
+   * no duplicar el `h1`; el SEO lo gestiona la página contenedora.
+   */
+  readonly embedded = input(false);
   readonly catalog = inject(CatalogProductsStore);
   readonly authStore = inject(AuthStore);
   private readonly fb = inject(FormBuilder);
-  private readonly seoService = injectSeoPage(
-    'Catálogo — Panel del vendedor',
-    'Consulta el catálogo maestro, filtra productos y administra su stock y precio base.',
-  );
+  private readonly seoService = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly syncSeo = effect(() => {
+    if (!this.embedded()) {
+      this.seoService.setPage(
+        'Catálogo — Panel del vendedor',
+        'Consulta el catálogo maestro, filtra productos y administra su stock y precio base.',
+      );
+    }
+  });
+  /** En modo embebido el SEO pertenece a la página contenedora. */
+  private readonly cleanupSeo = this.destroyRef.onDestroy(() => {
+    if (!this.embedded()) this.seoService.reset();
+  });
 
   readonly canManage = () => this.authStore.user()?.role === 'empresario';
   readonly showForm = signal(false);
