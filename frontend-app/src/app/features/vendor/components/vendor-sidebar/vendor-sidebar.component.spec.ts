@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { VendorSidebarComponent } from './vendor-sidebar.component';
+import { workspaceModuleGroups } from '../../../../core/workspace/constants/workspace-modules.constants';
 
 @Component({ standalone: true, template: '' })
 class StubPageComponent {}
@@ -14,6 +15,10 @@ describe('VendorSidebarComponent', () => {
       providers: [provideRouter([{ path: '**', component: StubPageComponent }])],
     }).compileComponents();
     const fixture = TestBed.createComponent(VendorSidebarComponent);
+    fixture.componentRef.setInput(
+      'groups',
+      workspaceModuleGroups('store', () => true),
+    );
     fixture.detectChanges();
     return fixture;
   };

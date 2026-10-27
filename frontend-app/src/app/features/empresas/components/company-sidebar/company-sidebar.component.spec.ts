@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { CompanySidebarComponent } from './company-sidebar.component';
+import { workspaceModuleGroups } from '../../../../core/workspace/constants/workspace-modules.constants';
 
 describe('CompanySidebarComponent', () => {
   beforeEach(() => TestBed.resetTestingModule());
@@ -13,6 +14,10 @@ describe('CompanySidebarComponent', () => {
     }).compileComponents();
 
     const fixture = TestBed.createComponent(CompanySidebarComponent);
+    fixture.componentRef.setInput(
+      'groups',
+      workspaceModuleGroups('company', () => true),
+    );
     fixture.detectChanges();
     const links = fixture.debugElement.queryAll(By.css('a[data-testid^="company-nav-"]'));
 

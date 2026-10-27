@@ -23,6 +23,7 @@
     <app-company-sidebar
       id="company-sidebar"
       [open]="isSidebarOpen()"
+      [groups]="navGroups"
       (closed)="closeSidebar()"
       (itemSelected)="closeSidebar()"
     />

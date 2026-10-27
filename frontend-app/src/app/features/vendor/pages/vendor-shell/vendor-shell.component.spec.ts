@@ -1,14 +1,16 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import VendorShellComponent from './vendor-shell.component';
 import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-sidebar.component';
+import { AuthStore } from '../../../auth/public-api';
 
 describe('VendorShellComponent', () => {
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [VendorShellComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: AuthStore, useValue: { user: signal(null) } }],
     }).compileComponents();
     const fixture = TestBed.createComponent(VendorShellComponent);
     fixture.detectChanges();
