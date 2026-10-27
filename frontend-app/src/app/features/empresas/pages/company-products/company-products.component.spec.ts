@@ -54,7 +54,9 @@ describe('CompanyProductsComponent', () => {
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(CompanyProductsComponent, { set: { providers: [] } })
+      .compileComponents();
 
     const fixture = TestBed.createComponent(CompanyProductsComponent);
     fixture.detectChanges();

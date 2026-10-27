@@ -32,7 +32,7 @@
         [class]="
           activeTab() === 'productos'
             ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
-            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:border-surface-500 dark:hover:text-white'
+            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white'
         "
         [attr.aria-pressed]="activeTab() === 'productos'"
         data-testid="products-tab"
@@ -41,7 +41,7 @@
         <i class="fa-solid fa-cube" aria-hidden="true"></i>
         Productos
         <span
-          class="rounded-full bg-black/10 px-2 py-0.5 text-[10px] tabular-nums dark:bg-white/10"
+          class="rounded-full px-2 py-0.5 text-[10px] tabular-nums"
           data-testid="products-tab-count"
         >
           {{ catalog.total() }}
@@ -54,7 +54,7 @@
         [class]="
           activeTab() === 'servicios'
             ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
-            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:border-surface-500 dark:hover:text-white'
+            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white'
         "
         [attr.aria-pressed]="activeTab() === 'servicios'"
         data-testid="services-tab"
@@ -63,7 +63,7 @@
         <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
         Servicios
         <span
-          class="rounded-full bg-black/10 px-2 py-0.5 text-[10px] tabular-nums dark:bg-white/10"
+          class="rounded-full px-2 py-0.5 text-[10px] tabular-nums"
           data-testid="services-tab-count"
         >
           {{ services.total() }}
@@ -305,7 +305,7 @@
         }
 
         <div
-          class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_auto]"
+          class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]"
           data-testid="services-filters"
         >
           <div class="flex flex-col gap-1">
