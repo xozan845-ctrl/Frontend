@@ -1,0 +1,76 @@
+<section class="flex flex-col gap-5">
+  <header class="flex flex-col gap-2">
+    <p class="text-[10px] font-bold tracking-widest text-accent-600 uppercase">Operación</p>
+    <h1 class="font-heading text-2xl font-black tracking-tight uppercase">{{ title() }}</h1>
+    <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ subtitle() }}</p>
+  </header>
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="card p-4" data-testid="finance-kpi-purchases">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Compras del mes</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ finance.summary().purchasesMonth | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="finance-kpi-expenses">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Gastos del mes</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ finance.summary().expensesMonth | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="finance-kpi-cash">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Saldo de caja</p>
+      <p
+        class="mt-1 text-xl font-black tabular-nums"
+        [class.text-emerald-600]="finance.summary().cashBalance >= 0"
+        [class.text-red-600]="finance.summary().cashBalance < 0"
+      >
+        {{ finance.summary().cashBalance | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="finance-kpi-pending">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Por pagar</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ finance.summary().purchasesPending | appCurrency }}
+      </p>
+    </article>
+  </div>
+
+  <nav class="flex flex-wrap gap-2" aria-label="Secciones de finanzas">
+    @for (item of tabs; track item.value) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="bg-accent-600 text-white border-accent-600"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-accent-500 hover:text-accent-600 dark:border-surface-600 dark:text-slate-300"
+        [attr.data-testid]="'finance-tab-' + item.value"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  @switch (tab()) {
+    @case ('purchases') {
+      <app-purchase-panel
+        [records]="finance.purchases()"
+        (create)="createPurchase($event)"
+        (remove)="finance.removePurchase($event)"
+      />
+    }
+    @case ('expenses') {
+      <app-expense-panel
+        [records]="finance.expenses()"
+        (create)="createExpense($event)"
+        (remove)="finance.removeExpense($event)"
+      />
+    }
+    @case ('cash') {
+      <app-cash-panel
+        [records]="finance.cash()"
+        (create)="createCashMovement($event)"
+        (remove)="finance.removeCashMovement($event)"
+      />
+    }
+  }
+</section>

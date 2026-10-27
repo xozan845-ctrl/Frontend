@@ -94,7 +94,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:purchases:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.expenses',
@@ -105,7 +105,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:expenses:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.cash',
@@ -116,7 +116,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:cash:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.payables',
