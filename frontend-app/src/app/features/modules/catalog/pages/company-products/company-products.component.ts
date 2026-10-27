@@ -1,22 +1,21 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { injectSeoPage } from '../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../core/services/notification/notification.service';
-import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../../../products/public-api';
+import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { CompanyCatalogTableComponent } from '../../components/company-catalog-table/company-catalog-table.component';
 import { CompanyProductModalComponent } from '../../components/company-product-modal/company-product-modal.component';
-import { COMPANY_CATALOG_SORT_LABELS } from '../../constants/company-products.constants';
-import type {
-  CompanyCatalogFormValue,
-  CompanyCatalogModalMode,
-  CompanyCatalogRow,
-  CompanyCatalogSort,
-  CompanyCatalogStatusFilter,
-  CompanyCatalogTab,
-} from '../../models/company-catalog.model';
-import { CompanyProductsStore } from '../../state/company-products/company-products.store';
-import { CompanyServicesStore } from '../../state/company-services/company-services.store';
+import {
+  COMPANY_CATALOG_SORT_LABELS,
+  CompanyProductsStore,
+  CompanyServicesStore,
+  type CompanyCatalogFormValue,
+  type CompanyCatalogModalMode,
+  type CompanyCatalogRow,
+  type CompanyCatalogSort,
+  type CompanyCatalogStatusFilter,
+  type CompanyCatalogTab,
+} from '../../../../empresas/public-api';
 
 /**
  * Catálogo administrable de la empresa (ADR-55): KPIs, pestañas de productos,
@@ -31,11 +30,6 @@ import { CompanyServicesStore } from '../../state/company-services/company-servi
     CompanyProductModalComponent,
     AppCurrencyPipe,
     FocusTrapDirective,
-  ],
-  providers: [
-    CompanyProductsStore,
-    CompanyServicesStore,
-    { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
   ],
   templateUrl: './company-products.component.html',
 })

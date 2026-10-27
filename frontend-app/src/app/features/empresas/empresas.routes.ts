@@ -74,7 +74,8 @@ export const EMPRESAS_ROUTES: Routes = [
       {
         path: 'productos',
         canActivate: [moduleGuard('company.catalog')],
-        loadComponent: () => import('./pages/company-products/company-products.component'),
+        loadChildren: () =>
+          import('../modules/catalog/catalog.routes').then((module) => module.CATALOG_ROUTES),
       },
       companySoonRoute(
         'compras',

@@ -1,19 +1,17 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
 import {
   COMPANY_PRODUCT_CONTENT_UNITS,
   COMPANY_PRODUCT_PURCHASE_UNITS,
   COMPANY_PRODUCT_UNITS,
-} from '../../constants/company-products.constants';
-import type {
-  CompanyCatalogFieldType,
-  CompanyCatalogFormValue,
-  CompanyCatalogKind,
-  CompanyCatalogModalMode,
-  CompanyCatalogRow,
-  CompanyCatalogStatus,
-} from '../../models/company-catalog.model';
+  type CompanyCatalogFieldType,
+  type CompanyCatalogFormValue,
+  type CompanyCatalogKind,
+  type CompanyCatalogModalMode,
+  type CompanyCatalogRow,
+  type CompanyCatalogStatus,
+} from '../../../../empresas/public-api';
 
 /**
  * Modal de alta/edición de productos y servicios (ADR-55). Componente

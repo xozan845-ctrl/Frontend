@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyCatalogTableComponent } from './company-catalog-table.component';
-import type { CompanyCatalogRow } from '../../models/company-catalog.model';
+import type { CompanyCatalogRow } from '../../../../empresas/public-api';
 
 function makeRow(overrides: Partial<CompanyCatalogRow> = {}): CompanyCatalogRow {
   return {
