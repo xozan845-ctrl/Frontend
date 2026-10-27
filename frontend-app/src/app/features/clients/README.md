@@ -1,8 +1,8 @@
 # clients/ — Cartera de clientes compartida
 
-Módulo de **clientes** reutilizado por el workspace de empresa y el panel del
-vendedor. La UI, el store, el adaptador y el modal son únicos; cada workspace
-inyecta su fuente de datos y su configuración visual.
+Dominio de **clientes** reutilizado por el workspace de empresa y el panel del
+vendedor. Este feature es `domainOnly`: modelo, adaptador, store, servicios y
+puertos. La página y el modal viven en `features/modules/clients` (ADR-59).
 
 | Capa            | Responsabilidad                                                       |
 | --------------- | --------------------------------------------------------------------- |
@@ -12,12 +12,12 @@ inyecta su fuente de datos y su configuración visual.
 | `services/`     | Fuente HTTP compartida; el workspace configura endpoint y ámbito.     |
 | `constants/`    | Paginación, umbrales, token de configuración y clave `ecom_*`.        |
 | `state/`        | `ClientsStore` con derivados en `withComputed` y persistencia local.  |
-| `components/`   | Modal de alta de cliente.                                             |
-| `pages/`        | Página compartida; título, inicio e importación vienen por token.     |
+| `public-api.ts` | API de dominio para el módulo de composición y otros consumidores.    |
 
 ## Decisión
 
-Empresa y vendedor comparten el mismo módulo (ADR-56). El **estado** decide qué
+Empresa y vendedor comparten el mismo dominio (ADR-56). La composición está en
+`features/modules/clients` (ADR-59). El **estado** decide qué
 se muestra: la fuente de datos entrega solo las órdenes del ámbito activo y la
 configuración de ruta define título, miga de pan y capacidades. Empresa usa
 `GET /orders/empresa` y storage por tenant; vendedor usa
