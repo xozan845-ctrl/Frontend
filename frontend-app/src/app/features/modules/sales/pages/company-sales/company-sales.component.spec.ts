@@ -2,20 +2,20 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import CompanySalesComponent from './company-sales.component';
-import { CompanySalesStore } from '../../state/company-sales/company-sales.store';
-import { CompanyServicesStore } from '../../state/company-services/company-services.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../auth/public-api';
-import type { CompanyService } from '../../models/company-service.model';
-import type { CatalogProduct } from '../../../products/public-api';
-import type {
-  CompanyRecurringClient,
-  CompanySaleKpis,
-  CompanySalePaymentFilter,
-  CompanySalePeriod,
-  CompanySaleRow,
-  CreateCompanySalePayload,
-} from '../../models/company-sale.model';
+import {
+  CompanySalesStore,
+  CompanyServicesStore,
+  type CompanyRecurringClient,
+  type CompanySaleKpis,
+  type CompanySalePaymentFilter,
+  type CompanySalePeriod,
+  type CompanySaleRow,
+  type CompanyServiceModel,
+  type CreateCompanySalePayload,
+} from '../../../../empresas/public-api';
+import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { AuthStore } from '../../../../auth/public-api';
+import type { CatalogProduct } from '../../../../products/public-api';
 
 const row: CompanySaleRow = {
   id: 'sale-1',
@@ -64,7 +64,7 @@ const product: CatalogProduct = {
   createdAt: '2026-09-01T12:00:00.000Z',
 };
 
-const service: CompanyService = {
+const service: CompanyServiceModel = {
   id: 'srv-1',
   companyId: 'empresa-1',
   code: 'SRV-1',

@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CompanyNewSaleModalComponent } from './company-new-sale-modal.component';
-import type { Client } from '../../../clients/public-api';
-import type { CompanyService } from '../../models/company-service.model';
-import type { CatalogProduct } from '../../../products/public-api';
-import type { CreateCompanySalePayload } from '../../models/company-sale.model';
+import type { Client } from '../../../../clients/public-api';
+import type { CatalogProduct } from '../../../../products/public-api';
+import type {
+  CompanyServiceModel,
+  CreateCompanySalePayload,
+} from '../../../../empresas/public-api';
 
 const client: Client = {
   id: 'buyer-buyer-1',
@@ -40,7 +42,7 @@ const product: CatalogProduct = {
   createdAt: '2026-09-01T12:00:00.000Z',
 };
 
-const service: CompanyService = {
+const service: CompanyServiceModel = {
   id: 'srv-1',
   companyId: 'empresa-1',
   code: 'SRV-1',

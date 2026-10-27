@@ -6,7 +6,7 @@ import { HOME_ROUTES, ROOT_ROUTES } from './features/home/home.routes';
 import { PLANS_ROUTES } from './features/plans/plans.routes';
 import { PRODUCTS_ROUTES } from './features/products/products.routes';
 import { WISHLIST_ROUTES } from './features/wishlist/wishlist.routes';
-import { EMPRESAS_ROUTES } from './features/empresas/public-api';
+import { EMPRESAS_ROUTES } from './features/empresas/empresas.routes';
 import { storefrontResolver } from './features/products/resolvers/storefront/storefront.resolver';
 
 /**
