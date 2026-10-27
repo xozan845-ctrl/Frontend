@@ -2,8 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import NewOrderComponent from './new-order.component';
+import { createVendorOrdersSource } from '../../services/vendor-orders-source/vendor-orders-source.service';
 import {
   VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
 import { CLIENT_REPOSITORY, ClientRepository } from '../../repositories/client.repository';
@@ -125,6 +127,7 @@ describe('NewOrderComponent (POS)', () => {
       providers: [
         provideRouter([]),
         { provide: VENDOR_ORDER_REPOSITORY, useValue: orderRepo },
+        { provide: VENDOR_ORDERS_SOURCE, useValue: createVendorOrdersSource(orderRepo) },
         { provide: CLIENT_REPOSITORY, useValue: clientRepo },
         { provide: VENDOR_PRODUCT_REPOSITORY, useValue: productRepo },
         { provide: NotificationService, useValue: notification },

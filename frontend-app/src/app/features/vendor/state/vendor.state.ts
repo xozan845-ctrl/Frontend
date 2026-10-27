@@ -41,22 +41,11 @@ export interface VendorCatalogState {
   category: string | null;
 }
 
-export interface VendorOrdersState {
-  orders: VendorOrder[];
-  loading: boolean;
-  error: string | null;
-  /** Marca de tiempo (ms) de la última carga lograda; alimenta "Actualizado …". */
-  lastUpdatedAt: number | null;
+export interface VendorOrdersUiState {
   /** Modo "en vivo": sondeo activo que se pausa con la pestaña oculta. */
   live: boolean;
   /** Filtro por estado de la lista completa; `null` equivale a "Todas". */
   statusFilter: OrderStatus | null;
-  /** Pedido abierto en la página de detalle (`pedidos/:id`). */
-  selectedOrder: VendorOrder | null;
-  selectedLoading: boolean;
-  selectedError: string | null;
-  /** Cambio de estado en curso; deshabilita las acciones del detalle. */
-  updatingStatus: boolean;
 }
 
 /** KPIs del inicio del panel: venta de hoy y trabajo por atender. */

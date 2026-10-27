@@ -14,9 +14,14 @@ import {
   VENDOR_CLIENTS_SCOPE_CONFIG,
 } from './constants/vendor-clients-page.config';
 import { vendorGuard } from './guards/vendor/vendor.guard';
+import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
-import { VENDOR_ORDER_REPOSITORY } from './repositories/vendor-order.repository';
+import {
+  VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
+  type VendorOrderRepository,
+} from './repositories/vendor-order.repository';
 import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.repository';
 import { ClientService } from './services/client/client.service';
 import { VendorOfferService } from './services/vendor-offer/vendor-offer.service';
@@ -62,6 +67,11 @@ export const VENDOR_ROUTES: Routes = [
     loadComponent: () => import('./pages/vendor-shell/vendor-shell.component'),
     providers: [
       { provide: VENDOR_ORDER_REPOSITORY, useClass: VendorOrderService },
+      {
+        provide: VENDOR_ORDERS_SOURCE,
+        useFactory: (repository: VendorOrderRepository) => createVendorOrdersSource(repository),
+        deps: [VENDOR_ORDER_REPOSITORY],
+      },
       { provide: CLIENT_REPOSITORY, useClass: ClientService },
       { provide: VENDOR_PRODUCT_REPOSITORY, useClass: VendorProductService },
       OrderDraftStore,
