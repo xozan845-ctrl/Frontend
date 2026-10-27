@@ -1469,3 +1469,32 @@ contexto y consecuencias.
   modelo de orden, adaptador, store y tabla queda como siguiente fase; los
   stores conservan sus capacidades específicas (ventas locales de empresa,
   polling y transiciones del POS).
+
+## ADR-58: Registro de módulos por workspace y permisos
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: los sidebars de empresa y vendedor declaraban sus ítems en
+  arrays hardcodeados, con rutas y permisos repartidos. La visibilidad dependía
+  de comprobaciones por rol y no había una fuente única para decidir qué módulo
+  ve cada sesión. Además, los módulos financieros y de administración debían
+  quedar reservados al propietario o a permisos delegados.
+- **Decisión**:
+  - Se crea `core/workspace` con el registro `WORKSPACE_MODULES`: id, etiqueta,
+    icono, ruta, sección, workspace, permiso y estado (`ready`/`soon`).
+  - Los shells construyen los grupos desde `AuthStore` y
+    `workspaceModuleGroups(...)`, que filtra por `canEnterWorkspace` y
+    `hasPermission`. Los sidebars son presentacionales y reciben los grupos.
+  - `moduleGuard(id)` protege las rutas con el mismo registro; el registro se
+    importa de forma lazy para no aumentar el bundle inicial.
+  - Se amplían los permisos `company:*` para ventas, clientes, catálogo,
+    compras, gastos, caja, cuentas por pagar, salarios, proformas, códigos de
+    barras, créditos, impuestos, reportes, estadísticas, notificaciones y
+    configuración. El vendedor conserva permisos `store:*` y no recibe los
+    módulos de empresa.
+  - La UI oculta lo no permitido, pero la autorización real sigue en el backend
+    y RLS; el guard solo evita navegación incoherente.
+- **Consecuencias**: añadir un módulo es una entrada de registro + permiso +
+  guard, sin duplicar menús. Los módulos “soon” ya aparecen según sesión y se
+  implementan después. La separación por carpetas `features/modules` se podrá
+  hacer más adelante para la composición de módulos, sin mover el dominio.
