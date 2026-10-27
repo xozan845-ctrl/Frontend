@@ -4,7 +4,9 @@
  */
 export {
   CLIENT_SEARCH_DEBOUNCE_MS,
+  ORDER_STATUS_ACTIONS,
   ORDER_STATUS_LABELS,
+  ORDER_STATUS_TRANSITIONS,
   VENDOR_DRAFT_STORAGE_KEY,
   VENDOR_POLL_INTERVAL_MS,
   VENDOR_TAX_RATE,
@@ -27,6 +29,18 @@ export type {
   VendorOffer,
   VendorOfferPage,
 } from './models/vendor-offer.model';
+export { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
+export { CLIENT_REPOSITORY, type ClientRepository } from './repositories/client.repository';
+export {
+  VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
+  type VendorOrderRepository,
+} from './repositories/vendor-order.repository';
+export {
+  VENDOR_PRODUCT_REPOSITORY,
+  type VendorProductRepository,
+} from './repositories/vendor-product.repository';
+export { RecentOrdersTableComponent } from './components/recent-orders-table/recent-orders-table.component';
 export { ClientSearchStore } from './state/client-search/client-search.store';
 export { OrderDraftStore } from './state/order-draft/order-draft.store';
 export { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
