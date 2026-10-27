@@ -77,27 +77,24 @@ export const EMPRESAS_ROUTES: Routes = [
         loadChildren: () =>
           import('../modules/catalog/catalog.routes').then((module) => module.CATALOG_ROUTES),
       },
-      companySoonRoute(
-        'compras',
-        'Compras',
-        'Órdenes y proveedores de la empresa.',
-        'fa-solid fa-bag-shopping',
-        'company.purchases',
-      ),
-      companySoonRoute(
-        'gastos',
-        'Gastos',
-        'Control de gastos operativos.',
-        'fa-solid fa-dollar-sign',
-        'company.expenses',
-      ),
-      companySoonRoute(
-        'caja',
-        'Caja / Pagos',
-        'Movimientos y cierres de caja.',
-        'fa-solid fa-wallet',
-        'company.cash',
-      ),
+      {
+        path: 'compras',
+        canActivate: [moduleGuard('company.purchases')],
+        loadChildren: () =>
+          import('../modules/finance/finance.routes').then((module) => module.PURCHASES_ROUTES),
+      },
+      {
+        path: 'gastos',
+        canActivate: [moduleGuard('company.expenses')],
+        loadChildren: () =>
+          import('../modules/finance/finance.routes').then((module) => module.EXPENSES_ROUTES),
+      },
+      {
+        path: 'caja',
+        canActivate: [moduleGuard('company.cash')],
+        loadChildren: () =>
+          import('../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
+      },
       companySoonRoute(
         'cuentas-por-pagar',
         'Cuentas por pagar',
