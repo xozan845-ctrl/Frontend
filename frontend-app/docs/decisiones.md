@@ -1444,3 +1444,28 @@ contexto y consecuencias.
   acotada a sus ventas, sin duplicar lógica. El storage histórico de empresa se
   conserva. Un endpoint futuro de clientes se integra sustituyendo la fuente de
   datos, sin tocar la página ni el store.
+
+## ADR-57: Primitivos compartidos de pedidos entre ventas y POS
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: Ventas de empresa (`company-sales`) y Pedidos/POS del vendedor
+  duplicaban etiquetas, colores y transiciones de estado, el badge de estado y
+  el bloque de totales. Además, cada flujo tenía su propia interpretación de
+  estados (`creada/pagada/enviada/...` en empresa y
+  `pendiente/en_proceso/completado/cancelado` en vendedor).
+- **Decisión**:
+  - Se crea `shared/orders` con `ORDER_STATUS_META`, que normaliza ambos
+    vocabularios y expone etiqueta y tono por estado.
+  - `OrderStatusBadgeComponent` es único para empresa y vendedor.
+  - `OrderTotalsComponent` recibe subtotal, descuento, IVA opcional y total.
+    El descuento puede ser editable (POS) o solo informativo (resumen/venta
+    rápida), y el IVA se oculta cuando el flujo no lo aplica.
+  - La tabla de Ventas de empresa, el detalle/listado del vendedor y el panel
+    del POS consumen estos componentes; el estilo y la accesibilidad quedan en
+    un solo lugar.
+- **Consecuencias**: se elimina la duplicación visual y de metadatos de estado,
+  sin forzar una misma pantalla para dos flujos distintos. La unificación del
+  modelo de orden, adaptador, store y tabla queda como siguiente fase; los
+  stores conservan sus capacidades específicas (ventas locales de empresa,
+  polling y transiciones del POS).
