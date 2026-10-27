@@ -101,10 +101,15 @@ export class SeoService {
   }
 
   /** Título, descripción, canonical y Open Graph de una página genérica. */
-  setPage(title: string, description?: string, path?: string): void {
+  setPage(
+    title: string,
+    description?: string,
+    path?: string,
+    imagePath: string = DEFAULT_OG_IMAGE,
+  ): void {
     const canonical = this.absoluteUrl(path ?? this.currentPath());
     const socialDescription = description || DEFAULT_DESCRIPTION;
-    const image = this.absoluteUrl(DEFAULT_OG_IMAGE);
+    const image = this.absoluteUrl(imagePath);
 
     this.updateTitle(title);
     this.updateMeta(description);
@@ -250,8 +255,12 @@ export function injectSeoCleanup(): SeoService {
  * Debe invocarse en un contexto de inyección (field initializer, constructor o
  * factory), nunca dentro de un `effect` ni de un callback asíncrono.
  */
-export function injectSeoPage(title: string, description?: string): SeoService {
+export function injectSeoPage(title: string, description?: string, imagePath?: string): SeoService {
   const seo = injectSeoCleanup();
-  seo.setPage(title, description);
+  if (imagePath) {
+    seo.setPage(title, description, undefined, imagePath);
+  } else {
+    seo.setPage(title, description);
+  }
   return seo;
 }
