@@ -160,6 +160,11 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  'modules/sales': {
+    layers: ['components', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
   orders: {
     layers: ['adapters', 'models'],
     publicApi: true,

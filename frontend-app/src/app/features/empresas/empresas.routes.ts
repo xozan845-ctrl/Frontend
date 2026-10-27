@@ -59,9 +59,7 @@ export const EMPRESAS_ROUTES: Routes = [
         path: 'ventas',
         canActivate: [moduleGuard('company.sales')],
         loadChildren: () =>
-          import('./pages/company-sales/company-sales.routes').then(
-            (module) => module.COMPANY_SALES_ROUTES,
-          ),
+          import('../modules/sales/sales.routes').then((module) => module.SALES_ROUTES),
       },
       {
         path: 'clientes',
