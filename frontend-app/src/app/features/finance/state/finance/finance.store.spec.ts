@@ -121,6 +121,9 @@ describe('FinanceStore', () => {
       expensesTotal: 50,
       cashBalance: 200,
     });
+    expect(store.hasPurchases()).toBe(true);
+    expect(store.hasExpenses()).toBe(true);
+    expect(store.hasCash()).toBe(true);
     expect(notification.showSuccess).toHaveBeenCalledWith('Compra registrada.');
     expect(notification.showSuccess).toHaveBeenCalledWith('Gasto registrado.');
     expect(notification.showSuccess).toHaveBeenCalledWith('Movimiento de caja registrado.');

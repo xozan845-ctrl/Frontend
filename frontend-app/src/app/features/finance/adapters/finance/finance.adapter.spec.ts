@@ -124,6 +124,23 @@ describe('finance.adapter', () => {
     ).toBeNull();
   });
 
+  it('debe generar un id alternativo cuando crypto no expone randomUUID', () => {
+    const originalCrypto = globalThis.crypto;
+    vi.stubGlobal('crypto', {});
+    try {
+      const record = createPurchaseRecord({
+        date: '2026-10-20',
+        supplier: 'Proveedor',
+        concept: 'Compra',
+        amount: 10,
+        status: 'pagada',
+      });
+      expect(record?.id).toMatch(/^purchase-/);
+    } finally {
+      vi.stubGlobal('crypto', originalCrypto);
+    }
+  });
+
   it('debe calcular totales del mes, pendientes y saldo de caja', () => {
     const now = new Date('2026-10-27T12:00:00');
     const previous: PurchaseRecord = { ...PURCHASE, id: 'purchase-2', date: '2026-09-01' };
