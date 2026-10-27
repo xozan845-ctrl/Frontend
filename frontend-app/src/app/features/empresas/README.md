@@ -3,14 +3,14 @@
 Dominio del **tenant comercial** (Core Engine, `/api/v1/empresas`): alta de la
 empresa, consulta, modalidad logística, tiendas e invitaciones de vendedores.
 
-| Capa            | Responsabilidad                                                               |
-| --------------- | ----------------------------------------------------------------------------- |
-| `models/`       | `Company`, `CompanySeller`, tiendas asignadas y payloads de alta.             |
-| `adapters/`     | Normalización de empresa, tiendas, vendedores e invitaciones (R-AR-4).        |
-| `repositories/` | Puertos `COMPANY_REPOSITORY` y `COMPANY_INVITATION_REPOSITORY`.               |
-| `services/`     | HTTP contra `/empresas` e invitaciones y traducción de errores (R-AR-9).      |
-| `state/`        | Empresa, portal consolidado, clientes, ventas, servicios e invitaciones.      |
-| `pages/`        | Configuración, ventas, clientes, vendedores, invitación, tiendas y productos. |
+| Capa            | Responsabilidad                                                          |
+| --------------- | ------------------------------------------------------------------------ |
+| `models/`       | `Company`, `CompanySeller`, tiendas asignadas y payloads de alta.        |
+| `adapters/`     | Normalización de empresa, tiendas, vendedores e invitaciones (R-AR-4).   |
+| `repositories/` | Puertos `COMPANY_REPOSITORY` y `COMPANY_INVITATION_REPOSITORY`.          |
+| `services/`     | HTTP contra `/empresas` e invitaciones y traducción de errores (R-AR-9). |
+| `state/`        | Empresa, portal consolidado, ventas, servicios e invitaciones.           |
+| `pages/`        | Configuración, ventas, vendedores, invitación, tiendas y productos.      |
 
 ## Decisión
 

@@ -1411,3 +1411,36 @@ contexto y consecuencias.
   el almacenamiento local por repositorios HTTP manteniendo stores y UI.
   Revertir es retirar el store de metadatos, el modal y los campos extendidos,
   y volver a la tabla simple de ADR-52.
+
+## ADR-56: Módulo de clientes compartido entre empresa y vendedor
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: existían dos implementaciones de Clientes: el CRM de empresa
+  (`features/empresas/pages/company-clients`, derivado de `/orders/empresa` y
+  con registro local por tenant) y la lista del vendedor
+  (`features/vendor/pages/clients`, contra el contrato asumido
+  `/vendedores/clientes`, que Core Engine no implementa). Duplicaban modelo,
+  store, modal y tabla, y el vendedor no tenía KPIs ni segmentos.
+- **Decisión**:
+  - Se crea el feature compartido `features/clients` con modelo, adaptador,
+    store, página y modal únicos.
+  - El puerto `CLIENTS_DATA_SOURCE` entrega las órdenes del ámbito activo y la
+    clave de storage. Empresa usa `GET /orders/empresa` y
+    `ecom_company_clients_<tenant>`; vendedor usa
+    `GET /orders/vendedor/mis-ventas` y `ecom_vendor_clients_<usuario>`.
+  - `CLIENTS_PAGE_CONFIG` define título, subtítulo, miga de pan e importación.
+    La página no conoce rutas ni roles hardcodeados.
+  - `ClientsHttpDataSource` implementa el puerto para ambos ámbitos: el workspace
+    configura `CLIENTS_SCOPE_CONFIG` (ámbito y sufijo de órdenes) y los tokens
+    ligeros viven en `shared/clients/` para no arrastrar el adaptador al bundle
+    inicial.
+  - Los derivados (KPIs, tabs, chips, búsqueda, paginación y recurrentes) viven
+    en `ClientsStore.withComputed`; el estado de cada workspace determina los
+    datos visibles.
+  - El buscador del POS (`ClientSearchStore`) se mantiene independiente porque
+    resuelve la selección rápida de clientes en una venta, no la cartera CRM.
+- **Consecuencias**: el vendedor obtiene la misma experiencia de clientes,
+  acotada a sus ventas, sin duplicar lógica. El storage histórico de empresa se
+  conserva. Un endpoint futuro de clientes se integra sustituyendo la fuente de
+  datos, sin tocar la página ni el store.

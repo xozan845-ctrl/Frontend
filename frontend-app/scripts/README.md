@@ -50,6 +50,9 @@ que son verificables por máquina.
 > del feature en el mismo PR (`R-AR-16`). Ejemplos vigentes: `logistica`
 > incorpora `adapters` y `repositories` para los envíos reales (ADR-37), y
 > `storage` nace con esas capas para el bucket del tenant (ADR-42).
+> El feature `clients` es compartido por empresa y vendedor: la página, el store
+> y el modal son únicos, y cada workspace inyecta su fuente de datos y su
+> configuración visual (ADR-56).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz
