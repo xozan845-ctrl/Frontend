@@ -1,0 +1,715 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="company-new-sale-modal"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="company-new-sale-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="company-new-sale-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 p-5 dark:border-surface-700"
+      >
+        <div>
+          <h2
+            id="company-new-sale-title"
+            class="font-heading text-xl font-black tracking-tight text-slate-900 uppercase dark:text-white"
+          >
+            Nueva Venta
+          </h2>
+          <p class="mt-1 font-mono text-xs font-bold text-accent-600 dark:text-accent-400">
+            {{ nextNumber() }}
+          </p>
+        </div>
+        <div class="flex items-center gap-1">
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-gear"></i>
+          </span>
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:bg-surface-700 dark:hover:text-slate-200"
+            aria-label="Cerrar"
+            data-testid="close-company-new-sale"
+            (click)="dismiss.emit()"
+          >
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="overflow-y-auto p-5">
+        <div
+          class="flex flex-wrap items-center gap-1 rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+          role="tablist"
+          aria-label="Pasos de la venta"
+        >
+          @for (stepItem of steps; track stepItem.value) {
+            <button
+              type="button"
+              role="tab"
+              [class]="stepClass(stepItem.value)"
+              [attr.aria-selected]="step() === stepItem.value"
+              [attr.aria-disabled]="stepItem.value > maxVisited()"
+              [disabled]="stepItem.value > maxVisited()"
+              [attr.data-testid]="'new-sale-step-' + stepItem.value"
+              (click)="goToStep(stepItem.value)"
+            >
+              <span>{{ stepItem.value }}.</span>
+              {{ stepItem.label }}
+            </button>
+          }
+        </div>
+
+        @if (error(); as message) {
+          <div
+            class="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+            role="alert"
+            data-testid="company-new-sale-error"
+          >
+            {{ message }}
+          </div>
+        }
+
+        @if (stepError(); as message) {
+          <div
+            class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+            role="alert"
+            data-testid="company-new-sale-step-error"
+          >
+            {{ message }}
+          </div>
+        }
+
+        @switch (step()) {
+          @case (1) {
+            <section class="mt-4" aria-labelledby="new-sale-client-title">
+              <h3
+                id="new-sale-client-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                ¿A quién le vendes?
+              </h3>
+              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                <button
+                  type="button"
+                  [class]="clientModeClass('existing')"
+                  data-testid="new-sale-client-existing"
+                  (click)="selectClientMode('existing')"
+                >
+                  <i class="fa-solid fa-user text-xl" aria-hidden="true"></i>
+                  <span class="text-xs font-black">Cliente existente</span>
+                  <span class="text-[10px] opacity-70">Buscar en tu lista</span>
+                </button>
+                <button
+                  type="button"
+                  [class]="clientModeClass('final')"
+                  data-testid="new-sale-client-final"
+                  (click)="selectClientMode('final')"
+                >
+                  <i class="fa-solid fa-cart-shopping text-xl" aria-hidden="true"></i>
+                  <span class="text-xs font-black">Consumidor final</span>
+                  <span class="text-[10px] opacity-70">Sin registro</span>
+                </button>
+                <button
+                  type="button"
+                  [class]="clientModeClass('quick')"
+                  data-testid="new-sale-client-quick"
+                  (click)="selectClientMode('quick')"
+                >
+                  <i class="fa-solid fa-user-plus text-xl" aria-hidden="true"></i>
+                  <span class="text-xs font-black">Cliente rápido</span>
+                  <span class="text-[10px] opacity-70">Crear al instante</span>
+                </button>
+              </div>
+
+              @if (clientMode() === 'existing') {
+                <div class="mt-4">
+                  <label for="new-sale-client-search" class="sr-only">Buscar cliente</label>
+                  <div class="relative">
+                    <i
+                      class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+                      aria-hidden="true"
+                    ></i>
+                    <input
+                      id="new-sale-client-search"
+                      type="search"
+                      class="input py-2.5 pl-9 text-xs"
+                      placeholder="Nombre, teléfono o correo…"
+                      [value]="clientSearch()"
+                      data-testid="new-sale-client-search"
+                      (input)="setClientSearch($event)"
+                    />
+                  </div>
+                  @if (filteredClients().length > 0) {
+                    <div class="mt-2 grid max-h-56 gap-2 overflow-y-auto pr-1">
+                      @for (client of filteredClients(); track client.id) {
+                        <button
+                          type="button"
+                          [class]="clientRowClass(client.id)"
+                          data-testid="new-sale-client-option"
+                          (click)="chooseClient(client)"
+                        >
+                          <span class="min-w-0">
+                            <span class="block truncate font-bold">{{ client.name }}</span>
+                            <span class="block truncate text-[10px] text-slate-400">
+                              {{ client.phone || client.email || 'Sin contacto' }} ·
+                              {{ client.ordersCount }} compras
+                            </span>
+                          </span>
+                          @if (selectedClientId() === client.id) {
+                            <i class="fa-solid fa-check text-accent-600" aria-hidden="true"></i>
+                          }
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                      No hay clientes que coincidan. Puedes usar Cliente rápido.
+                    </p>
+                  }
+                </div>
+              }
+
+              @if (clientMode() === 'quick') {
+                <form
+                  [formGroup]="quickForm"
+                  class="mt-4 grid gap-3 rounded-2xl border border-slate-100 p-4 sm:grid-cols-2 dark:border-surface-700"
+                  novalidate
+                >
+                  <div class="flex flex-col gap-2 sm:col-span-2">
+                    <label
+                      for="new-sale-quick-name"
+                      class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                    >
+                      Nombre *
+                    </label>
+                    <input
+                      id="new-sale-quick-name"
+                      type="text"
+                      formControlName="name"
+                      class="input"
+                      placeholder="Ej. Carla López"
+                      autocomplete="name"
+                      data-testid="new-sale-quick-name"
+                    />
+                    @if (quickForm.controls.name.touched && quickForm.controls.name.invalid) {
+                      <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">
+                        Escribe al menos 2 caracteres
+                      </span>
+                    }
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label
+                      for="new-sale-quick-phone"
+                      class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                    >
+                      Teléfono
+                    </label>
+                    <input
+                      id="new-sale-quick-phone"
+                      type="tel"
+                      formControlName="phone"
+                      class="input"
+                      placeholder="+505 8888 8888"
+                      autocomplete="tel"
+                      data-testid="new-sale-quick-phone"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label
+                      for="new-sale-quick-email"
+                      class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                    >
+                      Correo
+                    </label>
+                    <input
+                      id="new-sale-quick-email"
+                      type="email"
+                      formControlName="email"
+                      class="input"
+                      placeholder="cliente@correo.com"
+                      autocomplete="email"
+                      data-testid="new-sale-quick-email"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-2 sm:col-span-2">
+                    <label
+                      for="new-sale-quick-company"
+                      class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                    >
+                      Empresa
+                    </label>
+                    <input
+                      id="new-sale-quick-company"
+                      type="text"
+                      formControlName="company"
+                      class="input"
+                      placeholder="Ej. Distribuidora Norte"
+                      autocomplete="organization"
+                      data-testid="new-sale-quick-company"
+                    />
+                  </div>
+                </form>
+              }
+
+              @if (clientMode() === 'final') {
+                <div
+                  class="mt-4 rounded-2xl border border-dashed border-slate-200 p-6 text-center dark:border-surface-600"
+                >
+                  <i
+                    class="fa-solid fa-cart-shopping text-2xl text-slate-400"
+                    aria-hidden="true"
+                  ></i>
+                  <p class="mt-2 text-sm font-bold text-slate-700 dark:text-slate-200">
+                    Venta sin cliente registrado
+                  </p>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Se registrará como Consumidor final.
+                  </p>
+                </div>
+              }
+            </section>
+          }
+
+          @case (2) {
+            <section class="mt-4" aria-labelledby="new-sale-products-title">
+              <h3
+                id="new-sale-products-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Productos del catálogo
+              </h3>
+              <label for="new-sale-product-search" class="sr-only">Buscar producto</label>
+              <div class="relative mt-3">
+                <i
+                  class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+                  aria-hidden="true"
+                ></i>
+                <input
+                  id="new-sale-product-search"
+                  type="search"
+                  class="input py-2.5 pl-9 text-xs"
+                  placeholder="Nombre o código del producto…"
+                  [value]="productSearch()"
+                  data-testid="new-sale-product-search"
+                  (input)="setProductSearch($event)"
+                />
+              </div>
+
+              @if (filteredProducts().length > 0) {
+                <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                  @for (product of filteredProducts(); track product.id) {
+                    <button
+                      type="button"
+                      class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-left transition-colors hover:border-accent-400 dark:border-surface-600 dark:bg-surface-800 dark:hover:border-accent-500"
+                      data-testid="new-sale-product"
+                      (click)="addProduct(product)"
+                    >
+                      <span class="min-w-0">
+                        <span class="block truncate text-xs font-bold">{{ product.name }}</span>
+                        <span class="block text-[10px] text-slate-400">
+                          {{ product.sku }} · Stock {{ product.stock }}
+                        </span>
+                      </span>
+                      <span class="shrink-0 text-xs font-black tabular-nums">
+                        {{ product.basePrice | appCurrency }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              } @else {
+                <div
+                  class="mt-3 rounded-2xl border border-dashed border-slate-200 p-6 text-center dark:border-surface-600"
+                >
+                  <p class="text-sm font-bold text-slate-600 dark:text-slate-300">
+                    No hay productos disponibles
+                  </p>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Créalos desde Productos / Servicios o agrega un servicio.
+                  </p>
+                </div>
+              }
+            </section>
+          }
+
+          @case (3) {
+            <section class="mt-4" aria-labelledby="new-sale-services-title">
+              <h3
+                id="new-sale-services-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Servicios de la empresa
+              </h3>
+              <label for="new-sale-service-search" class="sr-only">Buscar servicio</label>
+              <div class="relative mt-3">
+                <i
+                  class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+                  aria-hidden="true"
+                ></i>
+                <input
+                  id="new-sale-service-search"
+                  type="search"
+                  class="input py-2.5 pl-9 text-xs"
+                  placeholder="Nombre o código del servicio…"
+                  [value]="serviceSearch()"
+                  data-testid="new-sale-service-search"
+                  (input)="setServiceSearch($event)"
+                />
+              </div>
+
+              @if (filteredServices().length > 0) {
+                <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                  @for (service of filteredServices(); track service.id) {
+                    <button
+                      type="button"
+                      class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 text-left transition-colors hover:border-accent-400 dark:border-surface-600 dark:bg-surface-800 dark:hover:border-accent-500"
+                      data-testid="new-sale-service"
+                      (click)="addService(service)"
+                    >
+                      <span class="min-w-0">
+                        <span class="block truncate text-xs font-bold">{{ service.name }}</span>
+                        <span class="block text-[10px] text-slate-400">
+                          {{ service.code }} · {{ service.durationMinutes }} min
+                        </span>
+                      </span>
+                      <span class="shrink-0 text-xs font-black tabular-nums">
+                        {{ service.price | appCurrency }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              } @else {
+                <div
+                  class="mt-3 rounded-2xl border border-dashed border-slate-200 p-6 text-center dark:border-surface-600"
+                >
+                  <p class="text-sm font-bold text-slate-600 dark:text-slate-300">
+                    Aún no tienes servicios activos
+                  </p>
+                  <a
+                    routerLink="/empresa/productos"
+                    class="mt-2 inline-flex text-xs font-black tracking-widest text-accent-600 uppercase hover:underline dark:text-accent-400"
+                  >
+                    Crear servicios
+                  </a>
+                </div>
+              }
+            </section>
+          }
+
+          @case (4) {
+            <section class="mt-4" aria-labelledby="new-sale-summary-title">
+              <h3
+                id="new-sale-summary-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Resumen de la venta
+              </h3>
+              <div
+                class="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-slate-100 p-4 dark:border-surface-700"
+              >
+                <div class="min-w-0">
+                  <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                    Cliente
+                  </p>
+                  <p class="truncate text-sm font-black">{{ clientName() }}</p>
+                </div>
+                <i class="fa-solid fa-user text-slate-300" aria-hidden="true"></i>
+              </div>
+
+              <div class="mt-3 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead>
+                    <tr
+                      class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+                    >
+                      <th scope="col" class="py-2 pr-3 font-bold">Producto / servicio</th>
+                      <th scope="col" class="py-2 pr-3 text-center font-bold">Cant.</th>
+                      <th scope="col" class="py-2 pr-3 text-right font-bold">Precio</th>
+                      <th scope="col" class="py-2 text-right font-bold">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+                    @for (line of lines(); track line.id) {
+                      <tr>
+                        <td class="py-2 pr-3">
+                          <span class="text-xs font-bold">{{ line.name }}</span>
+                          @if (line.code) {
+                            <span class="block text-[10px] text-slate-400">{{ line.code }}</span>
+                          }
+                        </td>
+                        <td class="py-2 pr-3">
+                          <div class="flex items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                              [attr.aria-label]="'Quitar una unidad de ' + line.name"
+                              (click)="decrementLine(line.id)"
+                            >
+                              <i class="fa-solid fa-minus text-[10px]" aria-hidden="true"></i>
+                            </button>
+                            <span class="w-6 text-center text-xs font-black tabular-nums">{{
+                              line.quantity
+                            }}</span>
+                            <button
+                              type="button"
+                              class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                              [attr.aria-label]="'Agregar una unidad de ' + line.name"
+                              (click)="incrementLine(line.id)"
+                            >
+                              <i class="fa-solid fa-plus text-[10px]" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                        </td>
+                        <td class="py-2 pr-3 text-right text-xs tabular-nums">
+                          {{ line.unitPrice | appCurrency }}
+                        </td>
+                        <td class="py-2 text-right text-xs font-bold tabular-nums">
+                          {{ line.subtotal | appCurrency }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div
+                class="mt-4 grid gap-3 rounded-2xl border border-slate-100 p-4 sm:grid-cols-2 dark:border-surface-700"
+              >
+                <div class="flex flex-col gap-2">
+                  <label
+                    for="new-sale-discount"
+                    class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                  >
+                    Descuento (%)
+                  </label>
+                  <input
+                    id="new-sale-discount"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    class="input py-2.5 text-xs"
+                    [value]="discountPercent()"
+                    data-testid="new-sale-discount"
+                    (input)="setDiscount($event)"
+                  />
+                </div>
+                <dl class="flex flex-col justify-end gap-1 text-xs">
+                  <div class="flex items-center justify-between gap-3">
+                    <dt class="text-slate-500 dark:text-slate-400">Subtotal</dt>
+                    <dd class="font-bold tabular-nums">{{ subtotal() | appCurrency }}</dd>
+                  </div>
+                  <div class="flex items-center justify-between gap-3">
+                    <dt class="text-slate-500 dark:text-slate-400">Descuento</dt>
+                    <dd class="font-bold tabular-nums">-{{ discount() | appCurrency }}</dd>
+                  </div>
+                  <div
+                    class="flex items-center justify-between gap-3 border-t border-slate-100 pt-1 dark:border-surface-700"
+                  >
+                    <dt class="font-black uppercase">Total</dt>
+                    <dd
+                      class="font-heading text-lg font-black tabular-nums text-accent-600 dark:text-accent-400"
+                    >
+                      {{ total() | appCurrency }}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+          }
+
+          @case (5) {
+            <section class="mt-4" aria-labelledby="new-sale-payment-title">
+              <h3
+                id="new-sale-payment-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Fecha y método de pago
+              </h3>
+              <div class="mt-3 max-w-xs">
+                <label
+                  for="new-sale-date"
+                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+                >
+                  Fecha de esta venta
+                </label>
+                <input
+                  id="new-sale-date"
+                  type="date"
+                  class="input mt-2 py-2.5 text-xs"
+                  [value]="saleDate()"
+                  data-testid="new-sale-date"
+                  (input)="setSaleDate($event)"
+                />
+              </div>
+              <div class="mt-4">
+                <p class="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                  Método de pago
+                </p>
+                <app-company-sale-payment-methods
+                  [selected]="paymentMethod()"
+                  (selectMethod)="paymentMethod.set($event)"
+                />
+              </div>
+              <div
+                class="mt-4 flex items-center justify-between rounded-2xl border border-slate-100 p-4 dark:border-surface-700"
+              >
+                <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  Total a cobrar
+                </span>
+                <span
+                  class="font-heading text-xl font-black tabular-nums text-accent-600 dark:text-accent-400"
+                >
+                  {{ total() | appCurrency }}
+                </span>
+              </div>
+            </section>
+          }
+
+          @case (6) {
+            <section class="mt-4" aria-labelledby="new-sale-notes-title">
+              <h3
+                id="new-sale-notes-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Observaciones
+              </h3>
+              <label for="new-sale-notes" class="sr-only">Observaciones de la venta</label>
+              <textarea
+                id="new-sale-notes"
+                class="input mt-3 min-h-28 py-2.5 text-xs"
+                placeholder="Notas internas, instrucciones de entrega o condiciones especiales…"
+                [value]="notes()"
+                data-testid="new-sale-notes"
+                (input)="setNotes($event)"
+              ></textarea>
+
+              <dl
+                class="mt-4 grid gap-2 rounded-2xl border border-slate-100 p-4 text-xs dark:border-surface-700"
+              >
+                <div class="flex items-center justify-between gap-3">
+                  <dt class="text-slate-500 dark:text-slate-400">Cliente</dt>
+                  <dd class="font-bold">{{ clientName() }}</dd>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <dt class="text-slate-500 dark:text-slate-400">Líneas</dt>
+                  <dd class="font-bold">{{ lines().length }}</dd>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <dt class="text-slate-500 dark:text-slate-400">Total</dt>
+                  <dd
+                    class="font-heading text-lg font-black tabular-nums text-accent-600 dark:text-accent-400"
+                  >
+                    {{ total() | appCurrency }}
+                  </dd>
+                </div>
+              </dl>
+              <p class="mt-3 text-[10px] text-slate-400">
+                La venta se guardará en el historial local de tu empresa.
+              </p>
+            </section>
+          }
+        }
+
+        @if (hasItems() && step() >= 2 && step() < 4) {
+          <section
+            class="mt-4 rounded-2xl border border-slate-100 p-3 dark:border-surface-700"
+            aria-labelledby="new-sale-lines-title"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <h3
+                id="new-sale-lines-title"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Líneas agregadas
+              </h3>
+              <span class="text-[10px] font-bold text-slate-400">{{ lines().length }}</span>
+            </div>
+            @for (line of lines(); track line.id) {
+              <div
+                class="flex items-center gap-2 border-t border-slate-100 py-2 text-xs dark:border-surface-700"
+              >
+                <i [class]="lineIcon(line)" class="text-slate-400" aria-hidden="true"></i>
+                <span class="min-w-0 flex-1 truncate font-bold">{{ line.name }}</span>
+                <div class="flex items-center gap-1">
+                  <button
+                    type="button"
+                    class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                    [attr.aria-label]="'Quitar una unidad de ' + line.name"
+                    (click)="decrementLine(line.id)"
+                  >
+                    <i class="fa-solid fa-minus text-[10px]" aria-hidden="true"></i>
+                  </button>
+                  <span class="w-6 text-center font-black tabular-nums">{{ line.quantity }}</span>
+                  <button
+                    type="button"
+                    class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                    [attr.aria-label]="'Agregar una unidad de ' + line.name"
+                    (click)="incrementLine(line.id)"
+                  >
+                    <i class="fa-solid fa-plus text-[10px]" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <span class="w-20 text-right font-bold tabular-nums">{{
+                  line.subtotal | appCurrency
+                }}</span>
+                <button
+                  type="button"
+                  class="text-slate-400 hover:text-red-500"
+                  [attr.aria-label]="'Eliminar ' + line.name"
+                  (click)="removeLine(line.id)"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+            }
+          </section>
+        }
+      </div>
+
+      <footer
+        class="flex flex-col gap-3 border-t border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+      >
+        <button type="button" class="btn btn-secondary btn-sm" (click)="dismiss.emit()">
+          Cancelar
+        </button>
+        <div class="flex items-center justify-between gap-2 sm:justify-end">
+          @if (hasItems()) {
+            <span class="text-xs font-black tabular-nums text-slate-600 dark:text-slate-300">
+              {{ total() | appCurrency }}
+            </span>
+          }
+          @if (step() > 1) {
+            <button type="button" class="btn btn-secondary btn-sm" (click)="previous()">
+              Anterior
+            </button>
+          }
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            data-testid="new-sale-next"
+            (click)="next()"
+          >
+            {{ isLastStep() ? 'Registrar venta' : 'Siguiente' }}
+            <i
+              [class]="isLastStep() ? 'fa-solid fa-check' : 'fa-solid fa-arrow-right'"
+              class="text-[10px]"
+              aria-hidden="true"
+            ></i>
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+}
