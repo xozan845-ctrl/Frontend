@@ -1,16 +1,16 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../core/services/seo/seo.service';
-import type { CatalogProduct } from '../../../products/models/catalog-product.model';
-import type {
-  CompanyCatalogRow,
-  CompanyCatalogSort,
-  CompanyCatalogStatusFilter,
-} from '../../models/company-catalog.model';
-import { CompanyProductsStore } from '../../state/company-products/company-products.store';
-import { CompanyServicesStore } from '../../state/company-services/company-services.store';
+import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { SeoService } from '../../../../../core/services/seo/seo.service';
+import type { CatalogProduct } from '../../../../products/public-api';
+import {
+  CompanyProductsStore,
+  CompanyServicesStore,
+  type CompanyCatalogRow,
+  type CompanyCatalogSort,
+  type CompanyCatalogStatusFilter,
+} from '../../../../empresas/public-api';
 import CompanyProductsComponent from './company-products.component';
 
 function makeRow(overrides: Partial<CompanyCatalogRow> = {}): CompanyCatalogRow {
