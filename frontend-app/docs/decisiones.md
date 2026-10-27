@@ -1246,3 +1246,31 @@ contexto y consecuencias.
 - **Consecuencias**: se elimina el secreto del frontend y se mantiene el gate de
   staging para el resto de clientes. El detalle operativo vive en
   [`api-proxy.md`](./api-proxy.md).
+
+## ADR-51: Clientes del panel empresario derivados de pedidos + registro local
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: el panel empresarial necesita una vista de clientes con KPIs,
+  segmentos, búsqueda e importación. Core Engine no expone un endpoint de
+  clientes por empresa y `GET /orders/empresa` devuelve `comprador_id` y totales,
+  pero no el nombre, teléfono o correo del comprador.
+- **Decisión**:
+  - La cartera se deriva de `GET /orders/empresa`, agrupando por `comprador_id`
+    y calculando compras, gasto, primera y última compra.
+  - Los campos de contacto se toman de los campos opcionales del comprador
+    cuando el backend los incluya; si faltan, se muestra un nombre de respaldo
+    y `—` en los datos ausentes.
+  - Los pedidos cancelados o devueltos no cuentan para las métricas del cliente.
+  - Los clientes creados o importados manualmente se guardan en
+    `localStorage` bajo `ecom_company_clients_<tenant>`, aislados por tenant, y
+    se fusionan con la cartera derivada cuando comparten `buyerId`.
+  - La importación acepta CSV compatible con Excel (`,`, `;` o tabulador) con
+    encabezados en español o inglés; `.xlsx` no está soportado todavía.
+  - Las pestañas y filtros (frecuentes, activos, inactivos) se calculan en el
+    adaptador puro a partir de las constantes del feature.
+- **Consecuencias**: el módulo funciona sin cambios de backend y mantiene los
+  datos manuales en el navegador del empresario. Cuando exista un endpoint de
+  clientes, el registro local podrá migrarse y el adaptador de pedidos quedará
+  como respaldo. La importación `.xlsx` y la sincronización de contactos
+  requieren contrato backend o una librería adicional.
