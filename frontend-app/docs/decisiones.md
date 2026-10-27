@@ -1579,3 +1579,36 @@ contexto y consecuencias.
   de cada pantalla en su componente. El store compartido sigue pendiente;
   cuando llegue, la tabla no necesitará cambios porque solo consume filas ya
   normalizadas.
+
+## ADR-62: Store compartido de pedidos
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: los stores de pedidos del vendedor y de ventas de empresa
+  repetían el ciclo de carga (spinner, error, marca de actualización), la
+  recarga silenciosa, el detalle y el cambio de estado con avisos. El dominio y
+  el adaptador ya eran comunes (ADR-60), pero cada store seguía gestionando su
+  propia lista.
+- **Decisión**:
+  - Se añade `shared/orders/state/with-orders` como feature de
+    `@ngrx/signals`: `withOrders<T, S>(token)` aporta `orderRecords`, `loading`,
+    `error`, `lastUpdatedAt`, `selectedRecord` y los indicadores de detalle.
+  - El puerto `OrdersDataSource<T, S>` vive en `shared/orders/repositories` y
+    solo exige `list`; `detail` y `updateStatus` son capacidades opcionales.
+    Cada workspace crea su token con `createOrdersDataSourceToken`.
+  - `VendorOrderRepository` se adapta con `createVendorOrdersSource`; el
+    `VendorOrdersStore` conserva su tipo `VendorOrder`, su API pública
+    (`orders`, `selectedOrder`, filtros, KPIs y sondeo) y solo delega la
+    carga/detalle/estado en la feature.
+  - El tipo y el estado del pedido son parámetros del workspace, de modo que
+    empresa podrá reutilizar la feature con `OrderResponse` y su propio token
+    sin cambiar el contrato común.
+  - El estado compartido se queda en `shared/orders`, no en `features/orders`:
+    el dominio sigue siendo `domainOnly` y las piezas de estado no entran en el
+    grafo eager que consumen los adaptadores de empresa (el store solo aparece
+    en el chunk lazy del vendedor).
+- **Consecuencias**: una sola semántica de carga, detalle y cambio de estado.
+  El bundle inicial pasa de 551.98 a 552.08 kB (techo de aviso 555 kB) porque
+  el dominio expone la fábrica del token; la feature del store permanece lazy.
+  Queda migrar `CompanySalesStore` a la feature y mover la composición de
+  Ventas/Pedidos a `features/modules/sales`.
