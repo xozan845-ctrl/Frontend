@@ -1,0 +1,15 @@
+<div class="grid grid-cols-2 gap-2 sm:grid-cols-3" role="group" aria-label="Método de pago">
+  @for (method of methods; track method.value) {
+    <button
+      type="button"
+      [class]="methodClass(method.value)"
+      [attr.aria-pressed]="selected() === method.value"
+      [disabled]="disabled()"
+      [attr.data-testid]="'sale-payment-' + method.value"
+      (click)="selectMethod.emit(method.value)"
+    >
+      <i [class]="method.icon" aria-hidden="true"></i>
+      {{ method.label }}
+    </button>
+  }
+</div>

@@ -1,0 +1,259 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="company-quick-sale-modal"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="company-quick-sale-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="company-quick-sale-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 p-5 dark:border-surface-700"
+      >
+        <div>
+          <h2
+            id="company-quick-sale-title"
+            class="font-heading text-xl font-black tracking-tight text-slate-900 uppercase dark:text-white"
+          >
+            Venta rápida
+          </h2>
+          <p class="mt-1 font-mono text-xs font-bold text-accent-600 dark:text-accent-400">
+            {{ nextNumber() }}
+          </p>
+        </div>
+        <div class="flex items-center gap-1">
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-gear"></i>
+          </span>
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:bg-surface-700 dark:hover:text-slate-200"
+            aria-label="Cerrar"
+            data-testid="close-company-quick-sale"
+            (click)="dismiss.emit()"
+          >
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="overflow-y-auto p-5">
+        @if (error(); as message) {
+          <div
+            class="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+            role="alert"
+            data-testid="company-quick-sale-error"
+          >
+            {{ message }}
+          </div>
+        }
+
+        <label
+          for="quick-sale-scan"
+          class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+        >
+          Escanea el producto
+        </label>
+        <div class="relative mt-2">
+          <i
+            class="fa-solid fa-barcode pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+            aria-hidden="true"
+          ></i>
+          <input
+            id="quick-sale-scan"
+            type="text"
+            class="input py-2.5 pl-9 font-mono text-xs"
+            placeholder="Esperando lectura del escáner… (o escribe el código)"
+            autocomplete="off"
+            [value]="scan()"
+            data-testid="quick-sale-scan"
+            (input)="setScan($event)"
+            (keydown.enter)="onScanSubmit()"
+          />
+        </div>
+        <p class="mt-1 flex items-center gap-1 text-[10px] text-slate-400">
+          <i class="fa-solid fa-barcode" aria-hidden="true"></i>
+          Listo para escanear
+        </p>
+
+        @if (scanError(); as message) {
+          <div
+            class="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+            role="alert"
+            data-testid="quick-sale-scan-error"
+          >
+            {{ message }}
+          </div>
+        }
+
+        @if (suggestions().length > 0) {
+          <div
+            class="mt-2 grid gap-1 rounded-xl border border-slate-100 p-2 dark:border-surface-700"
+          >
+            @for (product of suggestions(); track product.id) {
+              <button
+                type="button"
+                class="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors hover:bg-slate-50 dark:hover:bg-surface-700"
+                data-testid="quick-sale-suggestion"
+                (click)="addSuggestion(product)"
+              >
+                <span class="min-w-0">
+                  <span class="block truncate font-bold">{{ product.name }}</span>
+                  <span class="block text-[10px] text-slate-400">{{ product.sku }}</span>
+                </span>
+                <span class="shrink-0 font-black tabular-nums">{{
+                  product.basePrice | appCurrency
+                }}</span>
+              </button>
+            }
+          </div>
+        }
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left text-sm" data-testid="quick-sale-table">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+              >
+                <th scope="col" class="py-2 pr-2 font-bold">Producto</th>
+                <th scope="col" class="py-2 pr-2 font-bold">Código</th>
+                <th scope="col" class="py-2 pr-2 text-center font-bold">Qty</th>
+                <th scope="col" class="py-2 pr-2 text-right font-bold">Precio</th>
+                <th scope="col" class="py-2 pr-2 text-right font-bold">Subtotal</th>
+                <th scope="col" class="py-2 font-bold"><span class="sr-only">Quitar</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+              @for (line of lines(); track line.id) {
+                <tr data-testid="quick-sale-line">
+                  <td class="max-w-40 truncate py-2 pr-2 text-xs font-bold">{{ line.name }}</td>
+                  <td class="py-2 pr-2 font-mono text-[10px] text-slate-400">{{ line.code }}</td>
+                  <td class="py-2 pr-2">
+                    <div class="flex items-center justify-center gap-1">
+                      <button
+                        type="button"
+                        class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                        [attr.aria-label]="'Quitar una unidad de ' + line.name"
+                        (click)="decrementLine(line.id)"
+                      >
+                        <i class="fa-solid fa-minus text-[10px]" aria-hidden="true"></i>
+                      </button>
+                      <span class="w-6 text-center text-xs font-black tabular-nums">{{
+                        line.quantity
+                      }}</span>
+                      <button
+                        type="button"
+                        class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-slate-300 dark:border-surface-600 dark:text-slate-300"
+                        [attr.aria-label]="'Agregar una unidad de ' + line.name"
+                        (click)="incrementLine(line.id)"
+                      >
+                        <i class="fa-solid fa-plus text-[10px]" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="py-2 pr-2 text-right text-xs tabular-nums">
+                    {{ line.unitPrice | appCurrency }}
+                  </td>
+                  <td class="py-2 pr-2 text-right text-xs font-bold tabular-nums">
+                    {{ line.subtotal | appCurrency }}
+                  </td>
+                  <td class="py-2 text-right">
+                    <button
+                      type="button"
+                      class="text-slate-400 hover:text-red-500"
+                      [attr.aria-label]="'Eliminar ' + line.name"
+                      (click)="removeLine(line.id)"
+                    >
+                      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+              @if (!hasItems()) {
+                <tr>
+                  <td colspan="6" class="py-8 text-center text-xs text-slate-400">
+                    <i class="fa-solid fa-cart-shopping mb-2 block text-2xl" aria-hidden="true"></i>
+                    Escanea el primer producto para comenzar
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <dl
+          class="mt-4 flex flex-col gap-1 border-t border-slate-100 pt-3 text-xs dark:border-surface-700"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-slate-500 dark:text-slate-400">Subtotal</dt>
+            <dd class="font-bold tabular-nums">{{ subtotal() | appCurrency }}</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="font-black uppercase">Total</dt>
+            <dd
+              class="font-heading text-xl font-black tabular-nums text-accent-600 dark:text-accent-400"
+            >
+              {{ total() | appCurrency }}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-4 max-w-xs">
+          <label
+            for="quick-sale-date"
+            class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+          >
+            Fecha de esta venta
+          </label>
+          <input
+            id="quick-sale-date"
+            type="date"
+            class="input mt-2 py-2.5 text-xs"
+            [value]="saleDate()"
+            data-testid="quick-sale-date"
+            (input)="setSaleDate($event)"
+          />
+        </div>
+
+        <div class="mt-4">
+          <p class="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            Método de pago
+          </p>
+          <app-company-sale-payment-methods
+            [selected]="paymentMethod()"
+            (selectMethod)="paymentMethod.set($event)"
+          />
+        </div>
+      </div>
+
+      <footer
+        class="flex flex-col gap-3 border-t border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+      >
+        <button type="button" class="btn btn-secondary btn-sm" (click)="dismiss.emit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          [disabled]="!canSubmit()"
+          data-testid="quick-sale-submit"
+          (click)="submit()"
+        >
+          <i class="fa-solid fa-check text-[10px]" aria-hidden="true"></i>
+          Cobrar y cerrar venta
+        </button>
+      </footer>
+    </div>
+  </div>
+}

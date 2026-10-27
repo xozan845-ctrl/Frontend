@@ -1,0 +1,543 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="company-sales-page">
+  <header class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/empresa/inicio" class="transition-colors hover:text-accent-600">Inicio</a>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Ventas</span>
+      </nav>
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-cart-shopping"></i>
+        </span>
+        <div>
+          <h1
+            class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+          >
+            {{ greeting }}
+          </h1>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Centro operativo de ventas. Registra, controla y analiza cada transacción.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 self-start xl:self-auto">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        data-testid="company-sales-quick"
+        (click)="openQuickSale()"
+      >
+        <i class="fa-solid fa-barcode text-xs" aria-hidden="true"></i>
+        Venta rápida
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-testid="company-sales-new"
+        (click)="openNewSale()"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nueva Venta
+      </button>
+    </div>
+  </header>
+
+  @if (sales.error(); as message) {
+    <div
+      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      role="alert"
+      data-testid="company-sales-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button type="button" class="btn btn-secondary btn-sm self-start" (click)="sync()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <section
+    class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+    aria-label="Resumen de ventas"
+  >
+    <article class="card flex items-start gap-3 p-4">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-dollar-sign"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas del día</p>
+        <p
+          class="mt-1 font-heading text-lg font-black tabular-nums"
+          data-testid="company-sales-kpi-today"
+        >
+          {{ sales.kpis().todaySales | appCurrency }}
+        </p>
+        <p class="text-[10px] text-slate-400">hoy</p>
+      </div>
+    </article>
+
+    <article class="card flex items-start gap-3 p-4">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-calendar-days"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas del mes</p>
+        <p
+          class="mt-1 font-heading text-lg font-black tabular-nums"
+          data-testid="company-sales-kpi-month"
+        >
+          {{ sales.kpis().monthSales | appCurrency }}
+        </p>
+        <p class="text-[10px] text-slate-400">este mes</p>
+      </div>
+    </article>
+
+    <article class="card flex items-start gap-3 p-4">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-list-check"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Cantidad de ventas
+        </p>
+        <p
+          class="mt-1 font-heading text-lg font-black tabular-nums"
+          data-testid="company-sales-kpi-count"
+        >
+          {{ sales.kpis().monthCount }}
+        </p>
+        <p class="text-[10px] text-slate-400">este mes</p>
+      </div>
+    </article>
+
+    <article class="card flex items-start gap-3 p-4">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-chart-line"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Ticket promedio
+        </p>
+        <p
+          class="mt-1 font-heading text-lg font-black tabular-nums"
+          data-testid="company-sales-kpi-average"
+        >
+          {{ sales.kpis().averageTicket | appCurrency }}
+        </p>
+        <p class="text-[10px] text-slate-400">por venta</p>
+      </div>
+    </article>
+
+    <article class="card flex items-start gap-3 p-4">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-arrow-trend-up"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Ganancia estimada
+        </p>
+        <p
+          class="mt-1 font-heading text-lg font-black tabular-nums"
+          data-testid="company-sales-kpi-profit"
+        >
+          {{ sales.kpis().estimatedProfit | appCurrency }}
+        </p>
+        <p class="text-[10px] text-slate-400">este mes</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="company-recurring-title">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-repeat"></i>
+        </span>
+        <div>
+          <h2
+            id="company-recurring-title"
+            class="font-heading text-lg font-black tracking-tight uppercase"
+          >
+            Clientes con pago recurrente
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            {{ sales.recurringClients().length }} clientes
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start sm:self-auto"
+        [disabled]="sales.loading()"
+        data-testid="company-recurring-refresh"
+        (click)="sync()"
+      >
+        <i
+          class="fa-solid fa-rotate text-xs"
+          [class.animate-spin]="sales.loading()"
+          aria-hidden="true"
+        ></i>
+        Actualizar
+      </button>
+    </header>
+
+    @if (sales.recurringClients().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm" data-testid="company-recurring-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Frecuencia</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Último pago</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Próxima fecha a pagar</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Debe pagar</th>
+              <th scope="col" class="py-2 font-bold">Estado</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (client of sales.recurringClients(); track client.id) {
+              <tr data-testid="company-recurring-row">
+                <td class="max-w-xs truncate py-3 pr-3 text-xs font-bold">
+                  {{ client.name }}
+                </td>
+                <td class="py-3 pr-3 text-xs">{{ client.frequencyLabel }}</td>
+                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                  {{ client.lastPaymentAt ? (client.lastPaymentAt | appDate: 'short') : '—' }}
+                </td>
+                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                  {{ client.nextPaymentAt ? (client.nextPaymentAt | appDate: 'short') : '—' }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ client.amountDue | appCurrency }}
+                </td>
+                <td class="py-3">
+                  <span
+                    [class]="statusBadgeClass(client.status === 'Activo' ? 'pagada' : 'pendiente')"
+                  >
+                    {{ client.status }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div
+        class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 px-6 py-8 text-center dark:border-surface-600"
+        data-testid="company-recurring-empty"
+      >
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-repeat text-xl"></i>
+        </span>
+        <p class="max-w-md text-sm text-slate-500 dark:text-slate-400">
+          Aún no tienes clientes marcados como "Recurrente". Configúralos desde el módulo de
+          Clientes.
+        </p>
+        <a
+          routerLink="/empresa/clientes"
+          class="text-xs font-black tracking-widest text-accent-600 uppercase hover:underline dark:text-accent-400"
+        >
+          Ir a Clientes
+        </a>
+      </div>
+    }
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5" aria-labelledby="company-sales-history-title">
+    <header class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-surface-700 dark:text-slate-300"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-list"></i>
+        </span>
+        <div>
+          <h2
+            id="company-sales-history-title"
+            class="font-heading text-lg font-black tracking-tight uppercase"
+          >
+            Historial de ventas
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            {{ sales.filteredCount() }} ventas
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          [disabled]="sales.loading()"
+          data-testid="company-sales-refresh"
+          (click)="sync()"
+        >
+          <i
+            class="fa-solid fa-rotate text-xs"
+            [class.animate-spin]="sales.loading()"
+            aria-hidden="true"
+          ></i>
+          Actualizar
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="openNewSale()">
+          <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+          Nueva Venta
+        </button>
+      </div>
+    </header>
+
+    <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+      <div
+        class="flex flex-wrap items-center gap-1 self-start rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+        role="tablist"
+        aria-label="Periodo de ventas"
+      >
+        @for (period of periods; track period.value) {
+          <button
+            type="button"
+            role="tab"
+            [class]="tabClass(period.value)"
+            [attr.aria-selected]="sales.period() === period.value"
+            [attr.data-testid]="'company-sales-period-' + period.value"
+            (click)="setPeriod(period.value)"
+          >
+            {{ period.label }}
+          </button>
+        }
+      </div>
+
+      <div class="w-full max-w-xs">
+        <label for="company-sales-search" class="sr-only">Buscar venta</label>
+        <div class="relative">
+          <i
+            class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+            aria-hidden="true"
+          ></i>
+          <input
+            id="company-sales-search"
+            type="search"
+            class="input py-2.5 pl-9 text-xs"
+            placeholder="Buscar cliente, número…"
+            [value]="sales.search()"
+            data-testid="company-sales-search"
+            (input)="onSearchInput($event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+        Forma de pago:
+      </span>
+      @for (filter of paymentFilters; track filter.value) {
+        <button
+          type="button"
+          [class]="chipClass(filter.value)"
+          [attr.aria-pressed]="sales.payment() === filter.value"
+          [attr.data-testid]="'company-sales-payment-' + filter.value"
+          (click)="setPayment(filter.value)"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+
+    @if (hasCustomPeriod()) {
+      <div class="grid gap-2 sm:grid-cols-2 lg:max-w-md">
+        <div>
+          <label for="company-sales-from" class="sr-only">Desde</label>
+          <input
+            id="company-sales-from"
+            type="date"
+            class="input py-2.5 text-xs"
+            [value]="sales.customFrom()"
+            data-testid="company-sales-from"
+            (input)="onCustomFrom($event)"
+          />
+        </div>
+        <div>
+          <label for="company-sales-to" class="sr-only">Hasta</label>
+          <input
+            id="company-sales-to"
+            type="date"
+            class="input py-2.5 text-xs"
+            [value]="sales.customTo()"
+            data-testid="company-sales-to"
+            (input)="onCustomTo($event)"
+          />
+        </div>
+      </div>
+    }
+
+    @if (sales.loading() && !sales.hasRows()) {
+      <div class="flex flex-col gap-2" role="status" aria-live="polite">
+        <span class="sr-only">Cargando ventas…</span>
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+        <app-skeleton-loader height="52px" customClass="rounded-xl" />
+      </div>
+    } @else if (!sales.hasFilteredRows()) {
+      <div
+        class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 px-6 py-10 text-center dark:border-surface-600"
+        data-testid="company-sales-empty"
+      >
+        <i class="fa-solid fa-cart-shopping text-3xl text-slate-300" aria-hidden="true"></i>
+        <div>
+          <p class="font-heading text-base font-black tracking-tight uppercase">
+            Sin ventas en este período
+          </p>
+          <p class="mt-1 max-w-md text-sm text-slate-500 dark:text-slate-400">
+            Registra una venta rápida o usa el asistente de Nueva Venta para empezar.
+          </p>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" (click)="openNewSale()">
+          <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+          Nueva venta
+        </button>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm" data-testid="company-sales-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold"># Venta</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Método</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Productos</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Proveedor</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Total</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Ganancia</th>
+              <th scope="col" class="py-2 font-bold">Estado</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (row of sales.pagedRows(); track row.id) {
+              <tr data-testid="company-sales-row">
+                <td class="py-3 pr-3 font-mono text-xs font-bold text-slate-900 dark:text-white">
+                  {{ row.number }}
+                </td>
+                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                  {{ row.date | appDate: 'short' }}
+                </td>
+                <td class="max-w-xs truncate py-3 pr-3 text-xs font-bold" [title]="row.clientName">
+                  {{ row.clientName }}
+                </td>
+                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                  {{ row.paymentLabel }}
+                </td>
+                <td
+                  class="max-w-xs truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300"
+                  [title]="row.productsLabel"
+                >
+                  {{ row.productsLabel }}
+                </td>
+                <td
+                  class="max-w-xs truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300"
+                  [title]="row.providerName"
+                >
+                  {{ row.providerName }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ row.total | appCurrency }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ row.profit | appCurrency }}
+                </td>
+                <td class="py-3">
+                  <span [class]="statusBadgeClass(row.status)">{{ row.statusLabel }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer
+        class="flex flex-col gap-2 border-t border-slate-100 pt-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+      >
+        <p data-testid="company-sales-range">
+          Mostrando {{ sales.currentPage() }} de {{ sales.pageCount() }} páginas ·
+          {{ sales.filteredCount() }} ventas
+        </p>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="sales.isFirstPage()"
+            data-testid="company-sales-prev"
+            (click)="sales.previousPage()"
+          >
+            <i class="fa-solid fa-chevron-left text-[10px]" aria-hidden="true"></i>
+            Anterior
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="sales.isLastPage()"
+            data-testid="company-sales-next"
+            (click)="sales.nextPage()"
+          >
+            Siguiente
+            <i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+          </button>
+        </div>
+      </footer>
+    }
+  </section>
+
+  <app-company-new-sale-modal
+    [open]="newSaleOpen()"
+    [clients]="sales.clients()"
+    [products]="sales.activeProducts()"
+    [services]="services.services()"
+    [nextNumber]="sales.nextNumber()"
+    [error]="newSaleError()"
+    (submitSale)="submitNewSale($event)"
+    (dismiss)="closeNewSale()"
+  />
+
+  <app-company-quick-sale-modal
+    [open]="quickSaleOpen()"
+    [products]="sales.activeProducts()"
+    [nextNumber]="sales.nextNumber()"
+    [error]="quickSaleError()"
+    (submitSale)="submitQuickSale($event)"
+    (dismiss)="closeQuickSale()"
+  />
+</div>

@@ -45,11 +45,10 @@ export const EMPRESAS_ROUTES: Routes = [
       },
       {
         path: 'ventas',
-        loadComponent: () => import('./pages/company-orders/company-orders.component'),
-        providers: [
-          CompanyPortalStore,
-          { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
-        ],
+        loadChildren: () =>
+          import('./pages/company-sales/company-sales.routes').then(
+            (module) => module.COMPANY_SALES_ROUTES,
+          ),
       },
       {
         path: 'clientes',
