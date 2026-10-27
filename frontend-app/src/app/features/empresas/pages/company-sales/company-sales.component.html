@@ -480,7 +480,7 @@
                   {{ row.profit | appCurrency }}
                 </td>
                 <td class="py-3">
-                  <span [class]="statusBadgeClass(row.status)">{{ row.statusLabel }}</span>
+                  <app-order-status-badge [status]="row.status" />
                 </td>
               </tr>
             }

@@ -4,7 +4,7 @@ import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
 import { VendorOrder } from '../../models/vendor-order.model';
-import { OrderStatusBadgeComponent } from '../order-status-badge/order-status-badge.component';
+import { OrderStatusBadgeComponent } from '../../../../shared/orders/components/order-status-badge/order-status-badge.component';
 
 /** Fecha corta del pedido para la tabla; `—` si la API no la trae (`R-RB-4`). */
 export function formatOrderDate(iso: string): string {
