@@ -7,7 +7,7 @@ import {
   COMPANY_SALE_RECURRING_DAYS,
   COMPANY_SALE_RECURRING_ORDERS,
 } from '../../constants/company-sales.constants';
-import type { CompanyClient } from '../../models/company-client.model';
+import { clientFallbackName, type Client } from '../../../clients/public-api';
 import type { BuildCompanySaleRowsInput } from '../../models/company-sale.types';
 import type {
   CompanyRecurringClient,
@@ -24,7 +24,6 @@ import type {
   CompanySaleStatus,
   CreateCompanySalePayload,
 } from '../../models/company-sale.model';
-import { companyClientFallbackName } from '../company-client/company-client.adapter';
 
 const DAY_MS = 86_400_000;
 const PAYMENT_METHODS = new Set<CompanySalePaymentMethod>(
@@ -291,7 +290,7 @@ function localProductsLabel(record: CompanySaleRecord): string {
 
 /** Combina las órdenes del backend con las ventas locales en filas de historial. */
 export function buildCompanySaleRows(input: BuildCompanySaleRowsInput): CompanySaleRow[] {
-  const clientsByBuyer = new Map<string, CompanyClient>();
+  const clientsByBuyer = new Map<string, Client>();
   for (const client of input.clients) {
     if (client.buyerId) clientsByBuyer.set(client.buyerId, client);
   }
@@ -310,8 +309,7 @@ export function buildCompanySaleRows(input: BuildCompanySaleRowsInput): CompanyS
       id: `order-${order.id}`,
       number: order.orderNumber,
       date: order.createdAt,
-      clientName:
-        client?.name ?? (buyerId ? companyClientFallbackName(buyerId) : 'Consumidor final'),
+      clientName: client?.name ?? (buyerId ? clientFallbackName(buyerId) : 'Consumidor final'),
       paymentLabel: 'No registrado',
       paymentGroup: orderPaymentGroup(order.status),
       productsLabel: orderProductsLabel(order),
@@ -415,7 +413,7 @@ export function computeCompanySaleKpis(
 }
 
 /** Clientes frecuentes con su próxima fecha estimada de pago. */
-export function buildRecurringClients(clients: readonly CompanyClient[]): CompanyRecurringClient[] {
+export function buildRecurringClients(clients: readonly Client[]): CompanyRecurringClient[] {
   return clients
     .filter((client) => client.ordersCount >= COMPANY_SALE_RECURRING_ORDERS)
     .map((client) => {
