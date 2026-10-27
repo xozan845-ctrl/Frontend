@@ -2,6 +2,7 @@ import {
   COMPANY_SERVICE_MAX_DURATION_MINUTES,
   COMPANY_SERVICE_MAX_RECORDS,
 } from '../../constants/company-services.constants';
+import type { CompanyCatalogSort } from '../../models/company-catalog.model';
 import type {
   CompanyService,
   CompanyServiceFilters,
@@ -105,7 +106,11 @@ export function sanitizeCompanyService(raw: unknown): CompanyService | null {
     name,
     description: toText(raw['description']),
     category: toText(raw['category']),
+    brand: toText(raw['brand']),
+    barcode: toText(raw['barcode']),
     price,
+    cost: parseCompanyServicePrice(toPriceInput(raw['cost'])) ?? 0,
+    unit: toText(raw['unit'], 'Hora (h)'),
     durationMinutes,
     status: toStatus(raw['status']),
     createdAt,
@@ -150,7 +155,11 @@ export function createCompanyServiceRecord(
     name,
     description: data.description?.trim() ?? '',
     category: data.category?.trim() ?? '',
+    brand: data.brand?.trim() ?? '',
+    barcode: data.barcode?.trim() ?? '',
     price,
+    cost: parseCompanyServicePrice(data.cost ?? '0') ?? 0,
+    unit: data.unit?.trim() || 'Hora (h)',
     durationMinutes,
     status: data.status === 'inactivo' ? 'inactivo' : 'activo',
     createdAt: options.now,
@@ -165,11 +174,12 @@ export function updateCompanyServiceRecord(
   now: string,
 ): CompanyService | null {
   const price = data.price === undefined ? current.price : parseCompanyServicePrice(data.price);
+  const cost = data.cost === undefined ? current.cost : parseCompanyServicePrice(data.cost);
   const durationMinutes =
     data.durationMinutes === undefined
       ? current.durationMinutes
       : parseCompanyServiceDuration(data.durationMinutes);
-  if (price === null || durationMinutes === null) return null;
+  if (price === null || cost === null || durationMinutes === null) return null;
 
   const name = data.name === undefined ? current.name : data.name.trim();
   if (!name) return null;
@@ -179,30 +189,65 @@ export function updateCompanyServiceRecord(
     name,
     description: data.description === undefined ? current.description : data.description.trim(),
     category: data.category === undefined ? current.category : data.category.trim(),
+    brand: data.brand === undefined ? current.brand : data.brand.trim(),
+    barcode: data.barcode === undefined ? current.barcode : data.barcode.trim(),
     price,
+    cost,
+    unit: data.unit === undefined ? current.unit : data.unit.trim() || current.unit,
     durationMinutes,
     status: data.status ?? current.status,
     updatedAt: now,
   };
 }
 
-/** Filtra por texto (nombre, código, categoría o descripción), categoría y estado. */
+/** Filtra por texto (nombre, código, categoría, marca o descripción), categoría, marca y estado. */
 export function filterCompanyServices(
   services: readonly CompanyService[],
   filters: CompanyServiceFilters = {},
 ): CompanyService[] {
   const search = normalizeCompanyServiceSearch(filters.search ?? '');
   const category = normalizeCompanyServiceSearch(filters.category ?? '');
+  const brand = normalizeCompanyServiceSearch(filters.brand ?? '');
   const status = filters.status ?? null;
 
-  return services.filter((service) => {
+  const filtered = services.filter((service) => {
     if (status && service.status !== status) return false;
     if (category && normalizeCompanyServiceSearch(service.category) !== category) return false;
+    if (brand && normalizeCompanyServiceSearch(service.brand) !== brand) return false;
     if (!search) return true;
 
     const haystack = normalizeCompanyServiceSearch(
-      `${service.name} ${service.code} ${service.category} ${service.description}`,
+      `${service.name} ${service.code} ${service.category} ${service.brand} ${service.barcode} ${service.description}`,
     );
     return haystack.includes(search);
   });
+
+  return sortCompanyServices(filtered, filters.sort ?? 'nombre-az');
+}
+
+/** Ordena servicios sin mutar el arreglo original. */
+export function sortCompanyServices(
+  services: readonly CompanyService[],
+  sort: CompanyCatalogSort,
+): CompanyService[] {
+  const sorted = [...services];
+  sorted.sort((a, b) => {
+    switch (sort) {
+      case 'nombre-az':
+        return a.name.localeCompare(b.name, 'es');
+      case 'nombre-za':
+        return b.name.localeCompare(a.name, 'es');
+      case 'precio-asc':
+        return a.price - b.price;
+      case 'precio-desc':
+        return b.price - a.price;
+      case 'stock-asc':
+        return a.durationMinutes - b.durationMinutes;
+      case 'stock-desc':
+        return b.durationMinutes - a.durationMinutes;
+      case 'reciente':
+        return Date.parse(b.updatedAt || b.createdAt) - Date.parse(a.updatedAt || a.createdAt);
+    }
+  });
+  return sorted;
 }

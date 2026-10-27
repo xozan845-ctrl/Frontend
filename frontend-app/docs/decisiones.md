@@ -1373,3 +1373,41 @@ contexto y consecuencias.
   futuro implica sustituir la persistencia local por un repositorio HTTP
   manteniendo el store y la UI. Los recurrentes se derivan de los clientes
   frecuentes hasta que exista una marca explícita de recurrencia.
+
+## ADR-55: Catálogo administrable con metadatos locales y modal unificado
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: el empresario necesita administrar el catálogo como un
+  inventario real (KPIs, stock mínimo/máximo, costo, margen, marca, código de
+  barras, garantía, materia prima, ubicación y estado) y dar de alta productos
+  y servicios desde un modal. `GET/POST/PATCH /catalog/productos` solo expone
+  SKU, nombre, descripción, categoría, precio base, stock y estado; Core Engine
+  no tiene endpoint de servicios ni de estos campos extendidos.
+- **Decisión**:
+  - `CompanyProductsStore` carga **todas** las páginas de
+    `GET /catalog/productos` (límite máximo 100 por página) y las combina con
+    `CompanyProductMetadata`, persistidos por tenant en
+    `ecom_company_product_meta_<tenant>`. Los derivados (filas, filtros, orden,
+    paginación y KPIs) viven en `withComputed` (`R-ST-2`, `R-ST-3`).
+  - Los campos que el API no soporta se guardan localmente: costo, marca,
+    código de barras, unidad, fracciones, unidad de compra, contenido,
+    tipo de precio/costo, stock mínimo/máximo, garantía, materia prima,
+    ubicación y estado visible. El SKU, nombre, descripción, categoría, precio
+    base y stock siguen siendo la fuente de verdad del API.
+  - `CompanyProductModalComponent` es presentacional y emite
+    `CompanyCatalogFormValue`; la página decide si crea/edita un producto
+    (`CompanyProductsStore`) o un servicio (`CompanyServicesStore`, local).
+  - Los servicios incorporan costo, marca, código de barras y unidad, y
+    comparten la tabla y el modal con los productos.
+  - La página ofrece KPIs, pestañas Productos/Servicios/Materia Prima, filtros,
+    orden, paginación, exportación CSV y plantilla descargable. La importación
+    de Excel queda como aviso explícito de próxima fase.
+  - El presupuesto de advertencia del bundle inicial sube de 540 kB a 545 kB
+    por los estilos de la nueva UI; el límite de error permanece en 560 kB.
+- **Consecuencias**: el módulo se aproxima al diseño de inventario solicitado
+  sin inventar contratos de backend. Los metadatos y los servicios quedan
+  ligados al navegador del empresario; cuando existan endpoints, se sustituye
+  el almacenamiento local por repositorios HTTP manteniendo stores y UI.
+  Revertir es retirar el store de metadatos, el modal y los campos extendidos,
+  y volver a la tabla simple de ADR-52.
