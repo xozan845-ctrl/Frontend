@@ -1616,3 +1616,29 @@ contexto y consecuencias.
   primera migración y a 552.27 kB al migrar empresa (techo de aviso 555 kB);
   la feature del store permanece lazy. Queda mover la composición de
   Ventas/Pedidos a `features/modules/sales`.
+
+## ADR-63: Módulo de composición de Ventas
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: la página y los modales de Ventas de empresa vivían dentro de
+  `features/empresas` junto al dominio y al store. `empresas/public-api`
+  exportaba `EMPRESAS_ROUTES`, así que un módulo de composición que importara
+  stores o tokens desde el API pública podía cerrar un ciclo con las rutas del
+  workspace.
+- **Decisión**:
+  - `EMPRESAS_ROUTES` deja de exportarse por `public-api.ts`; `app.routes.ts`
+    importa el archivo de rutas directamente, como punto de composición.
+  - `empresas/public-api` expone los stores (`CompanySalesStore`,
+    `CompanyServicesStore`), servicios, tokens, constantes y tipos que necesita
+    la composición, sin exportar rutas.
+  - Se crea `features/modules/sales` con la página, los modales de venta rápida
+    y asistente, el selector de pago y `SALES_ROUTES`.
+  - El dominio de ventas, el store, los adaptadores y las constantes siguen en
+    `features/empresas`; el módulo solo compone presentación y providers.
+  - `EMPRESAS_ROUTES` carga `SALES_ROUTES` con `loadChildren`, manteniendo la
+    página lazy y sin duplicar el dominio en otro feature.
+- **Consecuencias**: la composición de Ventas deja de depender de las rutas de
+  empresas y no hay ciclos. El bundle inicial pasa a 552.43 kB (techo 555 kB) y
+  el chunk de Ventas sigue lazy (~68 kB). Pedidos del vendedor permanece en
+  `features/vendor`; mover su composición al módulo queda como siguiente fase.

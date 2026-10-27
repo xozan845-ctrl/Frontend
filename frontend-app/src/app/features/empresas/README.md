@@ -10,9 +10,14 @@ empresa, consulta, modalidad logística, tiendas e invitaciones de vendedores.
 | `repositories/` | Puertos `COMPANY_REPOSITORY` y `COMPANY_INVITATION_REPOSITORY`.          |
 | `services/`     | HTTP contra `/empresas` e invitaciones y traducción de errores (R-AR-9). |
 | `state/`        | Empresa, portal consolidado, ventas, servicios e invitaciones.           |
-| `pages/`        | Configuración, ventas, vendedores, invitación, tiendas y productos.      |
+| `pages/`        | Configuración, vendedores, invitación, tiendas y productos.              |
 
 ## Decisión
+
+La página y los modales de **Ventas** se componen en
+`features/modules/sales` (ADR-63); este feature conserva su store, dominio,
+adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
+exporta `EMPRESAS_ROUTES`, para que el módulo pueda consumirlos sin ciclos.
 
 La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
 Crear la empresa cambia el `tenant_id`/rol del usuario en el backend, así que el
