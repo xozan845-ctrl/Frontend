@@ -1,5 +1,13 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {
+  AuthStore,
+  canEnterWorkspace,
+  hasPermission,
+  type Permission,
+  type Workspace,
+} from '../../../auth/public-api';
+import { workspaceModuleGroups } from '../../../../core/workspace/constants/workspace-modules.constants';
 import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-sidebar.component';
 
 /**
@@ -15,6 +23,14 @@ import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-s
 })
 export default class VendorShellComponent {
   readonly isSidebarOpen = signal(false);
+  private readonly auth = inject(AuthStore);
+  readonly navGroups = workspaceModuleGroups('store', (module) => {
+    const user = this.auth.user();
+    return (
+      canEnterWorkspace(user, module.workspace as Workspace) &&
+      (!module.permission || hasPermission(user, module.permission as Permission))
+    );
+  });
 
   @HostListener('document:keydown.escape')
   closeSidebar(): void {

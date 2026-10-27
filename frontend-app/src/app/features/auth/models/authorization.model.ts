@@ -17,6 +17,22 @@ export type Permission =
   | 'company:manage-products'
   | 'company:manage-roles'
   | 'company:manage-billing'
+  | 'company:sales:read'
+  | 'company:clients:read'
+  | 'company:catalog:manage'
+  | 'company:purchases:manage'
+  | 'company:expenses:manage'
+  | 'company:cash:manage'
+  | 'company:payables:manage'
+  | 'company:payroll:manage'
+  | 'company:quotes:manage'
+  | 'company:barcodes:manage'
+  | 'company:credit:manage'
+  | 'company:taxes:manage'
+  | 'company:reports:read'
+  | 'company:analytics:read'
+  | 'company:notifications:read'
+  | 'company:settings:manage'
   | 'store:read'
   | 'store:manage'
   | 'store:manage-products'
@@ -25,6 +41,7 @@ export type Permission =
   | 'store:manage-billing'
   | 'store:manage-roles'
   | 'store:manage-logistics'
+  | 'store:reports:read'
   | 'logistics:read'
   | 'logistics:manage-fleet'
   | 'logistics:manage-routes'
@@ -60,6 +77,22 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'company:manage-products',
     'company:manage-roles',
     'company:manage-billing',
+    'company:sales:read',
+    'company:clients:read',
+    'company:catalog:manage',
+    'company:purchases:manage',
+    'company:expenses:manage',
+    'company:cash:manage',
+    'company:payables:manage',
+    'company:payroll:manage',
+    'company:quotes:manage',
+    'company:barcodes:manage',
+    'company:credit:manage',
+    'company:taxes:manage',
+    'company:reports:read',
+    'company:analytics:read',
+    'company:notifications:read',
+    'company:settings:manage',
     'store:read',
     'store:manage',
     'store:manage-products',
@@ -68,6 +101,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:reports:read',
     'logistics:read',
     'logistics:manage-fleet',
     'logistics:manage-routes',
@@ -82,6 +116,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:reports:read',
     'logistics:read',
     'logistics:manage-fleet',
     'logistics:manage-routes',

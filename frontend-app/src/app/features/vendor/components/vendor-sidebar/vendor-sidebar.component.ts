@@ -1,12 +1,13 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import type { VendorNavItem } from './vendor-sidebar.types';
+import type {
+  WorkspaceModuleGroup,
+  WorkspaceModuleSection,
+} from '../../../../core/workspace/models/workspace-module.model';
 
 /**
- * Navegación del panel del vendedor (presentacional, `R-SO-8`): pinta las
- * secciones del diseño de la tienda y marca la activa con `aria-current`
- * (`R-AC-1`, `R-AC-2`). En móvil llega como drawer: `open` lo muestra y
- * `closed` avisa al shell para cerrarlo (backdrop o Escape).
+ * Navegación del panel del vendedor (presentacional, `R-SO-8`): pinta los
+ * módulos que el shell calcula según sesión y permisos.
  */
 @Component({
   selector: 'app-vendor-sidebar',
@@ -16,102 +17,12 @@ import type { VendorNavItem } from './vendor-sidebar.types';
 })
 export class VendorSidebarComponent {
   readonly open = input(false);
+  readonly groups = input<readonly WorkspaceModuleGroup[]>([]);
   readonly closed = output<void>();
   readonly itemSelected = output<void>();
 
-  readonly mainItems: readonly VendorNavItem[] = [
-    {
-      label: 'Inicio',
-      icon: 'fa-solid fa-house',
-      link: '/vendedor/inicio',
-      testId: 'vendor-nav-inicio',
-    },
-    {
-      label: 'Catálogo',
-      icon: 'fa-solid fa-layer-group',
-      link: '/vendedor/catalogo',
-      testId: 'vendor-nav-catalogo',
-    },
-    {
-      label: 'Ofertas',
-      icon: 'fa-solid fa-box',
-      link: '/vendedor/productos',
-      testId: 'vendor-nav-ofertas',
-    },
-    {
-      label: 'Clientes',
-      icon: 'fa-solid fa-user-group',
-      link: '/vendedor/clientes',
-      testId: 'vendor-nav-clientes',
-    },
-    {
-      label: 'Ventas',
-      icon: 'fa-solid fa-cart-shopping',
-      link: '/vendedor/ventas/nuevo',
-      testId: 'vendor-nav-ventas',
-    },
-    {
-      label: 'Pedidos',
-      icon: 'fa-solid fa-receipt',
-      link: '/vendedor/pedidos',
-      testId: 'vendor-nav-pedidos',
-    },
-    {
-      label: 'Mi tienda',
-      icon: 'fa-solid fa-store',
-      link: '/vendedor/tienda',
-      testId: 'vendor-nav-tienda',
-    },
-    {
-      label: 'Roles y permisos',
-      icon: 'fa-solid fa-user-shield',
-      link: '/vendedor/roles',
-      testId: 'vendor-nav-roles',
-    },
-    {
-      label: 'Mi logística',
-      icon: 'fa-solid fa-truck-fast',
-      link: '/vendedor/logistica',
-      testId: 'vendor-nav-logistica',
-    },
-    {
-      label: 'Facturación',
-      icon: 'fa-solid fa-file-invoice-dollar',
-      link: '/facturacion/nueva',
-      testId: 'vendor-nav-facturacion',
-    },
-    {
-      label: 'Inventario',
-      icon: 'fa-solid fa-warehouse',
-      link: '/vendedor/inventario',
-      testId: 'vendor-nav-inventario',
-    },
-    {
-      label: 'Almacenamiento',
-      icon: 'fa-solid fa-cloud-arrow-up',
-      link: '/vendedor/almacenamiento',
-      testId: 'vendor-nav-almacenamiento',
-    },
-    {
-      label: 'Reportes',
-      icon: 'fa-solid fa-chart-line',
-      link: '/vendedor/reportes',
-      testId: 'vendor-nav-reportes',
-    },
-  ];
-
-  readonly footerItems: readonly VendorNavItem[] = [
-    {
-      label: 'Ajustes',
-      icon: 'fa-solid fa-gear',
-      link: '/vendedor/ajustes',
-      testId: 'vendor-nav-ajustes',
-    },
-    {
-      label: 'Ayuda y soporte',
-      icon: 'fa-solid fa-circle-question',
-      link: '/vendedor/ayuda',
-      testId: 'vendor-nav-ayuda',
-    },
-  ];
+  groupClass(section: WorkspaceModuleSection): string {
+    if (section === 'footer') return 'mt-auto border-t border-white/10 pt-4';
+    return '';
+  }
 }

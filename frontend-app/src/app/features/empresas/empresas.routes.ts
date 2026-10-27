@@ -3,6 +3,7 @@ import {
   CLIENTS_PAGE_CONFIG,
   CLIENTS_SCOPE_CONFIG,
 } from '../../shared/clients/constants/clients-config.tokens';
+import { moduleGuard } from '../auth/public-api';
 import { companyGuard } from './guards/company/company.guard';
 import {
   COMPANY_CLIENTS_PAGE_CONFIG,
@@ -20,8 +21,10 @@ const companySoonRoute = (
   title: string,
   description: string,
   icon: string,
+  moduleId: string,
 ): Route => ({
   path,
+  canActivate: [moduleGuard(moduleId)],
   loadComponent: () => import('../../shared/ui/coming-soon/coming-soon.component'),
   data: { title, description, icon, context: 'Empresa' },
 });
@@ -49,10 +52,12 @@ export const EMPRESAS_ROUTES: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
         path: 'inicio',
+        canActivate: [moduleGuard('company.dashboard')],
         loadComponent: () => import('./pages/company-settings/company-settings.component'),
       },
       {
         path: 'ventas',
+        canActivate: [moduleGuard('company.sales')],
         loadChildren: () =>
           import('./pages/company-sales/company-sales.routes').then(
             (module) => module.COMPANY_SALES_ROUTES,
@@ -60,6 +65,7 @@ export const EMPRESAS_ROUTES: Routes = [
       },
       {
         path: 'clientes',
+        canActivate: [moduleGuard('company.clients')],
         loadChildren: () =>
           import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
         providers: [
@@ -69,6 +75,7 @@ export const EMPRESAS_ROUTES: Routes = [
       },
       {
         path: 'productos',
+        canActivate: [moduleGuard('company.catalog')],
         loadComponent: () => import('./pages/company-products/company-products.component'),
       },
       companySoonRoute(
@@ -76,70 +83,88 @@ export const EMPRESAS_ROUTES: Routes = [
         'Compras',
         'Órdenes y proveedores de la empresa.',
         'fa-solid fa-bag-shopping',
+        'company.purchases',
       ),
       companySoonRoute(
         'gastos',
         'Gastos',
         'Control de gastos operativos.',
         'fa-solid fa-dollar-sign',
+        'company.expenses',
       ),
       companySoonRoute(
         'caja',
         'Caja / Pagos',
         'Movimientos y cierres de caja.',
         'fa-solid fa-wallet',
+        'company.cash',
       ),
       companySoonRoute(
         'cuentas-por-pagar',
         'Cuentas por pagar',
         'Compromisos y vencimientos de pago.',
         'fa-solid fa-file-invoice-dollar',
+        'company.payables',
       ),
-      companySoonRoute('salarios', 'Salarios', 'Nómina y pagos al equipo.', 'fa-solid fa-users'),
+      companySoonRoute(
+        'salarios',
+        'Salarios',
+        'Nómina y pagos al equipo.',
+        'fa-solid fa-users',
+        'company.payroll',
+      ),
       companySoonRoute(
         'proformas',
         'Proformas',
         'Cotizaciones y proformas comerciales.',
         'fa-solid fa-file-lines',
+        'company.quotes',
       ),
       companySoonRoute(
         'codigos-de-barras',
         'Códigos de barras',
         'Etiquetas y códigos para tus productos.',
         'fa-solid fa-barcode',
+        'company.barcodes',
       ),
       companySoonRoute(
         'creditos',
         'Créditos',
         'Crédito de clientes y cuentas financiadas.',
         'fa-solid fa-credit-card',
+        'company.credit',
       ),
       companySoonRoute(
         'impuestos',
         'Impuestos',
         'Configuración y reportes fiscales.',
         'fa-solid fa-file-invoice',
+        'company.taxes',
       ),
       companySoonRoute(
         'reportes',
         'Reportes',
         'Reportes consolidados por tienda.',
         'fa-solid fa-chart-column',
+        'company.reports',
       ),
       companySoonRoute(
         'estadisticas',
         'Estadísticas',
         'Indicadores y tendencias del negocio.',
         'fa-solid fa-wave-square',
+        'company.analytics',
       ),
       companySoonRoute(
         'notificaciones',
         'Notificaciones',
         'Alertas relevantes de tu empresa.',
         'fa-solid fa-bell',
+        'company.notifications',
       ),
       {
         path: 'tiendas',
+        canActivate: [moduleGuard('company.stores')],
         loadComponent: () => import('./pages/company-stores/company-stores.component'),
         providers: [
           CompanyPortalStore,
@@ -148,16 +173,19 @@ export const EMPRESAS_ROUTES: Routes = [
       },
       {
         path: 'vendedores',
+        canActivate: [moduleGuard('company.sellers')],
         loadChildren: () =>
           import('./company-vendors.routes').then((module) => module.COMPANY_VENDORS_ROUTES),
       },
       {
         path: 'logistica',
+        canActivate: [moduleGuard('company.logistics')],
         loadChildren: () =>
           import('../logistica/logistica.routes').then((module) => module.LOGISTICA_ROUTES),
       },
       {
         path: 'configuracion',
+        canActivate: [moduleGuard('company.settings')],
         loadComponent: () => import('./pages/company-settings/company-settings.component'),
       },
       companySoonRoute(
@@ -165,6 +193,7 @@ export const EMPRESAS_ROUTES: Routes = [
         'Ayuda y soporte',
         'Guías y canales de soporte para tu empresa.',
         'fa-solid fa-circle-question',
+        'company.help',
       ),
     ],
   },

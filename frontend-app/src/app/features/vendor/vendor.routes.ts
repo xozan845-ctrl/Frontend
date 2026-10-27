@@ -1,6 +1,6 @@
 import { Route, Routes } from '@angular/router';
 import { STORAGE_ROUTES } from '../storage/public-api';
-import { workspaceGuard } from '../auth/public-api';
+import { moduleGuard } from '../auth/public-api';
 import {
   CLIENTS_PAGE_CONFIG,
   CLIENTS_SCOPE_CONFIG,
@@ -34,7 +34,13 @@ import { VendorStoreStore } from './state/vendor-store/vendor-store.store';
  * (`R-UX-6`). La página vive en `shared/ui` porque también la usa logística
  * (`R-SH-3`).
  */
-const comingSoonRoute = (title: string, description: string, icon: string): Route => ({
+const comingSoonRoute = (
+  title: string,
+  description: string,
+  icon: string,
+  moduleId: string,
+): Route => ({
+  canActivate: [moduleGuard(moduleId)],
   loadComponent: () => import('../../shared/ui/coming-soon/coming-soon.component'),
   data: { title, description, icon, context: 'Panel del vendedor' },
 });
@@ -67,22 +73,27 @@ export const VENDOR_ROUTES: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {
         path: 'inicio',
+        canActivate: [moduleGuard('store.home')],
         loadComponent: () => import('./pages/dashboard/dashboard.component'),
       },
       {
         path: 'ventas/nuevo',
+        canActivate: [moduleGuard('store.sales')],
         loadComponent: () => import('./pages/new-order/new-order.component'),
       },
       {
         path: 'pedidos',
+        canActivate: [moduleGuard('store.orders')],
         loadComponent: () => import('./pages/orders/orders.component'),
       },
       {
         path: 'pedidos/:id',
+        canActivate: [moduleGuard('store.orders')],
         loadComponent: () => import('./pages/order-detail/order-detail.component'),
       },
       {
         path: 'tienda',
+        canActivate: [moduleGuard('store.my-store')],
         loadComponent: () => import('./pages/store/store.component'),
         providers: [VendorStoreStore, { provide: STORE_REPOSITORY, useClass: StoreService }],
       },
@@ -91,6 +102,7 @@ export const VENDOR_ROUTES: Routes = [
       { path: 'empresa', pathMatch: 'full', redirectTo: '/empresa' },
       {
         path: 'clientes',
+        canActivate: [moduleGuard('store.clients')],
         loadChildren: () =>
           import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
         providers: [
@@ -100,6 +112,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'catalogo',
+        canActivate: [moduleGuard('store.catalog')],
         loadComponent: () => import('../products/pages/catalog/catalog.component'),
         providers: [
           CatalogProductsStore,
@@ -108,6 +121,7 @@ export const VENDOR_ROUTES: Routes = [
       },
       {
         path: 'productos',
+        canActivate: [moduleGuard('store.offers')],
         loadComponent: () => import('./pages/products/products.component'),
         providers: [
           VendorOffersStore,
@@ -120,6 +134,7 @@ export const VENDOR_ROUTES: Routes = [
           'Inventario',
           'El control de existencias de tu tienda.',
           'fa-solid fa-warehouse',
+          'store.inventory',
         ),
       },
       ...STORAGE_ROUTES,
@@ -129,6 +144,7 @@ export const VENDOR_ROUTES: Routes = [
           'Reportes',
           'Las métricas de ventas de tu tienda.',
           'fa-solid fa-chart-line',
+          'store.reports',
         ),
       },
       {
@@ -137,11 +153,12 @@ export const VENDOR_ROUTES: Routes = [
           'Ajustes',
           'La configuración de tu cuenta de vendedor.',
           'fa-solid fa-gear',
+          'store.settings',
         ),
       },
       {
         path: 'roles',
-        canActivate: [workspaceGuard],
+        canActivate: [moduleGuard('store.roles')],
         loadComponent: () => import('../../shared/ui/coming-soon/coming-soon.component'),
         data: {
           title: 'Roles y permisos',
@@ -158,10 +175,12 @@ export const VENDOR_ROUTES: Routes = [
           'Ayuda y soporte',
           'Guías y canales de soporte para vendedores.',
           'fa-solid fa-circle-question',
+          'store.help',
         ),
       },
       {
         path: 'logistica',
+        canActivate: [moduleGuard('store.logistics')],
         loadChildren: () =>
           import('../logistica/logistica.routes').then((module) => module.LOGISTICA_ROUTES),
       },

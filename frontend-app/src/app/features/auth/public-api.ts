@@ -30,3 +30,4 @@ export { canViewShipments, logisticsGuard } from './guards/logistics/logistics.g
 export { canViewField, fieldGuard } from './guards/field/field.guard';
 export { workspaceGuard } from './guards/workspace/workspace.guard';
 export { companyOwnerRedirectGuard } from './guards/company-entry/company-entry.guard';
+export { moduleGuard } from './guards/module/module.guard';

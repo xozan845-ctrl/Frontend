@@ -25,6 +25,7 @@
     <app-vendor-sidebar
       id="vendor-sidebar"
       [open]="isSidebarOpen()"
+      [groups]="navGroups"
       (closed)="closeSidebar()"
       (itemSelected)="closeSidebar()"
     />
