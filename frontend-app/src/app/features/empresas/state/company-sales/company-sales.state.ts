@@ -7,18 +7,14 @@ import type {
 import type { ClientRecord } from '../../../clients/public-api';
 import type { CompanySalesAccount } from '../../models/company-sales.model';
 import type { CompanyStore } from '../../models/company-store.model';
-import type { OrderResponse } from '../../../cart/public-api';
 
 export interface CompanySalesState {
-  orders: OrderResponse[];
   products: CatalogProduct[];
   stores: CompanyStore[];
   salesAccount: CompanySalesAccount | null;
   localSales: CompanySaleRecord[];
   localClients: ClientRecord[];
-  loading: boolean;
   productsLoading: boolean;
-  error: string | null;
   period: CompanySalePeriod;
   payment: CompanySalePaymentFilter;
   search: string;

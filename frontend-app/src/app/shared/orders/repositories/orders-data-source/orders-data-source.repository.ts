@@ -6,7 +6,7 @@ import type { Observable } from 'rxjs';
  * `list` es obligatorio: los paneles de solo lectura no implementan detalle
  * ni cambio de estado (modelo de capacidades, ADR-62).
  */
-export interface OrdersDataSource<T extends { id: string }, S extends string = string> {
+export interface OrdersDataSource<T extends { id: string | number }, S extends string = string> {
   list(): Observable<T[]>;
   detail?(id: string): Observable<T>;
   updateStatus?(id: string, status: S): Observable<T>;
@@ -16,8 +16,9 @@ export interface OrdersDataSource<T extends { id: string }, S extends string = s
  * Crea el token de la fuente de pedidos de un workspace. Cada panel declara el
  * suyo para que el store compartido reciba su tipo de vista y su estado.
  */
-export function createOrdersDataSourceToken<T extends { id: string }, S extends string = string>(
-  description: string,
-): InjectionToken<OrdersDataSource<T, S>> {
+export function createOrdersDataSourceToken<
+  T extends { id: string | number },
+  S extends string = string,
+>(description: string): InjectionToken<OrdersDataSource<T, S>> {
   return new InjectionToken<OrdersDataSource<T, S>>(description);
 }
