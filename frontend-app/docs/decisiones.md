@@ -1701,3 +1701,31 @@ contexto y consecuencias.
   lazy (~60 kB). El vendedor conserva sus ofertas y el POS en `modules/sales`;
   una composición de catálogo del vendedor podrá reutilizar este módulo cuando
   exista la vista correspondiente.
+
+## ADR-66: Compras, Gastos y Caja de empresa
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: Compras, Gastos y Caja existían solo como rutas "En
+  construcción". No había dominio, store ni persistencia, y la UI no podía
+  registrar ni consultar la operación financiera básica.
+- **Decisión**:
+  - Se crea `features/finance` como dominio `domainOnly` con compras, gastos y
+    movimientos de caja, constantes, adaptador y `FinanceStore`.
+  - Los registros se guardan por tenant en `localStorage` con claves
+    `ecom_company_purchases_*`, `ecom_company_expenses_*` y
+    `ecom_company_cash_*`; el adaptador descarta registros inválidos y limita
+    cada colección a 500 entradas.
+  - `FinanceStore` deriva totales del mes, pendientes de pago y saldo de caja;
+    las altas y bajas avisan por `NotificationService`.
+  - Se crea `features/modules/finance` con una página compartida por sección,
+    paneles presentacionales de compras, gastos y caja, y las rutas
+    `PURCHASES_ROUTES`/`EXPENSES_ROUTES`/`CASH_ROUTES`.
+  - `/empresa/compras`, `/empresa/gastos` y `/empresa/caja` cargan el módulo con
+    `loadChildren`; los tres módulos del workspace pasan a `status: 'ready'`.
+- **Consecuencias**: la operación financiera básica queda disponible sin
+  backend nuevo, aislada por tenant y con el mismo patrón de composición que
+  Ventas, Catálogo y Clientes. El bundle inicial pasa a 552.63 kB (techo
+  555 kB); la página de finanzas sigue lazy (~26 kB). El dominio podrá cambiar
+  la persistencia local por endpoints cuando Core Engine los exponga sin tocar
+  la composición.
