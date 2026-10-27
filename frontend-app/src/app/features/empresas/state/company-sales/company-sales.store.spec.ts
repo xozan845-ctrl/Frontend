@@ -12,7 +12,7 @@ import {
   COMPANY_PORTAL_REPOSITORY,
   type CompanyPortalRepository,
 } from '../../repositories/company-portal.repository';
-import { companyClientsStorageKey } from '../../constants/company-clients.constants';
+import { clientsStorageKey } from '../../../clients/public-api';
 import { companySalesStorageKey } from '../../constants/company-sales.constants';
 import type { CompanySaleRecord, CreateCompanySalePayload } from '../../models/company-sale.model';
 
@@ -317,7 +317,7 @@ describe('CompanySalesStore', () => {
       createdAt: isoDaysAgo(10),
     };
     localStorage.setItem(companySalesStorageKey('empresa-1'), JSON.stringify([saleRecord()]));
-    localStorage.setItem(companyClientsStorageKey('empresa-1'), JSON.stringify([client]));
+    localStorage.setItem(clientsStorageKey('company', 'empresa-1'), JSON.stringify([client]));
     localStorage.setItem(
       companySalesStorageKey('empresa-2'),
       JSON.stringify([saleRecord({ id: 'other' })]),
@@ -332,7 +332,7 @@ describe('CompanySalesStore', () => {
 
   it('debe ignorar storage corrupto', () => {
     localStorage.setItem(companySalesStorageKey('empresa-1'), '{');
-    localStorage.setItem(companyClientsStorageKey('empresa-1'), 'no-json');
+    localStorage.setItem(clientsStorageKey('company', 'empresa-1'), 'no-json');
     const store = setup();
 
     expect(store.localSales()).toEqual([]);

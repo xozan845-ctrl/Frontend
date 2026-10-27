@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CompanyNewSaleModalComponent } from './company-new-sale-modal.component';
-import type { CompanyClient } from '../../models/company-client.model';
+import type { Client } from '../../../clients/public-api';
 import type { CompanyService } from '../../models/company-service.model';
 import type { CatalogProduct } from '../../../products/public-api';
 import type { CreateCompanySalePayload } from '../../models/company-sale.model';
 
-const client: CompanyClient = {
+const client: Client = {
   id: 'buyer-buyer-1',
   buyerId: 'buyer-1',
   name: 'Carla López',

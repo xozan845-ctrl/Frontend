@@ -1,5 +1,5 @@
 import type { OrderResponse } from '../../../cart/public-api';
-import type { CompanyClient } from '../../models/company-client.model';
+import type { Client } from '../../../clients/public-api';
 import type { CompanySalesAccount } from '../../models/company-sales.model';
 import type {
   CompanySaleFilters,
@@ -83,7 +83,7 @@ function order(overrides: Partial<OrderResponse> = {}): OrderResponse {
   };
 }
 
-function client(overrides: Partial<CompanyClient> = {}): CompanyClient {
+function client(overrides: Partial<Client> = {}): Client {
   return {
     id: 'buyer-buyer-1',
     buyerId: 'buyer-1',

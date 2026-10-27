@@ -24,16 +24,16 @@ import {
   sanitizeCompanySaleRecords,
 } from '../../adapters/company-sale/company-sale.adapter';
 import {
-  buildCompanyClients,
-  sanitizeCompanyClientRecords,
-} from '../../adapters/company-client/company-client.adapter';
+  buildClients,
+  clientsStorageKey,
+  sanitizeClientRecords,
+} from '../../../clients/public-api';
 import {
   COMPANY_SALE_DEFAULT_PROVIDER,
   COMPANY_SALE_MAX_RECORDS,
   COMPANY_SALE_PAGE_SIZE,
   companySalesStorageKey,
 } from '../../constants/company-sales.constants';
-import { companyClientsStorageKey } from '../../constants/company-clients.constants';
 import type {
   CompanySaleMutationResult,
   CompanySalePaymentFilter,
@@ -85,7 +85,7 @@ function loadStoredClients(storageKey: string): CompanySalesState['localClients'
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return [];
-    return sanitizeCompanyClientRecords(JSON.parse(raw) as unknown);
+    return sanitizeClientRecords(JSON.parse(raw) as unknown);
   } catch {
     return [];
   }
@@ -100,7 +100,7 @@ function loadStoredClients(storageKey: string): CompanySalesState['localClients'
 export const CompanySalesStore = signalStore(
   withState(initialState),
   withComputed((store) => {
-    const clients = computed(() => buildCompanyClients(store.orders(), store.localClients()));
+    const clients = computed(() => buildClients(store.orders(), store.localClients()));
 
     const rows = computed(() =>
       buildCompanySaleRows({
@@ -314,7 +314,7 @@ export const CompanySalesStore = signalStore(
       const authStore = inject(AuthStore);
       const tenantId = authStore.user()?.tenantId;
       const salesKey = companySalesStorageKey(tenantId);
-      const clientsKey = companyClientsStorageKey(tenantId);
+      const clientsKey = clientsStorageKey('company', tenantId);
       const storedSales = loadStoredSales(salesKey);
       const storedClients = loadStoredClients(clientsKey);
 

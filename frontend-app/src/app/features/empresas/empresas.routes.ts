@@ -1,5 +1,13 @@
 import { Route, Routes } from '@angular/router';
+import {
+  CLIENTS_PAGE_CONFIG,
+  CLIENTS_SCOPE_CONFIG,
+} from '../../shared/clients/constants/clients-config.tokens';
 import { companyGuard } from './guards/company/company.guard';
+import {
+  COMPANY_CLIENTS_PAGE_CONFIG,
+  COMPANY_CLIENTS_SCOPE_CONFIG,
+} from './constants/company-clients-page.config';
 import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
 import { COMPANY_REPOSITORY } from './repositories/company.repository';
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
@@ -53,9 +61,11 @@ export const EMPRESAS_ROUTES: Routes = [
       {
         path: 'clientes',
         loadChildren: () =>
-          import('./pages/company-clients/company-clients.routes').then(
-            (module) => module.COMPANY_CLIENTS_ROUTES,
-          ),
+          import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
+        providers: [
+          { provide: CLIENTS_PAGE_CONFIG, useValue: COMPANY_CLIENTS_PAGE_CONFIG },
+          { provide: CLIENTS_SCOPE_CONFIG, useValue: COMPANY_CLIENTS_SCOPE_CONFIG },
+        ],
       },
       {
         path: 'productos',

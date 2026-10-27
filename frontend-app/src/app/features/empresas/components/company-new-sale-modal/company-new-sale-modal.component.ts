@@ -7,7 +7,7 @@ import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.dir
 import type { CatalogProduct } from '../../../products/public-api';
 import { createCompanySaleLineId } from '../../constants/company-sales.constants';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
-import type { CompanyClient } from '../../models/company-client.model';
+import type { Client } from '../../../clients/public-api';
 import type { CompanyService } from '../../models/company-service.model';
 import type {
   CompanySaleClientMode,
@@ -56,7 +56,7 @@ function todayInput(): string {
 })
 export class CompanyNewSaleModalComponent {
   readonly open = input(false);
-  readonly clients = input<readonly CompanyClient[]>([]);
+  readonly clients = input<readonly Client[]>([]);
   readonly products = input<readonly CatalogProduct[]>([]);
   readonly services = input<readonly CompanyService[]>([]);
   readonly nextNumber = input('V-000001');
@@ -186,7 +186,7 @@ export class CompanyNewSaleModalComponent {
     if (mode !== 'existing') this.selectedClientId.set(null);
   }
 
-  chooseClient(client: CompanyClient): void {
+  chooseClient(client: Client): void {
     this.selectedClientId.set(client.id);
     this.clientMode.set('existing');
     this.stepError.set(null);
