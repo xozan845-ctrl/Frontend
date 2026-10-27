@@ -198,6 +198,41 @@ test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) 
   await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText('Producto Nuevo');
 });
 
+// R-E-40: el empresario administra servicios desde "Productos / Servicios"
+// (ADR-52): alta, edición y eliminación con persistencia local por tenant.
+test('R-E-40: el empresario administra servicios de la empresa', async ({ page }) => {
+  await login(page, '/empresa/productos', 'empresario@tienda.test');
+
+  await page.getByTestId('services-tab').click();
+  await expect(page.getByTestId('services-empty')).toBeVisible();
+
+  await page.getByTestId('new-service').click();
+  await page.getByTestId('service-code').fill('SRV-001');
+  await page.getByTestId('service-name').fill('Mantenimiento preventivo');
+  await page.getByTestId('service-description').fill('Revisión completa de equipos');
+  await page.getByTestId('service-category').fill('Soporte');
+  await page.getByTestId('service-price').fill('1500.00');
+  await page.getByTestId('service-duration').fill('90');
+  await page.getByTestId('save-service').click();
+
+  await expect(page.locator('[data-testid="service-row"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="service-row"]').first()).toContainText(
+    'Mantenimiento preventivo',
+  );
+
+  await page.locator('[data-testid^="edit-service-"]').first().click();
+  await page.getByTestId('service-name').fill('Mantenimiento express');
+  await page.getByTestId('save-service').click();
+  await expect(page.locator('[data-testid="service-row"]').first()).toContainText(
+    'Mantenimiento express',
+  );
+
+  await page.locator('[data-testid^="delete-service-"]').first().click();
+  await expect(page.getByTestId('service-delete-dialog')).toBeVisible();
+  await page.getByTestId('confirm-delete-service').click();
+  await expect(page.getByTestId('services-empty')).toBeVisible();
+});
+
 // R-E-38: el empresario consulta las ventas consolidadas de su empresa
 // (`GET /orders/empresa` + `/empresarios/me/ventas`, ADR-45).
 test('R-E-38: el empresario consulta las ventas de la empresa', async ({ page }) => {
