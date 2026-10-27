@@ -11,6 +11,19 @@ function toNumber(value: unknown, fallback = 0): number {
   return Number.isNaN(parsed) ? fallback : parsed;
 }
 
+/** Texto opcional recortado; los valores vacíos no se exponen en el dominio. */
+function toOptionalText(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed || undefined;
+}
+
+function toRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
 /** Normaliza una línea de orden (`ItemOrden` de Core Engine). */
 function adaptOrderItem(raw: unknown): OrderItem {
   const item = (raw ?? {}) as BackendOrderItemDTO;
@@ -60,6 +73,48 @@ export function adaptOrderResponse(raw: unknown, fallbackTotal: number): OrderRe
     data.orderNumber ?? data.order_number ?? `ORD-${orderId.slice(-8).toUpperCase()}`,
   );
 
+  const rawBuyer = data.comprador;
+  const buyer = toRecord(rawBuyer);
+  const buyerString = toOptionalText(rawBuyer);
+  const shipping = toRecord(data.direccion_envio ?? data.shippingAddress);
+  const buyerName = toOptionalText(
+    data.comprador_nombre ??
+      data.compradorNombre ??
+      data.buyerName ??
+      buyer?.['nombre'] ??
+      buyer?.['nombre_completo'] ??
+      buyer?.['name'] ??
+      buyerString ??
+      shipping?.['nombre_receptor'] ??
+      shipping?.['nombre'] ??
+      shipping?.['name'],
+  );
+  const buyerPhone = toOptionalText(
+    data.comprador_telefono ??
+      data.compradorTelefono ??
+      data.buyerPhone ??
+      buyer?.['telefono'] ??
+      buyer?.['phone'] ??
+      shipping?.['telefono'] ??
+      shipping?.['phone'],
+  );
+  const buyerEmail = toOptionalText(
+    data.comprador_email ??
+      data.compradorEmail ??
+      data.buyerEmail ??
+      buyer?.['email'] ??
+      buyer?.['correo'] ??
+      shipping?.['email'] ??
+      shipping?.['correo'],
+  );
+  const buyerCompany = toOptionalText(
+    data.comprador_empresa ??
+      data.compradorEmpresa ??
+      data.buyerCompany ??
+      buyer?.['empresa'] ??
+      buyer?.['company'],
+  );
+
   return {
     id,
     orderNumber,
@@ -72,6 +127,10 @@ export function adaptOrderResponse(raw: unknown, fallbackTotal: number): OrderRe
     ...(data.comprador_id || data.compradorId
       ? { buyerId: String(data.comprador_id ?? data.compradorId) }
       : {}),
+    ...(buyerName ? { buyerName } : {}),
+    ...(buyerPhone ? { buyerPhone } : {}),
+    ...(buyerEmail ? { buyerEmail } : {}),
+    ...(buyerCompany ? { buyerCompany } : {}),
     ...(data.vendedor_id || data.vendedorId
       ? { sellerId: String(data.vendedor_id ?? data.vendedorId) }
       : {}),

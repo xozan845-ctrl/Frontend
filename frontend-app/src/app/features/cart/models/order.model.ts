@@ -31,6 +31,11 @@ export interface OrderResponse {
   createdAt: string;
   storeId?: string;
   buyerId?: string;
+  /** Nombre del comprador cuando el contrato lo expone. */
+  buyerName?: string;
+  buyerPhone?: string;
+  buyerEmail?: string;
+  buyerCompany?: string;
   sellerId?: string;
   /** Comisión de plataforma en córdobas (`comision_cents / 100`). */
   commission?: number;

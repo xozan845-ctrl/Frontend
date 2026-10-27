@@ -85,6 +85,84 @@ describe('order.adapter', () => {
       ).toBe(30);
       expect(adaptOrderResponse({ id: 'o-1' }, 0).items).toBeUndefined();
     });
+
+    it('debe mapear el contacto plano del comprador y recortar espacios', () => {
+      const order = adaptOrderResponse(
+        {
+          id: 'o-1',
+          comprador_id: 'buyer-1',
+          comprador_nombre: '  Carla López ',
+          comprador_telefono: '+505 8888 8888',
+          comprador_email: ' CARLA@CORREO.COM ',
+          comprador_empresa: 'Norte',
+        },
+        0,
+      );
+
+      expect(order).toMatchObject({
+        buyerId: 'buyer-1',
+        buyerName: 'Carla López',
+        buyerPhone: '+505 8888 8888',
+        buyerEmail: 'CARLA@CORREO.COM',
+        buyerCompany: 'Norte',
+      });
+    });
+
+    it('debe leer el comprador anidado y preferirlo sobre la dirección de envío', () => {
+      const order = adaptOrderResponse(
+        {
+          id: 'o-2',
+          comprador: {
+            nombre_completo: 'Ana Ruiz',
+            telefono: '7777',
+            correo: 'ana@correo.com',
+            empresa: 'Sur',
+          },
+          direccion_envio: {
+            nombre_receptor: 'Ana Envío',
+            telefono: '8888',
+            email: 'ana@envio.com',
+          },
+        },
+        0,
+      );
+
+      expect(order).toMatchObject({
+        buyerName: 'Ana Ruiz',
+        buyerPhone: '7777',
+        buyerEmail: 'ana@correo.com',
+        buyerCompany: 'Sur',
+      });
+    });
+
+    it('debe usar la dirección de envío como respaldo y omitir valores vacíos', () => {
+      const shipping = adaptOrderResponse(
+        {
+          id: 'o-3',
+          direccion_envio: { nombre: 'Luis', phone: '6666', correo: 'luis@correo.com' },
+        },
+        0,
+      );
+      const empty = adaptOrderResponse(
+        { id: 'o-4', comprador: '   ', comprador_telefono: '   ', comprador_email: '' },
+        0,
+      );
+
+      expect(shipping).toMatchObject({
+        buyerName: 'Luis',
+        buyerPhone: '6666',
+        buyerEmail: 'luis@correo.com',
+      });
+      expect(empty.buyerName).toBeUndefined();
+      expect(empty.buyerPhone).toBeUndefined();
+      expect(empty.buyerEmail).toBeUndefined();
+    });
+
+    it('debe aceptar un comprador en texto plano', () => {
+      const order = adaptOrderResponse({ id: 'o-5', comprador: 'Carlos' }, 0);
+
+      expect(order.buyerName).toBe('Carlos');
+    });
   });
 
   describe('generateMockOrderResponse', () => {

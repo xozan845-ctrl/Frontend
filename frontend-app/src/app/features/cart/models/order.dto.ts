@@ -17,6 +17,18 @@ export interface BackendOrderItemDTO {
   storeId?: string | number | null;
 }
 
+export interface BackendOrderBuyerDTO {
+  nombre?: string | null;
+  nombre_completo?: string | null;
+  name?: string | null;
+  telefono?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  correo?: string | null;
+  empresa?: string | null;
+  company?: string | null;
+}
+
 export interface BackendOrderDTO {
   id?: string | number | null;
   _id?: string | number | null;
@@ -26,6 +38,19 @@ export interface BackendOrderDTO {
   vendedorId?: string | number | null;
   comprador_id?: string | number | null;
   compradorId?: string | number | null;
+  comprador_nombre?: string | null;
+  compradorNombre?: string | null;
+  buyerName?: string | null;
+  comprador_telefono?: string | null;
+  compradorTelefono?: string | null;
+  buyerPhone?: string | null;
+  comprador_email?: string | null;
+  compradorEmail?: string | null;
+  buyerEmail?: string | null;
+  comprador_empresa?: string | null;
+  compradorEmpresa?: string | null;
+  buyerCompany?: string | null;
+  comprador?: BackendOrderBuyerDTO | null;
   estado?: string;
   status?: string;
   total_cents?: number | null;
