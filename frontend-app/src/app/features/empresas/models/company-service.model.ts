@@ -1,12 +1,11 @@
-/** Pestañas del apartado "Productos / Servicios" del workspace de empresa. */
-export type CompanyCatalogTab = 'productos' | 'servicios';
+import type { CompanyCatalogSort } from './company-catalog.model';
 
 /** Estado visible de un servicio de la empresa. */
 export type CompanyServiceStatus = 'activo' | 'inactivo';
 
 /**
  * Servicio ofrecido por la empresa. Mientras Core Engine no exponga un
- * endpoint de servicios, se persiste localmente por tenant (ADR-52).
+ * endpoint de servicios, se persiste localmente por tenant (ADR-52/55).
  */
 export interface CompanyService {
   id: string;
@@ -16,8 +15,14 @@ export interface CompanyService {
   name: string;
   description: string;
   category: string;
-  /** Precio en córdobas. */
+  brand: string;
+  barcode: string;
+  /** Precio de venta en córdobas. */
   price: number;
+  /** Costo estimado en córdobas. */
+  cost: number;
+  /** Unidad de venta (ej. "Hora (h)"). */
+  unit: string;
   /** Duración estimada en minutos. */
   durationMinutes: number;
   status: CompanyServiceStatus;
@@ -33,8 +38,13 @@ export interface CreateCompanyServiceData {
   name: string;
   description?: string;
   category?: string;
+  brand?: string;
+  barcode?: string;
   /** Precio decimal como string (ej. "1500.00"). */
   price: string;
+  /** Costo decimal como string (ej. "500.00"). */
+  cost?: string;
+  unit?: string;
   durationMinutes: number;
   status?: CompanyServiceStatus;
 }
@@ -44,8 +54,13 @@ export interface UpdateCompanyServiceData {
   name?: string;
   description?: string;
   category?: string;
+  brand?: string;
+  barcode?: string;
   /** Precio decimal como string (ej. "1500.00"). */
   price?: string;
+  /** Costo decimal como string (ej. "500.00"). */
+  cost?: string;
+  unit?: string;
   durationMinutes?: number;
   status?: CompanyServiceStatus;
 }
@@ -61,5 +76,7 @@ export interface CompanyServiceMutationResult {
 export interface CompanyServiceFilters {
   search?: string;
   category?: string;
+  brand?: string;
   status?: CompanyServiceStatus | null;
+  sort?: CompanyCatalogSort;
 }

@@ -1,529 +1,529 @@
-<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="company-products-page">
-  <header class="flex flex-col gap-4">
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-5" data-testid="company-products-page">
+  <header class="flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
     <div>
-      <nav
-        aria-label="Ruta de navegación"
-        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
-      >
-        <span>Empresa</span>
-        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
-        <span aria-current="page" class="text-accent-600 dark:text-accent-400">
-          Productos y servicios
-        </span>
-      </nav>
       <h1
-        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+        class="font-heading text-3xl font-black tracking-tight whitespace-nowrap text-slate-900 dark:text-white"
       >
-        Productos y servicios
+        Productos &amp; Servicios
       </h1>
-      <p class="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-        Administra el catálogo de productos y los servicios que ofrece tu empresa.
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Administra tu catálogo, precios, costos y stock
       </p>
     </div>
 
-    <div
-      class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"
-      role="group"
-      aria-label="Sección de productos y servicios"
-    >
+    <div class="flex flex-wrap items-center gap-2">
       <button
         type="button"
-        class="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
-        [class]="
-          activeTab() === 'productos'
-            ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
-            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white'
-        "
-        [attr.aria-pressed]="activeTab() === 'productos'"
-        data-testid="products-tab"
-        (click)="setTab('productos')"
+        class="flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
+        data-testid="inventory-settings"
+        (click)="showComingSoon('La configuración de inventario')"
       >
-        <i class="fa-solid fa-cube" aria-hidden="true"></i>
-        Productos
-        <span
-          class="rounded-full px-2 py-0.5 text-[10px] tabular-nums"
-          data-testid="products-tab-count"
-        >
-          {{ catalog.total() }}
-        </span>
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+        Configuración de inventario
       </button>
 
       <button
         type="button"
-        class="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden"
-        [class]="
-          activeTab() === 'servicios'
-            ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/25'
-            : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white'
-        "
-        [attr.aria-pressed]="activeTab() === 'servicios'"
-        data-testid="services-tab"
-        (click)="setTab('servicios')"
+        class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden dark:border-surface-600 dark:bg-surface-800 dark:text-slate-200"
+        data-testid="download-template"
+        (click)="downloadTemplate()"
       >
-        <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
-        Servicios
-        <span
-          class="rounded-full px-2 py-0.5 text-[10px] tabular-nums"
-          data-testid="services-tab-count"
-        >
-          {{ services.total() }}
-        </span>
+        <i class="fa-solid fa-file-arrow-down text-emerald-500" aria-hidden="true"></i>
+        Descargar plantilla
+        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400" aria-hidden="true"></i>
+      </button>
+
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden dark:border-surface-600 dark:bg-surface-800 dark:text-slate-200"
+        data-testid="import-excel"
+        (click)="importInput.click()"
+      >
+        <i class="fa-solid fa-file-excel text-emerald-500" aria-hidden="true"></i>
+        Importar Excel
+      </button>
+      <input
+        #importInput
+        type="file"
+        class="hidden"
+        accept=".csv,.xlsx,.xls"
+        aria-label="Importar archivo de productos"
+        (change)="onImportFile($event)"
+      />
+
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
+        data-testid="new-product"
+        (click)="openNew()"
+      >
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        Nuevo {{ activeTab() === 'servicios' ? 'Servicio' : 'Producto' }}
       </button>
     </div>
   </header>
 
-  @if (activeTab() === 'productos') {
-    <section aria-label="Productos">
-      <app-catalog-page [embedded]="true" />
-    </section>
-  } @else {
-    <section class="flex flex-col gap-6" aria-labelledby="services-title">
-      <div class="card flex flex-col gap-5 p-5">
-        <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2
-              id="services-title"
-              class="font-heading text-2xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
-            >
-              Servicios
-            </h2>
-            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              Servicios que tu empresa ofrece a sus clientes, con precio y duración estimada.
-            </p>
-          </div>
-          <button
-            type="button"
-            class="btn btn-primary self-start sm:self-auto"
-            data-testid="new-service"
-            (click)="openCreateService()"
-          >
-            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
-            Nuevo servicio
-          </button>
-        </header>
-
-        @if (serviceFormOpen()) {
-          <section
-            class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-surface-600 dark:bg-surface-700/40"
-            aria-labelledby="service-form-title"
-            data-testid="service-form"
-          >
-            <h3
-              id="service-form-title"
-              class="font-heading text-lg font-black tracking-tight uppercase dark:text-white"
-            >
-              {{ editingService() ? 'Editar servicio' : 'Nuevo servicio' }}
-            </h3>
-
-            @if (serviceError(); as message) {
-              <div
-                class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-700 dark:border-amber-800 dark:bg-amber-900/10 dark:text-amber-300"
-                role="alert"
-                data-testid="service-form-error"
-              >
-                {{ message }}
-              </div>
-            }
-
-            <form
-              [formGroup]="serviceForm"
-              (ngSubmit)="submitService()"
-              class="mt-3 grid gap-4 sm:grid-cols-2"
-              novalidate
-            >
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-code"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Código *
-                </label>
-                <input
-                  id="service-code"
-                  type="text"
-                  class="input"
-                  formControlName="code"
-                  autocomplete="off"
-                  placeholder="SRV-001"
-                  data-testid="service-code"
-                />
-                @if (isServiceInvalid('code')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    Usa de 2 a 32 letras, números o guiones.
-                  </p>
-                } @else if (editingService()) {
-                  <p class="text-[10px] text-slate-400">El código no se puede cambiar.</p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-name"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Nombre *
-                </label>
-                <input
-                  id="service-name"
-                  type="text"
-                  class="input"
-                  formControlName="name"
-                  placeholder="Ej. Mantenimiento preventivo"
-                  data-testid="service-name"
-                />
-                @if (isServiceInvalid('name')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    El nombre debe tener entre 2 y 200 caracteres.
-                  </p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1 sm:col-span-2">
-                <label
-                  for="service-description"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Descripción
-                </label>
-                <textarea
-                  id="service-description"
-                  rows="2"
-                  class="input resize-none"
-                  formControlName="description"
-                  placeholder="Qué incluye el servicio…"
-                  data-testid="service-description"
-                ></textarea>
-                @if (isServiceInvalid('description')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    La descripción no puede superar 500 caracteres.
-                  </p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-category"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Categoría
-                </label>
-                <input
-                  id="service-category"
-                  type="text"
-                  class="input"
-                  formControlName="category"
-                  placeholder="Ej. Soporte técnico"
-                  data-testid="service-category"
-                />
-                @if (isServiceInvalid('category')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    La categoría no puede superar 80 caracteres.
-                  </p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-price"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Precio (C$) *
-                </label>
-                <input
-                  id="service-price"
-                  type="text"
-                  inputmode="decimal"
-                  class="input"
-                  formControlName="price"
-                  placeholder="1500.00"
-                  data-testid="service-price"
-                />
-                @if (isServiceInvalid('price')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    Usa un decimal válido, por ejemplo 1500.00.
-                  </p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-duration"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Duración (minutos) *
-                </label>
-                <input
-                  id="service-duration"
-                  type="number"
-                  min="1"
-                  max="10080"
-                  step="1"
-                  class="input"
-                  formControlName="durationMinutes"
-                  data-testid="service-duration"
-                />
-                @if (isServiceInvalid('durationMinutes')) {
-                  <p class="text-xs font-bold text-red-600 dark:text-red-400">
-                    La duración debe estar entre 1 y 10 080 minutos.
-                  </p>
-                }
-              </div>
-
-              <div class="flex flex-col gap-1">
-                <label
-                  for="service-status"
-                  class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
-                >
-                  Estado
-                </label>
-                <select
-                  id="service-status"
-                  class="input"
-                  formControlName="status"
-                  data-testid="service-status"
-                >
-                  <option value="activo">Activo</option>
-                  <option value="inactivo">Inactivo</option>
-                </select>
-              </div>
-
-              <div class="flex gap-2 sm:col-span-2">
-                <button type="submit" class="btn btn-primary" data-testid="save-service">
-                  {{ editingService() ? 'Guardar cambios' : 'Crear servicio' }}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-testid="cancel-service"
-                  (click)="closeServiceForm()"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </section>
-        }
-
-        <div
-          class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]"
-          data-testid="services-filters"
+  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Indicadores del catálogo">
+    <article
+      class="rounded-2xl border border-slate-200 border-t-4 border-t-emerald-400 bg-white p-4 shadow-sm dark:border-surface-700 dark:border-t-emerald-400 dark:bg-surface-800"
+      data-testid="kpi-active-products"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Productos activos
+        </p>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-lg dark:bg-emerald-900/20"
+          aria-hidden="true"
+          >📦</span
         >
-          <div class="flex flex-col gap-1">
-            <label for="services-search" class="sr-only">Buscar servicios</label>
-            <input
-              id="services-search"
-              type="search"
-              class="input"
-              placeholder="Buscar por nombre, código o categoría…"
-              [value]="services.search()"
-              data-testid="services-search"
-              (input)="onSearchInput($event)"
-            />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="services-category-filter" class="sr-only">Categoría</label>
-            <select
-              id="services-category-filter"
-              class="input"
-              [value]="services.category()"
-              data-testid="services-category-filter"
-              (change)="onCategoryFilter($event)"
-            >
-              <option value="">Todas las categorías</option>
-              @for (category of services.categories(); track category) {
-                <option [value]="category">{{ category }}</option>
-              }
-            </select>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="services-status-filter" class="sr-only">Estado</label>
-            <select
-              id="services-status-filter"
-              class="input"
-              [value]="services.status() ?? ''"
-              data-testid="services-status-filter"
-              (change)="onStatusFilter($event)"
-            >
-              <option value="">Todos los estados</option>
-              <option value="activo">Activo</option>
-              <option value="inactivo">Inactivo</option>
-            </select>
-          </div>
-          <div class="flex items-end">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-testid="clear-services-filters"
-              (click)="services.clearFilters()"
-            >
-              Limpiar
-            </button>
-          </div>
+      </div>
+      <p class="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+        {{ products.kpis().activeProducts }}
+      </p>
+      <p class="text-xs text-slate-400">En catálogo</p>
+    </article>
+
+    <article
+      class="rounded-2xl border border-slate-200 border-t-4 border-t-sky-400 bg-white p-4 shadow-sm dark:border-surface-700 dark:border-t-sky-400 dark:bg-surface-800"
+      data-testid="kpi-active-services"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Servicios activos
+        </p>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-lg dark:bg-sky-900/20"
+          aria-hidden="true"
+          >🔧</span
+        >
+      </div>
+      <p class="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+        {{ services.activeCount() }}
+      </p>
+      <p class="text-xs text-slate-400">Disponibles</p>
+    </article>
+
+    <article
+      class="rounded-2xl border border-slate-200 border-t-4 border-t-violet-400 bg-white p-4 shadow-sm dark:border-surface-700 dark:border-t-violet-400 dark:bg-surface-800"
+      data-testid="kpi-inventory-value"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Valor del inventario
+        </p>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-lg dark:bg-violet-900/20"
+          aria-hidden="true"
+          >💵</span
+        >
+      </div>
+      <p class="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+        {{ products.kpis().inventoryValue | appCurrency }}
+      </p>
+      <p class="text-xs text-slate-400">Stock × Costo</p>
+    </article>
+
+    <article
+      class="rounded-2xl border border-slate-200 border-t-4 border-t-emerald-400 bg-white p-4 shadow-sm dark:border-surface-700 dark:border-t-emerald-400 dark:bg-surface-800"
+      data-testid="kpi-inventory-ok"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">Inventario OK</p>
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-lg dark:bg-emerald-900/20"
+          aria-hidden="true"
+          >✅</span
+        >
+      </div>
+      <p class="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+        {{ products.kpis().inventoryOk }}
+      </p>
+      <p class="text-xs text-slate-400">Todo en orden</p>
+    </article>
+  </section>
+
+  <section
+    class="flex flex-wrap items-center gap-2"
+    role="group"
+    aria-label="Secciones del catálogo"
+  >
+    <button
+      type="button"
+      class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
+      [class]="
+        activeTab() === 'productos'
+          ? 'bg-gradient-to-r from-emerald-400 to-sky-500 text-white shadow-lg shadow-emerald-500/20'
+          : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300'
+      "
+      [attr.aria-pressed]="activeTab() === 'productos'"
+      data-testid="products-tab"
+      (click)="setTab('productos')"
+    >
+      <span aria-hidden="true">📦</span>
+      Productos
+      <span class="rounded-full px-2 py-0.5 text-[10px] tabular-nums">
+        {{ products.total() }}
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
+      [class]="
+        activeTab() === 'servicios'
+          ? 'bg-gradient-to-r from-emerald-400 to-sky-500 text-white shadow-lg shadow-emerald-500/20'
+          : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300'
+      "
+      [attr.aria-pressed]="activeTab() === 'servicios'"
+      data-testid="services-tab"
+      (click)="setTab('servicios')"
+    >
+      <span aria-hidden="true">🔧</span>
+      Servicios
+      <span class="rounded-full px-2 py-0.5 text-[10px] tabular-nums">
+        {{ services.total() }}
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
+      [class]="
+        activeTab() === 'materia-prima'
+          ? 'bg-gradient-to-r from-emerald-400 to-sky-500 text-white shadow-lg shadow-emerald-500/20'
+          : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300'
+      "
+      [attr.aria-pressed]="activeTab() === 'materia-prima'"
+      data-testid="raw-material-tab"
+      (click)="setTab('materia-prima')"
+    >
+      <span aria-hidden="true">🧱</span>
+      Materia Prima
+      <span class="rounded-full px-2 py-0.5 text-[10px] tabular-nums">
+        {{ products.rawMaterialCount() }}
+      </span>
+    </button>
+  </section>
+
+  <section
+    class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-surface-700 dark:bg-surface-800"
+    aria-label="Filtros del catálogo"
+  >
+    <div class="flex flex-col gap-3">
+      <div class="grid gap-2 lg:grid-cols-[1.6fr_1fr_auto]">
+        <div class="relative">
+          <i
+            class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-slate-400"
+            aria-hidden="true"
+          ></i>
+          <input
+            type="search"
+            class="input pl-9"
+            placeholder="Buscar por nombre, SKU, categoría o marca…"
+            [value]="activeSearch()"
+            aria-label="Buscar en el catálogo"
+            data-testid="catalog-search"
+            (input)="onSearchInput($event)"
+          />
         </div>
 
-        @if (!services.hasServices() && !serviceFormOpen()) {
-          <div
-            class="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 p-10 text-center dark:border-surface-600"
-            data-testid="services-empty"
-          >
-            <i
-              class="fa-solid fa-briefcase text-3xl text-slate-300 dark:text-surface-600"
-              aria-hidden="true"
-            ></i>
-            <p class="text-sm font-bold text-slate-600 dark:text-slate-300">
-              Aún no hay servicios registrados
-            </p>
-            <p class="max-w-md text-xs text-slate-500 dark:text-slate-400">
-              Agrega el primer servicio para que tu equipo conozca qué ofrece la empresa y a qué
-              precio.
-            </p>
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          (click)="showComingSoon('El escaneo de código de barras')"
+        >
+          <i class="fa-solid fa-barcode" aria-hidden="true"></i>
+          Escanear código de barras…
+        </button>
+
+        <div class="flex flex-wrap gap-1.5">
+          @for (filter of statusFilters; track filter.value) {
             <button
               type="button"
-              class="btn btn-secondary btn-sm mt-2"
-              (click)="openCreateService()"
+              class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-black tracking-wide uppercase transition-colors"
+              [class]="
+                isStatusActive(filter.value)
+                  ? 'border-emerald-400 bg-emerald-400 text-white'
+                  : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300'
+              "
+              [disabled]="activeTab() === 'servicios' && filter.value === 'stock-bajo'"
+              (click)="setStatusFilter(filter.value)"
             >
-              Crear el primer servicio
+              <i [class]="filter.icon" aria-hidden="true"></i>
+              {{ filter.label }}
             </button>
-          </div>
-        } @else if (!services.hasFilteredServices()) {
-          <p
-            class="p-6 text-center text-sm text-slate-500 dark:text-slate-400"
-            data-testid="services-no-results"
-          >
-            No hay servicios que coincidan con los filtros.
-            <button
-              type="button"
-              class="font-bold text-accent-600"
-              (click)="services.clearFilters()"
-            >
-              Limpiar filtros
-            </button>
-          </p>
-        } @else {
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm" data-testid="services-table">
-              <thead>
-                <tr
-                  class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
-                >
-                  <th scope="col" class="py-2 pr-3 font-bold">Código</th>
-                  <th scope="col" class="py-2 pr-3 font-bold">Servicio</th>
-                  <th scope="col" class="py-2 pr-3 font-bold">Categoría</th>
-                  <th scope="col" class="py-2 pr-3 font-bold">Precio</th>
-                  <th scope="col" class="py-2 pr-3 font-bold">Duración</th>
-                  <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
-                  <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
-                @for (service of services.pagedServices(); track service.id) {
-                  <tr data-testid="service-row" [attr.data-service-id]="service.id">
-                    <td
-                      class="py-3 pr-3 font-mono text-xs whitespace-nowrap text-slate-500 dark:text-slate-400"
-                    >
-                      {{ service.code }}
-                    </td>
-                    <td class="py-3 pr-3">
-                      <p class="font-bold text-slate-900 dark:text-white">{{ service.name }}</p>
-                      <p class="max-w-md truncate text-xs text-slate-400">
-                        {{ service.description || '—' }}
-                      </p>
-                    </td>
-                    <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
-                      {{ service.category || '—' }}
-                    </td>
-                    <td
-                      class="py-3 pr-3 tabular-nums whitespace-nowrap text-slate-600 dark:text-slate-300"
-                    >
-                      {{ service.price | appCurrency }}
-                    </td>
-                    <td
-                      class="py-3 pr-3 tabular-nums whitespace-nowrap text-slate-600 dark:text-slate-300"
-                    >
-                      {{ service.durationMinutes }} min
-                    </td>
-                    <td class="py-3 pr-3">
-                      <span
-                        class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
-                        [class]="
-                          service.status === 'activo'
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                            : 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300'
-                        "
-                      >
-                        {{ serviceStatusLabels[service.status] }}
-                      </span>
-                    </td>
-                    <td class="py-3 text-right">
-                      <div class="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          class="btn btn-secondary btn-sm"
-                          [attr.data-testid]="'edit-service-' + service.id"
-                          (click)="openEditService(service)"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-danger btn-sm"
-                          [attr.data-testid]="'delete-service-' + service.id"
-                          (click)="confirmDelete(service)"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+          }
+        </div>
+      </div>
 
-          <footer
-            class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-surface-700"
-          >
-            <p class="text-xs text-slate-500 dark:text-slate-400" data-testid="services-count">
-              {{ services.filteredCount() }} de {{ services.total() }}
-              {{ services.total() === 1 ? 'servicio' : 'servicios' }}
-            </p>
-            <div class="flex items-center gap-2">
-              <span
-                class="text-xs text-slate-500 dark:text-slate-400"
-                data-testid="services-page-indicator"
-              >
-                Página {{ services.currentPage() }} de {{ services.pageCount() }}
-              </span>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                [disabled]="services.isFirstPage()"
-                data-testid="services-prev-page"
-                (click)="services.previousPage()"
-              >
-                Anterior
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                [disabled]="services.isLastPage()"
-                data-testid="services-next-page"
-                (click)="services.nextPage()"
-              >
-                Siguiente
-              </button>
-            </div>
-          </footer>
-        }
+      <div class="flex flex-wrap items-center gap-2">
+        <select
+          class="input w-auto min-w-40 py-1.5 text-xs"
+          [value]="activeBrand()"
+          aria-label="Filtrar por marca"
+          data-testid="catalog-brand-filter"
+          (change)="onBrandFilter($event)"
+        >
+          <option value="">Todas las marcas</option>
+          @for (brand of activeBrands(); track brand) {
+            <option [value]="brand">{{ brand }}</option>
+          }
+        </select>
 
-        <p class="text-[10px] text-slate-400 dark:text-slate-500">
-          Los servicios se guardan en este dispositivo hasta que el servidor habilite el catálogo de
-          servicios.
+        <select
+          class="input w-auto min-w-44 py-1.5 text-xs"
+          [value]="activeSort()"
+          aria-label="Ordenar catálogo"
+          data-testid="catalog-sort"
+          (change)="onSortChange($event)"
+        >
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+
+        <span class="text-xs text-slate-400" data-testid="catalog-result-count">
+          {{ activeFilteredCount() }} resultados
+        </span>
+
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          data-testid="export-inventory"
+          (click)="exportInventory()"
+        >
+          <i class="fa-solid fa-file-export text-emerald-500" aria-hidden="true"></i>
+          Exportar inventario
+        </button>
+
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          (click)="showComingSoon('Mover productos')"
+        >
+          <i class="fa-solid fa-boxes-stacked text-emerald-500" aria-hidden="true"></i>
+          Mover productos
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          (click)="showComingSoon('Trasladar varios productos')"
+        >
+          <i class="fa-solid fa-truck-fast text-emerald-500" aria-hidden="true"></i>
+          Trasladar varios
+        </button>
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          (click)="showComingSoon('Los traslados')"
+        >
+          <i class="fa-solid fa-clipboard-list text-emerald-500" aria-hidden="true"></i>
+          Traslados
+        </button>
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          data-testid="refresh-catalog"
+          (click)="refresh()"
+        >
+          <i class="fa-solid fa-rotate text-emerald-500" aria-hidden="true"></i>
+          Actualizar
+        </button>
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-surface-700"
+          data-testid="clear-catalog-filters"
+          (click)="clearFilters()"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-surface-700 dark:bg-surface-800"
+    aria-label="Tabla del catálogo"
+  >
+    <app-company-catalog-table
+      [rows]="activeRows()"
+      [tab]="activeTab()"
+      [loading]="activeLoading()"
+      [emptyTitle]="activeEmptyTitle()"
+      [emptyDescription]="activeEmptyDescription()"
+      (edit)="openEdit($event)"
+      (remove)="confirmDelete($event)"
+      (create)="openNew()"
+    />
+
+    <footer
+      class="flex flex-col gap-2 border-t border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+    >
+      <p class="text-xs text-slate-400" data-testid="catalog-records-count">
+        {{ activeFilteredCount() }} registros encontrados
+      </p>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400" data-testid="catalog-page-indicator">
+          Página {{ activePage() }} de {{ activePages() }}
+        </span>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 disabled:opacity-40 dark:border-surface-600 dark:text-slate-300"
+          [disabled]="activeIsFirstPage()"
+          data-testid="catalog-prev-page"
+          (click)="previousPage()"
+        >
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 disabled:opacity-40 dark:border-surface-600 dark:text-slate-300"
+          [disabled]="activeIsLastPage()"
+          data-testid="catalog-next-page"
+          (click)="nextPage()"
+        >
+          Siguiente
+        </button>
+      </div>
+      <p class="text-[10px] text-slate-400">🔒 Datos protegidos por RLS · Solo tus registros</p>
+    </footer>
+  </section>
+
+  <section
+    class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-surface-700 dark:bg-surface-800"
+    aria-labelledby="combos-title"
+  >
+    <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h2
+          id="combos-title"
+          class="flex items-center gap-2 font-heading text-lg font-black text-slate-900 dark:text-white"
+        >
+          <span aria-hidden="true">📦</span>
+          Combos
+        </h2>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Agrupa varios productos bajo un mismo nombre, SKU y código de barras. Al venderse, se
+          descuenta el stock de cada componente.
         </p>
       </div>
-    </section>
-  }
+    </header>
+    <div class="mt-3 flex flex-wrap items-center gap-2">
+      <input
+        type="search"
+        class="input min-w-64 flex-1 py-2 text-xs"
+        placeholder="Buscar combo por nombre, SKU o código…"
+        aria-label="Buscar combos"
+      />
+      <select class="input w-auto py-2 text-xs" aria-label="Ordenar combos">
+        <option>Más reciente</option>
+      </select>
+      <span class="text-xs text-slate-400">0 combos</span>
+      <button
+        type="button"
+        class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
+        (click)="showComingSoon('Los combos')"
+      >
+        + Crear combo
+      </button>
+    </div>
+    <div class="mt-3 overflow-x-auto">
+      <table class="w-full min-w-[760px] text-left text-xs">
+        <thead>
+          <tr
+            class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+          >
+            <th class="py-2 pr-3 font-bold">Combo</th>
+            <th class="py-2 pr-3 font-bold">SKU / Código de barras</th>
+            <th class="py-2 pr-3 font-bold">Componentes</th>
+            <th class="py-2 pr-3 font-bold">Costo</th>
+            <th class="py-2 pr-3 font-bold">Precio</th>
+            <th class="py-2 pr-3 font-bold">Estado</th>
+            <th class="py-2 text-right font-bold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-400">
+              Aún no has creado ningún combo.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section
+    class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-surface-700 dark:bg-surface-800"
+    aria-labelledby="promotions-title"
+  >
+    <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h2
+          id="promotions-title"
+          class="flex items-center gap-2 font-heading text-lg font-black text-slate-900 dark:text-white"
+        >
+          <span aria-hidden="true">🎉</span>
+          Promociones
+        </h2>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          2×1, descuentos por cantidad o regalos al comprar — se aplican solas en Ventas cuando se
+          cumple la condición.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">0 promociones</span>
+        <button
+          type="button"
+          class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
+          (click)="showComingSoon('Las promociones')"
+        >
+          + Nueva promoción
+        </button>
+      </div>
+    </header>
+    <div class="mt-3 overflow-x-auto">
+      <table class="w-full min-w-[680px] text-left text-xs">
+        <thead>
+          <tr
+            class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+          >
+            <th class="py-2 pr-3 font-bold">Promoción</th>
+            <th class="py-2 pr-3 font-bold">Tipo</th>
+            <th class="py-2 pr-3 font-bold">Detalle</th>
+            <th class="py-2 pr-3 font-bold">Precio</th>
+            <th class="py-2 pr-3 font-bold">Vigencia</th>
+            <th class="py-2 pr-3 font-bold">Estado</th>
+            <th class="py-2 text-right font-bold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-400">
+              Aún no has creado ninguna promoción.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
+
+<app-company-product-modal
+  [open]="modalOpen()"
+  [mode]="modalMode()"
+  [initialType]="modalType()"
+  [item]="editingRow()"
+  [brands]="allBrands()"
+  [saving]="products.saving()"
+  [error]="modalError() ?? products.error()"
+  (save)="onModalSubmit($event)"
+  (dismiss)="closeModal()"
+/>
 
 @if (serviceToDelete(); as service) {
   <div
@@ -531,9 +531,8 @@
     data-testid="service-delete-dialog"
   >
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
-
     <div
-      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-surface-800"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="service-delete-title"
@@ -543,7 +542,7 @@
     >
       <h2
         id="service-delete-title"
-        class="font-heading text-xl font-black tracking-tight text-slate-900 uppercase dark:text-white"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
       >
         Eliminar servicio
       </h2>

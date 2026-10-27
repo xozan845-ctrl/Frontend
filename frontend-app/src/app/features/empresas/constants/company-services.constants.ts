@@ -2,7 +2,7 @@
 export const COMPANY_SERVICES_STORAGE_KEY = 'ecom_company_services';
 
 /** Servicios por página en la tabla del workspace. */
-export const COMPANY_SERVICE_PAGE_SIZE = 8;
+export const COMPANY_SERVICE_PAGE_SIZE = 10;
 
 /** Tope defensivo de servicios guardados por empresa. */
 export const COMPANY_SERVICE_MAX_RECORDS = 500;

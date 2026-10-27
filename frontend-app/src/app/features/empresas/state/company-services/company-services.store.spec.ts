@@ -17,7 +17,11 @@ function makeService(index: number, overrides: Partial<CompanyService> = {}): Co
     name: `Servicio ${index}`,
     description: 'Demo',
     category: index % 2 === 0 ? 'Soporte' : 'Campo',
+    brand: index % 2 === 0 ? 'Marca Demo' : 'Otra marca',
+    barcode: `75000000000${index}`,
     price: 100 + index,
+    cost: 50 + index,
+    unit: 'Hora (h)',
     durationMinutes: 30,
     status: index % 2 === 0 ? 'activo' : 'inactivo',
     createdAt: '2026-10-27T00:00:00.000Z',
@@ -79,10 +83,15 @@ describe('CompanyServicesStore', () => {
     expect(store.services()[0]).toMatchObject({
       code: 'SRV-010',
       name: 'Instalación',
+      brand: '',
+      barcode: '',
       price: 250.5,
+      cost: 0,
+      unit: 'Hora (h)',
       durationMinutes: 120,
       status: 'activo',
     });
+    expect(store.activeCount()).toBe(1);
     expect(notification.showSuccess).toHaveBeenCalledWith('Servicio "Instalación" creado.');
   });
 
@@ -114,6 +123,10 @@ describe('CompanyServicesStore', () => {
     const result = store.update(created!.id, {
       name: 'Uno actualizado',
       price: '300',
+      cost: '120',
+      brand: 'Marca',
+      barcode: '123',
+      unit: 'Servicio',
       durationMinutes: 45,
       status: 'inactivo',
     });
@@ -122,6 +135,10 @@ describe('CompanyServicesStore', () => {
     expect(store.services()[0]).toMatchObject({
       name: 'Uno actualizado',
       price: 300,
+      cost: 120,
+      brand: 'Marca',
+      barcode: '123',
+      unit: 'Servicio',
       durationMinutes: 45,
       status: 'inactivo',
     });
@@ -146,12 +163,22 @@ describe('CompanyServicesStore', () => {
     expect(notification.showSuccess).toHaveBeenCalledWith('Servicio "Uno" eliminado.');
   });
 
-  it('debe filtrar por texto, categoría y estado', () => {
+  it('debe filtrar por texto, categoría, marca y estado', () => {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify([
-        makeService(1, { name: 'Instalación de red', category: 'Campo', status: 'activo' }),
-        makeService(2, { name: 'Soporte remoto', category: 'Soporte', status: 'inactivo' }),
+        makeService(1, {
+          name: 'Instalación de red',
+          category: 'Campo',
+          brand: 'Marca Demo',
+          status: 'activo',
+        }),
+        makeService(2, {
+          name: 'Soporte remoto',
+          category: 'Soporte',
+          brand: 'Otra marca',
+          status: 'inactivo',
+        }),
       ]),
     );
     const store = setup();
@@ -166,6 +193,11 @@ describe('CompanyServicesStore', () => {
     expect(store.filteredServices()[0].name).toBe('Soporte remoto');
 
     store.setCategory('');
+    store.setBrand('Marca Demo');
+    expect(store.filteredServices()).toHaveLength(1);
+    expect(store.filteredServices()[0].name).toBe('Instalación de red');
+
+    store.setBrand('');
     store.setStatus('inactivo' as CompanyServiceStatus);
     expect(store.filteredServices()).toHaveLength(1);
     expect(store.hasFilters()).toBe(true);
@@ -175,16 +207,32 @@ describe('CompanyServicesStore', () => {
     expect(store.hasFilters()).toBe(false);
   });
 
-  it('debe paginar los servicios filtrados', () => {
+  it('debe exponer filas de catálogo y ordenar', () => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(Array.from({ length: 10 }, (_, index) => makeService(index + 1))),
+      JSON.stringify([makeService(1, { name: 'Zeta' }), makeService(2, { name: 'Alfa' })]),
     );
     const store = setup();
 
-    expect(store.total()).toBe(10);
+    expect(store.serviceRows()).toHaveLength(2);
+    expect(store.pagedRows()[0].name).toBe('Alfa');
+    expect(store.brands()).toContain('Marca Demo');
+    expect(store.categories()).toContain('Soporte');
+
+    store.setSort('nombre-za');
+    expect(store.pagedRows()[0].name).toBe('Zeta');
+  });
+
+  it('debe paginar los servicios filtrados', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(Array.from({ length: 12 }, (_, index) => makeService(index + 1))),
+    );
+    const store = setup();
+
+    expect(store.total()).toBe(12);
     expect(store.pageCount()).toBe(2);
-    expect(store.pagedServices()).toHaveLength(8);
+    expect(store.pagedServices()).toHaveLength(10);
     expect(store.isFirstPage()).toBe(true);
     expect(store.isLastPage()).toBe(false);
 
@@ -276,5 +324,104 @@ describe('CompanyServicesStore', () => {
     expect(store.search()).toBe('');
     expect(store.status()).toBeNull();
     expect(store.page()).toBe(1);
+  });
+
+  it('debe crear y actualizar desde el formulario del modal', () => {
+    const store = setup();
+    const result = store.createFromForm({
+      type: 'servicio',
+      name: 'Soporte',
+      description: 'Demo',
+      category: 'Servicios',
+      code: 'SRV-FORM',
+      brand: 'Marca',
+      barcode: '123',
+      cost: '50.00',
+      price: '150.00',
+      unit: 'Hora (h)',
+      allowFractions: false,
+      purchaseUnit: 'Igual que la de venta',
+      contentAmount: 0,
+      contentUnit: 'Sin contenido',
+      priceType: 'fijo',
+      costType: 'fijo',
+      stock: 0,
+      minStock: 0,
+      maxStock: null,
+      warrantyMonths: null,
+      isRawMaterial: false,
+      location: '',
+      status: 'activo',
+      createdAt: '2026-10-27',
+      durationMinutes: 90,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(store.services()[0]).toMatchObject({ code: 'SRV-FORM', cost: 50, brand: 'Marca' });
+
+    const updated = store.updateFromForm(store.services()[0].id, {
+      type: 'servicio',
+      name: 'Soporte express',
+      description: '',
+      category: 'Servicios',
+      code: 'SRV-FORM',
+      brand: 'Marca',
+      barcode: '',
+      cost: '60.00',
+      price: '180.00',
+      unit: 'Hora (h)',
+      allowFractions: false,
+      purchaseUnit: 'Igual que la de venta',
+      contentAmount: 0,
+      contentUnit: 'Sin contenido',
+      priceType: 'fijo',
+      costType: 'fijo',
+      stock: 0,
+      minStock: 0,
+      maxStock: null,
+      warrantyMonths: null,
+      isRawMaterial: false,
+      location: '',
+      status: 'inactivo',
+      createdAt: '2026-10-27',
+      durationMinutes: 60,
+    });
+
+    expect(updated.ok).toBe(true);
+    expect(store.services()[0]).toMatchObject({ name: 'Soporte express', cost: 60 });
+    expect(store.lastSaved()?.name).toBe('Soporte express');
+    expect(store.inventoryCsv()).toContain('Soporte express');
+    store.acknowledgeSaved();
+    expect(store.lastSaved()).toBeNull();
+  });
+
+  it('debe cambiar filtros de marca, orden y categoría', () => {
+    const store = setup();
+    expect(store.hasFilteredServices()).toBe(false);
+    store.setCategory('Soporte');
+    store.setBrand('Marca');
+    store.setSort('precio-desc');
+    store.setPage(2);
+
+    expect(store.category()).toBe('Soporte');
+    expect(store.brand()).toBe('Marca');
+    expect(store.sort()).toBe('precio-desc');
+    expect(store.page()).toBe(2);
+    expect(store.hasFilters()).toBe(true);
+  });
+
+  it('debe informar una actualización inválida', () => {
+    const store = setup();
+    const created = store.create({
+      code: 'SRV-001',
+      name: 'Uno',
+      price: '100',
+      durationMinutes: 30,
+    }).service!;
+
+    const result = store.update(created.id, { price: 'gratis' });
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain('precio');
   });
 });

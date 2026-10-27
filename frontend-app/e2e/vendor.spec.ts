@@ -177,60 +177,79 @@ test('R-E-24: el vendedor consulta la ficha de su tienda', async ({ page }) => {
 });
 
 // R-E-26: el empresario consulta el catálogo maestro y crea un producto desde
-// su workspace de empresa (`GET/POST /catalog/productos`, ADR-32).
+// su workspace de empresa (`GET/POST /catalog/productos`, ADR-32/53).
 test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) => {
   await login(page, '/empresa/productos', 'empresario@tienda.test');
 
-  await expect(page.getByTestId('catalog-page')).toBeVisible();
+  await expect(page.getByTestId('company-products-page')).toBeVisible();
   await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(6);
 
-  await page.getByTestId('new-catalog-product').click();
-  await expect(page.getByTestId('catalog-form')).toBeVisible();
-  await page.getByTestId('catalog-sku').fill('SKU-NUEVO-01');
-  await page.getByTestId('catalog-name').fill('Producto Nuevo');
-  await page.getByTestId('catalog-description').fill('Creado desde el catálogo');
-  await page.getByTestId('catalog-category').fill('Demo');
-  await page.getByTestId('catalog-price').fill('250.00');
-  await page.getByTestId('catalog-stock').fill('7');
-  await page.getByTestId('save-catalog-product').click();
+  await page.getByTestId('new-product').click();
+  await expect(page.getByTestId('company-product-modal')).toBeVisible();
+  await page.getByTestId('product-modal-name').fill('Producto Nuevo');
+  await page.getByTestId('product-modal-code').fill('SKU-NUEVO-01');
+  await page.getByTestId('product-modal-category').fill('Demo');
+  await page.getByTestId('product-modal-price').fill('250.00');
+  await page.getByTestId('product-modal-cost').fill('150.00');
+  await page.getByTestId('product-modal-stock').fill('7');
+  await page.getByTestId('product-modal-min-stock').fill('2');
+  await page.getByTestId('save-product-modal').click();
 
   await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(7);
-  await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText('Producto Nuevo');
+  await expect(
+    page.locator('[data-testid="catalog-row"]').filter({ hasText: 'Producto Nuevo' }),
+  ).toHaveCount(1);
+});
+
+// R-E-41: las pestañas y KPIs del catálogo reflejan el estado del inventario
+// (ADR-55).
+test('R-E-41: el empresario navega las pestañas del catálogo', async ({ page }) => {
+  await login(page, '/empresa/productos', 'empresario@tienda.test');
+
+  await expect(page.getByTestId('kpi-active-products')).toContainText('6');
+  await expect(page.getByTestId('kpi-active-services')).toContainText('0');
+
+  await page.getByTestId('raw-material-tab').click();
+  await expect(page.getByTestId('catalog-table-empty')).toContainText('Sin materia prima aún');
+
+  await page.getByTestId('services-tab').click();
+  await expect(page.getByTestId('catalog-table-empty')).toContainText('Aún no hay servicios');
 });
 
 // R-E-40: el empresario administra servicios desde "Productos / Servicios"
-// (ADR-52): alta, edición y eliminación con persistencia local por tenant.
+// (ADR-52/55): alta, edición y eliminación con persistencia local por tenant.
 test('R-E-40: el empresario administra servicios de la empresa', async ({ page }) => {
   await login(page, '/empresa/productos', 'empresario@tienda.test');
 
   await page.getByTestId('services-tab').click();
-  await expect(page.getByTestId('services-empty')).toBeVisible();
+  await expect(page.getByTestId('catalog-table-empty')).toContainText('Aún no hay servicios');
 
-  await page.getByTestId('new-service').click();
-  await page.getByTestId('service-code').fill('SRV-001');
-  await page.getByTestId('service-name').fill('Mantenimiento preventivo');
-  await page.getByTestId('service-description').fill('Revisión completa de equipos');
-  await page.getByTestId('service-category').fill('Soporte');
-  await page.getByTestId('service-price').fill('1500.00');
-  await page.getByTestId('service-duration').fill('90');
-  await page.getByTestId('save-service').click();
+  await page.getByTestId('new-product').click();
+  await expect(page.getByTestId('company-product-modal')).toBeVisible();
+  await page.getByTestId('product-modal-name').fill('Mantenimiento preventivo');
+  await page.getByTestId('product-modal-code').fill('SRV-001');
+  await page.getByTestId('product-modal-category').fill('Soporte');
+  await page.getByTestId('product-modal-price').fill('1500.00');
+  await page.getByTestId('product-modal-cost').fill('500.00');
+  await page.getByTestId('product-modal-duration').fill('90');
+  await page.getByTestId('save-product-modal').click();
 
-  await expect(page.locator('[data-testid="service-row"]')).toHaveCount(1);
-  await expect(page.locator('[data-testid="service-row"]').first()).toContainText(
+  await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText(
     'Mantenimiento preventivo',
   );
 
-  await page.locator('[data-testid^="edit-service-"]').first().click();
-  await page.getByTestId('service-name').fill('Mantenimiento express');
-  await page.getByTestId('save-service').click();
-  await expect(page.locator('[data-testid="service-row"]').first()).toContainText(
+  await page.locator('[data-testid^="edit-row-"]').first().click();
+  await page.getByTestId('product-modal-name').fill('Mantenimiento express');
+  await page.getByTestId('save-product-modal').click();
+  await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText(
     'Mantenimiento express',
   );
 
-  await page.locator('[data-testid^="delete-service-"]').first().click();
+  await page.locator('[data-testid^="delete-row-"]').first().click();
   await expect(page.getByTestId('service-delete-dialog')).toBeVisible();
   await page.getByTestId('confirm-delete-service').click();
-  await expect(page.getByTestId('services-empty')).toBeVisible();
+  await expect(page.getByTestId('catalog-table-empty')).toContainText('Aún no hay servicios');
 });
 
 // R-E-38: el empresario consulta y opera las ventas consolidadas de su empresa

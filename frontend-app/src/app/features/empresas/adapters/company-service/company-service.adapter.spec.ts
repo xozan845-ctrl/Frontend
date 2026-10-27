@@ -17,7 +17,11 @@ const service: CompanyService = {
   name: 'Mantenimiento preventivo',
   description: 'Revisión completa de equipos',
   category: 'Soporte técnico',
+  brand: 'Marca Demo',
+  barcode: '7501234567890',
   price: 1500,
+  cost: 500,
+  unit: 'Hora (h)',
   durationMinutes: 90,
   status: 'activo',
   createdAt: '2026-10-27T00:00:00.000Z',
@@ -78,7 +82,11 @@ describe('company-service adapter', () => {
       name: 'Instalación',
       description: 'En sitio',
       category: 'Campo',
+      brand: '',
+      barcode: '',
       price: 250.5,
+      cost: 0,
+      unit: 'Hora (h)',
       durationMinutes: 120,
       status: 'activo',
       createdAt: '2026-10-27T10:00:00.000Z',
@@ -98,7 +106,16 @@ describe('company-service adapter', () => {
   it('actualiza solo los campos editables y refresca updatedAt', () => {
     const updated = updateCompanyServiceRecord(
       service,
-      { name: 'Mantenimiento express', price: '2000', durationMinutes: 45, status: 'inactivo' },
+      {
+        name: 'Mantenimiento express',
+        price: '2000',
+        cost: '800',
+        brand: 'Otra marca',
+        barcode: '123',
+        unit: 'Servicio',
+        durationMinutes: 45,
+        status: 'inactivo',
+      },
       '2026-10-28T00:00:00.000Z',
     );
 
@@ -106,6 +123,10 @@ describe('company-service adapter', () => {
       ...service,
       name: 'Mantenimiento express',
       price: 2000,
+      cost: 800,
+      brand: 'Otra marca',
+      barcode: '123',
+      unit: 'Servicio',
       durationMinutes: 45,
       status: 'inactivo',
       updatedAt: '2026-10-28T00:00:00.000Z',
@@ -117,13 +138,14 @@ describe('company-service adapter', () => {
     expect(findCompanyServiceByCode([service], 'SRV-001', 'srv-1')).toBeNull();
   });
 
-  it('filtra por texto sin acentos, categoría y estado', () => {
+  it('filtra por texto sin acentos, categoría, marca y estado', () => {
     const other: CompanyService = {
       ...service,
       id: 'srv-2',
       code: 'SRV-002',
       name: 'Instalación de red',
       category: 'Campo',
+      brand: 'Otra marca',
       status: 'inactivo',
     };
 
@@ -131,8 +153,30 @@ describe('company-service adapter', () => {
     expect(filterCompanyServices([service, other], { category: 'soporte tecnico' })).toEqual([
       service,
     ]);
+    expect(filterCompanyServices([service, other], { brand: 'marca demo' })).toEqual([service]);
     expect(filterCompanyServices([service, other], { status: 'inactivo' })).toEqual([other]);
     expect(filterCompanyServices([service, other])).toHaveLength(2);
+  });
+
+  it('ordena por nombre, precio y duración', () => {
+    const other: CompanyService = {
+      ...service,
+      id: 'srv-2',
+      code: 'SRV-002',
+      name: 'Instalación de red',
+      price: 2000,
+      durationMinutes: 60,
+    };
+
+    expect(filterCompanyServices([service, other], { sort: 'nombre-az' }).map((s) => s.id)).toEqual(
+      ['srv-2', 'srv-1'],
+    );
+    expect(
+      filterCompanyServices([service, other], { sort: 'precio-desc' }).map((s) => s.id),
+    ).toEqual(['srv-2', 'srv-1']);
+    expect(filterCompanyServices([service, other], { sort: 'stock-asc' }).map((s) => s.id)).toEqual(
+      ['srv-2', 'srv-1'],
+    );
   });
 
   it('descarta registros sin id, nombre, código o precio válido', () => {
@@ -157,9 +201,12 @@ describe('company-service adapter', () => {
     expect(sanitized.updatedAt).toBe(new Date(0).toISOString());
   });
 
-  it('no actualiza si el precio, la duración o el nombre son inválidos', () => {
+  it('no actualiza si el precio, el costo, la duración o el nombre son inválidos', () => {
     expect(
       updateCompanyServiceRecord(service, { price: 'gratis' }, '2026-10-28T00:00:00.000Z'),
+    ).toBeNull();
+    expect(
+      updateCompanyServiceRecord(service, { cost: 'gratis' }, '2026-10-28T00:00:00.000Z'),
     ).toBeNull();
     expect(
       updateCompanyServiceRecord(service, { durationMinutes: 0 }, '2026-10-28T00:00:00.000Z'),

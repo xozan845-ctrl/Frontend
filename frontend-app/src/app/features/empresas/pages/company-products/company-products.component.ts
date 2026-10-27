@@ -1,158 +1,196 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, effect, inject, signal } from '@angular/core';
 import { injectSeoPage } from '../../../../core/services/seo/seo.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { FocusTrapDirective } from '../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import {
-  CATALOG_PRODUCT_REPOSITORY,
-  CatalogProductService,
-  CatalogProductsStore,
-} from '../../../products/public-api';
-import { CatalogComponent } from '../../../products/public-ui';
-import { COMPANY_SERVICE_MAX_DURATION_MINUTES } from '../../constants/company-services.constants';
+import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../../../products/public-api';
+import { CompanyCatalogTableComponent } from '../../components/company-catalog-table/company-catalog-table.component';
+import { CompanyProductModalComponent } from '../../components/company-product-modal/company-product-modal.component';
+import { COMPANY_CATALOG_SORT_LABELS } from '../../constants/company-products.constants';
 import type {
+  CompanyCatalogFormValue,
+  CompanyCatalogModalMode,
+  CompanyCatalogRow,
+  CompanyCatalogSort,
+  CompanyCatalogStatusFilter,
   CompanyCatalogTab,
-  CompanyService,
-  CompanyServiceStatus,
-} from '../../models/company-service.model';
+} from '../../models/company-catalog.model';
+import { CompanyProductsStore } from '../../state/company-products/company-products.store';
 import { CompanyServicesStore } from '../../state/company-services/company-services.store';
 
 /**
- * Apartado "Productos / Servicios" del workspace de empresa (ADR-52): reutiliza
- * el catálogo maestro para los productos y administra los servicios locales de
- * la empresa. La página solo orquesta stores; la validación y persistencia
- * viven en `CompanyServicesStore` y su adapter (`R-CX-3`, `R-SO-8`).
+ * Catálogo administrable de la empresa (ADR-55): KPIs, pestañas de productos,
+ * servicios y materia prima, filtros, tabla y modal de alta/edición. La página
+ * solo orquesta los stores; toda la derivación vive en `withComputed`.
  */
 @Component({
   selector: 'app-company-products',
   standalone: true,
-  imports: [ReactiveFormsModule, CatalogComponent, AppCurrencyPipe, FocusTrapDirective],
+  imports: [
+    CompanyCatalogTableComponent,
+    CompanyProductModalComponent,
+    AppCurrencyPipe,
+    FocusTrapDirective,
+  ],
   providers: [
-    CatalogProductsStore,
+    CompanyProductsStore,
     CompanyServicesStore,
     { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
   ],
   templateUrl: './company-products.component.html',
 })
 export default class CompanyProductsComponent {
-  readonly catalog = inject(CatalogProductsStore);
+  readonly products = inject(CompanyProductsStore);
   readonly services = inject(CompanyServicesStore);
-  private readonly fb = inject(FormBuilder);
+  private readonly notification = inject(NotificationService);
   private readonly seoService = injectSeoPage(
     'Productos y servicios — Empresa',
-    'Administra el catálogo de productos y los servicios que ofrece tu empresa.',
+    'Administra tu catálogo, precios, costos y stock.',
   );
 
   readonly activeTab = signal<CompanyCatalogTab>('productos');
-  readonly serviceFormOpen = signal(false);
-  readonly editingService = signal<CompanyService | null>(null);
-  readonly serviceError = signal<string | null>(null);
-  readonly serviceToDelete = signal<CompanyService | null>(null);
+  readonly modalOpen = signal(false);
+  readonly modalMode = signal<CompanyCatalogModalMode>('create');
+  readonly modalType = signal<'producto' | 'servicio'>('producto');
+  readonly editingRow = signal<CompanyCatalogRow | null>(null);
+  readonly modalError = signal<string | null>(null);
+  readonly serviceToDelete = signal<CompanyCatalogRow | null>(null);
 
-  readonly serviceStatusLabels: Readonly<Record<CompanyServiceStatus, string>> = {
-    activo: 'Activo',
-    inactivo: 'Inactivo',
-  };
+  readonly statusFilters: readonly {
+    value: CompanyCatalogStatusFilter;
+    label: string;
+    icon: string;
+  }[] = [
+    { value: 'todos', label: 'Todos', icon: 'fa-solid fa-list' },
+    { value: 'activos', label: 'Activos', icon: 'fa-solid fa-circle-check' },
+    { value: 'inactivos', label: 'Inactivos', icon: 'fa-solid fa-circle-minus' },
+    { value: 'stock-bajo', label: 'Stock bajo', icon: 'fa-solid fa-triangle-exclamation' },
+  ];
 
-  readonly serviceForm = this.fb.nonNullable.group({
-    code: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]{2,32}$/)]],
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
-    description: ['', [Validators.maxLength(500)]],
-    category: ['', [Validators.maxLength(80)]],
-    price: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-    durationMinutes: [
-      60,
-      [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(COMPANY_SERVICE_MAX_DURATION_MINUTES),
-      ],
-    ],
-    status: ['activo' as CompanyServiceStatus, [Validators.required]],
+  readonly sortOptions = Object.entries(COMPANY_CATALOG_SORT_LABELS).map(([value, label]) => ({
+    value: value as CompanyCatalogSort,
+    label,
+  }));
+
+  private readonly loadProducts = this.products.load();
+
+  /** Cierra el modal cuando el API confirma la creación/edición del producto. */
+  private readonly closeOnProductSaved = effect(() => {
+    if (this.products.lastSaved()) {
+      this.products.acknowledgeSaved();
+      this.closeModal();
+    }
   });
 
   setTab(tab: CompanyCatalogTab): void {
     this.activeTab.set(tab);
-    this.closeServiceForm();
     this.cancelDelete();
+    if (tab === 'servicios') return;
+    this.products.setOnlyRawMaterial(tab === 'materia-prima');
+    this.products.setPage(1);
   }
 
-  openCreateService(): void {
-    this.editingService.set(null);
-    this.serviceError.set(null);
-    this.serviceForm.reset({
-      code: '',
-      name: '',
-      description: '',
-      category: '',
-      price: '',
-      durationMinutes: 60,
-      status: 'activo',
-    });
-    this.serviceForm.controls.code.enable();
-    this.serviceFormOpen.set(true);
+  isStatusActive(filter: CompanyCatalogStatusFilter): boolean {
+    return this.activeTab() === 'servicios'
+      ? this.services.status() === this.toServiceStatus(filter)
+      : this.products.status() === filter;
   }
 
-  openEditService(service: CompanyService): void {
-    this.editingService.set(service);
-    this.serviceError.set(null);
-    this.serviceForm.reset({
-      code: service.code,
-      name: service.name,
-      description: service.description,
-      category: service.category,
-      price: service.price.toFixed(2),
-      durationMinutes: service.durationMinutes,
-      status: service.status,
-    });
-    this.serviceForm.controls.code.disable();
-    this.serviceFormOpen.set(true);
+  setStatusFilter(filter: CompanyCatalogStatusFilter): void {
+    if (this.activeTab() === 'servicios') {
+      this.services.setStatus(this.toServiceStatus(filter));
+      return;
+    }
+    this.products.setStatus(filter);
   }
 
-  closeServiceForm(): void {
-    this.serviceFormOpen.set(false);
-    this.editingService.set(null);
-    this.serviceError.set(null);
+  onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    if (this.activeTab() === 'servicios') this.services.setSearch(value);
+    else this.products.setQuery(value);
   }
 
-  submitService(): void {
-    if (this.serviceForm.invalid) {
-      this.serviceForm.markAllAsTouched();
+  onBrandFilter(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    if (this.activeTab() === 'servicios') this.services.setBrand(value);
+    else this.products.setBrand(value);
+  }
+
+  onSortChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as CompanyCatalogSort;
+    if (this.activeTab() === 'servicios') this.services.setSort(value);
+    else this.products.setSort(value);
+  }
+
+  refresh(): void {
+    if (this.activeTab() === 'servicios') {
+      this.notification.showInfo('Los servicios locales ya están actualizados.');
+      return;
+    }
+    this.products.load();
+  }
+
+  clearFilters(): void {
+    if (this.activeTab() === 'servicios') this.services.clearFilters();
+    else this.products.clearFilters();
+  }
+
+  openNew(): void {
+    this.modalMode.set('create');
+    this.modalType.set(this.activeTab() === 'servicios' ? 'servicio' : 'producto');
+    this.editingRow.set(null);
+    this.modalError.set(null);
+    this.products.clearError();
+    this.modalOpen.set(true);
+  }
+
+  openEdit(row: CompanyCatalogRow): void {
+    this.modalMode.set('edit');
+    this.modalType.set(row.kind);
+    this.editingRow.set(row);
+    this.modalError.set(null);
+    this.products.clearError();
+    this.modalOpen.set(true);
+  }
+
+  closeModal(): void {
+    if (this.products.saving()) return;
+    this.modalOpen.set(false);
+    this.editingRow.set(null);
+    this.modalError.set(null);
+  }
+
+  onModalSubmit(form: CompanyCatalogFormValue): void {
+    const editing = this.editingRow();
+    if (editing) {
+      if (editing.kind === 'servicio') {
+        const result = this.services.updateFromForm(editing.id, form);
+        if (!result.ok) {
+          this.modalError.set(result.message ?? 'No se pudo actualizar el servicio.');
+          return;
+        }
+        this.closeModal();
+        return;
+      }
+      this.products.update({ id: editing.id, data: form });
       return;
     }
 
-    const { code, name, description, category, price, durationMinutes, status } =
-      this.serviceForm.getRawValue();
-    const editing = this.editingService();
-    const result = editing
-      ? this.services.update(editing.id, {
-          name,
-          description,
-          category,
-          price,
-          durationMinutes,
-          status,
-        })
-      : this.services.create({
-          code,
-          name,
-          description,
-          category,
-          price,
-          durationMinutes,
-          status,
-        });
-
-    if (!result.ok) {
-      this.serviceError.set(result.message ?? 'No se pudo guardar el servicio.');
+    if (form.type === 'servicio') {
+      const result = this.services.createFromForm(form);
+      if (!result.ok) {
+        this.modalError.set(result.message ?? 'No se pudo crear el servicio.');
+        return;
+      }
+      this.closeModal();
       return;
     }
 
-    this.closeServiceForm();
+    this.products.create(form);
   }
 
-  confirmDelete(service: CompanyService): void {
-    this.serviceToDelete.set(service);
+  confirmDelete(row: CompanyCatalogRow): void {
+    if (row.kind === 'servicio') this.serviceToDelete.set(row);
   }
 
   cancelDelete(): void {
@@ -160,29 +198,133 @@ export default class CompanyProductsComponent {
   }
 
   deleteService(): void {
-    const service = this.serviceToDelete();
-    if (!service) return;
-    this.services.remove(service.id);
+    const row = this.serviceToDelete();
+    if (!row) return;
+    this.services.remove(row.id);
     this.serviceToDelete.set(null);
   }
 
-  onSearchInput(event: Event): void {
-    this.services.setSearch((event.target as HTMLInputElement).value);
+  downloadTemplate(): void {
+    this.downloadCsv(this.products.templateCsv(), 'plantilla-productos.csv');
   }
 
-  onCategoryFilter(event: Event): void {
-    this.services.setCategory((event.target as HTMLSelectElement).value);
+  exportInventory(): void {
+    this.downloadCsv(
+      this.activeTab() === 'servicios'
+        ? this.services.inventoryCsv()
+        : this.products.inventoryCsv(),
+      'inventario.csv',
+    );
   }
 
-  onStatusFilter(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.services.setStatus(value === 'activo' || value === 'inactivo' ? value : null);
+  onImportFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this.notification.showInfo(
+      'La importación de Excel estará disponible en una próxima fase. Mientras tanto usa la plantilla y el alta manual.',
+    );
+    input.value = '';
   }
 
-  isServiceInvalid(
-    field: 'code' | 'name' | 'description' | 'category' | 'price' | 'durationMinutes',
-  ): boolean {
-    const control = this.serviceForm.controls[field];
-    return !!(control && control.invalid && (control.dirty || control.touched));
+  showComingSoon(feature: string): void {
+    this.notification.showInfo(`${feature} estará disponible en una próxima fase.`);
+  }
+
+  activeRows(): readonly CompanyCatalogRow[] {
+    return this.activeTab() === 'servicios' ? this.services.pagedRows() : this.products.pagedRows();
+  }
+
+  activeFilteredCount(): number {
+    return this.activeTab() === 'servicios'
+      ? this.services.filteredCount()
+      : this.products.filteredCount();
+  }
+
+  activePage(): number {
+    return this.activeTab() === 'servicios'
+      ? this.services.currentPage()
+      : this.products.currentPage();
+  }
+
+  activePages(): number {
+    return this.activeTab() === 'servicios' ? this.services.pageCount() : this.products.pageCount();
+  }
+
+  activeIsFirstPage(): boolean {
+    return this.activeTab() === 'servicios'
+      ? this.services.isFirstPage()
+      : this.products.isFirstPage();
+  }
+
+  activeIsLastPage(): boolean {
+    return this.activeTab() === 'servicios'
+      ? this.services.isLastPage()
+      : this.products.isLastPage();
+  }
+
+  activeLoading(): boolean {
+    return this.activeTab() === 'servicios' ? false : this.products.loading();
+  }
+
+  activeSearch(): string {
+    return this.activeTab() === 'servicios' ? this.services.search() : this.products.query();
+  }
+
+  activeBrand(): string {
+    return this.activeTab() === 'servicios' ? this.services.brand() : this.products.brand();
+  }
+
+  activeSort(): CompanyCatalogSort {
+    return this.activeTab() === 'servicios' ? this.services.sort() : this.products.sort();
+  }
+
+  activeBrands(): readonly string[] {
+    return this.activeTab() === 'servicios' ? this.services.brands() : this.products.brands();
+  }
+
+  allBrands(): readonly string[] {
+    return Array.from(new Set([...this.products.brands(), ...this.services.brands()])).sort(
+      (a, b) => a.localeCompare(b, 'es'),
+    );
+  }
+
+  activeEmptyTitle(): string {
+    if (this.activeTab() === 'servicios') return 'Aún no hay servicios';
+    if (this.activeTab() === 'materia-prima') return 'Sin materia prima aún';
+    return 'Sin productos aún';
+  }
+
+  activeEmptyDescription(): string {
+    if (this.activeTab() === 'servicios') return 'Agrega tu primer servicio para comenzar.';
+    if (this.activeTab() === 'materia-prima') {
+      return 'Marca un producto como materia prima para verlo aquí.';
+    }
+    return 'Agrega tu primer producto para comenzar.';
+  }
+
+  previousPage(): void {
+    if (this.activeTab() === 'servicios') this.services.previousPage();
+    else this.products.previousPage();
+  }
+
+  nextPage(): void {
+    if (this.activeTab() === 'servicios') this.services.nextPage();
+    else this.products.nextPage();
+  }
+
+  private toServiceStatus(filter: CompanyCatalogStatusFilter): 'activo' | 'inactivo' | null {
+    if (filter === 'activos') return 'activo';
+    if (filter === 'inactivos') return 'inactivo';
+    return null;
+  }
+
+  private downloadCsv(content: string, filename: string): void {
+    const blob = new Blob([`\uFEFF${content}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 }
