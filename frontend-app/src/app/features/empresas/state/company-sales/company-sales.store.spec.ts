@@ -206,6 +206,7 @@ describe('CompanySalesStore', () => {
     store.loadSales();
     await vi.waitFor(() => expect(store.rows()).toHaveLength(1));
 
+    expect(store.orders()).toHaveLength(1);
     expect(portalRepo.orders).toHaveBeenCalledWith({ limit: 100 });
     expect(catalogRepo.list).toHaveBeenCalledWith({ limit: 100, status: 'disponible' });
     expect(store.products()).toHaveLength(1);
