@@ -48,3 +48,10 @@ por su API pública; sus capas locales son `pages`, `state`, `components` y
   (`R-SO-8`).
 - Las rutas se declaran en `<feature>.routes.ts` y se componen en
   `app.routes.ts` (`R-AR-12`).
+
+## Navegación por módulos
+
+Los sidebars de empresa y vendedor no declaran sus ítems: se generan desde
+`core/workspace` según el workspace, los permisos y la sesión. Cada feature
+expone sus páginas/rutas y el registro común decide qué módulos se muestran y
+qué rutas se protegen con `moduleGuard`.
