@@ -185,6 +185,29 @@ describe('CatalogComponent', () => {
     expect(fixture.nativeElement.querySelector('[role="status"]')).not.toBeNull();
   });
 
+  it('debe usar h2 y ocultar la miga de pan cuando se embebe en otra página', async () => {
+    const fixture = await setup();
+    fixture.componentRef.setInput('embedded', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('h1')).toBeNull();
+    expect(fixture.nativeElement.querySelector('h2')?.textContent).toContain(
+      'Catálogo de productos',
+    );
+    expect(fixture.nativeElement.querySelector('nav[aria-label="Ruta de navegación"]')).toBeNull();
+  });
+
+  it('no debe resetear el SEO al destruirse en modo embebido', async () => {
+    const fixture = await setup();
+    fixture.componentRef.setInput('embedded', true);
+    fixture.detectChanges();
+    vi.clearAllMocks();
+
+    fixture.destroy();
+
+    expect(seo.reset).not.toHaveBeenCalled();
+  });
+
   it('debe mostrar el estado vacío', async () => {
     const fixture = await setup();
 

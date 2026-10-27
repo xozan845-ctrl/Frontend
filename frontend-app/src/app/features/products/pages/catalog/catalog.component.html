@@ -1,21 +1,35 @@
 <div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="catalog-page">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <nav
-        aria-label="Ruta de navegación"
-        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
-      >
-        <span>Tienda</span>
-        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
-        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Catálogo</span>
-      </nav>
-      <h1
-        class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
-      >
-        Catálogo
-      </h1>
+      @if (!embedded()) {
+        <nav
+          aria-label="Ruta de navegación"
+          class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+        >
+          <span>Tienda</span>
+          <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+          <span aria-current="page" class="text-accent-600 dark:text-accent-400">Catálogo</span>
+        </nav>
+      }
+      @if (embedded()) {
+        <h2
+          class="font-heading text-2xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+        >
+          Catálogo de productos
+        </h2>
+      } @else {
+        <h1
+          class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+        >
+          Catálogo
+        </h1>
+      }
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Productos maestros, precios base y stock. Publica ofertas desde Ofertas.
+        @if (embedded()) {
+          Productos maestros, precios base y stock de tu empresa.
+        } @else {
+          Productos maestros, precios base y stock. Publica ofertas desde Ofertas.
+        }
       </p>
     </div>
     @if (canManage()) {
