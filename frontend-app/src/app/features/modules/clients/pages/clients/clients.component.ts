@@ -1,20 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../shared/pipes/app-date.pipe';
-import { InitialsPipe } from '../../../../shared/pipes/initials.pipe';
-import { SkeletonLoaderComponent } from '../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
+import { InitialsPipe } from '../../../../../shared/pipes/initials.pipe';
+import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ClientModalComponent } from '../../components/client-modal/client-modal.component';
-import { CLIENT_IMPORT_MAX_BYTES } from '../../constants/clients.constants';
-import type {
-  ClientChip,
+import {
+  CLIENT_IMPORT_MAX_BYTES,
+  ClientsStore,
+  type ClientChip,
   ClientStatus,
   ClientsTab,
   CreateClientPayload,
-} from '../../models/client.model';
-import { CLIENTS_PAGE_CONFIG } from '../../../../shared/clients/constants/clients-config.tokens';
-import { ClientsStore } from '../../state/clients/clients.store';
+} from '../../../../clients/public-api';
+import { CLIENTS_PAGE_CONFIG } from '../../../../../shared/clients/constants/clients-config.tokens';
 
 const STATUS_LABELS: Readonly<Record<ClientStatus, string>> = {
   activo: 'Activo',

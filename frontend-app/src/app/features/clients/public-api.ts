@@ -50,3 +50,5 @@ export type {
   ClientStatus,
   CreateClientPayload,
 } from './models/client.model';
+export { ClientsStore } from './state/clients/clients.store';
+export { ClientsHttpDataSource } from './services/clients-data/clients-data.service';

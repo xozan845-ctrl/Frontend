@@ -44,10 +44,29 @@ function checkUnit({ findings, featureRel, layer, unitName, unitDir }) {
 export function findFeatureStructureViolations() {
   const findings = [];
   const featuresDir = resolveInApp(FEATURES_ROOT);
-  const featureDirs = readdirSync(featuresDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
+  const featureEntries = readdirSync(featuresDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== 'modules')
+    .map((entry) => ({
+      name: entry.name,
+      dir: join(featuresDir, entry.name),
+      rel: `${FEATURES_ROOT}/${entry.name}`,
+      contractKey: entry.name,
+    }));
+  const modulesDir = join(featuresDir, 'modules');
+  if (existsSync(modulesDir)) {
+    for (const entry of readdirSync(modulesDir, { withFileTypes: true }).filter((item) =>
+      item.isDirectory(),
+    )) {
+      featureEntries.push({
+        name: entry.name,
+        dir: join(modulesDir, entry.name),
+        rel: `${FEATURES_ROOT}/modules/${entry.name}`,
+        contractKey: `modules/${entry.name}`,
+      });
+    }
+  }
+  featureEntries.sort((a, b) => a.contractKey.localeCompare(b.contractKey));
+  const discoveredContracts = featureEntries.map((entry) => entry.contractKey);
 
   const add = (rel, detail, key) => {
     findings.push({
@@ -59,17 +78,22 @@ export function findFeatureStructureViolations() {
     });
   };
 
-  for (const feature of featureDirs) {
-    const featureDir = join(featuresDir, feature);
-    const featureRel = `${FEATURES_ROOT}/${feature}`;
-    const contract = FEATURE_CONTRACTS[feature];
+  for (const entry of featureEntries) {
+    const feature = entry.name;
+    const featureDir = entry.dir;
+    const featureRel = entry.rel;
+    const contract = FEATURE_CONTRACTS[entry.contractKey];
 
     if (!KEBAB_CASE.test(feature)) {
       add(featureRel, `el nombre del feature '${feature}' no es kebab-case`, 'feature-name');
     }
 
     if (!contract) {
-      add(featureRel, 'el feature no declara contrato en FEATURE_CONTRACTS', 'missing-contract');
+      add(
+        featureRel,
+        `el feature no declara contrato en FEATURE_CONTRACTS ('${entry.contractKey}')`,
+        'missing-contract',
+      );
       continue;
     }
 
@@ -88,16 +112,18 @@ export function findFeatureStructureViolations() {
       }
     }
 
-    if (!actualFiles.includes(routesFile)) {
-      add(featureRel, `falta ${routesFile}`, 'missing-routes');
-    } else {
-      const routes = readText(join(featureDir, routesFile));
-      if (!/load(Component|Children)\s*:/.test(routes)) {
-        add(
-          `${featureRel}/${routesFile}`,
-          'las rutas no declaran loadComponent/loadChildren',
-          'routes-lazy',
-        );
+    if (!contract.domainOnly) {
+      if (!actualFiles.includes(routesFile)) {
+        add(featureRel, `falta ${routesFile}`, 'missing-routes');
+      } else {
+        const routes = readText(join(featureDir, routesFile));
+        if (!/load(Component|Children)\s*:/.test(routes)) {
+          add(
+            `${featureRel}/${routesFile}`,
+            'las rutas no declaran loadComponent/loadChildren',
+            'routes-lazy',
+          );
+        }
       }
     }
 
@@ -197,7 +223,7 @@ export function findFeatureStructureViolations() {
   }
 
   for (const feature of Object.keys(FEATURE_CONTRACTS)) {
-    if (!featureDirs.includes(feature)) {
+    if (!discoveredContracts.includes(feature)) {
       add(
         `${FEATURES_ROOT}/${feature}`,
         `el contrato apunta a un feature inexistente: '${feature}'`,

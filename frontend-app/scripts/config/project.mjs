@@ -150,17 +150,14 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   clients: {
-    layers: [
-      'adapters',
-      'components',
-      'constants',
-      'models',
-      'pages',
-      'repositories',
-      'services',
-      'state',
-    ],
+    layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
     publicApi: true,
+    publicUi: false,
+    domainOnly: true,
+  },
+  'modules/clients': {
+    layers: ['components', 'pages'],
+    publicApi: false,
     publicUi: false,
   },
   cart: {
