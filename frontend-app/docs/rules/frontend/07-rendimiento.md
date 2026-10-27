@@ -22,3 +22,8 @@ npm run build            # budgets: no debe fallar por exceso de peso (R-PF-1)
 node scripts/cli.mjs rules --only performance-guards   # R-PF-4/6/7
 grep -rn "zone.js" package.json angular.json           # R-PF-7: no debe aparecer
 ```
+
+> **Lighthouse y la invitación.** `lighthouserc.json` audita explícitamente
+> `index.html`. La tarjeta `invitacion.html` lleva `noindex, nofollow` por diseño
+> (ADR-51), así que su puntuación SEO de Lighthouse no aplica; su vista previa y
+> su flujo se validan en la suite de navegador/manual.
