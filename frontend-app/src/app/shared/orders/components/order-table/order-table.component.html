@@ -1,0 +1,86 @@
+<div class="overflow-x-auto">
+  <table class="w-full text-left text-sm" [attr.data-testid]="tableTestId()">
+    <thead>
+      <tr
+        class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+      >
+        @for (column of columns(); track column.key) {
+          <th scope="col" class="py-2 pr-3 font-bold" [class.text-right]="column.align === 'right'">
+            {{ column.label }}
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+      @for (row of rows(); track row.id) {
+        <tr [attr.data-testid]="rowTestId()">
+          @for (column of columns(); track column.key) {
+            <td class="py-3 pr-3" [class.text-right]="column.align === 'right'">
+              @switch (column.key) {
+                @case ('number') {
+                  @if (row.numberHref) {
+                    <a
+                      [routerLink]="row.numberHref"
+                      class="font-mono text-xs font-bold text-slate-900 transition-colors hover:text-accent-600 dark:text-white dark:hover:text-accent-400"
+                      [attr.data-testid]="'order-link-' + row.id"
+                    >
+                      {{ row.number }}
+                    </a>
+                  } @else {
+                    <span class="font-mono text-xs font-bold text-slate-900 dark:text-white">
+                      {{ row.number }}
+                    </span>
+                  }
+                }
+                @case ('date') {
+                  <span class="text-xs text-slate-600 dark:text-slate-300" data-testid="order-date">
+                    {{ row.date | appDate: dateFormat() }}
+                  </span>
+                }
+                @case ('client') {
+                  <span class="block max-w-xs truncate text-xs font-bold" [title]="row.clientName">
+                    {{ row.clientName }}
+                  </span>
+                }
+                @case ('payment') {
+                  <span class="text-xs text-slate-600 dark:text-slate-300">
+                    {{ row.paymentLabel || '—' }}
+                  </span>
+                }
+                @case ('products') {
+                  <span
+                    class="block max-w-xs truncate text-xs text-slate-600 dark:text-slate-300"
+                    [title]="row.productsLabel || ''"
+                  >
+                    {{ row.productsLabel || '—' }}
+                  </span>
+                }
+                @case ('provider') {
+                  <span
+                    class="block max-w-xs truncate text-xs text-slate-600 dark:text-slate-300"
+                    [title]="row.providerName || ''"
+                  >
+                    {{ row.providerName || '—' }}
+                  </span>
+                }
+                @case ('total') {
+                  <span class="text-xs font-bold tabular-nums">
+                    {{ row.total | appCurrency }}
+                  </span>
+                }
+                @case ('profit') {
+                  <span class="text-xs font-bold tabular-nums">
+                    {{ row.profit ?? 0 | appCurrency }}
+                  </span>
+                }
+                @case ('status') {
+                  <app-order-status-badge [status]="row.status" />
+                }
+              }
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

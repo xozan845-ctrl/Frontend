@@ -429,64 +429,12 @@
         </button>
       </div>
     } @else {
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm" data-testid="company-sales-table">
-          <thead>
-            <tr
-              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
-            >
-              <th scope="col" class="py-2 pr-3 font-bold"># Venta</th>
-              <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
-              <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
-              <th scope="col" class="py-2 pr-3 font-bold">Método</th>
-              <th scope="col" class="py-2 pr-3 font-bold">Productos</th>
-              <th scope="col" class="py-2 pr-3 font-bold">Proveedor</th>
-              <th scope="col" class="py-2 pr-3 text-right font-bold">Total</th>
-              <th scope="col" class="py-2 pr-3 text-right font-bold">Ganancia</th>
-              <th scope="col" class="py-2 font-bold">Estado</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
-            @for (row of sales.pagedRows(); track row.id) {
-              <tr data-testid="company-sales-row">
-                <td class="py-3 pr-3 font-mono text-xs font-bold text-slate-900 dark:text-white">
-                  {{ row.number }}
-                </td>
-                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
-                  {{ row.date | appDate: 'short' }}
-                </td>
-                <td class="max-w-xs truncate py-3 pr-3 text-xs font-bold" [title]="row.clientName">
-                  {{ row.clientName }}
-                </td>
-                <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
-                  {{ row.paymentLabel }}
-                </td>
-                <td
-                  class="max-w-xs truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300"
-                  [title]="row.productsLabel"
-                >
-                  {{ row.productsLabel }}
-                </td>
-                <td
-                  class="max-w-xs truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300"
-                  [title]="row.providerName"
-                >
-                  {{ row.providerName }}
-                </td>
-                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
-                  {{ row.total | appCurrency }}
-                </td>
-                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
-                  {{ row.profit | appCurrency }}
-                </td>
-                <td class="py-3">
-                  <app-order-status-badge [status]="row.status" />
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+      <app-order-table
+        [rows]="sales.pagedRows()"
+        [columns]="saleColumns"
+        rowTestId="company-sales-row"
+        tableTestId="company-sales-table"
+      />
 
       <footer
         class="flex flex-col gap-2 border-t border-slate-100 pt-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
