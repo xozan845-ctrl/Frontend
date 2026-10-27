@@ -1551,3 +1551,31 @@ contexto y consecuencias.
   555 kB (el error permanece en 560 kB, R-PF-1). La siguiente fase puede
   extraer el store/tabla compartidos y mover la composición de Ventas/Pedidos a
   `features/modules/sales` sin volver a tocar el contrato de entrada.
+
+## ADR-61: Tabla de pedidos compartida
+
+- **Fecha**: 2026-10-27
+- **Estado**: Aceptado
+- **Contexto**: Ventas de empresa y Pedidos recientes del vendedor mantenían
+  dos tablas HTML con columnas, formato de fecha, enlace y badge duplicados.
+  Ya compartían modelo/adaptador (ADR-60) y presentación de estado/totales
+  (ADR-57).
+- **Decisión**:
+  - Se crea `shared/orders/components/order-table` con contrato
+    `OrderTableRow`/`OrderTableColumn` en
+    `shared/orders/models/order-table.model.ts`.
+  - La tabla es presentacional: recibe `rows`, `columns`, `dateFormat` y los
+    `data-testid` de fila/tabla. No inyecta stores ni conoce rutas de negocio;
+    el enlace opcional del número llega como `numberHref`.
+  - Ventas de empresa declara sus nueve columnas (venta, fecha, cliente,
+    método, productos, proveedor, total, ganancia, estado) y conserva
+    `company-sales-row`/`company-sales-table`.
+  - Pedidos recientes del vendedor usa las columnas pedido, cliente, total,
+    estado y fecha, con `dateFormat="datetime"`, enlace a
+    `/vendedor/pedidos/:id` y `recent-order-row`.
+  - Las claves de columna se limitan a las que ambos flujos necesitan; una
+    columna nueva se añade al modelo y a la plantilla compartida.
+- **Consecuencias**: una sola tabla para ambos workspaces, con la composición
+  de cada pantalla en su componente. El store compartido sigue pendiente;
+  cuando llegue, la tabla no necesitará cambios porque solo consume filas ya
+  normalizadas.
