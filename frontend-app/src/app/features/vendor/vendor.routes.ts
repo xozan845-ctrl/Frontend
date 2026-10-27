@@ -104,7 +104,7 @@ export const VENDOR_ROUTES: Routes = [
         path: 'clientes',
         canActivate: [moduleGuard('store.clients')],
         loadChildren: () =>
-          import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
+          import('../modules/clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
         providers: [
           { provide: CLIENTS_PAGE_CONFIG, useValue: VENDOR_CLIENTS_PAGE_CONFIG },
           { provide: CLIENTS_SCOPE_CONFIG, useValue: VENDOR_CLIENTS_SCOPE_CONFIG },

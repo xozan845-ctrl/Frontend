@@ -67,7 +67,7 @@ export const EMPRESAS_ROUTES: Routes = [
         path: 'clientes',
         canActivate: [moduleGuard('company.clients')],
         loadChildren: () =>
-          import('../clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
+          import('../modules/clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
         providers: [
           { provide: CLIENTS_PAGE_CONFIG, useValue: COMPANY_CLIENTS_PAGE_CONFIG },
           { provide: CLIENTS_SCOPE_CONFIG, useValue: COMPANY_CLIENTS_SCOPE_CONFIG },

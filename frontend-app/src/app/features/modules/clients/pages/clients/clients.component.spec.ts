@@ -2,9 +2,9 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import ClientsPageComponent from './clients.component';
-import { CLIENTS_PAGE_CONFIG } from '../../../../shared/clients/constants/clients-config.tokens';
-import { ClientsStore } from '../../state/clients/clients.store';
-import { SeoService } from '../../../../core/services/seo/seo.service';
+import { CLIENTS_PAGE_CONFIG } from '../../../../../shared/clients/constants/clients-config.tokens';
+import { ClientsStore } from '../../../../clients/public-api';
+import { SeoService } from '../../../../../core/services/seo/seo.service';
 import type {
   Client,
   ClientChip,
@@ -12,7 +12,7 @@ import type {
   ClientKpis,
   ClientMutationResult,
   ClientsTab,
-} from '../../models/client.model';
+} from '../../../../clients/public-api';
 
 const client: Client = {
   id: 'buyer-buyer-1',
