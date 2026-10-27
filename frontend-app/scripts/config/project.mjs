@@ -42,7 +42,7 @@ export const TYPE_DECLARATION_FILE_PATTERNS = [
 export const FEATURE_LAYER_DEPENDENCIES = {
   models: new Set(['models']),
   repositories: new Set(['models', 'repositories']),
-  adapters: new Set(['models', 'adapters']),
+  adapters: new Set(['models', 'adapters', 'constants']),
   services: new Set(['models', 'repositories', 'adapters', 'services', 'constants']),
   state: new Set(['models', 'repositories', 'services', 'state', 'constants']),
   pages: new Set([
@@ -146,6 +146,20 @@ export const FEATURE_CONTRACTS = {
   },
   billing: {
     layers: ['components', 'constants', 'models', 'pages'],
+    publicApi: true,
+    publicUi: false,
+  },
+  clients: {
+    layers: [
+      'adapters',
+      'components',
+      'constants',
+      'models',
+      'pages',
+      'repositories',
+      'services',
+      'state',
+    ],
     publicApi: true,
     publicUi: false,
   },
@@ -327,6 +341,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'billing',
   'cart',
   'checkout',
+  'clients',
   'empresas',
   'home',
   'logistica',
