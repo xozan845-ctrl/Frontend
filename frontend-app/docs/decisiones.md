@@ -1782,3 +1782,26 @@ contexto y consecuencias.
   misma UI y sin mezclar datos. El bundle inicial queda en 554.36 kB (techo
   555 kB); la página sigue lazy. El patrón queda listo para Códigos de barras,
   Créditos y Reportes.
+
+## ADR-69: Códigos de barras compartidos por scope
+
+- **Fecha**: 2026-10-28
+- **Estado**: Aceptado
+- **Contexto**: Códigos de barras era un placeholder de empresa y el vendedor
+  no tenía la sección. El patrón de scope de Cuentas por pagar y Bancos ya
+  resolvía el aislamiento por tenant/tienda.
+- **Decisión**:
+  - Se crea `features/barcodes` como dominio `domainOnly` con etiquetas,
+    simbologías EAN-13/Code 128, validación/generación, adaptador y store.
+  - `shared/barcodes` expone `BARCODES_SCOPE_CONFIG` para no arrastrar el
+    dominio desde las rutas eager.
+  - Persistencia aislada: `ecom_company_barcodes_*` y
+    `ecom_store_barcodes_*`; máximo 500 etiquetas y 100 copias por etiqueta.
+  - Se crea `features/modules/barcodes` con página, formulario y
+    `BARCODES_ROUTES`; el workspace provee el scope.
+  - Se añaden `/empresa/codigos-de-barras` y
+    `/vendedor/codigos-de-barras`, los módulos `company.barcodes`/`store.barcodes`
+    y el permiso `store:barcodes:manage`.
+- **Consecuencias**: empresa y tienda asignan y consultan sus propios códigos
+  sin mezclar datos. El bundle inicial queda en 554.52 kB (techo 555 kB); la
+  página sigue lazy. El patrón queda listo para Créditos y Reportes.
