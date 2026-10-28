@@ -87,7 +87,7 @@ WhatsApp (y la mayoría de crawlers) **no ejecuta JavaScript**: lee el HTML que
 devuelve Hosting. Como la SPA reescribe todo a `index.html`, una invitación
 compartida mostraba el host y la URL cruda, sin imagen.
 
-- `scripts/generate-invitation-html.mjs` corre como `postbuild`: copia el
+- `scripts/commands/generate-invitation-html.mjs` corre como `postbuild`: copia el
   `index.html` compilado, le cambia el título y los metadatos OG/Twitter y lo
   escribe como `invitacion.html`.
 - `firebase.json` sirve ese archivo en `/i/**` y `/registro/vendedor`; el resto
@@ -99,7 +99,7 @@ compartida mostraba el host y la URL cruda, sin imagen.
   panel del empresario.
 - Si cambia el dominio público, actualiza las URLs absolutas de `src/index.html`
   y el valor por defecto de `PUBLIC_ORIGIN` en
-  `scripts/generate-invitation-html.mjs`. También puedes definir
+  `scripts/commands/generate-invitation-html.mjs`. También puedes definir
   `FRONTEND_URL` al ejecutar el build.
 
 Para regenerar la imagen y comprobar el HTML:
