@@ -58,7 +58,8 @@ que son verificables por máquina.
 > consumido por los adaptadores de empresa y vendedor (ADR-60). `modules/sales`
 > compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64), el catálogo
 > administrable de empresa (ADR-65), Compras/Gastos/Caja (ADR-66), Cuentas por
-> pagar, Bancos y Códigos de barras con scope empresa/tienda (ADR-67/68/69).
+> pagar, Bancos, Códigos de barras y Créditos con scope empresa/tienda
+> (ADR-67/68/69/70).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz

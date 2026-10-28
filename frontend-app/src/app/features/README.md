@@ -32,6 +32,7 @@ features/<feature>/
 | `payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
 | `banks`           | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
 | `barcodes`        | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
+| `credits`         | Ventas a crédito compartidas por empresa y tienda (ADR-70).                        |
 | `empresas`        | Empresa, modalidad logística y vendedores (ADR-27).                                |
 | `home`            | Inicio, entrada multi-tienda y 404.                                                |
 | `logistica`       | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
