@@ -1,0 +1,105 @@
+<form class="card flex flex-col gap-3 p-5" [formGroup]="form" (ngSubmit)="submit()">
+  <h2 class="font-heading text-lg font-black tracking-tight uppercase">
+    {{ isEditing() ? 'Editar cuenta' : 'Nueva cuenta' }}
+  </h2>
+  <p class="text-sm text-slate-500 dark:text-slate-400">
+    Registra la cuenta bancaria y su saldo actual.
+  </p>
+
+  <div class="flex flex-col gap-1">
+    <label for="bank-name" class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+      Banco *
+    </label>
+    <input
+      id="bank-name"
+      type="text"
+      class="input"
+      formControlName="bank"
+      placeholder="Ej: Banco Lafise"
+    />
+    @if (isInvalid('bank')) {
+      <p class="text-xs font-bold text-red-600 dark:text-red-400">
+        Indica el banco (máx. 120 caracteres).
+      </p>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="bank-alias" class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+      Alias *
+    </label>
+    <input
+      id="bank-alias"
+      type="text"
+      class="input"
+      formControlName="alias"
+      placeholder="Ej: Operativa principal"
+    />
+    @if (isInvalid('alias')) {
+      <p class="text-xs font-bold text-red-600 dark:text-red-400">
+        Indica un alias (máx. 80 caracteres).
+      </p>
+    }
+  </div>
+
+  <div class="grid gap-3 sm:grid-cols-2">
+    <div class="flex flex-col gap-1">
+      <label for="bank-number" class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+        Número de cuenta *
+      </label>
+      <input
+        id="bank-number"
+        type="text"
+        class="input"
+        formControlName="accountNumber"
+        placeholder="Ej: 123456789"
+      />
+      @if (isInvalid('accountNumber')) {
+        <p class="text-xs font-bold text-red-600 dark:text-red-400">
+          Indica el número (máx. 40 caracteres).
+        </p>
+      }
+    </div>
+    <div class="flex flex-col gap-1">
+      <label for="bank-type" class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+        Tipo
+      </label>
+      <select id="bank-type" class="input" formControlName="type">
+        @for (type of types; track type.value) {
+          <option [value]="type.value">{{ type.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="bank-balance" class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+      Saldo actual *
+    </label>
+    <input
+      id="bank-balance"
+      type="number"
+      min="0"
+      step="0.01"
+      class="input"
+      formControlName="balance"
+    />
+    @if (isInvalid('balance')) {
+      <p class="text-xs font-bold text-red-600 dark:text-red-400">
+        El saldo no puede ser negativo.
+      </p>
+    }
+  </div>
+
+  <div class="flex flex-wrap gap-2">
+    <button type="submit" class="btn btn-primary btn-sm" data-testid="bank-submit">
+      <i class="fa-solid fa-floppy-disk text-xs" aria-hidden="true"></i>
+      {{ isEditing() ? 'Guardar cambios' : 'Registrar cuenta' }}
+    </button>
+    @if (isEditing()) {
+      <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit.emit()">
+        Cancelar
+      </button>
+    }
+  </div>
+</form>

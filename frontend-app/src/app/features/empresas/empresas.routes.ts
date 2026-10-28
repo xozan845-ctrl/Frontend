@@ -15,7 +15,9 @@ import { CompanyPortalService } from './services/company-portal/company-portal.s
 import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
+import { COMPANY_BANKS_SCOPE_CONFIG } from './constants/company-banks.config';
 import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
+import { BANKS_SCOPE_CONFIG } from '../../shared/banks/constants/banks-config.tokens';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -96,6 +98,13 @@ export const EMPRESAS_ROUTES: Routes = [
         canActivate: [moduleGuard('company.cash')],
         loadChildren: () =>
           import('../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
+      },
+      {
+        path: 'bancos',
+        canActivate: [moduleGuard('company.banks')],
+        loadChildren: () =>
+          import('../modules/banks/banks.routes').then((module) => module.BANKS_ROUTES),
+        providers: [{ provide: BANKS_SCOPE_CONFIG, useValue: COMPANY_BANKS_SCOPE_CONFIG }],
       },
       {
         path: 'cuentas-por-pagar',
