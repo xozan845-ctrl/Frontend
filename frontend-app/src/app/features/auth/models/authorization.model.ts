@@ -23,6 +23,7 @@ export type Permission =
   | 'company:purchases:manage'
   | 'company:expenses:manage'
   | 'company:cash:manage'
+  | 'company:banks:manage'
   | 'company:payables:manage'
   | 'company:payroll:manage'
   | 'company:quotes:manage'
@@ -41,6 +42,7 @@ export type Permission =
   | 'store:manage-billing'
   | 'store:manage-roles'
   | 'store:manage-logistics'
+  | 'store:banks:manage'
   | 'store:payables:manage'
   | 'store:reports:read'
   | 'logistics:read'
@@ -84,6 +86,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'company:purchases:manage',
     'company:expenses:manage',
     'company:cash:manage',
+    'company:banks:manage',
     'company:payables:manage',
     'company:payroll:manage',
     'company:quotes:manage',
@@ -102,6 +105,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:banks:manage',
     'store:payables:manage',
     'store:reports:read',
     'logistics:read',
@@ -118,6 +122,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:banks:manage',
     'store:payables:manage',
     'store:reports:read',
     'logistics:read',
