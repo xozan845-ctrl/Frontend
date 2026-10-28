@@ -1,4 +1,9 @@
-import type { ReportDay, ReportEntry, ReportSnapshot, ReportStatus } from '../../models/report.model';
+import type {
+  ReportDay,
+  ReportEntry,
+  ReportSnapshot,
+  ReportStatus,
+} from '../../models/report.model';
 
 function round(value: number): number {
   return Math.round(value * 100) / 100;
