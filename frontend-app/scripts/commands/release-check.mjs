@@ -3,7 +3,7 @@
  * release-check.mjs — valida un tag de release antes de publicarlo (R-CD-3/R-GB-3).
  *
  * Uso:
- *   node scripts/release-check.mjs --tag v1.24.0
+ *   node scripts/commands/release-check.mjs --tag v1.24.0
  *   npm run release:check -- --tag v1.24.0
  *
  * Comprueba:
@@ -15,12 +15,12 @@
  *   - con `--check-remote`, que un tag ya publicado no apunte a otro commit
  */
 import { execFileSync } from 'node:child_process';
-import { repoRoot } from './engine/lib/paths.mjs';
-import { compareSemver, parseTag } from './engine/lib/semver.mjs';
-import { DEFAULT_MAIN_REF, RELEASE_TAG_PATTERN, VERSION_MATCH_FROM } from './config/release.mjs';
+import { repoRoot } from '../engine/lib/paths.mjs';
+import { compareSemver, parseTag } from '../engine/lib/semver.mjs';
+import { DEFAULT_MAIN_REF, RELEASE_TAG_PATTERN, VERSION_MATCH_FROM } from '../config/release.mjs';
 
 function printHelp() {
-  console.log(`Uso: node scripts/release-check.mjs --tag <vX.Y.Z[-pre]> [opciones]
+  console.log(`Uso: node scripts/commands/release-check.mjs --tag <vX.Y.Z[-pre]> [opciones]
 
 Opciones:
   --tag <tag>        Tag de release a validar (obligatorio).

@@ -16,7 +16,7 @@ import { chromium } from '@playwright/test';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const images = [
   {
     source: join(root, 'docs/assets/og-image.html'),

@@ -58,7 +58,7 @@ jobs:
       - name: Check release readiness (informative)
         run: |
           set -o pipefail
-          node scripts/release-readiness.mjs --main-ref origin/main | tee release-readiness.txt
+          node scripts/commands/release-readiness.mjs --main-ref origin/main | tee release-readiness.txt
       - name: Publish release readiness summary
         if: always()
         run: |
@@ -183,7 +183,7 @@ jobs:
       - run: |
           set -o pipefail
           npm run build 2>&1 | tee build.log
-      - run: node scripts/check-budget.mjs
+      - run: node scripts/commands/check-budget.mjs
 
   e2e:
     name: E2E (Playwright)

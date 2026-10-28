@@ -8,20 +8,20 @@
  * el parser semver en `engine/lib/semver.mjs`.
  *
  * Uso:
- *   node scripts/release-readiness.mjs
- *   node scripts/release-readiness.mjs --main-ref origin/main
+ *   node scripts/commands/release-readiness.mjs
+ *   node scripts/commands/release-readiness.mjs --main-ref origin/main
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { repoRoot } from './engine/lib/paths.mjs';
-import { compareSemver, parseTag } from './engine/lib/semver.mjs';
+import { repoRoot } from '../engine/lib/paths.mjs';
+import { compareSemver, parseTag } from '../engine/lib/semver.mjs';
 import {
   APP_ARTIFACT_EXCLUDES,
   APP_ARTIFACT_PATTERNS,
   DEFAULT_MAIN_REF,
   DEPENDENCY_ARTIFACT_PATTERNS,
-} from './config/release.mjs';
+} from '../config/release.mjs';
 
 const IMPACT_RANK = { none: 0, patch: 1, minor: 2, major: 3 };
 

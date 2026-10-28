@@ -62,7 +62,7 @@ export function buildInvitationHtml(indexHtml, origin = PUBLIC_ORIGIN) {
 }
 
 async function main() {
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
   const browserDir = join(root, 'dist/frontend-app/browser');
   const indexPath = join(browserDir, 'index.html');
   const outputPath = join(browserDir, 'invitacion.html');
