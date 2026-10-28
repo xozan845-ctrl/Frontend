@@ -17,9 +17,11 @@ import { CompanyPortalStore } from './state/company-portal/company-portal.store'
 import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
 import { COMPANY_BANKS_SCOPE_CONFIG } from './constants/company-banks.config';
 import { COMPANY_BARCODES_SCOPE_CONFIG } from './constants/company-barcodes.config';
+import { COMPANY_CREDITS_SCOPE_CONFIG } from './constants/company-credits.config';
 import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { BANKS_SCOPE_CONFIG } from '../../shared/banks/constants/banks-config.tokens';
 import { BARCODES_SCOPE_CONFIG } from '../../shared/barcodes/constants/barcodes-config.tokens';
+import { CREDITS_SCOPE_CONFIG } from '../../shared/credits/constants/credits-config.tokens';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -136,13 +138,13 @@ export const EMPRESAS_ROUTES: Routes = [
           import('../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
         providers: [{ provide: BARCODES_SCOPE_CONFIG, useValue: COMPANY_BARCODES_SCOPE_CONFIG }],
       },
-      companySoonRoute(
-        'creditos',
-        'Créditos',
-        'Crédito de clientes y cuentas financiadas.',
-        'fa-solid fa-credit-card',
-        'company.credit',
-      ),
+      {
+        path: 'creditos',
+        canActivate: [moduleGuard('company.credit')],
+        loadChildren: () =>
+          import('../modules/credits/credits.routes').then((module) => module.CREDITS_ROUTES),
+        providers: [{ provide: CREDITS_SCOPE_CONFIG, useValue: COMPANY_CREDITS_SCOPE_CONFIG }],
+      },
       companySoonRoute(
         'impuestos',
         'Impuestos',

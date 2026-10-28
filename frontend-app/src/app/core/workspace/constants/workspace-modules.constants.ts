@@ -182,7 +182,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:credit:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.taxes',
@@ -415,6 +415,17 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:read',
+    status: 'ready',
+  },
+  {
+    id: 'store.credit',
+    label: 'Créditos',
+    icon: 'fa-solid fa-credit-card',
+    link: '/vendedor/creditos',
+    testId: 'vendor-nav-creditos',
+    workspace: 'store',
+    section: 'operacion',
+    permission: 'store:credit:manage',
     status: 'ready',
   },
   {

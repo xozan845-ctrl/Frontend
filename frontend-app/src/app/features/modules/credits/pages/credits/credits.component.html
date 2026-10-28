@@ -1,0 +1,123 @@
+<section class="flex flex-col gap-5">
+  <header class="flex flex-col gap-2">
+    <p class="text-[10px] font-bold tracking-widest text-accent-600 uppercase">
+      {{ config.scope === 'company' ? 'Empresa' : 'Tienda' }}
+    </p>
+    <h1 class="font-heading text-2xl font-black tracking-tight uppercase">{{ config.title }}</h1>
+    <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ config.subtitle }}</p>
+  </header>
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="card p-4" data-testid="credits-kpi-outstanding">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pendiente</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ credits.summary().outstandingTotal | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="credits-kpi-overdue">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Vencido</p>
+      <p class="mt-1 text-xl font-black tabular-nums text-red-600">
+        {{ credits.summary().overdueTotal | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="credits-kpi-collected">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cobrado</p>
+      <p class="mt-1 text-xl font-black tabular-nums text-emerald-600">
+        {{ credits.summary().collectedTotal | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="credits-kpi-active">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Activos</p>
+      <p class="mt-1 text-xl font-black tabular-nums">{{ credits.summary().activeCount }}</p>
+    </article>
+  </div>
+
+  <div class="grid gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)]">
+    <app-credit-form [error]="error()" (createCredit)="addCredit($event)" />
+
+    <div class="card flex flex-col gap-3 p-5">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="font-heading text-lg font-black tracking-tight uppercase">
+          Créditos registrados
+        </h2>
+        <span class="badge badge-neutral">{{ credits.records().length }}</span>
+      </div>
+
+      @if (!credits.hasRecords()) {
+        <p class="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+          Aún no hay créditos registrados.
+        </p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" data-testid="credits-table">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+              >
+                <th scope="col" class="py-2 pr-3 font-bold">Cliente</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Concepto</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Vence</th>
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Importe</th>
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Saldo</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+                <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+              @for (row of credits.rows(); track row.id) {
+                <tr data-testid="credit-row">
+                  <td class="py-3 pr-3 text-xs font-bold">{{ row.customer }}</td>
+                  <td
+                    class="max-w-xs truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300"
+                  >
+                    {{ row.concept }}
+                  </td>
+                  <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                    {{ row.dueDate | appDate: 'short' }}
+                  </td>
+                  <td class="py-3 pr-3 text-right text-xs tabular-nums">
+                    {{ row.amount | appCurrency }}
+                  </td>
+                  <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                    {{ row.balance | appCurrency }}
+                  </td>
+                  <td class="py-3 pr-3">
+                    @if (row.paid) {
+                      <span class="badge badge-success">Pagado</span>
+                    } @else if (row.overdue) {
+                      <span class="badge badge-danger">Vencido</span>
+                    } @else {
+                      <span class="badge badge-warning">Activo</span>
+                    }
+                  </td>
+                  <td class="flex justify-end gap-1 py-3">
+                    @if (!row.paid) {
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-sm text-emerald-600"
+                        (click)="credits.markPaid(row.id)"
+                        [attr.aria-label]="'Marcar como pagado el crédito de ' + row.customer"
+                        data-testid="credit-mark-paid"
+                      >
+                        <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm text-red-600"
+                      (click)="credits.removeCredit(row.id)"
+                      [attr.aria-label]="'Eliminar crédito de ' + row.customer"
+                      data-testid="credit-remove"
+                    >
+                      <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</section>
