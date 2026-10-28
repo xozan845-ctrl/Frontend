@@ -1758,3 +1758,27 @@ contexto y consecuencias.
   créditos y reportes). El bundle inicial queda en 553.23 kB (techo 555 kB) y
   la página sigue lazy. El dominio podrá cambiar la persistencia local por
   endpoints con scope sin tocar la composición.
+
+## ADR-68: Bancos compartidos por scope
+
+- **Fecha**: 2026-10-28
+- **Estado**: Aceptado
+- **Contexto**: la empresa no tenía un módulo de bancos y el vendedor no podía
+  consultar las cuentas de su tienda. El patrón de Cuentas por pagar (ADR-67)
+  ya resolvía el aislamiento por tenant/tienda.
+- **Decisión**:
+  - Se crea `features/banks` como dominio `domainOnly` con cuentas, tipos,
+    adaptador y `BanksStore` (alta, edición, borrado y saldo total).
+  - `shared/banks` expone `BANKS_SCOPE_CONFIG` y `BanksScopeConfig` para que
+    las rutas eager no importen el dominio.
+  - Persistencia aislada: `ecom_company_banks_*` para empresa y
+    `ecom_store_banks_*` para tienda; límite de 200 cuentas por ámbito.
+  - Se crea `features/modules/banks` con página, formulario de alta/edición y
+    `BANKS_ROUTES`; el workspace provee el scope.
+  - Se añaden `/empresa/bancos` y `/vendedor/bancos`, los módulos
+    `company.banks`/`store.banks`, y los permisos `company:banks:manage` y
+    `store:banks:manage`.
+- **Consecuencias**: empresa y vendedor administran sus propias cuentas con la
+  misma UI y sin mezclar datos. El bundle inicial queda en 554.36 kB (techo
+  555 kB); la página sigue lazy. El patrón queda listo para Códigos de barras,
+  Créditos y Reportes.

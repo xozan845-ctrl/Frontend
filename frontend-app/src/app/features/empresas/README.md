@@ -17,9 +17,9 @@ empresa, consulta, modalidad logística, tiendas e invitaciones de vendedores.
 La página y los modales de **Ventas** se componen en
 `features/modules/sales` (ADR-63); el catálogo administrable de productos,
 servicios y materia prima se compone en `features/modules/catalog` (ADR-65),
-Compras/Gastos/Caja en `features/modules/finance` (ADR-66) y Cuentas por pagar
-en `features/modules/payables` (ADR-67). Este feature conserva sus stores,
-dominio, adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
+Compras/Gastos/Caja en `features/modules/finance` (ADR-66), Cuentas por pagar
+en `features/modules/payables` (ADR-67) y Bancos en `features/modules/banks`
+(ADR-68). Este feature conserva sus stores, dominio, adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
 exporta `EMPRESAS_ROUTES`, para que el módulo pueda consumirlos sin ciclos.
 
 La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
