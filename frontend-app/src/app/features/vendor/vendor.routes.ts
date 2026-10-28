@@ -186,12 +186,11 @@ export const VENDOR_ROUTES: Routes = [
       ...STORAGE_ROUTES,
       {
         path: 'reportes',
-        ...comingSoonRoute(
-          'Reportes',
-          'Las métricas de ventas de tu tienda.',
-          'fa-solid fa-chart-line',
-          'store.reports',
-        ),
+        canActivate: [moduleGuard('store.reports')],
+        loadChildren: () =>
+          import('../modules/reports/reports.routes').then(
+            (module) => module.VENDOR_REPORTS_ROUTES,
+          ),
       },
       {
         path: 'ajustes',

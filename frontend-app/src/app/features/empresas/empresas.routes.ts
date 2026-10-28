@@ -152,13 +152,14 @@ export const EMPRESAS_ROUTES: Routes = [
         'fa-solid fa-file-invoice',
         'company.taxes',
       ),
-      companySoonRoute(
-        'reportes',
-        'Reportes',
-        'Reportes consolidados por tienda.',
-        'fa-solid fa-chart-column',
-        'company.reports',
-      ),
+      {
+        path: 'reportes',
+        canActivate: [moduleGuard('company.reports')],
+        loadChildren: () =>
+          import('../modules/reports/reports.routes').then(
+            (module) => module.COMPANY_REPORTS_ROUTES,
+          ),
+      },
       companySoonRoute(
         'estadisticas',
         'Estadísticas',
