@@ -14,7 +14,7 @@ npx playwright install chromium   # solo la primera vez
 npm run og-image
 ```
 
-El script `scripts/generate-og-image.mjs` renderiza el HTML con Chromium a
+El script `scripts/commands/generate-og-image.mjs` renderiza el HTML con Chromium a
 `deviceScaleFactor: 1` y sobrescribe el PNG. Usa una pila de fuentes del sistema
 (Helvetica/Arial/Liberation/DejaVu) para que el resultado no dependa de la red.
 

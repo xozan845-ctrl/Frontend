@@ -1339,7 +1339,7 @@ contexto y consecuencias.
 - **Consecuencias**: se obtiene una vista previa atractiva sin SSR ni plan Blaze.
   Una tarjeta distinta por empresa requeriría SSR, Cloud Functions o un Worker
   externo. Hay que mantener sincronizado el dominio público en `index.html` y
-  en `scripts/generate-invitation-html.mjs`.
+  en `scripts/commands/generate-invitation-html.mjs`.
 
 ## ADR-54: Centro de ventas con POS local en el workspace de empresa
 

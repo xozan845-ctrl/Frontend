@@ -365,22 +365,9 @@ export const APP_LAYER_ALLOWED_DIRECTORIES = {
 export const APP_LAYER_ALLOWED_ROOT_FILES = new Set(['README.md']);
 
 /** Estructura del motor de gobernanza (`scripts/`, R-AR-19). */
-export const SCRIPTS_ALLOWED_DIRECTORIES = new Set(['config', 'engine', 'rules']);
+export const SCRIPTS_ALLOWED_DIRECTORIES = new Set(['commands', 'config', 'engine', 'rules']);
 
-export const SCRIPTS_ALLOWED_ROOT_FILES = new Set([
-  'README.md',
-  'check-budget.mjs',
-  'check-diff-coverage.mjs',
-  'check-diff-coverage.test.mjs',
-  'check-rules.mjs',
-  'cli.mjs',
-  'generate-invitation-html.mjs',
-  'generate-invitation-html.test.mjs',
-  'generate-og-image.mjs',
-  'release-check.mjs',
-  'release-readiness.mjs',
-  'release-readiness.test.mjs',
-]);
+export const SCRIPTS_ALLOWED_ROOT_FILES = new Set(['README.md', 'check-rules.mjs', 'cli.mjs']);
 
 /** Ficheros de composición exentos de las reglas de capas. */
 export const COMPOSITION_FILES = new Set(['src/app/app.config.ts', 'src/app/app.routes.ts']);
