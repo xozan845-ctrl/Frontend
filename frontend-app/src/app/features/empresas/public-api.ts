@@ -47,6 +47,8 @@ export { CompanyProductsStore } from './state/company-products/company-products.
 export { CompanyServicesStore } from './state/company-services/company-services.store';
 export { CompanyService } from './services/company/company.service';
 export { CompanyPortalService } from './services/company-portal/company-portal.service';
+export { CompanyReportsSource } from './services/company-reports/company-reports.service';
+export { COMPANY_REPORTS_SCOPE_CONFIG } from './constants/company-reports.config';
 export { createCompanyOrdersSource } from './services/company-orders-source/company-orders-source.service';
 export { COMPANY_REPOSITORY, type CompanyRepository } from './repositories/company.repository';
 export {

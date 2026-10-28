@@ -1,0 +1,84 @@
+<section class="flex flex-col gap-5">
+  <header class="flex flex-col gap-2">
+    <p class="text-[10px] font-bold tracking-widest text-accent-600 uppercase">
+      {{ config.scope === 'company' ? 'Empresa' : 'Tienda' }}
+    </p>
+    <h1 class="font-heading text-2xl font-black tracking-tight uppercase">{{ config.title }}</h1>
+    <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ config.subtitle }}</p>
+  </header>
+
+  <div class="grid gap-3 sm:grid-cols-3">
+    <article class="card p-4" data-testid="reports-kpi-sales">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().totalSales | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-orders">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pedidos</p>
+      <p class="mt-1 text-xl font-black tabular-nums">{{ reports.snapshot().ordersCount }}</p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-ticket">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ticket promedio</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().averageTicket | appCurrency }}
+      </p>
+    </article>
+  </div>
+
+  @if (reports.loading()) {
+    <p class="card p-6 text-center text-sm text-slate-500 dark:text-slate-400">Cargando reporte…</p>
+  } @else if (!reports.hasData()) {
+    <p class="card p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+      No hay ventas registradas para este reporte.
+    </p>
+  } @else {
+    <div class="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
+      <div class="card flex flex-col gap-3 p-5">
+        <h2 class="font-heading text-lg font-black tracking-tight uppercase">Últimos días</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" data-testid="reports-days-table">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+              >
+                <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Pedidos</th>
+                <th scope="col" class="py-2 text-right font-bold">Ventas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+              @for (day of reports.recentDays(); track day.date) {
+                <tr data-testid="reports-day-row">
+                  <td class="py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                    {{ day.date | appDate: 'short' }}
+                  </td>
+                  <td class="py-3 pr-3 text-right text-xs tabular-nums">{{ day.count }}</td>
+                  <td class="py-3 text-right text-xs font-bold tabular-nums">
+                    {{ day.total | appCurrency }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card flex flex-col gap-3 p-5">
+        <h2 class="font-heading text-lg font-black tracking-tight uppercase">Por estado</h2>
+        <ul class="flex flex-col gap-2">
+          @for (status of reports.snapshot().statuses; track status.status) {
+            <li
+              class="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2 text-xs dark:bg-surface-800"
+              data-testid="reports-status-row"
+            >
+              <span class="font-bold uppercase">{{ status.status }}</span>
+              <span class="text-slate-500 dark:text-slate-400">{{ status.count }} pedidos</span>
+              <span class="font-bold tabular-nums">{{ status.total | appCurrency }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+</section>

@@ -204,7 +204,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:reports:read',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.analytics',
@@ -470,7 +470,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:reports:read',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'store.settings',
