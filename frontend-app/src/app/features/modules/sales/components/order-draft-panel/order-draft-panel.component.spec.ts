@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { OrderDraftPanelComponent } from './order-draft-panel.component';
 import type { OrderLineQuantityChange } from './order-draft-panel.types';
-import type { OrderDraftLine } from '../../../../vendor/public-api';
+import type { OrderDraftLine } from '../../../../applications/vendor/public-api';
 
 const line = (id: string, quantity: number): OrderDraftLine => ({
   product: {

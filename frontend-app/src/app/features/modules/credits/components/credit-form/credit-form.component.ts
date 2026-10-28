@@ -1,6 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import type { CreateCreditPayload } from '../../../../credits/public-api';
+import type { CreateCreditPayload } from '../../../../domains/credits/public-api';
 
 function inThirtyDays(): string {
   const date = new Date();

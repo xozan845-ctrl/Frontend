@@ -5,7 +5,7 @@ import {
   type BankAccount,
   type BankAccountType,
   type CreateBankAccountPayload,
-} from '../../../../banks/public-api';
+} from '../../../../domains/banks/public-api';
 
 /** Alta/edición de una cuenta bancaria; presentacional (`R-SO-8`). */
 @Component({

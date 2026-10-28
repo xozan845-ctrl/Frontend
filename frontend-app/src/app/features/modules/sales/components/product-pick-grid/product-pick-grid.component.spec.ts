@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ProductPickGridComponent } from './product-pick-grid.component';
-import type { VendorProduct } from '../../../../vendor/public-api';
+import type { VendorProduct } from '../../../../applications/vendor/public-api';
 
 const product = (id: string, name: string): VendorProduct => ({
   id,

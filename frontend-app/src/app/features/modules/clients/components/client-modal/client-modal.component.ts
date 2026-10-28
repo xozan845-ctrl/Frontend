@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import type { CreateClientPayload } from '../../../../clients/public-api';
+import type { CreateClientPayload } from '../../../../domains/clients/public-api';
 
 /**
  * Alta manual de un cliente de la empresa. Modal accesible con `focus-trap`

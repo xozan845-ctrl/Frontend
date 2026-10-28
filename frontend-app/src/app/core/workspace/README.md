@@ -16,7 +16,7 @@ No contiene lógica de negocio ni componentes de UI.
 3. `canView` comprueba `canEnterWorkspace(...)` + `hasPermission(...)`.
 4. El sidebar solo pinta los grupos recibidos; no conoce roles ni rutas
    hardcodeadas.
-5. `moduleGuard(id)` en `features/auth` resuelve el acceso a la ruta con el
+5. `moduleGuard(id)` en `features/applications/auth` resuelve el acceso a la ruta con el
    mismo registro (importado de forma lazy).
 
 ## Añadir un módulo
@@ -24,7 +24,7 @@ No contiene lógica de negocio ni componentes de UI.
 - Añadir la entrada a `WORKSPACE_MODULES` con `id`, metadatos, `workspace`,
   `permission` y `status`.
 - Añadir el permiso a `Permission` y a los roles que correspondan en
-  `features/auth/models/authorization.model.ts`.
+  `features/applications/auth/models/authorization.model.ts`.
 - Proteger la ruta con `moduleGuard('id')`.
 - Los módulos `soon` se muestran igual, pero responden con la página de
   “En construcción” hasta su implementación.

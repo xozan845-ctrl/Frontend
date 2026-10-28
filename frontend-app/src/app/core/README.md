@@ -21,6 +21,6 @@ Contiene infraestructura sin UI ni reglas de negocio (`R-AR-13`). No importa
 ## Reglas
 
 - Sin componentes ni plantillas.
-- Sin lógica de un dominio concreto: eso vive en `features/<feature>/`.
+- Sin lógica de un dominio concreto: eso vive en `features/<grupo>/<feature>/`.
 - La configuración se consume por tokens (`R-AR-3`) y nunca se hardcodea
   (`R-AR-11`).

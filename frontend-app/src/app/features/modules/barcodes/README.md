@@ -9,5 +9,5 @@ workspace (`BARCODES_SCOPE_CONFIG`) y compone KPIs, formulario y tabla.
 - `barcodes.routes.ts`: ruta lazy y `BarcodesStore`; el scope lo provee el
   workspace padre.
 
-El dominio y el store viven en `features/barcodes`; el módulo no duplica estado
+El dominio y el store viven en `features/domains/barcodes`; el módulo no duplica estado
 (ADR-69).

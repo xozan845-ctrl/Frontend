@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { CLIENTS_DATA_SOURCE } from '../../clients/public-api';
-import { ClientsHttpDataSource } from '../../clients/public-api';
-import { ClientsStore } from '../../clients/public-api';
+import { CLIENTS_DATA_SOURCE } from '../../domains/clients/public-api';
+import { ClientsHttpDataSource } from '../../domains/clients/public-api';
+import { ClientsStore } from '../../domains/clients/public-api';
 
 /**
  * Rutas del módulo compartido de clientes. La fuente de datos y la

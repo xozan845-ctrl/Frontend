@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { InitialsPipe } from '../../../../../shared/pipes/initials.pipe';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import type { Client } from '../../../../vendor/public-api';
+import type { Client } from '../../../../applications/vendor/public-api';
 
 /**
  * Selector de cliente del POS (presentacional, `R-SO-8`): buscador, lista de

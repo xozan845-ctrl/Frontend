@@ -15,7 +15,7 @@ import {
   type CompanyCatalogSort,
   type CompanyCatalogStatusFilter,
   type CompanyCatalogTab,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 
 /**
  * Catálogo administrable de la empresa (ADR-55): KPIs, pestañas de productos,

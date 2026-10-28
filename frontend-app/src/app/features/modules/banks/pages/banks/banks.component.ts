@@ -8,7 +8,7 @@ import {
   type BankAccount,
   type BankAccountType,
   type CreateBankAccountPayload,
-} from '../../../../banks/public-api';
+} from '../../../../domains/banks/public-api';
 import { BankFormComponent } from '../../components/bank-form/bank-form.component';
 
 /**

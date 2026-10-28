@@ -33,4 +33,4 @@ empresa). Pedidos del vendedor y Ventas de empresa ya la usan; empresa solo
 implementa `list` porque su pantalla es de lectura (ADR-62).
 
 > Fase 2: estado, badge, totales, tabla y store compartidos; el modelo/adaptador
-> vive en `features/orders`. La composición del módulo sigue pendiente.
+> vive en `features/domains/orders`. La composición del módulo sigue pendiente.

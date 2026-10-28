@@ -11,7 +11,7 @@ import {
   type CompanyCatalogModalMode,
   type CompanyCatalogRow,
   type CompanyCatalogStatus,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 
 /**
  * Modal de alta/edición de productos y servicios (ADR-55). Componente

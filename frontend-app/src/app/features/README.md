@@ -1,9 +1,10 @@
 # features/ — Dominios de negocio
 
-Cada feature es un dominio autocontenido con la misma estructura interna:
+Cada feature es una unidad autocontenida. Los features concretos viven dentro
+de un grupo explícito y conservan la misma estructura interna:
 
 ```text
-features/<feature>/
+features/<grupo>/<feature>/
 ├── pages/            # destinos de ruta (contenedores)
 ├── components/       # presentacionales internos
 ├── state/            # signalStore / estado de feature
@@ -22,49 +23,51 @@ tipos distintos de unidad. La tercera categoría tiene una frontera propia:
 
 ```text
 features/
-├── <application>/       # experiencia completa: páginas, estado y dominio local
-├── <domain>/             # dominio reutilizable: sin pages/components ni rutas
+├── applications/        # experiencias completas de la aplicación
+│   └── <application>/    # páginas, estado y dominio local
+├── domains/              # dominios reutilizables
+│   └── <domain>/         # sin pages/components ni rutas
 └── modules/
     └── <module>/         # composición de uno o varios dominios; solo UI/rutas
 ```
 
 El `kind` de cada entrada se declara en `scripts/config/project.mjs` y lo
-verifica `R-AR-16`. No se deben mover todos los features directos a
-`modules/`: hacerlo cambiaría su semántica y rompería la frontera entre
-dominio reutilizable y composición de workspace.
+verifica `R-AR-16`. `applications/` y `domains/` no son capas técnicas: son
+grupos físicos que hacen visible la diferencia entre una experiencia completa,
+un dominio reutilizable y un módulo de composición.
 
-| Feature           | Propósito                                                                          |
-| ----------------- | ---------------------------------------------------------------------------------- |
-| `account`         | Perfil, cambio de contraseña e historial de pedidos.                               |
-| `admin`           | Inventario de bodega y pantallas de administración.                                |
-| `ai-scraper`      | Jobs y chat de scraping con IA (ADR-18).                                           |
-| `auth`            | Login, registro, autorización por workspace y guards de sesión.                    |
-| `billing`         | Facturación: nueva factura, listado y detalle (ADR-23).                            |
-| `cart`            | Carrito, checkout y confirmación de pedido.                                        |
-| `clients`         | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
-| `modules/clients` | Composición de la página/modal de Clientes (ADR-59).                               |
-| `modules/sales`   | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
-| `modules/catalog` | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
-| `orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
-| `finance`         | Dominio de compras, gastos y caja con persistencia local (ADR-66).                 |
-| `payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
-| `banks`           | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
-| `barcodes`        | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
-| `credits`         | Ventas a crédito compartidas por empresa y tienda (ADR-70).                        |
-| `reports`         | Reportes de ventas compartidos por empresa y tienda (ADR-71).                      |
-| `empresas`        | Empresa, modalidad logística y vendedores (ADR-27).                                |
-| `home`            | Inicio, entrada multi-tienda y 404.                                                |
-| `logistica`       | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
-| `plans`           | Planes y suscripciones.                                                            |
-| `products`        | Catálogo, detalle, búsqueda y reseñas.                                             |
-| `stores`          | Asistente de creación de tienda.                                                   |
-| `vendor`          | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
-| `wishlist`        | Lista de deseos persistida localmente.                                             |
+| Feature                   | Propósito                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| `applications/account`    | Perfil, cambio de contraseña e historial de pedidos.                               |
+| `applications/admin`      | Inventario de bodega y pantallas de administración.                                |
+| `applications/ai-scraper` | Jobs y chat de scraping con IA (ADR-18).                                           |
+| `applications/auth`       | Login, registro, autorización por workspace y guards de sesión.                    |
+| `applications/billing`    | Facturación: nueva factura, listado y detalle (ADR-23).                            |
+| `applications/cart`       | Carrito, checkout y confirmación de pedido.                                        |
+| `domains/clients`         | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
+| `modules/clients`         | Composición de la página/modal de Clientes (ADR-59).                               |
+| `modules/sales`           | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
+| `modules/catalog`         | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
+| `domains/orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
+| `domains/finance`         | Dominio de compras, gastos y caja con persistencia local (ADR-66).                 |
+| `domains/payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
+| `domains/banks`           | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
+| `domains/barcodes`        | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
+| `domains/credits`         | Ventas a crédito compartidas por empresa y tienda (ADR-70).                        |
+| `domains/reports`         | Reportes de ventas compartidos por empresa y tienda (ADR-71).                      |
+| `applications/empresas`   | Empresa, modalidad logística y vendedores (ADR-27).                                |
+| `applications/home`       | Inicio, entrada multi-tienda y 404.                                                |
+| `applications/logistica`  | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
+| `applications/plans`      | Planes y suscripciones.                                                            |
+| `applications/products`   | Catálogo, detalle, búsqueda y reseñas.                                             |
+| `applications/stores`     | Asistente de creación de tienda.                                                   |
+| `applications/vendor`     | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
+| `applications/wishlist`   | Lista de deseos persistida localmente.                                             |
 
 ## Contratos de capas
 
 Cada feature declara sus capas obligatorias en `FEATURE_CONTRACTS`
-(`scripts/config/project.mjs`, `R-AR-16`). `account` reutiliza `auth` y `cart`
+(`scripts/config/project.mjs`, `R-AR-16`). `applications/account` reutiliza `applications/auth` y `applications/cart`
 por su API pública; sus capas locales son `pages`, `state`, `components` y
 `models`, sin duplicar stores, puertos ni adapters de esos dominios.
 

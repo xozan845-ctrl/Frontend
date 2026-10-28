@@ -13,11 +13,11 @@ features/modules/<módulo>/
 
 ## Dominio vs módulo
 
-- `features/<dominio>/` es reutilizable y declara `kind: 'domain'`: mantiene
+- `features/domains/<dominio>/` es reutilizable y declara `kind: 'domain'`: mantiene
   modelos, adapters, state, servicios y puertos, sin páginas ni rutas.
 - `features/modules/<módulo>/` compone dominios por su `public-api.ts`.
   Su contrato declara solo las capas de presentación que necesita.
 
-Ejemplo piloto: `features/clients` es el dominio compartido y
+Ejemplo piloto: `features/domains/clients` es el dominio compartido y
 `features/modules/clients` es la composición que consumen empresa y vendedor
 (ADR-59). `cart` no es un módulo de workspace y sigue fuera de esta carpeta.

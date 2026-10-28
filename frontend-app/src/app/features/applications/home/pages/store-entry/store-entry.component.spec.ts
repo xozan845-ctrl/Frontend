@@ -1,0 +1,133 @@
+import { computed, signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
+import StoreEntryComponent from './store-entry.component';
+import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { AuthStore } from '../../../auth/public-api';
+import type { User } from '../../../auth/public-api';
+
+describe('StoreEntryComponent', () => {
+  const seo = { setPage: vi.fn(), reset: vi.fn() };
+  const currentUser = signal<User | null>(null);
+  const authStoreStub = {
+    user: currentUser.asReadonly(),
+    hasActiveCompany: computed(
+      () => currentUser()?.role === 'empresario' && !!currentUser()?.tenantId,
+    ),
+  };
+
+  const setup = async () => {
+    await TestBed.configureTestingModule({
+      imports: [StoreEntryComponent],
+      providers: [
+        provideRouter([]),
+        { provide: SeoService, useValue: seo },
+        { provide: AuthStore, useValue: authStoreStub },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(StoreEntryComponent);
+    fixture.detectChanges();
+    return fixture;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    currentUser.set(null);
+    TestBed.resetTestingModule();
+  });
+
+  it('debe navegar al asistente al pulsar "Crear empresa"', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const button = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
+    ).find((candidate) => candidate.textContent?.includes('Crear empresa'))!;
+
+    button.click();
+
+    expect(navigate).toHaveBeenCalledWith(['/crear-empresa']);
+  });
+
+  it('debe entrar a la tienda indicada', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.goToStore('t-1');
+
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 't-1', 'shop']);
+  });
+
+  it('debe normalizar el id al entrar a la tienda', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.goToStore('  t-1  ');
+
+    expect(navigate).toHaveBeenCalledWith(['/tienda', 't-1', 'shop']);
+  });
+
+  it('no debe navegar cuando el id de tienda es inválido', async () => {
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.goToStore('   ');
+    fixture.componentInstance.goToStore('../admin');
+    fixture.componentInstance.goToStore('a'.repeat(101));
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('debe actualizar el SEO al entrar', async () => {
+    await setup();
+
+    expect(seo.setPage).toHaveBeenCalled();
+  });
+
+  it('debe restaurar el SEO al salir', async () => {
+    const fixture = await setup();
+
+    fixture.destroy();
+
+    expect(seo.reset).toHaveBeenCalled();
+  });
+
+  it('mantiene la raíz accesible y reemplaza crear empresa por el panel para empresarios', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const fixture = await setup();
+
+    expect(fixture.componentInstance.hasActiveCompany()).toBe(true);
+    expect(fixture.nativeElement.textContent).not.toContain('¿Tienes una empresa?');
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="company-workspace-link"]'),
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="create-logistics-company-link"]'),
+    ).not.toBeNull();
+  });
+
+  it('navega al workspace desde el card del empresario', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const fixture = await setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    (
+      fixture.nativeElement.querySelector(
+        '[data-testid="company-workspace-link"]',
+      ) as HTMLButtonElement
+    ).click();
+
+    expect(navigate).toHaveBeenCalledWith(['/empresa/inicio']);
+  });
+});

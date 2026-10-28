@@ -7,7 +7,7 @@ import {
   type CreatePurchasePayload,
   type PurchaseRecord,
   type PurchaseStatus,
-} from '../../../../finance/public-api';
+} from '../../../../domains/finance/public-api';
 
 function todayInput(): string {
   const now = new Date();

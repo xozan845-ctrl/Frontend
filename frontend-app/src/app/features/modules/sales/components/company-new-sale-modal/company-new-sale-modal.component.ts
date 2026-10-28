@@ -4,10 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import type { CatalogProduct } from '../../../../products/public-api';
+import type { CatalogProduct } from '../../../../applications/products/public-api';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
 import { OrderTotalsComponent } from '../../../../../shared/orders/components/order-totals/order-totals.component';
-import type { Client } from '../../../../clients/public-api';
+import type { Client } from '../../../../domains/clients/public-api';
 import {
   createCompanySaleLineId,
   type CompanySaleClientMode,
@@ -15,7 +15,7 @@ import {
   type CompanySalePaymentMethod,
   type CompanyServiceModel,
   type CreateCompanySalePayload,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 
 const STEPS = [
   { value: 1, label: 'Cliente' },

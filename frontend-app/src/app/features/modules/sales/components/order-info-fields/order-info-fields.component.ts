@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, input, output } from '@angular/cor
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { startWith } from 'rxjs/operators';
-import type { DeliveryMethod, OrderDraftInfo } from '../../../../vendor/public-api';
+import type { DeliveryMethod, OrderDraftInfo } from '../../../../applications/vendor/public-api';
 
 /**
  * Panel "Información del pedido" del POS (presentacional, `R-SO-8`): tienda,

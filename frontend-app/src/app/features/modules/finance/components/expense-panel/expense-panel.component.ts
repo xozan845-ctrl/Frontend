@@ -9,7 +9,7 @@ import {
   type ExpenseCategory,
   type ExpenseRecord,
   type PaymentMethod,
-} from '../../../../finance/public-api';
+} from '../../../../domains/finance/public-api';
 
 function todayInput(): string {
   const now = new Date();

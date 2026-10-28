@@ -9,7 +9,7 @@ almacenamiento y mensajes de commit en `frontend-app/`.
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | R-NC-1 | **Archivos `kebab-case` con sufijo por tipo**: `[nombre].[tipo].ts` (el tipo separado por punto). Tipos: `component`, `service`, `store`, `adapter`, `repository`, `model`, `dto`, `guard`, `interceptor`, `directive`, `pipe`, `mock`, `constants`, `functions`, `fixture`, `port`, `types`, `state`, `spec`. Ejemplos: `product-list.component.ts`, `product.store.ts`, `auth.adapter.ts`, `auth.guard.ts`, `coupons.constants.ts`. |
 | R-NC-2 | **Plantillas y estilos por archivo**: cada componente declara `templateUrl: './<nombre>.component.html'` y `styleUrl(s)` en archivos hermanos con el mismo `[nombre]`; prohibido incrustar plantillas o estilos largos en el decorador.                                                                                                                                                                                               |
-| R-NC-3 | **Carpetas `kebab-case`** en singular o plural coherente con el dominio (`features/products`, `features/products/pages/product-list`, `shared/ui/product-carousel`, `core/services`, `layout/navbar`).                                                                                                                                                                                                                                |
+| R-NC-3 | **Carpetas `kebab-case`** en singular o plural coherente con el dominio (`features/applications/products`, `features/applications/products/pages/product-list`, `shared/ui/product-carousel`, `core/services`, `layout/navbar`).                                                                                                                                                                                                      |
 
 ## Clases, tipos y selectores
 
@@ -41,7 +41,7 @@ almacenamiento y mensajes de commit en `frontend-app/`.
 > sufijos de CQRS del proyecto origen **no existen** en este repo.
 >
 > **Páginas y capas (ADR-12):** los destinos de ruta viven en
-> `features/<feature>/pages/<nombre>/` y conservan el sufijo `.component`
+> `features/<grupo>/<feature>/pages/<nombre>/` y conservan el sufijo `.component`
 > (`product-list.component.ts`); los presentacionales internos en
-> `features/<feature>/components/` y los reutilizables en `shared/ui/`. La
+> `features/<grupo>/<feature>/components/` y los reutilizables en `shared/ui/`. La
 > distinción páginas vs componentes es de rol (`R-AR-1`), no de sufijo.

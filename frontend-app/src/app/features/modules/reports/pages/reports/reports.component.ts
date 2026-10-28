@@ -3,7 +3,7 @@ import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { REPORTS_SCOPE_CONFIG } from '../../../../../shared/reports/constants/reports-config.tokens';
-import { ReportsStore } from '../../../../reports/public-api';
+import { ReportsStore } from '../../../../domains/reports/public-api';
 
 /**
  * Reportes compartidos entre empresa y tienda (ADR-71). La página consume el

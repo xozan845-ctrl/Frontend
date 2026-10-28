@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { PayablesStore } from '../../payables/public-api';
+import { PayablesStore } from '../../domains/payables/public-api';
 
 /** Ruta lazy del módulo; el workspace padre provee `PAYABLES_SCOPE_CONFIG`. */
 export const PAYABLES_ROUTES: Routes = [

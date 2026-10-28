@@ -8,5 +8,5 @@ workspace.
   desglose por estado.
 - `reports.routes.ts`: ruta lazy y `ReportsStore`.
 
-El dominio, el puerto y el adaptador viven en `features/reports`; las fuentes de
+El dominio, el puerto y el adaptador viven en `features/domains/reports`; las fuentes de
 empresa y tienda en sus features (ADR-71).

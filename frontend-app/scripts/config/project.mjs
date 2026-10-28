@@ -35,7 +35,7 @@ export const TYPE_DECLARATION_FILE_PATTERNS = [
 ];
 
 /**
- * Capas de un feature (`features/<feature>/<capa>/`). Cada capa declara qué
+ * Capas de un feature (`features/<grupo>/<feature>/<capa>/`). Cada capa declara qué
  * capas del MISMO feature puede importar. `null` = sin restricción dentro del
  * feature (sujeto a las reglas globales).
  */
@@ -72,7 +72,7 @@ export const FEATURE_LAYER_DEPENDENCIES = {
 };
 
 /**
- * Capas admitidas dentro de `features/<feature>/` (R-AR-16). Cualquier carpeta
+ * Capas admitidas dentro de `features/<grupo>/<feature>/` (R-AR-16). Cualquier carpeta
  * nueva debe añadirse aquí y al contrato del feature.
  */
 export const FEATURE_ALLOWED_LAYERS = new Set([
@@ -98,6 +98,12 @@ export const FEATURE_ALLOWED_ROOT_FILES = new Set([
   'company-vendors.routes.ts',
   'seller-invitation.routes.ts',
 ]);
+
+/** Grupos físicos permitidos directamente bajo `src/app/features/` (R-AR-17). */
+export const FEATURE_ALLOWED_DIRECTORIES = new Set(['applications', 'domains', 'modules']);
+
+/** La raíz de cada grupo solo admite su README de responsabilidad. */
+export const FEATURE_GROUP_ALLOWED_ROOT_FILES = new Set(['README.md']);
 
 /**
  * Contrato estructural de cada feature (R-AR-16): tipo, capas obligatorias y
@@ -451,6 +457,9 @@ export const REQUIRED_READMES = [
   'src/app/shared/README.md',
   'src/app/layout/README.md',
   'src/app/features/README.md',
+  'src/app/features/applications/README.md',
+  'src/app/features/domains/README.md',
+  'src/app/features/modules/README.md',
 ];
 
 /**

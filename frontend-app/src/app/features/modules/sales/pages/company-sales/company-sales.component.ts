@@ -4,7 +4,7 @@ import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { AuthStore } from '../../../../auth/public-api';
+import { AuthStore } from '../../../../applications/auth/public-api';
 import { CompanyNewSaleModalComponent } from '../../components/company-new-sale-modal/company-new-sale-modal.component';
 import { CompanyQuickSaleModalComponent } from '../../components/company-quick-sale-modal/company-quick-sale-modal.component';
 import { OrderTableComponent } from '../../../../../shared/orders/components/order-table/order-table.component';
@@ -17,7 +17,7 @@ import {
   type CompanySalePaymentFilter,
   type CompanySalePeriod,
   type CreateCompanySalePayload,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 
 const TAB_CLASSES = {
   active: 'bg-accent-600 text-white shadow-sm',
