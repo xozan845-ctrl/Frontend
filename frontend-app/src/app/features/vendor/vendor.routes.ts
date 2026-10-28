@@ -14,6 +14,8 @@ import {
   VENDOR_CLIENTS_SCOPE_CONFIG,
 } from './constants/vendor-clients-page.config';
 import { vendorGuard } from './guards/vendor/vendor.guard';
+import { VENDOR_PAYABLES_SCOPE_CONFIG } from './constants/vendor-payables.config';
+import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -100,6 +102,13 @@ export const VENDOR_ROUTES: Routes = [
         path: 'pedidos/:id',
         canActivate: [moduleGuard('store.orders')],
         loadComponent: () => import('../modules/sales/pages/order-detail/order-detail.component'),
+      },
+      {
+        path: 'cuentas-por-pagar',
+        canActivate: [moduleGuard('store.payables')],
+        loadChildren: () =>
+          import('../modules/payables/payables.routes').then((module) => module.PAYABLES_ROUTES),
+        providers: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: VENDOR_PAYABLES_SCOPE_CONFIG }],
       },
       {
         path: 'tienda',

@@ -175,6 +175,17 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  'modules/payables': {
+    layers: ['components', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
+  payables: {
+    layers: ['adapters', 'constants', 'models', 'state'],
+    publicApi: true,
+    publicUi: false,
+    domainOnly: true,
+  },
   finance: {
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
@@ -368,6 +379,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'clients',
   'empresas',
   'finance',
+  'payables',
   'home',
   'logistica',
   'plans',
