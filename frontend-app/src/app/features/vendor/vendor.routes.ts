@@ -17,9 +17,11 @@ import { vendorGuard } from './guards/vendor/vendor.guard';
 import { VENDOR_PAYABLES_SCOPE_CONFIG } from './constants/vendor-payables.config';
 import { VENDOR_BANKS_SCOPE_CONFIG } from './constants/vendor-banks.config';
 import { VENDOR_BARCODES_SCOPE_CONFIG } from './constants/vendor-barcodes.config';
+import { VENDOR_CREDITS_SCOPE_CONFIG } from './constants/vendor-credits.config';
 import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { BANKS_SCOPE_CONFIG } from '../../shared/banks/constants/banks-config.tokens';
 import { BARCODES_SCOPE_CONFIG } from '../../shared/barcodes/constants/barcodes-config.tokens';
+import { CREDITS_SCOPE_CONFIG } from '../../shared/credits/constants/credits-config.tokens';
 import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -106,6 +108,13 @@ export const VENDOR_ROUTES: Routes = [
         path: 'pedidos/:id',
         canActivate: [moduleGuard('store.orders')],
         loadComponent: () => import('../modules/sales/pages/order-detail/order-detail.component'),
+      },
+      {
+        path: 'creditos',
+        canActivate: [moduleGuard('store.credit')],
+        loadChildren: () =>
+          import('../modules/credits/credits.routes').then((module) => module.CREDITS_ROUTES),
+        providers: [{ provide: CREDITS_SCOPE_CONFIG, useValue: VENDOR_CREDITS_SCOPE_CONFIG }],
       },
       {
         path: 'codigos-de-barras',
