@@ -41,6 +41,7 @@ export type Permission =
   | 'store:manage-billing'
   | 'store:manage-roles'
   | 'store:manage-logistics'
+  | 'store:payables:manage'
   | 'store:reports:read'
   | 'logistics:read'
   | 'logistics:manage-fleet'
@@ -101,6 +102,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:payables:manage',
     'store:reports:read',
     'logistics:read',
     'logistics:manage-fleet',
@@ -116,6 +118,7 @@ const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<string, readonly Permission[]>> 
     'store:manage-billing',
     'store:manage-roles',
     'store:manage-logistics',
+    'store:payables:manage',
     'store:reports:read',
     'logistics:read',
     'logistics:manage-fleet',

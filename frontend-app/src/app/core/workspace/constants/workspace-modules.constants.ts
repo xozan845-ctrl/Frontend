@@ -127,7 +127,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:payables:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.payroll',
@@ -404,6 +404,17 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:read',
+    status: 'ready',
+  },
+  {
+    id: 'store.payables',
+    label: 'Cuentas por pagar',
+    icon: 'fa-solid fa-file-invoice-dollar',
+    link: '/vendedor/cuentas-por-pagar',
+    testId: 'vendor-nav-cuentas',
+    workspace: 'store',
+    section: 'operacion',
+    permission: 'store:payables:manage',
     status: 'ready',
   },
   {

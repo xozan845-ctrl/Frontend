@@ -14,6 +14,8 @@ import { COMPANY_REPOSITORY } from './repositories/company.repository';
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
 import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
+import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
+import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -95,13 +97,13 @@ export const EMPRESAS_ROUTES: Routes = [
         loadChildren: () =>
           import('../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
       },
-      companySoonRoute(
-        'cuentas-por-pagar',
-        'Cuentas por pagar',
-        'Compromisos y vencimientos de pago.',
-        'fa-solid fa-file-invoice-dollar',
-        'company.payables',
-      ),
+      {
+        path: 'cuentas-por-pagar',
+        canActivate: [moduleGuard('company.payables')],
+        loadChildren: () =>
+          import('../modules/payables/payables.routes').then((module) => module.PAYABLES_ROUTES),
+        providers: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: COMPANY_PAYABLES_SCOPE_CONFIG }],
+      },
       companySoonRoute(
         'salarios',
         'Salarios',
