@@ -322,13 +322,65 @@ export const FEATURE_CONTRACTS = {
       'state',
     ],
     publicApi: true,
-    publicUi: false,
+    publicUi: true,
   },
   wishlist: { layers: ['pages', 'state'], publicApi: true, publicUi: false },
 };
 
 /** Ficheros raíz de un feature que se consideran capa `root`. */
 export const FEATURE_ROOT_FILES = new Set(['public-api.ts', 'public-ui.ts']);
+
+/** Estructura permitida directamente bajo `src/app/` (R-AR-17). */
+export const APP_ROOT_ALLOWED_DIRECTORIES = new Set(['core', 'features', 'layout', 'shared']);
+
+export const APP_ROOT_ALLOWED_FILES = new Set([
+  'README.md',
+  'app.component.css',
+  'app.component.html',
+  'app.component.spec.ts',
+  'app.component.ts',
+  'app.config.ts',
+  'app.routes.ts',
+]);
+
+/** Capas transversales permitidas directamente bajo cada frontera global. */
+export const APP_LAYER_ALLOWED_DIRECTORIES = {
+  core: new Set(['config', 'constants', 'models', 'services', 'workspace']),
+  shared: new Set([
+    'banks',
+    'barcodes',
+    'clients',
+    'credits',
+    'directives',
+    'orders',
+    'payables',
+    'pipes',
+    'reports',
+    'ui',
+  ]),
+  layout: new Set(['footer', 'navbar']),
+};
+
+/** `core/shared/layout` solo admiten README en su raíz. */
+export const APP_LAYER_ALLOWED_ROOT_FILES = new Set(['README.md']);
+
+/** Estructura del motor de gobernanza (`scripts/`, R-AR-19). */
+export const SCRIPTS_ALLOWED_DIRECTORIES = new Set(['config', 'engine', 'rules']);
+
+export const SCRIPTS_ALLOWED_ROOT_FILES = new Set([
+  'README.md',
+  'check-budget.mjs',
+  'check-diff-coverage.mjs',
+  'check-diff-coverage.test.mjs',
+  'check-rules.mjs',
+  'cli.mjs',
+  'generate-invitation-html.mjs',
+  'generate-invitation-html.test.mjs',
+  'generate-og-image.mjs',
+  'release-check.mjs',
+  'release-readiness.mjs',
+  'release-readiness.test.mjs',
+]);
 
 /** Ficheros de composición exentos de las reglas de capas. */
 export const COMPOSITION_FILES = new Set(['src/app/app.config.ts', 'src/app/app.routes.ts']);
@@ -372,7 +424,7 @@ export const MIN_UNIT_FILES = 2;
  * con check ejecutable real. Súbelo al añadir validadores; nunca lo bajes para
  * silenciar una regresión.
  */
-export const COVERAGE_MIN_VERIFIED = 44;
+export const COVERAGE_MIN_VERIFIED = 47;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).

@@ -1,5 +1,5 @@
 import { defineSuite } from '../../engine/suite.mjs';
-import { findLayerViolations } from './checks.mjs';
+import { classify, findLayerViolations } from './checks.mjs';
 import { assertNoFresh } from './assertions.mjs';
 
 /**
@@ -20,6 +20,17 @@ export default defineSuite({
   cites: ['R-AR-3'],
   mode: 'repo',
   run: ({ test, assert }) => {
+    test('los módulos anidados se clasifican como features propias', () => {
+      assert.deepEqual(
+        classify('src/app/features/modules/sales/pages/orders/orders.component.ts'),
+        {
+          kind: 'feature',
+          feature: 'modules/sales',
+          layer: 'pages',
+        },
+      );
+    });
+
     test('La dependencia va hacia dentro: pages/components → state → services → repositories/adapters → models', () => {
       assertNoFresh({
         assert,

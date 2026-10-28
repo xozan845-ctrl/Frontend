@@ -3,10 +3,10 @@ import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import {
   ORDER_STATUS_LABELS,
-  RecentOrdersTableComponent,
   VendorOrdersStore,
   type OrderStatus,
 } from '../../../../vendor/public-api';
+import { RecentOrdersTableComponent } from '../../../../vendor/public-ui';
 
 /**
  * Página "Pedidos" (ADR-20): lista completa con filtro por estado en chips y

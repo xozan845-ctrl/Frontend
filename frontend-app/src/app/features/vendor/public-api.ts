@@ -40,7 +40,6 @@ export {
   VENDOR_PRODUCT_REPOSITORY,
   type VendorProductRepository,
 } from './repositories/vendor-product.repository';
-export { RecentOrdersTableComponent } from './components/recent-orders-table/recent-orders-table.component';
 export { ClientSearchStore } from './state/client-search/client-search.store';
 export { OrderDraftStore } from './state/order-draft/order-draft.store';
 export { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';

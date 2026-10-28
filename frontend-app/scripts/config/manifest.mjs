@@ -25,6 +25,7 @@ export const requiredSuites = [
   { id: 'naming-guards', file: 'rules/architecture/naming.test.mjs' },
   { id: 'architecture-config', file: 'rules/architecture/config.test.mjs' },
   { id: 'architecture-packaging', file: 'rules/architecture/packaging.test.mjs' },
+  { id: 'architecture-structure', file: 'rules/architecture/structure.test.mjs' },
   { id: 'security-guards', file: 'rules/security/security.test.mjs' },
   { id: 'performance-guards', file: 'rules/frontend/performance.test.mjs' },
   { id: 'store-guards', file: 'rules/frontend/stores.test.mjs' },
