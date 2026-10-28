@@ -15,6 +15,24 @@ features/<feature>/
 └── <feature>.routes.ts
 ```
 
+## Tipos de feature y ubicación
+
+Los hermanos directos de `features/` no son un accidente: representan dos
+tipos distintos de unidad. La tercera categoría tiene una frontera propia:
+
+```text
+features/
+├── <application>/       # experiencia completa: páginas, estado y dominio local
+├── <domain>/             # dominio reutilizable: sin pages/components ni rutas
+└── modules/
+    └── <module>/         # composición de uno o varios dominios; solo UI/rutas
+```
+
+El `kind` de cada entrada se declara en `scripts/config/project.mjs` y lo
+verifica `R-AR-16`. No se deben mover todos los features directos a
+`modules/`: hacerlo cambiaría su semántica y rompería la frontera entre
+dominio reutilizable y composición de workspace.
+
 | Feature           | Propósito                                                                          |
 | ----------------- | ---------------------------------------------------------------------------------- |
 | `account`         | Perfil, cambio de contraseña e historial de pedidos.                               |
@@ -54,7 +72,7 @@ por su API pública; sus capas locales son `pages`, `state`, `components` y
 
 - Un feature consume a otro solo por `public-api.ts`/`public-ui.ts`
   (`R-CX-6`).
-- Los features `domainOnly` exponen lógica reutilizable sin páginas ni rutas.
+- Los features de tipo `domain` exponen lógica reutilizable sin páginas ni rutas.
 - `features/modules/<módulo>` compone dominios para un workspace; no duplica
   modelos, stores ni adapters.
 - `pages/` consume estado del store; `components/` es presentacional
