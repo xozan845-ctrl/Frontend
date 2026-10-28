@@ -1,7 +1,7 @@
 /**
  * R-AR-16 — Contrato estructural de feature.
  *
- * Cada `features/<feature>/` declara en `FEATURE_CONTRACTS` su tipo (`kind`),
+ * Cada `features/<grupo>/<feature>/` declara en `FEATURE_CONTRACTS` su tipo (`kind`),
  * capas obligatorias y API pública. El sistema de archivos solo admite esas
  * capas más los archivos raíz conocidos. Las páginas y componentes viven en
  * su propia carpeta `<nombre>/<nombre>.component.{ts,html,spec.ts}`.
@@ -46,14 +46,22 @@ function checkUnit({ findings, featureRel, layer, unitName, unitDir }) {
 export function findFeatureStructureViolations() {
   const findings = [];
   const featuresDir = resolveInApp(FEATURES_ROOT);
-  const featureEntries = readdirSync(featuresDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name !== 'modules')
-    .map((entry) => ({
-      name: entry.name,
-      dir: join(featuresDir, entry.name),
-      rel: `${FEATURES_ROOT}/${entry.name}`,
-      contractKey: entry.name,
-    }));
+  const featureEntries = [];
+  for (const group of ['applications', 'domains']) {
+    const groupDir = join(featuresDir, group);
+    if (!existsSync(groupDir)) continue;
+    for (const entry of readdirSync(groupDir, { withFileTypes: true }).filter((item) =>
+      item.isDirectory(),
+    )) {
+      featureEntries.push({
+        name: entry.name,
+        group,
+        dir: join(groupDir, entry.name),
+        rel: `${FEATURES_ROOT}/${group}/${entry.name}`,
+        contractKey: entry.name,
+      });
+    }
+  }
   const modulesDir = join(featuresDir, 'modules');
   if (existsSync(modulesDir)) {
     for (const entry of readdirSync(modulesDir, { withFileTypes: true }).filter((item) =>
@@ -61,6 +69,7 @@ export function findFeatureStructureViolations() {
     )) {
       featureEntries.push({
         name: entry.name,
+        group: 'modules',
         dir: join(modulesDir, entry.name),
         rel: `${FEATURES_ROOT}/modules/${entry.name}`,
         contractKey: `modules/${entry.name}`,
@@ -99,7 +108,20 @@ export function findFeatureStructureViolations() {
       continue;
     }
 
-    const isNestedModule = entry.contractKey.startsWith('modules/');
+    const isNestedModule = entry.group === 'modules';
+    const expectedGroup =
+      contract.kind === 'module'
+        ? 'modules'
+        : contract.kind === 'domain'
+          ? 'domains'
+          : 'applications';
+    if (entry.group !== expectedGroup) {
+      add(
+        featureRel,
+        `el feature de tipo '${contract.kind}' debe vivir bajo features/${expectedGroup}/`,
+        'feature-group',
+      );
+    }
     if (!FEATURE_KINDS.has(contract.kind)) {
       add(
         featureRel,

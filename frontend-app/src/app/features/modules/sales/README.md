@@ -20,12 +20,12 @@ pedidos/POS del vendedor sobre los dominios y stores de sus features.
 - `components/client-picker`, `create-client-modal`, `order-draft-panel`,
   `order-info-fields`, `order-line`, `product-pick-card`,
   `product-pick-grid`, `quantity-stepper` y `confirm-modal`: piezas del POS.
-- `recent-orders-table` sigue en `features/vendor` porque también lo usa el
+- `recent-orders-table` sigue en `features/applications/vendor` porque también lo usa el
   inicio del panel.
 
 La empresa carga `sales.routes.ts` desde `EMPRESAS_ROUTES`; el vendedor carga
 las páginas desde `VENDOR_ROUTES` y mantiene sus stores en el shell para que
 sobrevivan a la navegación. El dominio, los stores y los adaptadores siguen en
 sus features; el módulo solo compone presentación y providers (ADR-63/64).
-`features/empresas/public-api` y `features/vendor/public-api` exponen lo que el
+`features/applications/empresas/public-api` y `features/applications/vendor/public-api` exponen lo que el
 módulo necesita, sin exportar rutas de workspace.

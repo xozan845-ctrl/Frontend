@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import ClientsPageComponent from './clients.component';
 import { CLIENTS_PAGE_CONFIG } from '../../../../../shared/clients/constants/clients-config.tokens';
-import { ClientsStore } from '../../../../clients/public-api';
+import { ClientsStore } from '../../../../domains/clients/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import type {
   Client,
@@ -12,7 +12,7 @@ import type {
   ClientKpis,
   ClientMutationResult,
   ClientsTab,
-} from '../../../../clients/public-api';
+} from '../../../../domains/clients/public-api';
 
 const client: Client = {
   id: 'buyer-buyer-1',

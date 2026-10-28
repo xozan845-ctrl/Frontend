@@ -49,19 +49,18 @@ export function classify(rel) {
 
   const parts = rel.split('/');
   if (parts[0] === 'src' && parts[1] === 'app' && parts[2] === 'features') {
-    // `features/modules/<module>/` es un feature de composición anidado, no
-    // una capa llamada `modules`. Mantener esta identidad evita que sus
-    // páginas/componentes queden fuera del grafo de dependencias.
+    // `features/<grupo>/<feature>/` conserva el nombre lógico del feature,
+    // mientras `modules/<module>/` mantiene su identidad de composición.
     if (parts[3] === 'modules' && parts[4]) {
       const feature = `modules/${parts[4]}`;
       if (parts.length === 6) return { kind: 'feature-root', feature, file: parts[5] };
       return { kind: 'feature', feature, layer: parts[5] };
     }
 
-    if (parts[3]) {
-      const feature = parts[3];
-      if (parts.length === 5) return { kind: 'feature-root', feature, file: parts[4] };
-      return { kind: 'feature', feature, layer: parts[4] };
+    if (['applications', 'domains'].includes(parts[3]) && parts[4]) {
+      const feature = parts[4];
+      if (parts.length === 6) return { kind: 'feature-root', feature, file: parts[5] };
+      return { kind: 'feature', feature, layer: parts[5] };
     }
   }
 

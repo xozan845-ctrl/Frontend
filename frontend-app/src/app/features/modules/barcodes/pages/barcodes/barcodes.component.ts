@@ -7,7 +7,7 @@ import {
   BarcodesStore,
   type BarcodeSymbology,
   type CreateBarcodeLabelPayload,
-} from '../../../../barcodes/public-api';
+} from '../../../../domains/barcodes/public-api';
 import { BarcodeFormComponent } from '../../components/barcode-form/barcode-form.component';
 
 /**

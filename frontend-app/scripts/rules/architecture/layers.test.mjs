@@ -31,6 +31,22 @@ export default defineSuite({
       );
     });
 
+    test('los grupos físicos conservan la identidad lógica del feature', () => {
+      assert.deepEqual(
+        classify('src/app/features/applications/auth/pages/login-form/login-form.component.ts'),
+        {
+          kind: 'feature',
+          feature: 'auth',
+          layer: 'pages',
+        },
+      );
+      assert.deepEqual(classify('src/app/features/domains/clients/models/client.model.ts'), {
+        kind: 'feature',
+        feature: 'clients',
+        layer: 'models',
+      });
+    });
+
     test('La dependencia va hacia dentro: pages/components → state → services → repositories/adapters → models', () => {
       assertNoFresh({
         assert,

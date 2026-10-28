@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { BanksStore } from '../../banks/public-api';
+import { BanksStore } from '../../domains/banks/public-api';
 
 /** Ruta lazy del módulo; el workspace padre provee `BANKS_SCOPE_CONFIG`. */
 export const BANKS_ROUTES: Routes = [

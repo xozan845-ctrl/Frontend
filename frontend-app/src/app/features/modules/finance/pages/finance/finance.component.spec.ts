@@ -8,7 +8,7 @@ import {
   type ExpenseRecord,
   type FinanceSummary,
   type PurchaseRecord,
-} from '../../../../finance/public-api';
+} from '../../../../domains/finance/public-api';
 import FinanceComponent from './finance.component';
 
 const purchase: PurchaseRecord = {

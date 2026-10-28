@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchasePanelComponent } from './purchase-panel.component';
-import type { PurchaseRecord } from '../../../../finance/public-api';
+import type { PurchaseRecord } from '../../../../domains/finance/public-api';
 
 const record: PurchaseRecord = {
   id: 'purchase-1',

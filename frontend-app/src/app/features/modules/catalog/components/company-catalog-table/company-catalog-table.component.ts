@@ -2,7 +2,10 @@ import { Component, input, output } from '@angular/core';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import type { CompanyCatalogRow, CompanyCatalogTab } from '../../../../empresas/public-api';
+import type {
+  CompanyCatalogRow,
+  CompanyCatalogTab,
+} from '../../../../applications/empresas/public-api';
 
 /**
  * Tabla presentacional del catálogo. Muestra productos, servicios o materia

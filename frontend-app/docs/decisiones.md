@@ -376,9 +376,9 @@ contexto y consecuencias.
   superficie de consumo es un **endpoint HTTP** con **CORS** por allowlist
   (`CORS_ORIGINS`) y, opcionalmente, cabecera `x-api-key`.
 - **Decisión**: integrarlo como un **feature aislado** del frontend
-  (`features/ai-scraper`), consumido por HTTP a través de **un endpoint**:
+  (`features/applications/ai-scraper`), consumido por HTTP a través de **un endpoint**:
   - El host vive en `environment.aiScraperUrl` (`R-AR-11`); los paths y
-    constantes en `features/ai-scraper/constants` (`R-AR-13`). **No** se
+    constantes en `features/applications/ai-scraper/constants` (`R-AR-13`). **No** se
     reutiliza `apiUrl` (son backends distintos).
   - CORS se habilita **en el backend** (`CORS_ORIGINS=<origen del frontend>`);
     el frontend no hace proxy ni intermedia.
@@ -428,7 +428,7 @@ contexto y consecuencias.
   endpoints de pedidos/clientes/stock del vendedor, así que el contrato se
   asume en el frontend con adapters tolerantes y modo `mock` mientras llega el
   backend.
-- **Decisión**: crear el feature **`vendor`** (`features/vendor/`) como extensión
+- **Decisión**: crear el feature **`vendor`** (`features/applications/vendor/`) como extensión
   del módulo de tienda, con su mismo lenguaje visual (tokens `surface`/`accent`,
   Outfit/Plus Jakarta Sans, animaciones existentes, dark mode, `appCurrency`):
   - **Rutas** `/vendedor` (lazy vía `loadChildren`, guard de rol `vendedor`) con
@@ -509,7 +509,7 @@ contexto y consecuencias.
   el mismo lenguaje visual del POS de la tienda (sidebar oscuro, cards, chips,
   panel de totales), por lo que conviene extenderlo sin duplicar la lógica de
   pedidos. Se pidió expresamente construir **primero la parte visual**.
-- **Decisión**: crear el feature **`features/billing/`** como módulo
+- **Decisión**: crear el feature **`features/applications/billing/`** como módulo
   independiente, cargado de forma perezosa desde `app.routes.ts` bajo
   `/facturacion` (R-AR-12, R-LZ-1):
   - **Rutas**: `/facturacion/nueva` (POS de facturación), `/facturacion/facturas`
@@ -575,7 +575,7 @@ contexto y consecuencias.
   del panel del vendedor (ADR-20) y de facturación (ADR-23): shell con sidebar
   oscuro, tarjetas, chips y tablas.
 - **Decisión**:
-  - Crear el feature **`features/logistica/`** cargado de forma perezosa bajo
+  - Crear el feature **`features/applications/logistica/`** cargado de forma perezosa bajo
     `/logistica` (R-AR-12, R-LZ-1), con shell propio y entrada visible en el
     navbar (desktop y móvil).
   - **Rutas**: `/logistica/dashboard` (tablero) y las secciones del sidebar
@@ -653,7 +653,7 @@ contexto y consecuencias.
   tienda fallaba contra el backend real porque el JWT del empresario recién
   registrado no incluía `tenant_id`.
 - **Decisión**:
-  - Nuevo feature lazy **`features/empresas/`** con modelos, adapter, puerto
+  - Nuevo feature lazy **`features/applications/empresas/`** con modelos, adapter, puerto
     (`COMPANY_REPOSITORY`), servicio HTTP y `CompanyStore` (R-AR-3, R-AR-4).
   - Se consumen los cuatro endpoints del contrato: alta (`POST /empresas`),
     consulta (`GET /empresas/:id`), cambio de modalidad
@@ -1417,13 +1417,13 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: existían dos implementaciones de Clientes: el CRM de empresa
-  (`features/empresas/pages/company-clients`, derivado de `/orders/empresa` y
+  (`features/applications/empresas/pages/company-clients`, derivado de `/orders/empresa` y
   con registro local por tenant) y la lista del vendedor
-  (`features/vendor/pages/clients`, contra el contrato asumido
+  (`features/applications/vendor/pages/clients`, contra el contrato asumido
   `/vendedores/clientes`, que Core Engine no implementa). Duplicaban modelo,
   store, modal y tabla, y el vendedor no tenía KPIs ni segmentos.
 - **Decisión**:
-  - Se crea el feature compartido `features/clients` con modelo, adaptador,
+  - Se crea el feature compartido `features/domains/clients` con modelo, adaptador,
     store, página y modal únicos.
   - El puerto `CLIENTS_DATA_SOURCE` entrega las órdenes del ámbito activo y la
     clave de storage. Empresa usa `GET /orders/empresa` y
@@ -1503,7 +1503,7 @@ contexto y consecuencias.
 
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
-- **Contexto**: `features/clients` mezclaba dominio reutilizable (modelo,
+- **Contexto**: `features/domains/clients` mezclaba dominio reutilizable (modelo,
   adaptador, store, fuente HTTP) con la composición de workspace (página,
   modal y rutas). Al aparecer más módulos, esa mezcla impide reutilizar el
   dominio sin arrastrar UI y obliga a que todo feature tenga rutas, incluso los
@@ -1516,7 +1516,7 @@ contexto y consecuencias.
   - `R-AR-16` descubre módulos anidados bajo `features/modules` y omite la
     exigencia de rutas para features `domainOnly`.
   - Piloto: `features/modules/clients` contiene la página, el modal y las rutas;
-    `features/clients` queda como dominio. Empresa y vendedor apuntan sus rutas
+    `features/domains/clients` queda como dominio. Empresa y vendedor apuntan sus rutas
     al módulo y siguen inyectando `CLIENTS_PAGE_CONFIG`/`CLIENTS_SCOPE_CONFIG`.
   - `cart` no es un módulo de workspace y permanece fuera.
 - **Consecuencias**: el dominio de clientes se puede consumir desde otros
@@ -1534,7 +1534,7 @@ contexto y consecuencias.
   `snake_case`/`camelCase`, envelopes, centavos y líneas con nombres distintos,
   pero con reglas duplicadas y divergentes.
 - **Decisión**:
-  - Se crea `features/orders` como dominio `domainOnly` con `Order` y
+  - Se crea `features/domains/orders` como dominio `domainOnly` con `Order` y
     `OrderLine`.
   - `adaptOrder(s)FromBackend` acepta los contratos de empresa (`OrderView`,
     `oferta_id`, `precio_unitario_cents`, `comprador_id`) y de vendedor
@@ -1607,7 +1607,7 @@ contexto y consecuencias.
     panel; empresa conserva "No se pudieron cargar las ventas.".
   - Los ids del contrato de empresa son `string | number`; el store los
     normaliza con `String` al llamar al detalle o al cambio de estado.
-  - El estado compartido se queda en `shared/orders`, no en `features/orders`:
+  - El estado compartido se queda en `shared/orders`, no en `features/domains/orders`:
     el dominio sigue siendo `domainOnly` y las piezas de estado no entran en el
     grafo eager que consumen los adaptadores de empresa (el store solo aparece
     en el chunk lazy del vendedor).
@@ -1622,7 +1622,7 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la página y los modales de Ventas de empresa vivían dentro de
-  `features/empresas` junto al dominio y al store. `empresas/public-api`
+  `features/applications/empresas` junto al dominio y al store. `empresas/public-api`
   exportaba `EMPRESAS_ROUTES`, así que un módulo de composición que importara
   stores o tokens desde el API pública podía cerrar un ciclo con las rutas del
   workspace.
@@ -1635,20 +1635,20 @@ contexto y consecuencias.
   - Se crea `features/modules/sales` con la página, los modales de venta rápida
     y asistente, el selector de pago y `SALES_ROUTES`.
   - El dominio de ventas, el store, los adaptadores y las constantes siguen en
-    `features/empresas`; el módulo solo compone presentación y providers.
+    `features/applications/empresas`; el módulo solo compone presentación y providers.
   - `EMPRESAS_ROUTES` carga `SALES_ROUTES` con `loadChildren`, manteniendo la
     página lazy y sin duplicar el dominio en otro feature.
 - **Consecuencias**: la composición de Ventas deja de depender de las rutas de
   empresas y no hay ciclos. El bundle inicial pasa a 552.43 kB (techo 555 kB) y
   el chunk de Ventas sigue lazy (~68 kB). Pedidos del vendedor permanece en
-  `features/vendor`; mover su composición al módulo queda como siguiente fase.
+  `features/applications/vendor`; mover su composición al módulo queda como siguiente fase.
 
 ## ADR-64: Composición de Pedidos y POS del vendedor
 
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la lista de pedidos, el detalle y el punto de venta del
-  vendedor vivían en `features/vendor` mezclados con el dominio, los stores y
+  vendedor vivían en `features/applications/vendor` mezclados con el dominio, los stores y
   los adaptadores. El módulo `modules/sales` ya componía Ventas de empresa
   (ADR-63) y era el lugar natural para esta experiencia.
 - **Decisión**:
@@ -1657,19 +1657,19 @@ contexto y consecuencias.
     `create-client-modal`, `order-draft-panel`, `order-info-fields`,
     `order-line`, `product-pick-card`, `product-pick-grid`,
     `quantity-stepper` y `confirm-modal`).
-  - `features/vendor` conserva el dominio, los tipos, las constantes, los
+  - `features/applications/vendor` conserva el dominio, los tipos, las constantes, los
     repositorios, los servicios y los stores (`VendorOrdersStore`,
     `OrderDraftStore`, `ClientSearchStore`, `VendorCatalogStore`).
   - `VENDOR_ROUTES` mantiene los providers de esos stores en el shell para que
     sobrevivan a la navegación y los libere al salir del panel; solo cambian
     las rutas lazy de las páginas al módulo.
-  - `recent-orders-table` se queda en `features/vendor` porque también lo usa
+  - `recent-orders-table` se queda en `features/applications/vendor` porque también lo usa
     el inicio del panel; se expone por `vendor/public-api` para el POS y la
     lista del módulo.
   - `vendor/public-api` amplía su superficie con stores, tokens, servicios,
     constantes, tipos y la tabla reciente que consume la composición.
 - **Consecuencias**: `modules/sales` compone las dos experiencias de venta y
-  `features/vendor` queda como dominio/estado del panel. El bundle inicial se
+  `features/applications/vendor` queda como dominio/estado del panel. El bundle inicial se
   mantiene en 552.43 kB y las páginas siguen en chunks lazy
   (`new-order` ~39 kB, `vendor-routes` ~26 kB). El inicio del vendedor y la
   tabla reciente permanecen en su feature para no acoplar el dashboard al
@@ -1680,7 +1680,7 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la página de productos/servicios de empresa, la tabla del
-  catálogo y el modal de alta/edición vivían en `features/empresas` junto a los
+  catálogo y el modal de alta/edición vivían en `features/applications/empresas` junto a los
   stores, modelos, constantes y adaptadores. El patrón de módulos ya estaba
   probado con Clientes y Ventas/Pedidos.
 - **Decisión**:
@@ -1689,7 +1689,7 @@ contexto y consecuencias.
     `CATALOG_ROUTES`.
   - Los providers (`CompanyProductsStore`, `CompanyServicesStore` y
     `CATALOG_PRODUCT_REPOSITORY`) se mueven de la página a las rutas del módulo.
-  - `features/empresas` conserva stores, modelos, constantes, adaptadores y
+  - `features/applications/empresas` conserva stores, modelos, constantes, adaptadores y
     servicios; su API pública expone stores, constantes y tipos del catálogo.
   - `EMPRESAS_ROUTES` carga `CATALOG_ROUTES` con `loadChildren` en
     `/empresa/productos`, manteniendo la página lazy.
@@ -1710,7 +1710,7 @@ contexto y consecuencias.
   construcción". No había dominio, store ni persistencia, y la UI no podía
   registrar ni consultar la operación financiera básica.
 - **Decisión**:
-  - Se crea `features/finance` como dominio `domainOnly` con compras, gastos y
+  - Se crea `features/domains/finance` como dominio `domainOnly` con compras, gastos y
     movimientos de caja, constantes, adaptador y `FinanceStore`.
   - Los registros se guardan por tenant en `localStorage` con claves
     `ecom_company_purchases_*`, `ecom_company_expenses_*` y
@@ -1739,7 +1739,7 @@ contexto y consecuencias.
   servir a ambos, pero los datos no pueden mezclarse: empresa ve sus
   obligaciones y cada tienda ve las suyas.
 - **Decisión**:
-  - Se crea `features/payables` como dominio `domainOnly` con modelos,
+  - Se crea `features/domains/payables` como dominio `domainOnly` con modelos,
     constantes, adaptador y `PayablesStore`.
   - La configuración de scope vive en `shared/payables`
     (`PAYABLES_SCOPE_CONFIG`, `PayablesScopeConfig`), igual que los tokens de
@@ -1767,7 +1767,7 @@ contexto y consecuencias.
   consultar las cuentas de su tienda. El patrón de Cuentas por pagar (ADR-67)
   ya resolvía el aislamiento por tenant/tienda.
 - **Decisión**:
-  - Se crea `features/banks` como dominio `domainOnly` con cuentas, tipos,
+  - Se crea `features/domains/banks` como dominio `domainOnly` con cuentas, tipos,
     adaptador y `BanksStore` (alta, edición, borrado y saldo total).
   - `shared/banks` expone `BANKS_SCOPE_CONFIG` y `BanksScopeConfig` para que
     las rutas eager no importen el dominio.
@@ -1791,7 +1791,7 @@ contexto y consecuencias.
   no tenía la sección. El patrón de scope de Cuentas por pagar y Bancos ya
   resolvía el aislamiento por tenant/tienda.
 - **Decisión**:
-  - Se crea `features/barcodes` como dominio `domainOnly` con etiquetas,
+  - Se crea `features/domains/barcodes` como dominio `domainOnly` con etiquetas,
     simbologías EAN-13/Code 128, validación/generación, adaptador y store.
   - `shared/barcodes` expone `BARCODES_SCOPE_CONFIG` para no arrastrar el
     dominio desde las rutas eager.
@@ -1814,7 +1814,7 @@ contexto y consecuencias.
   sección. El patrón de scope de Cuentas por pagar, Bancos y Códigos de barras
   ya resolvía el aislamiento por tenant/tienda.
 - **Decisión**:
-  - Se crea `features/credits` como dominio `domainOnly` con crédito, saldo,
+  - Se crea `features/domains/credits` como dominio `domainOnly` con crédito, saldo,
     vencimiento, adaptador y `CreditsStore` (alta, pago y borrado).
   - `shared/credits` expone `CREDITS_SCOPE_CONFIG` para no arrastrar el dominio
     desde las rutas eager.
@@ -1836,7 +1836,7 @@ contexto y consecuencias.
   Ambos necesitaban métricas de ventas, pero sobre fuentes distintas y sin
   duplicar la presentación.
 - **Decisión**:
-  - Se crea `features/reports` como dominio `domainOnly` con `ReportEntry`,
+  - Se crea `features/domains/reports` como dominio `domainOnly` con `ReportEntry`,
     `ReportDay`, `ReportStatus`, `ReportSnapshot`, un adaptador de agrupación y
     el puerto `REPORTS_DATA_SOURCE` (`snapshot`, `loading`, `load`).
   - `ReportsStore` consume ese puerto y expone snapshot, carga, días recientes

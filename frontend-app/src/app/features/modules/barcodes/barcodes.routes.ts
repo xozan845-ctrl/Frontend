@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { BarcodesStore } from '../../barcodes/public-api';
+import { BarcodesStore } from '../../domains/barcodes/public-api';
 
 /** Ruta lazy del módulo; el workspace padre provee `BARCODES_SCOPE_CONFIG`. */
 export const BARCODES_ROUTES: Routes = [

@@ -13,26 +13,33 @@ const gates = [
 ];
 
 test('activa la compuerta si cambia lógica y no hay docs', () => {
-  const findings = evaluateDocsSync(['src/app/features/cart/cart.store.ts'], { gates });
+  const findings = evaluateDocsSync(['src/app/features/applications/cart/cart.store.ts'], {
+    gates,
+  });
   assert.equal(findings.length, 1);
   assert.equal(findings[0].gate, 'app-logic');
 });
 
 test('no activa la compuerta si también cambia un doc requerido', () => {
   const findings = evaluateDocsSync(
-    ['src/app/features/cart/cart.store.ts', 'docs/rules/frontend/06-estado-signal-store.md'],
+    [
+      'src/app/features/applications/cart/cart.store.ts',
+      'docs/rules/frontend/06-estado-signal-store.md',
+    ],
     { gates },
   );
   assert.deepEqual(findings, []);
 });
 
 test('ignora los archivos excluidos (specs)', () => {
-  const findings = evaluateDocsSync(['src/app/features/cart/cart.store.spec.ts'], { gates });
+  const findings = evaluateDocsSync(['src/app/features/applications/cart/cart.store.spec.ts'], {
+    gates,
+  });
   assert.deepEqual(findings, []);
 });
 
 test('respeta las excepciones justificadas', () => {
-  const findings = evaluateDocsSync(['src/app/features/cart/cart.store.ts'], {
+  const findings = evaluateDocsSync(['src/app/features/applications/cart/cart.store.ts'], {
     gates,
     exemptions: [{ paths: [/cart\.store\.ts$/], reason: 'refactor sin cambio de contrato' }],
   });

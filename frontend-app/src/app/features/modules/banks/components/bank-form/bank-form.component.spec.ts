@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BankFormComponent } from './bank-form.component';
-import type { BankAccount } from '../../../../banks/public-api';
+import type { BankAccount } from '../../../../domains/banks/public-api';
 
 const ACCOUNT: BankAccount = {
   id: 'bank-1',

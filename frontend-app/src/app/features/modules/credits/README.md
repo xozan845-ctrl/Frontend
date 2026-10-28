@@ -8,5 +8,5 @@ workspace (`CREDITS_SCOPE_CONFIG`) y compone KPIs, formulario y tabla.
 - `credits.routes.ts`: ruta lazy y `CreditsStore`; el scope lo provee el
   workspace padre.
 
-El dominio y el store viven en `features/credits`; el módulo no duplica estado
+El dominio y el store viven en `features/domains/credits`; el módulo no duplica estado
 (ADR-70).

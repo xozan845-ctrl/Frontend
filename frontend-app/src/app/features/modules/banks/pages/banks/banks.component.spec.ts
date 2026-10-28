@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { BANKS_SCOPE_CONFIG } from '../../../../../shared/banks/constants/banks-config.tokens';
 import type { BanksScopeConfig } from '../../../../../shared/banks/models/banks-config.model';
-import { BanksStore, type BankAccount } from '../../../../banks/public-api';
+import { BanksStore, type BankAccount } from '../../../../domains/banks/public-api';
 import BanksComponent from './banks.component';
 
 const config: BanksScopeConfig = {

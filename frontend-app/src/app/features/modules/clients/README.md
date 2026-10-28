@@ -1,6 +1,6 @@
 # modules/clients/ — Composición de Clientes
 
-Módulo de workspace que compone el dominio compartido `features/clients`.
+Módulo de workspace que compone el dominio compartido `features/domains/clients`.
 
 - `pages/clients`: página de cartera, KPIs, tabs, filtros y paginación.
 - `components/client-modal`: alta manual de cliente.

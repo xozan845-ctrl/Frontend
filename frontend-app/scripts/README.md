@@ -70,7 +70,7 @@ que son verificables por máquina.
 
 ### Modelo de capas
 
-Dentro de `features/<feature>/`:
+Dentro de `features/<grupo>/<feature>/`:
 
 ```
 pages/ · components/        presentación: consumen estado (stores); components puede usar puertos de infra (*.port.ts)

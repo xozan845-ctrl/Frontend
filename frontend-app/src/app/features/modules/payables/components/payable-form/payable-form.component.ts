@@ -1,6 +1,6 @@
 import { Component, inject, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import type { CreatePayablePayload } from '../../../../payables/public-api';
+import type { CreatePayablePayload } from '../../../../domains/payables/public-api';
 
 function inThirtyDays(): string {
   const date = new Date();

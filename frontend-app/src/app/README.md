@@ -3,12 +3,12 @@
 Organización **feature-first por capas** (ADR-12). La app es una SPA Angular
 standalone, lazy por feature y zoneless.
 
-| Capa        | Responsabilidad                                                                | README                                       |
-| ----------- | ------------------------------------------------------------------------------ | -------------------------------------------- |
-| `core/`     | Infraestructura transversal sin UI: configuración, modelos, servicios, tokens. | [`core/README.md`](./core/README.md)         |
-| `shared/`   | Presentación y utilidades reutilizables sin reglas de negocio.                 | [`shared/README.md`](./shared/README.md)     |
-| `layout/`   | Chrome de la aplicación: navbar, footer y drawers.                             | [`layout/README.md`](./layout/README.md)     |
-| `features/` | Dominios de negocio con sus páginas, estado, servicios, adapters y modelos.    | [`features/README.md`](./features/README.md) |
+| Capa        | Responsabilidad                                                                                 | README                                       |
+| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `core/`     | Infraestructura transversal sin UI: configuración, modelos, servicios, tokens.                  | [`core/README.md`](./core/README.md)         |
+| `shared/`   | Presentación y utilidades reutilizables sin reglas de negocio.                                  | [`shared/README.md`](./shared/README.md)     |
+| `layout/`   | Chrome de la aplicación: navbar, footer y drawers.                                              | [`layout/README.md`](./layout/README.md)     |
+| `features/` | Experiencias (`applications/`), dominios reutilizables (`domains/`) y composición (`modules/`). | [`features/README.md`](./features/README.md) |
 
 ## Composición
 

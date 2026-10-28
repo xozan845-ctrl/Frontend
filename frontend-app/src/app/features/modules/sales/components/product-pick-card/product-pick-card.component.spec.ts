@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ProductPickCardComponent } from './product-pick-card.component';
-import type { VendorProduct } from '../../../../vendor/public-api';
+import type { VendorProduct } from '../../../../applications/vendor/public-api';
 
 const product: VendorProduct = {
   id: 'vp-1',

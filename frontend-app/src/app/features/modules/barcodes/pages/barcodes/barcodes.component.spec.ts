@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { BARCODES_SCOPE_CONFIG } from '../../../../../shared/barcodes/constants/barcodes-config.tokens';
 import type { BarcodesScopeConfig } from '../../../../../shared/barcodes/models/barcodes-config.model';
-import { BarcodesStore, type BarcodeLabel } from '../../../../barcodes/public-api';
+import { BarcodesStore, type BarcodeLabel } from '../../../../domains/barcodes/public-api';
 import BarcodesComponent from './barcodes.component';
 
 const config: BarcodesScopeConfig = {

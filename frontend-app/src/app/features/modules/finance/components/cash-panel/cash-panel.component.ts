@@ -9,7 +9,7 @@ import {
   type CashMovementType,
   type CreateCashMovementPayload,
   type PaymentMethod,
-} from '../../../../finance/public-api';
+} from '../../../../domains/finance/public-api';
 
 function todayInput(): string {
   const now = new Date();

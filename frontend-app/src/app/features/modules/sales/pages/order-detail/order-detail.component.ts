@@ -13,7 +13,7 @@ import {
   ORDER_STATUS_TRANSITIONS,
   VendorOrdersStore,
   type OrderStatus,
-} from '../../../../vendor/public-api';
+} from '../../../../applications/vendor/public-api';
 import type { TimelineStep } from './order-detail.types';
 
 /**

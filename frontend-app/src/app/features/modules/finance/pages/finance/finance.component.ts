@@ -9,7 +9,7 @@ import {
   type CreateExpensePayload,
   type CreatePurchasePayload,
   type FinanceTab,
-} from '../../../../finance/public-api';
+} from '../../../../domains/finance/public-api';
 import { CashPanelComponent } from '../../components/cash-panel/cash-panel.component';
 import { ExpensePanelComponent } from '../../components/expense-panel/expense-panel.component';
 import { PurchasePanelComponent } from '../../components/purchase-panel/purchase-panel.component';
