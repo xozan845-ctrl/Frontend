@@ -12,7 +12,7 @@ Modelo y adaptador normalizado para los pedidos de empresa y vendedor.
 `snake_case`/`camelCase`, envelopes, centavos, cliente anidado y líneas con
 `oferta_id` o `producto_id`.
 
-El feature es `domainOnly` (ADR-60): no tiene páginas ni rutas. Empresa y
+El feature declara `kind: 'domain'` (ADR-60): no tiene páginas ni rutas. Empresa y
 vendedor lo consumen desde sus adaptadores actuales.
 
 El estado reutilizable no vive aquí: `shared/orders/state/with-orders` aporta el
