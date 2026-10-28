@@ -11,6 +11,6 @@ adaptador tolerante.
 | `adapters/`  | Creación y saneamiento de registros; totales y saldo de caja.           |
 | `state/`     | `FinanceStore`: listas, resumen, altas/bajas y persistencia por tenant. |
 
-El feature es `domainOnly` (ADR-66): no tiene páginas ni rutas. La composición
+El feature declara `kind: 'domain'` (ADR-66): no tiene páginas ni rutas. La composición
 visual vive en `features/modules/finance`; el store se provee en cada ruta del
 módulo y comparte el dominio entre Compras, Gastos y Caja.
