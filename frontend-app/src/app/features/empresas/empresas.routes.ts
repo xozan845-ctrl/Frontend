@@ -16,8 +16,10 @@ import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
 import { COMPANY_BANKS_SCOPE_CONFIG } from './constants/company-banks.config';
+import { COMPANY_BARCODES_SCOPE_CONFIG } from './constants/company-barcodes.config';
 import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { BANKS_SCOPE_CONFIG } from '../../shared/banks/constants/banks-config.tokens';
+import { BARCODES_SCOPE_CONFIG } from '../../shared/barcodes/constants/barcodes-config.tokens';
 import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
@@ -127,13 +129,13 @@ export const EMPRESAS_ROUTES: Routes = [
         'fa-solid fa-file-lines',
         'company.quotes',
       ),
-      companySoonRoute(
-        'codigos-de-barras',
-        'Códigos de barras',
-        'Etiquetas y códigos para tus productos.',
-        'fa-solid fa-barcode',
-        'company.barcodes',
-      ),
+      {
+        path: 'codigos-de-barras',
+        canActivate: [moduleGuard('company.barcodes')],
+        loadChildren: () =>
+          import('../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
+        providers: [{ provide: BARCODES_SCOPE_CONFIG, useValue: COMPANY_BARCODES_SCOPE_CONFIG }],
+      },
       companySoonRoute(
         'creditos',
         'Créditos',

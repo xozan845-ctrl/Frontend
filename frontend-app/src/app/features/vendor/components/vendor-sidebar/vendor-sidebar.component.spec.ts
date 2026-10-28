@@ -43,6 +43,7 @@ describe('VendorSidebarComponent', () => {
       'Facturación',
       'Inventario',
       'Almacenamiento',
+      'Códigos de barras',
       'Bancos',
       'Cuentas por pagar',
       'Reportes',
