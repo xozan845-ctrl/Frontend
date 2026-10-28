@@ -5,8 +5,8 @@ import {
   ORDER_STATUS_LABELS,
   VendorOrdersStore,
   type OrderStatus,
-} from '../../../../vendor/public-api';
-import { RecentOrdersTableComponent } from '../../../../vendor/public-ui';
+} from '../../../../applications/vendor/public-api';
+import { RecentOrdersTableComponent } from '../../../../applications/vendor/public-ui';
 
 /**
  * Página "Pedidos" (ADR-20): lista completa con filtro por estado en chips y

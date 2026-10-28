@@ -10,16 +10,16 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { RuntimeConfigService } from './core/config/runtime-config.service';
-import { authInterceptor } from './features/auth/interceptors/auth/auth.interceptor';
-import { aiScraperAuthInterceptor } from './features/ai-scraper/interceptors/ai-scraper-auth/ai-scraper-auth.interceptor';
-import { PRODUCT_REPOSITORY } from './features/products/repositories/product.repository';
-import { ProductService } from './features/products/services/product/product.service';
-import { ORDER_REPOSITORY } from './features/cart/repositories/order.repository';
-import { OrderService } from './features/cart/services/order/order.service';
-import { AUTH_REPOSITORY } from './features/auth/repositories/auth.repository';
-import { AuthService } from './features/auth/services/auth/auth.service';
-import { CART_REPOSITORY } from './features/cart/repositories/cart.repository';
-import { CartService } from './features/cart/services/cart/cart.service';
+import { authInterceptor } from './features/applications/auth/interceptors/auth/auth.interceptor';
+import { aiScraperAuthInterceptor } from './features/applications/ai-scraper/interceptors/ai-scraper-auth/ai-scraper-auth.interceptor';
+import { PRODUCT_REPOSITORY } from './features/applications/products/repositories/product.repository';
+import { ProductService } from './features/applications/products/services/product/product.service';
+import { ORDER_REPOSITORY } from './features/applications/cart/repositories/order.repository';
+import { OrderService } from './features/applications/cart/services/order/order.service';
+import { AUTH_REPOSITORY } from './features/applications/auth/repositories/auth.repository';
+import { AuthService } from './features/applications/auth/services/auth/auth.service';
+import { CART_REPOSITORY } from './features/applications/cart/repositories/cart.repository';
+import { CartService } from './features/applications/cart/services/cart/cart.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

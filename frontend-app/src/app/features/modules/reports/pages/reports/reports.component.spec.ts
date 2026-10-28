@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { REPORTS_SCOPE_CONFIG } from '../../../../../shared/reports/constants/reports-config.tokens';
 import type { ReportsScopeConfig } from '../../../../../shared/reports/models/reports-config.model';
-import { ReportsStore, type ReportSnapshot } from '../../../../reports/public-api';
+import { ReportsStore, type ReportSnapshot } from '../../../../domains/reports/public-api';
 import ReportsComponent from './reports.component';
 
 const config: ReportsScopeConfig = {

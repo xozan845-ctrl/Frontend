@@ -13,7 +13,7 @@ import {
   ClientStatus,
   ClientsTab,
   CreateClientPayload,
-} from '../../../../clients/public-api';
+} from '../../../../domains/clients/public-api';
 import { CLIENTS_PAGE_CONFIG } from '../../../../../shared/clients/constants/clients-config.tokens';
 
 const STATUS_LABELS: Readonly<Record<ClientStatus, string>> = {

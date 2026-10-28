@@ -9,5 +9,5 @@ tabla de cuentas.
 - `banks.routes.ts`: ruta lazy y `BanksStore`; el scope lo provee el workspace
   padre.
 
-El dominio y el store viven en `features/banks`; el módulo no duplica estado
+El dominio y el store viven en `features/domains/banks`; el módulo no duplica estado
 (ADR-68).

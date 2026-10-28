@@ -18,7 +18,7 @@ import {
   type VendorOrderRepository,
   type VendorProduct,
   type VendorProductRepository,
-} from '../../../../vendor/public-api';
+} from '../../../../applications/vendor/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { OrderLineComponent } from './order-line.component';
-import type { OrderDraftLine } from '../../../../vendor/public-api';
+import type { OrderDraftLine } from '../../../../applications/vendor/public-api';
 
 const line: OrderDraftLine = {
   product: {

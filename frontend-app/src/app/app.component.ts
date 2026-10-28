@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Navbar } from './layout/navbar/navbar.component';
 import { Footer } from './layout/footer/footer.component';
-import { CartDrawerComponent } from './features/cart/pages/cart-drawer/cart-drawer.component';
+import { CartDrawerComponent } from './features/applications/cart/pages/cart-drawer/cart-drawer.component';
 import { ToastComponent } from './shared/ui/notification/toast.component';
 import { PwaInstallBannerComponent } from './shared/ui/pwa-install/pwa-install-banner.component';
 import { FloatingSupportComponent } from './shared/ui/floating-support/floating-support.component';

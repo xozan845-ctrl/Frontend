@@ -1,5 +1,5 @@
 import { Route, Routes } from '@angular/router';
-import { FinanceStore, type FinanceTab } from '../../finance/public-api';
+import { FinanceStore, type FinanceTab } from '../../domains/finance/public-api';
 
 function financeRoute(tab: FinanceTab): Route {
   return {

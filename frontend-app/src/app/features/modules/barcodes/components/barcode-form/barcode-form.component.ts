@@ -5,7 +5,7 @@ import {
   BARCODE_SYMBOLOGIES,
   type BarcodeSymbology,
   type CreateBarcodeLabelPayload,
-} from '../../../../barcodes/public-api';
+} from '../../../../domains/barcodes/public-api';
 
 /** Alta de una etiqueta de código de barras; presentacional (`R-SO-8`). */
 @Component({

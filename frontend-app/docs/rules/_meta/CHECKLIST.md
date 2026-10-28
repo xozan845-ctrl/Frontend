@@ -33,7 +33,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 
 ## 3. Arquitectura ([`architecture/`](../architecture/README.md))
 
-- [ ] **R-AR-1** — El código vive en `core/`, `shared/`, `layout/` o `features/<feature>/` (con `pages/`/`components/` por rol).
+- [ ] **R-AR-1** — El código vive en `core/`, `shared/`, `layout/` o en `features/applications/<feature>/`, `features/domains/<feature>/` y `features/modules/<module>/` (con `pages/`/`components/` por rol).
 - [ ] **R-AR-2** — `core/`/`shared/`/`layout/` no importan `features/`; `core/` no usa `shared/`; el feature vecino se consume por su API pública.
 - [ ] **R-AR-3** — La infraestructura se consume por puerto + `InjectionToken` cableado en `app.config.ts` (transversales) o en los `providers` de la ruta lazy del feature (ADR-21).
 - [ ] **R-AR-4** — Las respuestas externas pasan por un adapter; el dominio no conoce `snake_case` ni envelopes.

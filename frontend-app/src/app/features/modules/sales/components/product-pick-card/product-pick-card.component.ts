@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import type { VendorProduct } from '../../../../vendor/public-api';
+import type { VendorProduct } from '../../../../applications/vendor/public-api';
 
 /**
  * Tarjeta de producto del catálogo del POS (presentacional, `R-SO-8`): imagen

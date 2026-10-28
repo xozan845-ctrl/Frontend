@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import type { CatalogProduct } from '../../../../products/public-api';
+import type { CatalogProduct } from '../../../../applications/products/public-api';
 import {
   CompanyProductsStore,
   CompanyServicesStore,
   type CompanyCatalogRow,
   type CompanyCatalogSort,
   type CompanyCatalogStatusFilter,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 import CompanyProductsComponent from './company-products.component';
 
 function makeRow(overrides: Partial<CompanyCatalogRow> = {}): CompanyCatalogRow {

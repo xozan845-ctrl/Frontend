@@ -4,10 +4,13 @@ import {
   COMPANY_PORTAL_REPOSITORY,
   CompanyPortalService,
   CompanyReportsSource,
-} from '../../empresas/public-api';
+} from '../../applications/empresas/public-api';
 import { REPORTS_SCOPE_CONFIG } from '../../../shared/reports/constants/reports-config.tokens';
-import { VENDOR_REPORTS_SCOPE_CONFIG, VendorReportsSource } from '../../vendor/public-api';
-import { REPORTS_DATA_SOURCE, ReportsStore } from '../../reports/public-api';
+import {
+  VENDOR_REPORTS_SCOPE_CONFIG,
+  VendorReportsSource,
+} from '../../applications/vendor/public-api';
+import { REPORTS_DATA_SOURCE, ReportsStore } from '../../domains/reports/public-api';
 
 const reportsModule = () =>
   import('./pages/reports/reports.component').then((module) => module.default);

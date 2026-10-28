@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
-import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../../products/public-api';
+import {
+  CATALOG_PRODUCT_REPOSITORY,
+  CatalogProductService,
+} from '../../applications/products/public-api';
 import {
   COMPANY_ORDERS_SOURCE,
   COMPANY_PORTAL_REPOSITORY,
@@ -8,11 +11,11 @@ import {
   CompanyServicesStore,
   createCompanyOrdersSource,
   type CompanyPortalRepository,
-} from '../../empresas/public-api';
+} from '../../applications/empresas/public-api';
 
 /**
  * Rutas del módulo compartido de Ventas. La composición vive aquí; el dominio,
- * el store y los adaptadores siguen en `features/empresas` y se consumen por su
+ * el store y los adaptadores siguen en `features/applications/empresas` y se consumen por su
  * API pública (ADR-63).
  */
 export const SALES_ROUTES: Routes = [

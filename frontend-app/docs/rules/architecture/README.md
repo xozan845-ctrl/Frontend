@@ -31,9 +31,8 @@ src/app/
 ├── core/        # infra transversal · SIN UI · NO importa shared/ ni features/
 ├── shared/      # ui/ directives/ pipes/ constants/ reports/ · sin negocio · puede usar core/
 ├── layout/      # navbar/ footer/ drawers (chrome de la app)
-└── features/    # <feature>/{pages,components,state,services,repositories,
-                 #           adapters,models,constants,mocks,public-api,
-                 #           public-ui,<feature>.routes.ts}
+└── features/    # applications/<feature>, domains/<feature>, modules/<module>
+                 # cada uno con sus capas, API pública y rutas declaradas
 ```
 
 ## Reglas de otras áreas que exige esta (cross-refs)
@@ -54,7 +53,7 @@ src/app/
 
 ## API pública entre features
 
-Los consumidores importan contratos por `features/<feature>/public-api.ts`;
+Los consumidores importan contratos por `features/<grupo>/<feature>/public-api.ts`;
 componentes presentacionales exportados intencionalmente usan `public-ui.ts` y
 solo se comunican por inputs/outputs. No importar archivos internos (`pages/`,
 `components/`, `state/`, `models/`) desde otro feature (`R-CX-6`).

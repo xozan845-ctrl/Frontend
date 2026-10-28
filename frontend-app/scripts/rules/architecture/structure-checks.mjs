@@ -15,6 +15,8 @@ import {
   APP_LAYER_ALLOWED_ROOT_FILES,
   APP_ROOT_ALLOWED_DIRECTORIES,
   APP_ROOT_ALLOWED_FILES,
+  FEATURE_ALLOWED_DIRECTORIES,
+  FEATURE_GROUP_ALLOWED_ROOT_FILES,
   FEATURE_CONTRACTS,
   ROUTES_FILE,
   SCRIPTS_ALLOWED_DIRECTORIES,
@@ -76,6 +78,44 @@ export function findApplicationStructureViolations() {
             `${layer}-root|${entry.name}`,
           ),
         );
+      }
+    }
+  }
+
+  const featuresDir = join(appDir, 'features');
+  if (existsSync(featuresDir)) {
+    for (const entry of directoryEntries(featuresDir)) {
+      const allowed = entry.isDirectory()
+        ? FEATURE_ALLOWED_DIRECTORIES.has(entry.name)
+        : FEATURE_GROUP_ALLOWED_ROOT_FILES.has(entry.name);
+      if (!allowed) {
+        findings.push(
+          finding(
+            'R-AR-17',
+            `src/app/features/${entry.name}`,
+            0,
+            `${entry.isDirectory() ? 'directorio' : 'archivo'} no permitido directamente bajo features/; usa applications/, domains/ o modules/`,
+            `features-root|${entry.name}`,
+          ),
+        );
+      }
+    }
+
+    for (const group of FEATURE_ALLOWED_DIRECTORIES) {
+      const groupDir = join(featuresDir, group);
+      if (!existsSync(groupDir)) continue;
+      for (const entry of directoryEntries(groupDir)) {
+        if (!entry.isDirectory() && !FEATURE_GROUP_ALLOWED_ROOT_FILES.has(entry.name)) {
+          findings.push(
+            finding(
+              'R-AR-17',
+              `src/app/features/${group}/${entry.name}`,
+              0,
+              `archivo no permitido directamente bajo features/${group}/`,
+              `feature-group-root|${group}|${entry.name}`,
+            ),
+          );
+        }
       }
     }
   }
@@ -281,12 +321,17 @@ export function findScriptsArchitectureViolations() {
 export function findContractPathViolations() {
   const findings = [];
   for (const feature of Object.keys(FEATURE_CONTRACTS)) {
-    const directory = resolveInApp('src/app/features', ...feature.split('/'));
+    const contract = FEATURE_CONTRACTS[feature];
+    const parts = feature.split('/');
+    const isModule = parts.length === 2 && parts[0] === 'modules';
+    const group = isModule ? 'modules' : contract.kind === 'domain' ? 'domains' : 'applications';
+    const featureName = isModule ? parts[1] : parts[0];
+    const directory = resolveInApp('src/app/features', group, featureName);
     if (!existsSync(directory)) {
       findings.push(
         finding(
           'R-AR-17',
-          `src/app/features/${feature}`,
+          `src/app/features/${group}/${featureName}`,
           0,
           `contrato declarado sin directorio correspondiente: ${feature}`,
           `contract-path|${feature}`,

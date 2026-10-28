@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CashPanelComponent } from './cash-panel.component';
-import type { CashMovement } from '../../../../finance/public-api';
+import type { CashMovement } from '../../../../domains/finance/public-api';
 
 const record: CashMovement = {
   id: 'cash-1',

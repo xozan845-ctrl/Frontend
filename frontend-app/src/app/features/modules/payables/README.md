@@ -8,5 +8,5 @@ workspace (`PAYABLES_SCOPE_CONFIG`) y compone KPIs, formulario y tabla.
 - `payables.routes.ts`: ruta lazy y `PayablesStore`; el scope lo provee el
   workspace padre.
 
-El dominio y el store viven en `features/payables`; el módulo no duplica estado
+El dominio y el store viven en `features/domains/payables`; el módulo no duplica estado
 (ADR-67).

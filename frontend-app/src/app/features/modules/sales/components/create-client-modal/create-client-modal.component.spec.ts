@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CreateClientModalComponent } from './create-client-modal.component';
-import type { CreateClientPayload } from '../../../../vendor/public-api';
+import type { CreateClientPayload } from '../../../../applications/vendor/public-api';
 
 describe('CreateClientModalComponent', () => {
   const setup = async (open = true, creating = false, error: string | null = null) => {

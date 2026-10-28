@@ -12,10 +12,10 @@ import {
   type CompanySaleRow,
   type CompanyServiceModel,
   type CreateCompanySalePayload,
-} from '../../../../empresas/public-api';
+} from '../../../../applications/empresas/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../../auth/public-api';
-import type { CatalogProduct } from '../../../../products/public-api';
+import { AuthStore } from '../../../../applications/auth/public-api';
+import type { CatalogProduct } from '../../../../applications/products/public-api';
 
 const row: CompanySaleRow = {
   id: 'sale-1',

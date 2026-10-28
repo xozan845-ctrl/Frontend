@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { CREDITS_SCOPE_CONFIG } from '../../../../../shared/credits/constants/credits-config.tokens';
 import type { CreditsScopeConfig } from '../../../../../shared/credits/models/credits-config.model';
-import { CreditsStore, type CreditRow } from '../../../../credits/public-api';
+import { CreditsStore, type CreditRow } from '../../../../domains/credits/public-api';
 import CreditsComponent from './credits.component';
 
 const config: CreditsScopeConfig = {

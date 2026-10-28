@@ -157,7 +157,7 @@ export function findPageDerivationViolations() {
 
 /**
  * Hallazgos de R-SO-8: componentes presentacionales que conocen un store.
- * Cubre `features/<feature>/components/` y `shared/ui/`.
+ * Cubre `features/<grupo>/<feature>/components/` y `shared/ui/`.
  */
 export function findPresentationalStoreViolations() {
   const findings = [];

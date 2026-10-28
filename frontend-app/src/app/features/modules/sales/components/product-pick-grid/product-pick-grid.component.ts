@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import type { VendorProduct } from '../../../../vendor/public-api';
+import type { VendorProduct } from '../../../../applications/vendor/public-api';
 import { ProductPickCardComponent } from '../product-pick-card/product-pick-card.component';
 
 /**

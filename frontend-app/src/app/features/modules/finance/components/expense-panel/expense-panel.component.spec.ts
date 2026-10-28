@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ExpensePanelComponent } from './expense-panel.component';
-import type { ExpenseRecord } from '../../../../finance/public-api';
+import type { ExpenseRecord } from '../../../../domains/finance/public-api';
 
 const record: ExpenseRecord = {
   id: 'expense-1',

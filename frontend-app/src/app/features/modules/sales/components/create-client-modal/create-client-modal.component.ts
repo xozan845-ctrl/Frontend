@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import type { CreateClientPayload } from '../../../../vendor/public-api';
+import type { CreateClientPayload } from '../../../../applications/vendor/public-api';
 
 /**
  * Alta rápida de cliente del POS (`R-AR-7`): modal accesible con `focus-trap`
