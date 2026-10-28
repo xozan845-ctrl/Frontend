@@ -1805,3 +1805,25 @@ contexto y consecuencias.
 - **Consecuencias**: empresa y tienda asignan y consultan sus propios códigos
   sin mezclar datos. El bundle inicial queda en 554.52 kB (techo 555 kB); la
   página sigue lazy. El patrón queda listo para Créditos y Reportes.
+
+## ADR-70: Créditos compartidos por scope
+
+- **Fecha**: 2026-10-28
+- **Estado**: Aceptado
+- **Contexto**: Créditos era un placeholder de empresa y el vendedor no tenía la
+  sección. El patrón de scope de Cuentas por pagar, Bancos y Códigos de barras
+  ya resolvía el aislamiento por tenant/tienda.
+- **Decisión**:
+  - Se crea `features/credits` como dominio `domainOnly` con crédito, saldo,
+    vencimiento, adaptador y `CreditsStore` (alta, pago y borrado).
+  - `shared/credits` expone `CREDITS_SCOPE_CONFIG` para no arrastrar el dominio
+    desde las rutas eager.
+  - Persistencia aislada: `ecom_company_credits_*` y `ecom_store_credits_*`;
+    máximo 500 créditos por ámbito. El saldo se limita al importe original.
+  - Se crea `features/modules/credits` con página, formulario y
+    `CREDITS_ROUTES`; el workspace provee el scope.
+  - Se añaden `/empresa/creditos` y `/vendedor/creditos`, los módulos
+    `company.credit`/`store.credit`, y el permiso `store:credit:manage`.
+- **Consecuencias**: empresa y tienda controlan sus propios créditos, saldos y
+  vencimientos sin mezclar datos. El bundle inicial queda en 554.80 kB (techo
+  555 kB); la página sigue lazy. Queda Reportes como último módulo del bloque.
