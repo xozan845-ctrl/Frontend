@@ -100,22 +100,27 @@ export const FEATURE_ALLOWED_ROOT_FILES = new Set([
 ]);
 
 /**
- * Contrato estructural de cada feature (R-AR-16): capas obligatorias y API
- * pública. `layers` es también el conjunto cerrado de capas: añadir o quitar
- * una capa exige actualizar este contrato en el mismo PR.
+ * Contrato estructural de cada feature (R-AR-16): tipo, capas obligatorias y
+ * API pública. `kind` distingue explícitamente dominios reutilizables,
+ * features de aplicación y módulos de composición. `layers` es también el
+ * conjunto cerrado de capas: añadir o quitar una capa exige actualizar este
+ * contrato en el mismo PR.
  */
 export const FEATURE_CONTRACTS = {
   account: {
+    kind: 'application',
     layers: ['components', 'models', 'pages', 'state'],
     publicApi: false,
     publicUi: false,
   },
   admin: {
+    kind: 'application',
     layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: false,
     publicUi: false,
   },
   'ai-scraper': {
+    kind: 'application',
     layers: [
       'adapters',
       'components',
@@ -131,6 +136,7 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   auth: {
+    kind: 'application',
     layers: [
       'adapters',
       'guards',
@@ -145,109 +151,121 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   billing: {
+    kind: 'application',
     layers: ['components', 'constants', 'models', 'pages'],
     publicApi: true,
     publicUi: false,
   },
   clients: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   'modules/clients': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/sales': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/catalog': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/finance': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/payables': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/banks': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/barcodes': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/credits': {
+    kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   'modules/reports': {
+    kind: 'module',
     layers: ['pages'],
     publicApi: false,
     publicUi: false,
   },
   reports: {
+    kind: 'domain',
     layers: ['adapters', 'models', 'repositories', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   credits: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   barcodes: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   banks: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   payables: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   finance: {
+    kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   orders: {
+    kind: 'domain',
     layers: ['adapters', 'models'],
     publicApi: true,
     publicUi: false,
-    domainOnly: true,
   },
   cart: {
+    kind: 'application',
     layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
   },
   empresas: {
+    kind: 'application',
     layers: [
       'adapters',
       'components',
@@ -262,8 +280,9 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
-  home: { layers: ['pages'], publicApi: false, publicUi: false },
+  home: { kind: 'application', layers: ['pages'], publicApi: false, publicUi: false },
   logistica: {
+    kind: 'application',
     layers: [
       'adapters',
       'components',
@@ -280,11 +299,13 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   plans: {
+    kind: 'application',
     layers: ['components', 'constants', 'models', 'pages'],
     publicApi: false,
     publicUi: false,
   },
   products: {
+    kind: 'application',
     layers: [
       'adapters',
       'components',
@@ -300,16 +321,19 @@ export const FEATURE_CONTRACTS = {
     publicUi: true,
   },
   storage: {
+    kind: 'application',
     layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
   },
   stores: {
+    kind: 'application',
     layers: ['adapters', 'components', 'models', 'pages', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
   },
   vendor: {
+    kind: 'application',
     layers: [
       'adapters',
       'components',
@@ -324,7 +348,7 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: true,
   },
-  wishlist: { layers: ['pages', 'state'], publicApi: true, publicUi: false },
+  wishlist: { kind: 'application', layers: ['pages', 'state'], publicApi: true, publicUi: false },
 };
 
 /** Ficheros raíz de un feature que se consideran capa `root`. */

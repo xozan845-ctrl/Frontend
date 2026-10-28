@@ -13,7 +13,7 @@ features/modules/<módulo>/
 
 ## Dominio vs módulo
 
-- `features/<dominio>/` es reutilizable y puede ser `domainOnly`: mantiene
+- `features/<dominio>/` es reutilizable y declara `kind: 'domain'`: mantiene
   modelos, adapters, state, servicios y puertos, sin páginas ni rutas.
 - `features/modules/<módulo>/` compone dominios por su `public-api.ts`.
   Su contrato declara solo las capas de presentación que necesita.

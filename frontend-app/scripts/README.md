@@ -53,9 +53,9 @@ que son verificables por máquina.
 > incorpora `adapters` y `repositories` para los envíos reales (ADR-37), y
 > `storage` nace con esas capas para el bucket del tenant (ADR-42).
 > El feature `clients` es un dominio compartido por empresa y vendedor
-> (`domainOnly`); su composición vive en `features/modules/clients`. Los
+> (`kind: 'domain'`); su composición vive en `features/modules/clients`. Los
 > módulos anidados se descubren bajo `features/modules/<módulo>` y los features
-> `domainOnly` no exigen rutas (ADR-59). `orders` es un dominio `domainOnly`
+> los dominios no exigen rutas (ADR-59). `orders` es un dominio (`kind: 'domain'`)
 > consumido por los adaptadores de empresa y vendedor (ADR-60). `modules/sales`
 > compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64), el catálogo
 > administrable de empresa (ADR-65), Compras/Gastos/Caja (ADR-66), Cuentas por
