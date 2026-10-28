@@ -1,7 +1,7 @@
 # clients/ — Cartera de clientes compartida
 
 Dominio de **clientes** reutilizado por el workspace de empresa y el panel del
-vendedor. Este feature es `domainOnly`: modelo, adaptador, store, servicios y
+vendedor. Este feature declara `kind: 'domain'`: modelo, adaptador, store, servicios y
 puertos. La página y el modal viven en `features/modules/clients` (ADR-59).
 
 | Capa            | Responsabilidad                                                       |
