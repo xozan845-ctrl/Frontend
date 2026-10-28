@@ -1,10 +1,10 @@
 /**
  * R-AR-16 — Contrato estructural de feature.
  *
- * Cada `features/<feature>/` declara en `FEATURE_CONTRACTS` sus capas
- * obligatorias y su API pública. El sistema de archivos solo admite esas capas
- * más los archivos raíz conocidos. Las páginas y componentes viven en su propia
- * carpeta `<nombre>/<nombre>.component.{ts,html,spec.ts}`.
+ * Cada `features/<feature>/` declara en `FEATURE_CONTRACTS` su tipo (`kind`),
+ * capas obligatorias y API pública. El sistema de archivos solo admite esas
+ * capas más los archivos raíz conocidos. Las páginas y componentes viven en
+ * su propia carpeta `<nombre>/<nombre>.component.{ts,html,spec.ts}`.
  */
 import { existsSync, readdirSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -18,6 +18,8 @@ import {
 
 const FEATURES_ROOT = 'src/app/features';
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const FEATURE_KINDS = new Set(['application', 'domain', 'module']);
+const MODULE_LAYERS = new Set(['pages', 'components']);
 
 const toRel = (path) => relative(appRoot, path).split(sep).join('/');
 
@@ -97,6 +99,27 @@ export function findFeatureStructureViolations() {
       continue;
     }
 
+    const isNestedModule = entry.contractKey.startsWith('modules/');
+    if (!FEATURE_KINDS.has(contract.kind)) {
+      add(
+        featureRel,
+        `el contrato debe declarar kind como application, domain o module (actual: '${contract.kind ?? 'ausente'}')`,
+        'contract-kind',
+      );
+    } else if (isNestedModule && contract.kind !== 'module') {
+      add(
+        featureRel,
+        `un feature bajo features/modules/ debe declarar kind: 'module' (actual: '${contract.kind}')`,
+        'module-kind',
+      );
+    } else if (!isNestedModule && contract.kind === 'module') {
+      add(
+        featureRel,
+        `un feature directo bajo features/ no puede declarar kind: 'module'`,
+        'direct-module-kind',
+      );
+    }
+
     const entries = readdirSync(featureDir, { withFileTypes: true });
     const actualLayers = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
     const actualFiles = entries.filter((entry) => entry.isFile()).map((entry) => entry.name);
@@ -112,7 +135,7 @@ export function findFeatureStructureViolations() {
       }
     }
 
-    if (!contract.domainOnly) {
+    if (contract.kind !== 'domain') {
       if (!actualFiles.includes(routesFile)) {
         add(featureRel, `falta ${routesFile}`, 'missing-routes');
       } else {
@@ -140,6 +163,20 @@ export function findFeatureStructureViolations() {
     for (const layer of actualLayers) {
       if (!contract.layers.includes(layer)) {
         add(featureRel, `capa no declarada en el contrato: '${layer}/'`, `extra-layer|${layer}`);
+      }
+      if (contract.kind === 'module' && !MODULE_LAYERS.has(layer)) {
+        add(
+          featureRel,
+          `un módulo solo puede contener capas de composición (pages/components), no '${layer}/'`,
+          `module-layer|${layer}`,
+        );
+      }
+      if (contract.kind === 'domain' && MODULE_LAYERS.has(layer)) {
+        add(
+          featureRel,
+          `un dominio no puede contener capas de presentación ('${layer}/')`,
+          `domain-layer|${layer}`,
+        );
       }
     }
 
