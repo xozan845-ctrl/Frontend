@@ -141,6 +141,22 @@ describe('BanksStore', () => {
     expect(
       store.addAccount({ bank: '', alias: '', accountNumber: '', type: 'ahorro', balance: 0 }),
     ).toEqual({ ok: false, message: 'Revisa banco, alias, número y saldo de la cuenta.' });
+    store.addAccount({
+      bank: 'Banco',
+      alias: 'Alias',
+      accountNumber: '1',
+      type: 'ahorro',
+      balance: 0,
+    });
+    expect(
+      store.updateAccount(store.accounts()[0].id, {
+        bank: 'Banco',
+        alias: 'Alias',
+        accountNumber: '1',
+        type: 'ahorro',
+        balance: -5,
+      }),
+    ).toEqual({ ok: false, message: 'Revisa banco, alias, número y saldo de la cuenta.' });
     expect(
       store.updateAccount('missing', {
         bank: 'Banco',
