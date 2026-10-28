@@ -16,8 +16,10 @@ import {
 import { vendorGuard } from './guards/vendor/vendor.guard';
 import { VENDOR_PAYABLES_SCOPE_CONFIG } from './constants/vendor-payables.config';
 import { VENDOR_BANKS_SCOPE_CONFIG } from './constants/vendor-banks.config';
+import { VENDOR_BARCODES_SCOPE_CONFIG } from './constants/vendor-barcodes.config';
 import { PAYABLES_SCOPE_CONFIG } from '../../shared/payables/constants/payables-config.tokens';
 import { BANKS_SCOPE_CONFIG } from '../../shared/banks/constants/banks-config.tokens';
+import { BARCODES_SCOPE_CONFIG } from '../../shared/barcodes/constants/barcodes-config.tokens';
 import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -104,6 +106,13 @@ export const VENDOR_ROUTES: Routes = [
         path: 'pedidos/:id',
         canActivate: [moduleGuard('store.orders')],
         loadComponent: () => import('../modules/sales/pages/order-detail/order-detail.component'),
+      },
+      {
+        path: 'codigos-de-barras',
+        canActivate: [moduleGuard('store.barcodes')],
+        loadChildren: () =>
+          import('../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
+        providers: [{ provide: BARCODES_SCOPE_CONFIG, useValue: VENDOR_BARCODES_SCOPE_CONFIG }],
       },
       {
         path: 'bancos',

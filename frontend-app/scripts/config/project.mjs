@@ -185,6 +185,17 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  'modules/barcodes': {
+    layers: ['components', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
+  barcodes: {
+    layers: ['adapters', 'constants', 'models', 'state'],
+    publicApi: true,
+    publicUi: false,
+    domainOnly: true,
+  },
   banks: {
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
@@ -391,6 +402,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'empresas',
   'finance',
   'banks',
+  'barcodes',
   'payables',
   'home',
   'logistica',

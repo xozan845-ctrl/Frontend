@@ -171,7 +171,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:barcodes:manage',
-    status: 'soon',
+    status: 'ready',
   },
   {
     id: 'company.credit',
@@ -415,6 +415,17 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:read',
+    status: 'ready',
+  },
+  {
+    id: 'store.barcodes',
+    label: 'Códigos de barras',
+    icon: 'fa-solid fa-barcode',
+    link: '/vendedor/codigos-de-barras',
+    testId: 'vendor-nav-codigos',
+    workspace: 'store',
+    section: 'operacion',
+    permission: 'store:barcodes:manage',
     status: 'ready',
   },
   {
