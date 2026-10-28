@@ -29,6 +29,7 @@ features/<feature>/
 | `modules/catalog` | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
 | `orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
 | `finance`         | Dominio de compras, gastos y caja con persistencia local (ADR-66).                 |
+| `payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
 | `empresas`        | Empresa, modalidad logística y vendedores (ADR-27).                                |
 | `home`            | Inicio, entrada multi-tienda y 404.                                                |
 | `logistica`       | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
