@@ -118,6 +118,12 @@ scripts/
 ├── cli.mjs                   # ÚNICO entrypoint (composition root)
 ├── check-rules.mjs           # wrapper -> cli.mjs rules
 │
+├── commands/                 # utilidades ejecutables del proyecto
+│   ├── check-budget.mjs      # gate de budgets de producción
+│   ├── check-diff-coverage.mjs
+│   ├── generate-*.mjs        # artefactos HTML/OG
+│   └── release-*.mjs         # validaciones de release
+│
 ├── engine/                   # infra reutilizable (CERO conocimiento del proyecto)
 │   ├── runner.mjs            #   descubrimiento + manifiesto + ejecución
 │   ├── suite.mjs             #   contrato defineSuite(...)
@@ -145,12 +151,13 @@ scripts/
     └── docs/structure.test.mjs
 ```
 
-| Capa      | Puede importar de             | No puede importar de               |
-| --------- | ----------------------------- | ---------------------------------- |
-| `engine/` | Node built-ins                | `config/`, `rules/`                |
-| `config/` | — (sólo datos)                | `engine/`, `rules/`                |
-| `rules/`  | `engine/`, `config/`          | `cli.mjs` y entradas no declaradas |
-| `cli.mjs` | todo (es el composition root) | —                                  |
+| Capa        | Puede importar de                       | No puede importar de                            |
+| ----------- | --------------------------------------- | ----------------------------------------------- |
+| `commands/` | `engine/`, `config/`, otros `commands/` | `rules/` y `cli.mjs`                            |
+| `engine/`   | Node built-ins                          | `config/`, `rules/`, `commands/`                |
+| `config/`   | — (sólo datos)                          | `engine/`, `rules/`, `commands/`                |
+| `rules/`    | `engine/`, `config/`                    | `commands/`, `cli.mjs` y entradas no declaradas |
+| `cli.mjs`   | todo (es el composition root)           | —                                               |
 
 ## Contrato de una suite
 
@@ -217,7 +224,7 @@ para evitar falsos verdes por caché ESM.
 
 ## Release
 
-`scripts/release-check.mjs` valida un tag antes de publicarlo: formato semver,
+`scripts/commands/release-check.mjs` valida un tag antes de publicarlo: formato semver,
 tag anotado, commit en `main`, monotonicidad, `package.json`/lockfile alineados y
 tag remoto inmutable. Se ejecuta en local con:
 
@@ -229,7 +236,7 @@ npm run release:check -- --tag vX.Y.Z
 un run de `ci.yml` en verde para el mismo SHA y construye el artefacto de
 producción. No es un pipeline de PR (`R-CI-4`).
 
-`scripts/release-readiness.mjs` es informativo y corre en `ci.yml` solo en push a
+`scripts/commands/release-readiness.mjs` es informativo y corre en `ci.yml` solo en push a
 `main`: compara el último tag con los commits que tocaron el artefacto de la app
 y avisa si falta versión o tag. No bloquea el merge.
 
@@ -251,11 +258,11 @@ exige documentación **del área** (rules de arquitectura/frontend/ui/security/t
 
 ## Utilidades de build (no son suites de gobernanza)
 
-| Script                              | Uso                                                                                                                                                                                               |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                              |
-| `generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53). |
-| `generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                              |
+| Script                                       | Uso                                                                                                                                                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commands/generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                              |
+| `commands/generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53). |
+| `commands/generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                              |
 
 Estas utilidades no forman parte del motor de reglas; sus pruebas se ejecutan en
-`npm run test:engine` (por el patrón `scripts/*.test.mjs`).
+`npm run test:engine` (por el patrón `scripts/commands/*.test.mjs`).

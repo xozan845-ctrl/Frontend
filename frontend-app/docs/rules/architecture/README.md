@@ -66,7 +66,7 @@ solo se comunican por inputs/outputs. No importar archivos internos (`pages/`,
 - `R-AR-18`: `public-api.ts` solo expone contratos reutilizables; la UI pública
   vive en `public-ui.ts`; las rutas no importan páginas/componentes de forma
   estática ni declaran `component:`.
-- `R-AR-19`: `scripts/` conserva las capas `config/`, `engine/` y `rules/`;
+- `R-AR-19`: `scripts/` conserva entradas mínimas en la raíz y agrupa las utilidades ejecutables en `commands/`, junto con `config/`, `engine/` y `rules/`;
   `engine` es genérico, `config` es declarativa y las suites deben mantener su
   contrato `defineSuite(...)`.
 

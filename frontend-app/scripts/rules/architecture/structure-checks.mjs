@@ -183,8 +183,9 @@ function resolveScriptImport(fromFile, specifier) {
 }
 
 /**
- * Comprueba el propio motor: engine es genérico, config es declarativa y
- * rules es la capa de composición que puede consumir ambas.
+ * Comprueba el propio motor: engine es genérico, config es declarativa,
+ * commands contiene utilidades ejecutables y rules es la capa de composición
+ * que puede consumir engine/config.
  */
 export function findScriptsArchitectureViolations() {
   const findings = [];
@@ -211,13 +212,15 @@ export function findScriptsArchitectureViolations() {
     const rel = scriptsToRel(file);
     if (rel.startsWith('node_modules/')) continue;
 
-    const layer = rel.startsWith('engine/')
-      ? 'engine'
-      : rel.startsWith('config/')
-        ? 'config'
-        : rel.startsWith('rules/')
-          ? 'rules'
-          : 'root';
+    const layer = rel.startsWith('commands/')
+      ? 'commands'
+      : rel.startsWith('engine/')
+        ? 'engine'
+        : rel.startsWith('config/')
+          ? 'config'
+          : rel.startsWith('rules/')
+            ? 'rules'
+            : 'root';
 
     if (layer === 'root') continue;
 
@@ -226,20 +229,24 @@ export function findScriptsArchitectureViolations() {
       const target = resolveScriptImport(file, specifier);
       if (!target) continue;
       const targetRel = scriptsToRel(target);
-      const targetLayer = targetRel.startsWith('engine/')
-        ? 'engine'
-        : targetRel.startsWith('config/')
-          ? 'config'
-          : targetRel.startsWith('rules/')
-            ? 'rules'
-            : 'root';
+      const targetLayer = targetRel.startsWith('commands/')
+        ? 'commands'
+        : targetRel.startsWith('engine/')
+          ? 'engine'
+          : targetRel.startsWith('config/')
+            ? 'config'
+            : targetRel.startsWith('rules/')
+              ? 'rules'
+              : 'root';
 
       const allowed =
-        layer === 'engine'
-          ? targetLayer === 'engine'
-          : layer === 'config'
-            ? targetLayer === 'config'
-            : targetLayer === 'rules' || targetLayer === 'engine' || targetLayer === 'config';
+        layer === 'commands'
+          ? targetLayer === 'commands' || targetLayer === 'engine' || targetLayer === 'config'
+          : layer === 'engine'
+            ? targetLayer === 'engine'
+            : layer === 'config'
+              ? targetLayer === 'config'
+              : targetLayer === 'rules' || targetLayer === 'engine' || targetLayer === 'config';
 
       if (!allowed) {
         findings.push(
