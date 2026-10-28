@@ -1729,3 +1729,32 @@ contexto y consecuencias.
   555 kB); la página de finanzas sigue lazy (~26 kB). El dominio podrá cambiar
   la persistencia local por endpoints cuando Core Engine los exponga sin tocar
   la composición.
+
+## ADR-67: Cuentas por pagar compartidas por scope
+
+- **Fecha**: 2026-10-28
+- **Estado**: Aceptado
+- **Contexto**: Cuentas por pagar existía solo para empresa como módulo
+  "En construcción"; el vendedor no tenía la sección. El mismo dominio debe
+  servir a ambos, pero los datos no pueden mezclarse: empresa ve sus
+  obligaciones y cada tienda ve las suyas.
+- **Decisión**:
+  - Se crea `features/payables` como dominio `domainOnly` con modelos,
+    constantes, adaptador y `PayablesStore`.
+  - La configuración de scope vive en `shared/payables`
+    (`PAYABLES_SCOPE_CONFIG`, `PayablesScopeConfig`), igual que los tokens de
+    Clientes; así las rutas eager no arrastran el dominio al bundle inicial.
+  - `PayablesStore` resuelve el id con el scope: `tenantId` para empresa y
+    `storeId` para tienda del vendedor. Persiste en
+    `ecom_company_payables_*` o `ecom_store_payables_*` y limita a 500 cuentas.
+  - Se crea `features/modules/payables` con página, formulario presentacional y
+    `PAYABLES_ROUTES`; el workspace padre provee el scope.
+  - `/empresa/cuentas-por-pagar` y `/vendedor/cuentas-por-pagar` cargan el
+    módulo con `loadChildren`. Se añade `store:payables:manage` a permisos de
+    vendedor y el módulo `store.payables` al sidebar; `company.payables` pasa a
+    `ready`.
+- **Consecuencias**: el patrón de módulo compartido con datos por scope queda
+  establecido para las siguientes secciones (bancos, códigos de barras,
+  créditos y reportes). El bundle inicial queda en 553.23 kB (techo 555 kB) y
+  la página sigue lazy. El dominio podrá cambiar la persistencia local por
+  endpoints con scope sin tocar la composición.
