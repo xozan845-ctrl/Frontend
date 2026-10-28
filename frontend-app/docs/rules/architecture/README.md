@@ -8,10 +8,10 @@ casi todas las demás.
 
 ## Archivos
 
-| Archivo              | Contenido                                                                                                                                                              | Sufijo        |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `01-arquitectura.md` | Capas `core/shared/layout/features`, dirección de dependencias, DIP, adapters/ACL, NgRx Signals, rutas por feature, formularios, errores, ciclo de vida, configuración | `R-AR` (1–16) |
-| `02-naming.md`       | Archivos, clases, selectores, tipos, rutas, claves de storage, idioma, commits                                                                                         | `R-NC` (1–12) |
+| Archivo              | Contenido                                                                                                                                                                                        | Sufijo        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| `01-arquitectura.md` | Capas `core/shared/layout/features`, dirección de dependencias, DIP, adapters/ACL, NgRx Signals, rutas por feature, formularios, errores, ciclo de vida, configuración y fronteras automatizadas | `R-AR` (1–19) |
+| `02-naming.md`       | Archivos, clases, selectores, tipos, rutas, claves de storage, idioma, commits                                                                                                                   | `R-NC` (1–13) |
 
 > Los documentos derivados de esta área (**AUDIT, CHECKLIST, historiales**) no
 > viven aquí: están en [`../_meta/`](../_meta/README.md). Un área de reglas solo
@@ -19,17 +19,17 @@ casi todas las demás.
 
 ## Mapa de IDs
 
-| Prefijo  | Rango | Archivo              | Ámbito                                                                                                       |
-| -------- | ----- | -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `R-AR-*` | 1–16  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas por feature, ciclo de vida, empaquetado y contrato estructural de feature |
-| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits                                                            |
+| Prefijo  | Rango | Archivo              | Ámbito                                                                                                 |
+| -------- | ----- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `R-AR-*` | 1–19  | `01-arquitectura.md` | Capas, DI, adapters, estado, rutas, ciclo de vida, empaquetado y fronteras estructurales automatizadas |
+| `R-NC-*` | 1–13  | `02-naming.md`       | Nomenclatura de código, archivos, tipos y commits                                                      |
 
 ## Estructura por capas (ADR-12)
 
 ```text
 src/app/
 ├── core/        # infra transversal · SIN UI · NO importa shared/ ni features/
-├── shared/      # ui/ directives/ pipes/ constants/ · sin negocio · puede usar core/
+├── shared/      # ui/ directives/ pipes/ constants/ reports/ · sin negocio · puede usar core/
 ├── layout/      # navbar/ footer/ drawers (chrome de la app)
 └── features/    # <feature>/{pages,components,state,services,repositories,
                  #           adapters,models,constants,mocks,public-api,
@@ -58,3 +58,16 @@ Los consumidores importan contratos por `features/<feature>/public-api.ts`;
 componentes presentacionales exportados intencionalmente usan `public-ui.ts` y
 solo se comunican por inputs/outputs. No importar archivos internos (`pages/`,
 `components/`, `state/`, `models/`) desde otro feature (`R-CX-6`).
+
+## Fronteras automatizadas
+
+- `R-AR-17`: el árbol global de `src/app/` y cada contrato declarado en
+  `FEATURE_CONTRACTS` tienen una forma explícita y existente.
+- `R-AR-18`: `public-api.ts` solo expone contratos reutilizables; la UI pública
+  vive en `public-ui.ts`; las rutas no importan páginas/componentes de forma
+  estática ni declaran `component:`.
+- `R-AR-19`: `scripts/` conserva las capas `config/`, `engine/` y `rules/`;
+  `engine` es genérico, `config` es declarativa y las suites deben mantener su
+  contrato `defineSuite(...)`.
+
+Estas reglas se ejecutan en la suite `architecture-structure`.

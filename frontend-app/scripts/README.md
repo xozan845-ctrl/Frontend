@@ -34,6 +34,7 @@ que son verificables por máquina.
 | `architecture-lifecycle` | `R-AR-15`                                      | Componentes/directivas sin `constructor` ni `ngOnInit`/`ngOnDestroy`; DI con `inject()`.                                                         |
 | `architecture-config`    | `R-AR-11`                                      | Sin URLs de API hardcodeadas ni `environment.apiUrl` en presentación.                                                                            |
 | `architecture-packaging` | `R-AR-14`                                      | Cada unidad lógica con ≥ 2 archivos vive en su subcarpeta `<unidad>/`; evita carpetas planas.                                                    |
+| `architecture-structure` | `R-AR-17/18/19`                                | Fronteras globales de `src/app`, superficies públicas, rutas lazy y arquitectura del propio motor de `scripts`.                                  |
 | `git-commits`            | `R-GC-1..4`, `R-GB-2`                          | Validador puro de asuntos (Conventional Commits) y nombres de rama.                                                                              |
 | `git-branch`             | `R-GC-1..4`, `R-GB-2`                          | Rama y commits reales del PR contra `origin/main`; se omite en `main`. Las ramas `dependabot/**` se eximen de R-GB-2; sus commits sí se validan. |
 | `docs-structure`         | `R-DO-6`                                       | Estructura de `docs/rules`, unicidad de IDs y enlaces internos.                                                                                  |
@@ -144,12 +145,12 @@ scripts/
     └── docs/structure.test.mjs
 ```
 
-| Capa      | Puede importar de             | No puede importar de      |
-| --------- | ----------------------------- | ------------------------- |
-| `engine/` | Node built-ins                | `config/`, `rules/`       |
-| `config/` | — (sólo datos)                | `engine/`, `rules/`       |
-| `rules/`  | `engine/`, `config/`          | `engine` (salvo contrato) |
-| `cli.mjs` | todo (es el composition root) | —                         |
+| Capa      | Puede importar de             | No puede importar de               |
+| --------- | ----------------------------- | ---------------------------------- |
+| `engine/` | Node built-ins                | `config/`, `rules/`                |
+| `config/` | — (sólo datos)                | `engine/`, `rules/`                |
+| `rules/`  | `engine/`, `config/`          | `cli.mjs` y entradas no declaradas |
+| `cli.mjs` | todo (es el composition root) | —                                  |
 
 ## Contrato de una suite
 

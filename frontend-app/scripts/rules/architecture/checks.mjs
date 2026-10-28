@@ -48,10 +48,21 @@ export function classify(rel) {
   if (rel.startsWith('src/app/layout/')) return { kind: 'layout', layer: rel.split('/')[3] };
 
   const parts = rel.split('/');
-  if (parts[0] === 'src' && parts[1] === 'app' && parts[2] === 'features' && parts[3]) {
-    const feature = parts[3];
-    if (parts.length === 5) return { kind: 'feature-root', feature, file: parts[4] };
-    return { kind: 'feature', feature, layer: parts[4] };
+  if (parts[0] === 'src' && parts[1] === 'app' && parts[2] === 'features') {
+    // `features/modules/<module>/` es un feature de composición anidado, no
+    // una capa llamada `modules`. Mantener esta identidad evita que sus
+    // páginas/componentes queden fuera del grafo de dependencias.
+    if (parts[3] === 'modules' && parts[4]) {
+      const feature = `modules/${parts[4]}`;
+      if (parts.length === 6) return { kind: 'feature-root', feature, file: parts[5] };
+      return { kind: 'feature', feature, layer: parts[5] };
+    }
+
+    if (parts[3]) {
+      const feature = parts[3];
+      if (parts.length === 5) return { kind: 'feature-root', feature, file: parts[4] };
+      return { kind: 'feature', feature, layer: parts[4] };
+    }
   }
 
   return { kind: 'other' };
