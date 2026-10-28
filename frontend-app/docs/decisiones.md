@@ -1827,3 +1827,28 @@ contexto y consecuencias.
 - **Consecuencias**: empresa y tienda controlan sus propios créditos, saldos y
   vencimientos sin mezclar datos. El bundle inicial queda en 554.80 kB (techo
   555 kB); la página sigue lazy. Queda Reportes como último módulo del bloque.
+
+## ADR-71: Reportes compartidos por scope
+
+- **Fecha**: 2026-10-28
+- **Estado**: Aceptado
+- **Contexto**: Reportes era un placeholder de empresa y el vendedor tenía otro.
+  Ambos necesitaban métricas de ventas, pero sobre fuentes distintas y sin
+  duplicar la presentación.
+- **Decisión**:
+  - Se crea `features/reports` como dominio `domainOnly` con `ReportEntry`,
+    `ReportDay`, `ReportStatus`, `ReportSnapshot`, un adaptador de agrupación y
+    el puerto `REPORTS_DATA_SOURCE` (`snapshot`, `loading`, `load`).
+  - `ReportsStore` consume ese puerto y expone snapshot, carga, días recientes
+    (máximo 14) y `hasData`.
+  - Las fuentes viven en cada workspace: `CompanyReportsSource` lee
+    `/orders/empresa` y `VendorReportsSource` los pedidos del vendedor; ambas
+    se proveen en la ruta.
+  - Se crea `features/modules/reports` con página y `REPORTS_ROUTES`; el
+    workspace provee `REPORTS_SCOPE_CONFIG` y la fuente.
+  - Se activan `/empresa/reportes` y `/vendedor/reportes`; los módulos
+    `company.reports` y `store.reports` pasan a `ready`.
+- **Consecuencias**: ambos workspaces comparten la misma presentación de
+  reportes sin compartir datos ni endpoints. El bundle inicial queda en
+  554.97 kB (techo 555 kB) y la página sigue lazy. Con esto se completa el
+  bloque de módulos compartidos por scope.

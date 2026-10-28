@@ -19,9 +19,10 @@ La página y los modales de **Ventas** se componen en
 servicios y materia prima se compone en `features/modules/catalog` (ADR-65),
 Compras/Gastos/Caja en `features/modules/finance` (ADR-66), Cuentas por pagar
 en `features/modules/payables` (ADR-67), Bancos en `features/modules/banks`
-(ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69) y Créditos
-en `features/modules/credits` (ADR-70). Este feature conserva sus stores,
-dominio, adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
+(ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69), Créditos
+en `features/modules/credits` (ADR-70) y Reportes en
+`features/modules/reports` (ADR-71). Este feature conserva sus stores, dominio,
+adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
 exporta `EMPRESAS_ROUTES`, para que el módulo pueda consumirlos sin ciclos.
 
 La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
