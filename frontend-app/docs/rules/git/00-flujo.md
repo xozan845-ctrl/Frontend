@@ -3,10 +3,10 @@
 Modelo de ramas que sostiene el despliegue de [`../cd/`](../cd/README.md):
 `main` es el **tronco** y todo el trabajo llega por ramas cortas y PRs.
 
-| Etapa      | Rama                      | Dónde corre                        | Uso                                                      |
-| ---------- | ------------------------- | ---------------------------------- | -------------------------------------------------------- |
-| Desarrollo | ramas `tipo/...` (cortas) | **local** (`npm start`)            | trabajo diario; nacen de `main` y mueren al mergear      |
-| Producción | `main`                    | Dockploy, environment `produccion` | lo que se sirve a los clientes; solo recibe merges de PR |
+| Etapa      | Rama                      | Dónde corre                  | Uso                                                      |
+| ---------- | ------------------------- | ---------------------------- | -------------------------------------------------------- |
+| Desarrollo | ramas `tipo/...` (cortas) | **local** (`npm start`)      | trabajo diario; nacen de `main` y mueren al mergear      |
+| Producción | `main`                    | Firebase Hosting, sitio live | lo que se sirve a los clientes; solo recibe merges de PR |
 
 | ID     | Regla                                                                                                                                                                                                                                                                                                                                                                                          |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

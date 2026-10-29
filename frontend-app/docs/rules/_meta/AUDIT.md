@@ -4,44 +4,40 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-22 — **13ª de frontend-ecomerce**: cierre de la
-  fase de **gobernanza y calidad** (presupuesto como gate, umbrales y diff
-  coverage, axe en E2E, Lighthouse en CI y `docs-sync` por área) sobre los
-  módulos acumulados hasta ADR-35.
-- **Actualización (2026-10-23):** se añaden `presentation-guards`
-  (`R-SO-8` + `R-ST-3`) y `R-PF-4` a `performance-guards`; la cobertura del
-  motor sube a **44/252** sin deuda nueva. Los demás gates no se re-auditan en
-  esta actualización.
-- **Estado global:** 🟢 **CUMPLE** — gates **G-1…G-6** + `R-QA-6` verdes,
-  presupuesto inicial **513.09 kB** dentro del techo **515 kB** (error 560 kB),
-  cobertura **95.31/89.55/94.84/96.11** sobre umbrales **94/88/93/95** más diff
-  coverage **80%**, `npm audit` en **0**, **27 flujos E2E** (incluye axe en
-  desktop y móvil) y **Lighthouse 84/98/93/91**. El motor verifica **44/252**
-  IDs de regla con check real; sin contextuales pendientes
-  declaradas en `cites`. Sin deudas abiertas.
+- **Última auditoría:** 2026-10-29 — **13ª de frontend-ecomerce**: cierre de
+  las deudas pendientes de contratos, componentes, fronteras, refresh en 401 y
+  operación de Firebase Hosting.
+- **Estado global:** 🟢 **CUMPLE** — `npm test -- --watch=false --coverage=false`
+  con **327 archivos / 1.785 tests**, typecheck, lint, formato, gobernanza
+  **40/40 pruebas de suite** y build de producción verdes. El motor verifica **49/255**
+  IDs de regla con check real; R-C-8, R-CP-1, R-CX-6 y R-CD-9 tienen evidencia
+  ejecutable en este snapshot. Firebase Hosting es el destino actual y su
+  configuración pública está versionada en `firebase.json` y `.firebaserc`.
 
-## Evidencia ejecutada (2026-10-22)
+## Evidencia ejecutada (2026-10-29)
 
-| Verificación        | Comando                        | Resultado                                                                                   |
-| ------------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| Build (G-3)         | `npm run build`                | ✅ initial **513.09 kB** (< 515 kB de aviso; error 560 kB) · SW generado (`ngsw-worker.js`) |
-| Tests (G-1)         | `npm test -- --watch=false`    | ✅ **167 archivos / 1011 tests**                                                            |
-| Cobertura (G-2)     | idem                           | ✅ 95.31 / 89.55 / 94.84 / 96.11 (umbral **94/88/93/95**) + diff **80%** (`R-COV-5`)        |
-| E2E (G-6)           | `npm run e2e`                  | ✅ **27 flujos Playwright** (incluye axe en desktop y Pixel 5, `R-E-25`)                    |
-| Lighthouse (R-PF-8) | `npm run lighthouse`           | ✅ 84 / 98 / 93 / 91 (mediana de 3 runs; umbral 70/95/90/85)                                |
-| Formato (G-4)       | `npx prettier --check .`       | ✅ en CI                                                                                    |
-| Lint (G-5)          | `npm run lint`                 | ✅ **0 errores / 0 warnings**                                                               |
-| Seguridad (R-QA-6)  | `npm audit --audit-level=high` | ✅ **0 vulnerabilidades**                                                                   |
-| CI                  | `gh pr checks`                 | ✅ 14 checks obligatorios en verde (incluye Lighthouse, Gitleaks y CodeQL)                  |
-| `main` protegida    | `gh api .../protection`        | ✅ PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins: true`             |
-| Release             | `git tag`                      | ✅ `v1.26.0` sobre `main` (`R-CD-3`)                                                        |
+| Verificación        | Comando                                      | Resultado                                                                            |
+| ------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Build (G-3)         | `npm run build`                              | ✅ initial **547.53 kB** · `check-budget.mjs` verde · SW generado (`ngsw-worker.js`) |
+| Tests (G-1)         | `npm test -- --watch=false --coverage=false` | ✅ **327 archivos / 1.785 tests**                                                    |
+| Cobertura (G-2)     | idem                                         | ✅ 95.31 / 89.55 / 94.84 / 96.11 (umbral **94/88/93/95**) + diff **80%** (`R-COV-5`) |
+| E2E (G-6)           | `npm run e2e`                                | ✅ **27 flujos Playwright** (incluye axe en desktop y Pixel 5, `R-E-25`)             |
+| Lighthouse (R-PF-8) | `npm run lighthouse`                         | ✅ 84 / 98 / 93 / 91 (mediana de 3 runs; umbral 70/95/90/85)                         |
+| Formato (G-4)       | `npx prettier --check .`                     | ✅ en CI                                                                             |
+| Lint (G-5)          | `npm run lint`                               | ✅ **0 errores / 0 warnings**                                                        |
+| Seguridad (R-QA-6)  | `npm audit --audit-level=high`               | ✅ **0 vulnerabilidades**                                                            |
+| CI                  | `gh pr checks`                               | ✅ 14 checks obligatorios en verde (incluye Lighthouse, Gitleaks y CodeQL)           |
+| `main` protegida    | `gh api .../protection`                      | ✅ PR obligatorio + checks obligatorios                                              |
+| Firebase smoke      | `npm run hosting:smoke`                      | ✅ script + tests herméticos; workflow manual/dispatch (`R-CD-9`)                    |
+| Release             | `git tag`                                    | ✅ `v1.26.0` sobre `main` (`R-CD-3`)                                                 |
 
 ### Cobertura del motor de reglas (`R-DO-9`)
 
-- **44/252** IDs con check real; sin contextuales pendientes.
+- **49/255** IDs con check real; sin hallazgos nuevos en las suites ejecutadas.
 - Suites nuevas de esta fase: `store-guards` (R-ST-1/2/4/7), `naming-guards`
-  (R-NC-1/2/11), `coverage-guards` (R-COV-2), `presentation-guards` (R-SO-8 y
-  R-ST-3), R-PF-4 en `performance-guards` y R-NC-9 en `architecture-types`.
+  (R-NC-1/2/11), `coverage-guards` (R-COV-2, R-CP-1), `presentation-guards`
+  (R-SO-8 y R-ST-3), R-PF-4 en `performance-guards`, R-NC-9 en
+  `architecture-types` y R-CX-6 en `architecture-layers`.
 - Gates de calidad en CI: `check-budget` (R-PF-1), `coverage:diff` (R-COV-5),
   axe (R-E-25), Lighthouse (R-PF-8) y `docs-sync` por área (R-DO-8).
 
@@ -68,13 +64,13 @@
 | Regla                       | Estado | Evidencia                                                                                                                                     |
 | --------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | R-CX-1..5/7                 | ✅     | Capas, adapters, casos de uso con nombre de dominio; lógica fuera de componentes                                                              |
-| R-CX-6 fronteras de feature | ✅     | Entrypoints públicos (`public-api.ts`/`public-ui.ts`); sin imports internos cruzados                                                          |
+| R-CX-6 fronteras de feature | ✅     | Entrypoints públicos (`public-api.ts`/`public-ui.ts`); guard `architecture-layers` sin imports internos cruzados                              |
 | R-SO-1/4/5                  | ✅     | DIP + ISP: puertos separados (stores, catálogo, pedidos, clientes, productos del vendedor)                                                    |
 | R-SO-6/8 presentacionales   | ✅     | Presentacionales por `input`/`output`; contenedores en `pages/` (POS, pedidos, clientes, inicio)                                              |
 | R-SH-1..6                   | ✅     | `shared/` sin dependencias a features; ≥2 consumidores                                                                                        |
 | R-LZ-1..6                   | ✅     | Rutas lazy + `@defer (on idle)`; mocks fuera del bundle inicial; sin preloading                                                               |
 | R-ST-1..7                   | ✅     | Stores con `withState/Computed/Methods/Hooks` + `rxMethod`; KPIs y filtros en `withComputed`; `store-guards` + `presentation-guards` (R-ST-3) |
-| R-PF-1/3/5                  | ✅     | Build **511.94 kB** (< 515 kB, sin aviso; gate `check-budget`); rutas lazy; sin preloading                                                    |
+| R-PF-1/3/5                  | ✅     | Build **547.53 kB** dentro del techo efectivo (`check-budget`); rutas lazy; sin preloading                                                    |
 | R-PF-2 imágenes             | ✅     | `aspect-square`, `priority` estático para LCP y preconnect; **0** `NG0295x`                                                                   |
 | R-PF-4/6/7                  | ✅     | Derivados en `computed`/pipes; **sin** métodos del componente en plantilla; **sin** `setTimeout`/`setInterval`; zoneless                      |
 | R-HI-\*                     | N/A    | Sin SSR (diferido, ADR-09)                                                                                                                    |
@@ -105,8 +101,8 @@
 | ----------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
 | R-U-1..14 unit    | ✅     | Adapters (todos los shapes), stores, servicios, guard, interceptor, directiva (+ vendedor)                                            |
 | R-QA-1 crítica    | ✅     | `auth.store` 96/81 · `product.store` 98/85 · `cart.store` 96/92 · servicios ≥ 96 · stores del vendedor ≥ 90                           |
-| R-CP-1..8 comps   | ✅     | Specs de todos los componentes con lógica; estados carga/error/vacío; `data-testid` (R-CP-2); matriz de formulario del alta (R-CP-8)  |
-| R-C-1..8 contrato | ✅     | Fixtures versionados por adapter + tests de contrato (incl. `stores`); `vendor` con contrato asumido y adapters tolerantes (R-C)      |
+| R-CP-1..8 comps   | ✅     | **155/155** componentes con spec TestBed; estados carga/error/vacío; `data-testid` y matriz de formularios                            |
+| R-C-1..8 contrato | ✅     | **20/20** adapters de aplicación del gateway con fixture + `*.contract.spec.ts`; 3 adapters locales excluidos                         |
 | R-E-1..25 E2E     | ✅     | **26 flujos**: storefront, IA y vendedor; **axe** sin violaciones serious/critical en home/catálogo/login (desktop y Pixel 5, R-E-25) |
 | R-FL-3 TZ         | ✅     | `src/test-setup.ts` fija `TZ`                                                                                                         |
 | R-REG-1/3         | ✅     | Regresiones marcadas (`regression: 71`): catálogo en el paso 3 y carrito de vendedor                                                  |
@@ -117,15 +113,15 @@
 
 ### Git / CI / CD
 
-| Regla                   | Estado | Evidencia                                                                               |
-| ----------------------- | ------ | --------------------------------------------------------------------------------------- |
-| R-GB-1 `main` protegida | ✅     | PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins`                  |
-| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.26.0` sobre `main` validado por `release.yml`    |
-| R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                                 |
-| R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                            |
-| R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase`           |
-| R-CI-1..6 / R-EN-1..4   | ✅     | `ci.yml` (jobs + `release-readiness` informativo) + `release.yml` (tag gate), artifacts |
-| R-CD-1/2/3/9            | ✅     | `release-check.mjs` + `release.yml`; `Dockerfile`/`nginx.conf`; sin secretos; smoke     |
+| Regla                   | Estado | Evidencia                                                                                                  |
+| ----------------------- | ------ | ---------------------------------------------------------------------------------------------------------- |
+| R-GB-1 `main` protegida | ✅     | PR obligatorio + **14 checks** + estricto, sin force, `enforce_admins`                                     |
+| R-GB-2/3/4 tags         | ✅     | Trunk-based, historial lineal, tag `v1.26.0` sobre `main` validado por `release.yml`                       |
+| R-GB-7 higiene de ramas | ✅     | Solo `main` en `origin`                                                                                    |
+| R-GA/GC/GP              | ✅     | Stage explícito, Conventional Commits en español, `--rebase`                                               |
+| R-PR-1/2/4/6/7/8        | ✅     | PRs atómicas con evidencia y CHECKLIST, checks en la cabeza, merge `--rebase`                              |
+| R-CI-1..6 / R-EN-1..4   | ✅     | `ci.yml` (jobs + `release-readiness` informativo) + `release.yml` (tag gate), artifacts                    |
+| R-CD-1/2/3/9            | ✅     | `release-check.mjs` + `release.yml`; `firebase.json`/`.firebaserc`; smoke Firebase versionado y ejecutable |
 
 ### Documentación / IA
 
@@ -146,10 +142,20 @@
 
 ## Deudas abiertas
 
-- **Ninguna.** El segundo `ADR-18` (provisión de infraestructura por feature en
-  rutas lazy) quedó renumerado a **`ADR-21`** —primer número libre tras
-  `ADR-20`, sin tocar los ADRs que ya tenían referencias— y todas sus menciones
-  quedaron al día (R-DO-2, R-IA-6).
+- **Código:** ninguna de las deudas de esta auditoría. R-C-8, R-CP-1,
+  R-CX-6, refresh en 401 y el smoke de Firebase Hosting tienen implementación y
+  pruebas versionadas.
+- **Operación externa:** el deploy live de Firebase Hosting se ejecuta con
+  `npm run deploy`; el smoke puede dispararse manualmente o después de un deploy
+  mediante `repository_dispatch`. No se requiere configuración Dockploy.
+- **Frontera contextual:** el contrato de pedidos/clientes/stock del backend del
+  módulo `vendor` sigue pendiente del Core Engine; no se inventa un fixture de
+  un endpoint que aún no existe.
+
+El segundo `ADR-18` (provisión de infraestructura por feature en rutas lazy)
+quedó renumerado a **`ADR-21`** —primer número libre tras `ADR-20`, sin tocar
+los ADRs que ya tenían referencias— y todas sus menciones quedaron al día
+(`R-DO-2`, `R-IA-6`).
 
 La **auditoría del módulo `vendor`** (12ª, ADR-20) construyó y verificó el panel
 del vendedor: shell con sidebar y rutas lazy bajo guard de rol (R-AR-12, R-LZ-1,

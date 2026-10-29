@@ -93,14 +93,14 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-U-5/6/7** — Adapters probados con todos los shapes, fallback y tipos numéricos.
 - [ ] **R-U-8/9/10** — Stores: transiciones, derivados boundary y `localStorage` aislado.
 - [ ] **R-U-11/12/13** — Servicios con `HttpTestingController`; errores; guards/interceptors por rama.
-- [ ] **R-CP-1/2/4** — Componentes con lógica: interacción, `data-testid` y dobles en `providers`.
-- [ ] **R-CP-6/8** — Estados de carga/error/vacío y validación de formularios.
+- [x] **R-CP-1/2/4** — Componentes con lógica: guard de spec hermano con TestBed, `data-testid` y dobles en `providers`.
+- [x] **R-CP-6/8** — Estados de carga/error/vacío y validación de formularios cubiertos por la suite de componentes.
 
 ## 9. Contrato y E2E (cuando apliquen)
 
-- [ ] **R-C-1/3** — Envelope del backend soportado; respuesta normalizada a modelo de dominio.
-- [ ] **R-C-4** — Fechas ISO 8601 UTC; conversión local en UI.
-- [ ] **R-C-8** — Fixture de contrato versionado en el repo.
+- [x] **R-C-1/3** — Envelope del backend soportado; respuesta normalizada a modelo de dominio.
+- [x] **R-C-4** — Fechas ISO 8601 UTC; conversión local en UI.
+- [x] **R-C-8** — Fixtures de contrato versionados y pruebas `*.contract.spec.ts` por adapter de backend.
 - [ ] **R-E-9/11** — Cero errores de consola; selectores estables (`data-testid`).
 - [ ] **R-E-12** — Suite hermética (fixtures/mocks, no backend de producción).
 

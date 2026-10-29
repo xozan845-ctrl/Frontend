@@ -1,25 +1,26 @@
-# Guion operativo: desplegar el frontend en Firebase Hosting (staging, plan gratuito)
+# Guion operativo: desplegar el frontend en Firebase Hosting
 
 > Documento **operativo** (no normativo). La normativa de CD vive en
 > [`rules/cd/`](./rules/cd/README.md) (`R-CD-*`). Este guion es la **lista de
 > tareas** para publicar el **mismo artefacto** estático de Angular
 > (`dist/frontend-app/browser`) en **Firebase Hosting** como entorno de
-> **staging**, sin tocar el despliegue de producción en Dockploy.
+> **producción** en Firebase Hosting. Dockploy queda fuera de la operación actual
+> y solo se conserva como destino futuro documentado.
 >
 > **Alcance:** solo el **frontend**. El backend (Core Engine y el backend de IA
 > `ai_scraper_executor`) son independientes y **no** se despliegan aquí.
 
 ## 0. Objetivo
 
-| Entorno    | Rama (`R-GB`)    | Dónde corre                                | Deploy                   |
-| ---------- | ---------------- | ------------------------------------------ | ------------------------ |
-| Desarrollo | ramas `tipo/...` | local (`npm start`)                        | no se despliega          |
-| Staging    | `main` o ramas   | **Firebase Hosting** (plan Spark)          | manual o preview channel |
-| Producción | `main`           | Dockploy (nginx), environment `produccion` | auto en push a `main`    |
+| Entorno    | Rama (`R-GB`)    | Dónde corre                       | Deploy                   |
+| ---------- | ---------------- | --------------------------------- | ------------------------ |
+| Desarrollo | ramas `tipo/...` | local (`npm start`)               | no se despliega          |
+| Staging    | `main` o ramas   | **Firebase Hosting** (plan Spark) | manual o preview channel |
+| Producción | `main`           | **Firebase Hosting** (sitio live) | `npm run deploy`         |
 
-Firebase Hosting se usa como **staging / demo público**: es un artefacto
-estático servido desde la CDN de Google, con HTTPS y dominio incluidos en el
-plan gratuito.
+Firebase Hosting es el destino actual de producción: es un artefacto estático
+servido desde la CDN de Google, con HTTPS y dominio incluidos en el plan
+gratuito.
 
 ## 1. Requisitos
 
@@ -35,7 +36,7 @@ plan gratuito.
 ## 2. Artefactos versionados
 
 - **`firebase.json`** (en `frontend-app/`): configuración del sitio.
-  - `public`: `dist/frontend-app/browser` (misma salida que nginx, `R-CD-4`).
+  - `public`: `dist/frontend-app/browser` (`R-CD-4`).
   - **Fallback SPA** (`rewrites: ** → /index.html`): refrescar `/tienda/<id>/shop`,
     `/carrito`, etc. devuelve 200 en lugar de 404 (equivalente al `try_files` de
     `nginx.conf`). Las rutas de invitación (`/i/**` y `/registro/vendedor`) se
@@ -173,6 +174,25 @@ El bundle inicial pesa ≈ **116 kB comprimidos**, así que el límite de transf
 da de sobra para uso de staging/demo.
 
 ## 6. Verificaciones tras el despliegue (smoke, `R-CD-9`)
+
+El smoke reproducible vive en `scripts/commands/hosting-smoke.mjs` y valida:
+
+- `/` con shell Angular (`<app-root>`);
+- una ruta interna configurable (`FRONTEND_SPA_PATH`, por defecto `/shop`),
+  para comprobar el rewrite SPA de Firebase Hosting;
+- `/config.json`, para comprobar la configuración de runtime.
+
+Ejecutarlo contra el sitio publicado:
+
+```bash
+FRONTEND_URL=https://kb-coleccion-internacional-ni.web.app npm run hosting:smoke
+```
+
+El workflow `.github/workflows/firebase-hosting-smoke.yml` se puede disparar
+manualmente o con un `repository_dispatch` de tipo `firebase-hosting-deployed`.
+Acepta una URL en el input o en `github.event.client_payload.url`; si no se
+indica, usa el sitio público definido en `.firebaserc`. El workflow valida el
+deploy existente, pero no publica credenciales ni despliega por sí mismo.
 
 | #   | Comprobación                                                              | ☐   |
 | --- | ------------------------------------------------------------------------- | --- |

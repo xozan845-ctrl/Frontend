@@ -58,5 +58,15 @@ export default defineSuite({
           'los services usan adapters/repositorios; models no depende de nadie (R-CX-1):',
       });
     });
+
+    test('R-CX-6: no hay imports internos entre features', () => {
+      const crossFeature = findLayerViolations().filter((finding) => finding.rule === 'R-CX-6');
+
+      assert.deepEqual(
+        crossFeature,
+        [],
+        'Cada dependencia entre features debe pasar por public-api.ts o public-ui.ts (R-CX-6).',
+      );
+    });
   },
 });

@@ -5,7 +5,22 @@ import { AuthStore } from '../../state/auth/auth.store';
 import { environment } from '../../../../../../environments/environment';
 
 /** Endpoints de auth donde un 401 es definitivo (no se reintenta). */
-const NO_RETRY = /\/auth\/(login|registro|refresh)$/;
+const NO_RETRY = /\/auth\/(?:login|registro|refresh)(?:\/)?(?:[?#]|$)/;
+
+// Evita dos llamadas de refresh aunque varios requests fallen en el mismo
+// tick. AuthStore también deduplica su propia operación; esta barrera protege
+// el interceptor ante dobles de test y ante stores alternativos (R-SE-1).
+let refreshInFlight: Promise<boolean> | null = null;
+
+function refreshSessionOnce(authStore: {
+  refreshTokenOnce: () => Promise<boolean>;
+}): Promise<boolean> {
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = authStore.refreshTokenOnce().finally(() => {
+    refreshInFlight = null;
+  });
+  return refreshInFlight;
+}
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authStore = inject(AuthStore);
@@ -28,7 +43,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      return from(authStore.refreshTokenOnce()).pipe(
+      return from(refreshSessionOnce(authStore)).pipe(
         switchMap((renewed) =>
           renewed ? next(withAuth(req, authStore.token())) : throwError(() => error),
         ),

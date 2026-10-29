@@ -1,0 +1,43 @@
+name: Firebase Hosting Smoke
+
+on:
+  repository_dispatch:
+    types: [firebase-hosting-deployed]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL pública del frontend en Firebase Hosting"
+        required: false
+        default: "https://kb-coleccion-internacional-ni.web.app"
+        type: string
+      spa_path:
+        description: "Ruta SPA para comprobar el fallback de Firebase Hosting"
+        required: false
+        default: "/shop"
+        type: string
+
+concurrency:
+  group: firebase-hosting-smoke-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Smoke Firebase Hosting
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FRONTEND_URL: ${{ inputs.url || github.event.client_payload.url || vars.FIREBASE_HOSTING_URL || 'https://kb-coleccion-internacional-ni.web.app' }}
+      FRONTEND_SPA_PATH: ${{ inputs.spa_path || '/shop' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Ejecutar smoke de Firebase Hosting
+        working-directory: frontend-app
+        run: node scripts/commands/hosting-smoke.mjs
