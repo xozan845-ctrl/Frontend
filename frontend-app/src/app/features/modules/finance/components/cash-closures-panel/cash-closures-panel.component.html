@@ -1,0 +1,153 @@
+<section class="flex flex-col gap-4" data-testid="cash-closures-panel">
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+        Saldo de apertura
+      </p>
+      <p class="mt-1 font-heading text-lg font-black tabular-nums">
+        {{ preview().openingBalance | cashMoney }}
+      </p>
+      <p class="text-[10px] text-slate-400">antes del día</p>
+    </article>
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ingresos del día</p>
+      <p
+        class="mt-1 font-heading text-lg font-black text-emerald-600 tabular-nums dark:text-emerald-400"
+      >
+        {{ preview().income | cashMoney }}
+      </p>
+      <p class="text-[10px] text-slate-400">
+        {{ preview().movementsCount }}
+        {{ preview().movementsCount === 1 ? 'movimiento' : 'movimientos' }}
+      </p>
+    </article>
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Egresos del día</p>
+      <p class="mt-1 font-heading text-lg font-black text-red-600 tabular-nums dark:text-red-400">
+        {{ preview().expense | cashMoney }}
+      </p>
+      <p class="text-[10px] text-slate-400">salidas registradas</p>
+    </article>
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Esperado en caja</p>
+      <p class="mt-1 font-heading text-lg font-black tabular-nums">
+        {{ preview().expectedBalance | cashMoney }}
+      </p>
+      <p class="text-[10px] text-slate-400">apertura + ingresos − egresos</p>
+    </article>
+  </div>
+
+  <div class="card flex flex-col gap-4 p-4 sm:p-5">
+    <header class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-file-invoice text-sm"></i>
+        </span>
+        <div>
+          <h2 class="font-heading text-lg font-black tracking-tight uppercase">Cierres diarios</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Compara lo esperado con el efectivo contado al final del día.
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        [disabled]="preview().existing !== null"
+        (click)="requestClose.emit()"
+        data-testid="closure-open"
+      >
+        <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+        {{ preview().existing ? 'Caja cerrada' : 'Cerrar caja de hoy' }}
+      </button>
+    </header>
+
+    @if (preview().existing; as existing) {
+      <div
+        class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-900/10"
+        data-testid="closure-existing"
+      >
+        <div>
+          <p class="text-sm font-black text-emerald-700 dark:text-emerald-300">
+            Cierre del {{ existing.date | appDate: 'short' }} registrado
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Contado: {{ existing.countedBalance | cashMoney }} · Esperado:
+            {{ existing.expectedBalance | cashMoney }}
+          </p>
+        </div>
+        <span class="badge badge-success"> Diferencia {{ existing.difference | cashMoney }} </span>
+      </div>
+    }
+
+    @if (closures().length === 0) {
+      <div class="flex flex-col items-center gap-2 py-10 text-center">
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-file-invoice text-lg"></i>
+        </span>
+        <p class="text-sm font-bold">Todavía no hay cierres registrados.</p>
+        <p class="max-w-sm text-xs text-slate-500 dark:text-slate-400">
+          Al cerrar la caja guardaremos la apertura, los movimientos del día y la diferencia.
+        </p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[920px] text-left text-sm" data-testid="closures-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Apertura</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Ingresos</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Egresos</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Esperado</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Contado</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Diferencia</th>
+              <th scope="col" class="py-2 font-bold">Notas</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (closure of closures(); track closure.id) {
+              <tr data-testid="closure-row">
+                <td class="py-3 pr-3 text-xs whitespace-nowrap">
+                  {{ closure.date | appDate: 'short' }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs tabular-nums">
+                  {{ closure.openingBalance | cashMoney }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs text-emerald-600 tabular-nums">
+                  {{ closure.income | cashMoney }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs text-red-600 tabular-nums">
+                  {{ closure.expense | cashMoney }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ closure.expectedBalance | cashMoney }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ closure.countedBalance | cashMoney }}
+                </td>
+                <td
+                  class="py-3 pr-3 text-right text-xs font-bold tabular-nums"
+                  [class]="differenceClass(closure.difference)"
+                >
+                  {{ closure.difference | cashMoney }}
+                </td>
+                <td class="max-w-[220px] truncate py-3 text-xs text-slate-500 dark:text-slate-400">
+                  {{ closure.notes || '—' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

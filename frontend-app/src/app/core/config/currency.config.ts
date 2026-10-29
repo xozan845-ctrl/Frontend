@@ -28,3 +28,25 @@ export function formatCurrency(
     currency: config.code,
   }).format(value);
 }
+
+/**
+ * Formatea con el código ISO visible (`NIO 1,234.56` / `USD 50.00`). Se usa en
+ * la caja para distinguir la moneda sin ambigüedad entre capturas NIO y USD.
+ */
+export function formatMoney(
+  value: number | null | undefined,
+  currency: string = CURRENCY.code,
+  locale: string = CURRENCY.locale,
+): string {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return '';
+  }
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    currencyDisplay: 'code',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}

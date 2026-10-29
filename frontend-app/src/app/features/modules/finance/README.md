@@ -1,15 +1,22 @@
-# modules/finance/ — Composición de Compras, Gastos y Caja
+# modules/finance/ — Centro financiero (Caja / Pagos)
 
-Módulo de workspace que compone las tres vistas financieras de la empresa
-sobre el dominio y el store de `features/domains/finance`.
+Módulo de workspace que compone la pantalla de caja de la empresa sobre el
+dominio y el store de `features/domains/finance`.
 
-- `pages/finance`: cabecera, KPIs, pestañas y orquestación del store.
-- `components/purchase-panel`: alta y listado de compras.
-- `components/expense-panel`: alta y listado de gastos.
-- `components/cash-panel`: alta, listado y saldo de caja.
-- `finance.routes.ts`: una ruta lazy por sección (`compras`, `gastos`, `caja`)
-  con el `FinanceStore` provisto y la pestaña en `data.tab`.
+- `pages/finance`: saludo, KPIs, pestañas de sección y orquestación del store.
+- `components/cash-kpi-grid`: tarjetas de saldo, ingresos, egresos y «otros».
+- `components/cash-movements-panel`: libro de caja con periodo, búsqueda,
+  paginación, saldo corrido y anulación de manuales.
+- `components/payment-methods-panel`: métodos de pago y su uso.
+- `components/cash-closures-panel`: arqueo y cierres diarios.
+- `components/petty-cash-panel`: fondo fijo, reposiciones y gastos.
+- `components/cash-banks-panel`: cuentas bancarias (`BanksStore`).
+- `components/cash-transfers-panel`: transferencias entre caja y bancos.
+- `components/*-modal`: alta de movimientos, métodos, cierres, caja chica,
+  bancos, transferencias y reporte de caja.
+- `finance.routes.ts`: ruta lazy de `/empresa/caja` con `FinanceStore`,
+  `BanksStore` y `CompanySalesStore`; las ventas cobradas alimentan el libro.
 
-Los registros se persisten por tenant en `localStorage`; el dominio, el
-adaptador y el store viven en `features/domains/finance` y se consumen por su API
-pública (ADR-66).
+Los registros manuales se persisten por tenant en `localStorage`; las ventas se
+derivan en memoria y los totales viven en adaptadores y `withComputed`
+(ADR-66, `R-ST-3`, `R-SO-8`).

@@ -1,0 +1,220 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cash-movement-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="cash-movement-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-surface-700"
+      >
+        <h2
+          id="cash-movement-title"
+          class="font-heading text-xl font-black tracking-tight text-slate-900 dark:text-white"
+        >
+          Registrar movimiento
+        </h2>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm px-2.5 text-slate-400"
+          aria-label="Cerrar"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark text-base" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form class="flex min-h-0 flex-1 flex-col" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="flex flex-col gap-4 overflow-y-auto px-5 py-5">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-movement-type"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Tipo de flujo *
+              </label>
+              <div class="relative">
+                <i
+                  class="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-sm"
+                  [ngClass]="
+                    type() === 'ingreso'
+                      ? ['fa-solid', 'fa-heart', 'text-emerald-500']
+                      : ['fa-solid', 'fa-arrow-trend-down', 'text-red-500']
+                  "
+                  aria-hidden="true"
+                ></i>
+                <select
+                  id="cash-movement-type"
+                  class="input py-3.5 pl-11 text-sm"
+                  style="padding-left: 2.75rem"
+                  formControlName="type"
+                  (change)="setType($any($event.target).value)"
+                >
+                  @for (option of types; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-movement-category"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Categoría *
+              </label>
+              <select
+                id="cash-movement-category"
+                class="input py-3 text-sm"
+                formControlName="category"
+              >
+                @for (option of categories(); track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="cash-movement-concept"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Concepto *
+            </label>
+            <input
+              id="cash-movement-concept"
+              type="text"
+              class="input py-3 text-sm"
+              formControlName="concept"
+              placeholder="Ej: Venta de mercancía al contado"
+              data-testid="cash-movement-concept"
+            />
+            @if (isInvalid('concept')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                Describe el movimiento (máx. 160 caracteres).
+              </p>
+            }
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-movement-amount"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Monto {{ usd() ? 'en USD' : '' }} *
+              </label>
+              <input
+                id="cash-movement-amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                class="input py-3 text-sm"
+                formControlName="amount"
+                placeholder="0.00"
+                data-testid="cash-movement-amount"
+              />
+              @if (isInvalid('amount')) {
+                <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                  El monto debe ser mayor que 0.
+                </p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-movement-method"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Método de pago
+              </label>
+              <select
+                id="cash-movement-method"
+                class="input py-3 text-sm"
+                formControlName="paymentMethod"
+              >
+                @for (method of methods(); track method.id) {
+                  <option [value]="method.id">{{ method.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <button
+              type="button"
+              class="inline-flex w-fit items-center gap-2 text-xs font-bold text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400"
+              (click)="toggleUsd()"
+              data-testid="cash-movement-usd"
+            >
+              <i class="fa-solid fa-money-bill-transfer text-xs" aria-hidden="true"></i>
+              {{ usd() ? 'Ingresar en córdobas' : 'Ingresar en dólares' }}
+            </button>
+            @if (usd()) {
+              <p class="text-[10px] font-semibold text-slate-400">
+                Se consolidará en NIO con el tipo de cambio de
+                {{ rate | cashMoney }} por USD 1.
+              </p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="cash-movement-date"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Fecha
+            </label>
+            <input
+              id="cash-movement-date"
+              type="date"
+              class="input py-3 text-sm"
+              formControlName="date"
+            />
+            @if (isInvalid('date')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">Indica la fecha.</p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="cash-movement-notes"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Observaciones
+            </label>
+            <textarea
+              id="cash-movement-notes"
+              rows="3"
+              class="input resize-y py-3 text-sm"
+              formControlName="observations"
+              placeholder="Notas opcionales sobre este movimiento…"
+            ></textarea>
+          </div>
+        </div>
+
+        <footer
+          class="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-surface-700"
+        >
+          <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm" data-testid="cash-movement-save">
+            <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+            Guardar movimiento
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

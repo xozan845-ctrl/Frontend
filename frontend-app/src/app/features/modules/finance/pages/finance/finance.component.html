@@ -1,76 +1,193 @@
-<section class="flex flex-col gap-5">
-  <header class="flex flex-col gap-2">
-    <p class="text-[10px] font-bold tracking-widest text-accent-600 uppercase">Operación</p>
-    <h1 class="font-heading text-2xl font-black tracking-tight uppercase">{{ title() }}</h1>
-    <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ subtitle() }}</p>
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="company-finance-page">
+  <header class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+      <nav
+        aria-label="Ruta de navegación"
+        class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        <a routerLink="/empresa/inicio" class="transition-colors hover:text-accent-600">Inicio</a>
+        <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
+        <span aria-current="page" class="text-accent-600 dark:text-accent-400">Caja / Pagos</span>
+      </nav>
+      <div class="flex items-start gap-3">
+        <span
+          class="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-cash-register text-lg"></i>
+        </span>
+        <div>
+          <h1
+            class="font-heading text-3xl font-black tracking-tighter text-slate-900 uppercase dark:text-white"
+          >
+            {{ greeting }}
+          </h1>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Centro financiero del negocio. Todos los movimientos de dinero en un lugar.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 self-start xl:self-auto">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="openExport()"
+        data-testid="cash-export"
+      >
+        <i class="fa-solid fa-download text-xs" aria-hidden="true"></i>
+        Exportar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        (click)="openMovement()"
+        data-testid="cash-new-movement-page"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nuevo movimiento
+      </button>
+    </div>
   </header>
 
-  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-    <article class="card p-4" data-testid="finance-kpi-purchases">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Compras del mes</p>
-      <p class="mt-1 text-xl font-black tabular-nums">
-        {{ finance.summary().purchasesMonth | appCurrency }}
-      </p>
-    </article>
-    <article class="card p-4" data-testid="finance-kpi-expenses">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Gastos del mes</p>
-      <p class="mt-1 text-xl font-black tabular-nums">
-        {{ finance.summary().expensesMonth | appCurrency }}
-      </p>
-    </article>
-    <article class="card p-4" data-testid="finance-kpi-cash">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Saldo de caja</p>
-      <p
-        class="mt-1 text-xl font-black tabular-nums"
-        [class.text-emerald-600]="finance.summary().cashBalance >= 0"
-        [class.text-red-600]="finance.summary().cashBalance < 0"
-      >
-        {{ finance.summary().cashBalance | appCurrency }}
-      </p>
-    </article>
-    <article class="card p-4" data-testid="finance-kpi-pending">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Por pagar</p>
-      <p class="mt-1 text-xl font-black tabular-nums">
-        {{ finance.summary().purchasesPending | appCurrency }}
-      </p>
-    </article>
-  </div>
+  <app-cash-kpi-grid class="block" [kpis]="finance.cashKpis()" />
 
-  <nav class="flex flex-wrap gap-2" aria-label="Secciones de finanzas">
-    @for (item of tabs; track item.value) {
-      <a
-        [routerLink]="item.path"
-        routerLinkActive="bg-accent-600 text-white border-accent-600"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-accent-500 hover:text-accent-600 dark:border-surface-600 dark:text-slate-300"
-        [attr.data-testid]="'finance-tab-' + item.value"
+  <nav
+    class="card flex flex-wrap gap-1 p-2"
+    aria-label="Secciones de caja y pagos"
+    data-testid="cash-section-tabs"
+  >
+    @for (item of sections; track item.value) {
+      <button
+        type="button"
+        [class]="sectionClass(item.value)"
+        [attr.aria-current]="section() === item.value ? 'page' : null"
+        [attr.data-testid]="'cash-section-' + item.value"
+        (click)="setSection(item.value)"
       >
+        <i [class]="item.icon" aria-hidden="true"></i>
         {{ item.label }}
-      </a>
+      </button>
     }
   </nav>
 
-  @switch (tab()) {
-    @case ('purchases') {
-      <app-purchase-panel
-        [records]="finance.purchases()"
-        (create)="createPurchase($event)"
-        (remove)="finance.removePurchase($event)"
+  @switch (section()) {
+    @case ('movements') {
+      <app-cash-movements-panel
+        class="block min-w-0"
+        [rows]="finance.pagedLedger()"
+        [page]="finance.currentPage()"
+        [pageCount]="finance.pageCount()"
+        [total]="finance.filteredCount()"
+        [period]="finance.filters().period"
+        [search]="finance.filters().search"
+        [methods]="finance.methods()"
+        (create)="openMovement()"
+        (periodChange)="setPeriod($event)"
+        (searchChange)="setSearch($event)"
+        (nextPage)="finance.nextCashPage()"
+        (previousPage)="finance.previousCashPage()"
+        (annul)="annulMovement($event)"
       />
     }
-    @case ('expenses') {
-      <app-expense-panel
-        [records]="finance.expenses()"
-        (create)="createExpense($event)"
-        (remove)="finance.removeExpense($event)"
+    @case ('methods') {
+      <app-payment-methods-panel
+        class="block min-w-0"
+        [summaries]="finance.methodSummaries()"
+        (requestAdd)="methodOpen.set(true)"
+        (requestToggle)="finance.togglePaymentMethod($event)"
+        (requestRemove)="removeMethod($event)"
       />
     }
-    @case ('cash') {
-      <app-cash-panel
-        [records]="finance.cash()"
-        (create)="createCashMovement($event)"
-        (remove)="finance.removeCashMovement($event)"
+    @case ('closures') {
+      <app-cash-closures-panel
+        class="block min-w-0"
+        [preview]="finance.closurePreview()"
+        [closures]="finance.closureHistory()"
+        (requestClose)="closureOpen.set(true)"
+      />
+    }
+    @case ('petty') {
+      <app-petty-cash-panel
+        class="block min-w-0"
+        [summary]="finance.pettySummary()"
+        [movements]="finance.pettyMovements()"
+        [fund]="finance.pettyFund()"
+        (openFund)="openFund()"
+        (openMovement)="openPetty($event)"
+      />
+    }
+    @case ('banks') {
+      <app-cash-banks-panel
+        class="block min-w-0"
+        [accounts]="banks.accounts()"
+        [summary]="banks.summary()"
+        (add)="openBank()"
+        (edit)="openBank($event)"
+        (remove)="banks.removeAccount($event)"
+      />
+    }
+    @case ('transfers') {
+      <app-cash-transfers-panel
+        class="block min-w-0"
+        [transfers]="finance.transferHistory()"
+        [summary]="finance.transferSummary()"
+        (requestCreate)="openTransfer()"
+        (requestCancel)="cancelTransfer($event)"
       />
     }
   }
-</section>
+</div>
+
+<app-cash-movement-modal
+  [open]="movementOpen()"
+  [methods]="visibleMethods()"
+  (dismiss)="movementOpen.set(false)"
+  (save)="saveMovement($event)"
+/>
+
+<app-cash-export-modal
+  [open]="exportOpen()"
+  [movements]="finance.movements()"
+  [methods]="finance.methods()"
+  [companyName]="companyName()"
+  (dismiss)="exportOpen.set(false)"
+/>
+
+<app-cash-method-modal
+  [open]="methodOpen()"
+  (dismiss)="methodOpen.set(false)"
+  (save)="saveMethod($event)"
+/>
+
+<app-cash-closure-modal
+  [open]="closureOpen()"
+  [preview]="finance.closurePreview()"
+  (dismiss)="closureOpen.set(false)"
+  (save)="saveClosure($event)"
+/>
+
+<app-petty-cash-modal
+  [open]="pettyOpen()"
+  [mode]="pettyMode()"
+  [defaultType]="pettyType()"
+  [fund]="finance.pettyFund()"
+  (dismiss)="pettyOpen.set(false)"
+  (saveMovement)="savePettyMovement($event)"
+  (saveFund)="saveFund($event)"
+/>
+
+<app-cash-bank-modal
+  [open]="bankOpen()"
+  [account]="editingBank()"
+  (dismiss)="closeBank()"
+  (save)="saveBank($event)"
+/>
+
+<app-cash-transfer-modal
+  [open]="transferOpen()"
+  [accounts]="transferAccounts()"
+  (dismiss)="transferOpen.set(false)"
+  (save)="saveTransfer($event)"
+/>

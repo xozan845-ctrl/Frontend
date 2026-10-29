@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { AuthStore } from '../../../../applications/auth/public-api';
 import {
+  CASH_MAX_RECORDS,
   financeStorageKey,
   type CashMovement,
   type ExpenseRecord,
@@ -46,10 +47,19 @@ function cash(overrides: Partial<CashMovement> = {}): CashMovement {
   return {
     id: 'cash-1',
     date: localDate(),
+    createdAt: new Date().toISOString(),
     type: 'ingreso',
     concept: 'Pago',
     amount: 200,
+    currency: 'NIO',
+    originalAmount: 200,
+    exchangeRate: 1,
     paymentMethod: 'efectivo',
+    category: 'aporte',
+    source: 'manual',
+    status: 'completado',
+    reference: '',
+    observations: '',
     ...overrides,
   };
 }
@@ -191,7 +201,9 @@ describe('FinanceStore', () => {
     );
     localStorage.setItem(
       financeStorageKey('cash', 'tenant-1'),
-      JSON.stringify(Array.from({ length: 500 }, (_, index) => cash({ id: `cash-${index}` }))),
+      JSON.stringify(
+        Array.from({ length: CASH_MAX_RECORDS }, (_, index) => cash({ id: `cash-${index}` })),
+      ),
     );
     const store = setup();
 

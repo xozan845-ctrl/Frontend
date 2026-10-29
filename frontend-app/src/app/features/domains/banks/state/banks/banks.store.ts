@@ -91,6 +91,24 @@ export const BanksStore = signalStore(
       });
       notificationService.showSuccess('Cuenta bancaria eliminada.');
     },
+
+    /**
+     * Ajusta el saldo de una cuenta por una transferencia interna. No emite
+     * toast: la operación que lo origina ya notifica al usuario.
+     */
+    adjustBalance(id: string, delta: number): BanksMutationResult {
+      const account = store.accounts().find((item) => item.id === id);
+      if (!account) return { ok: false, message: 'La cuenta bancaria no existe.' };
+      if (!Number.isFinite(delta)) return { ok: false, message: 'El ajuste no es válido.' };
+      const balance = Math.round((account.balance + delta) * 100) / 100;
+      if (balance < 0) {
+        return { ok: false, message: 'La cuenta no tiene saldo suficiente para la transferencia.' };
+      }
+      patchState(store, {
+        accounts: store.accounts().map((item) => (item.id === id ? { ...item, balance } : item)),
+      });
+      return { ok: true };
+    },
   })),
   withHooks({
     onInit(store) {

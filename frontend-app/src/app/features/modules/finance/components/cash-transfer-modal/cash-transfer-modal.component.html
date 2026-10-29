@@ -1,0 +1,187 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cash-transfer-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="cash-transfer-dialog"
+    >
+      <header class="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h2
+            id="cash-transfer-title"
+            class="font-heading text-xl font-black tracking-tight text-slate-900 dark:text-white"
+          >
+            Nueva transferencia
+          </h2>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Mueve dinero entre caja y bancos sin alterar ingresos ni egresos del negocio.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm px-2.5 text-slate-400"
+          aria-label="Cerrar"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark text-base" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      @if (accounts().length < 2) {
+        <p
+          class="rounded-xl bg-amber-50 p-3 text-xs font-semibold text-amber-700 dark:bg-amber-900/10 dark:text-amber-300"
+        >
+          Necesitas al menos una cuenta bancaria además de la caja para transferir.
+        </p>
+      } @else {
+        <form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+          <div class="flex flex-col gap-1.5">
+            <label for="transfer-date" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+              Fecha
+            </label>
+            <input
+              id="transfer-date"
+              type="date"
+              class="input py-3 text-sm"
+              formControlName="date"
+            />
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="transfer-from"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Desde *
+              </label>
+              <select
+                id="transfer-from"
+                class="input py-3 text-sm"
+                formControlName="fromId"
+                (change)="setFrom($any($event.target).value)"
+              >
+                @for (account of accounts(); track account.id) {
+                  <option [value]="account.id">{{ account.label }}</option>
+                }
+              </select>
+              @if (fromAccount(); as account) {
+                <p class="text-[10px] font-semibold text-slate-400">
+                  Disponible: {{ account.balance | cashMoney }}
+                </p>
+              }
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="transfer-to" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Hacia *
+              </label>
+              <select
+                id="transfer-to"
+                class="input py-3 text-sm"
+                formControlName="toId"
+                (change)="setTo($any($event.target).value)"
+              >
+                @for (account of accounts(); track account.id) {
+                  <option [value]="account.id">{{ account.label }}</option>
+                }
+              </select>
+              @if (toAccount(); as account) {
+                <p class="text-[10px] font-semibold text-slate-400">
+                  Disponible: {{ account.balance | cashMoney }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="transfer-amount"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Monto *
+            </label>
+            <input
+              id="transfer-amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              class="input py-3 text-sm"
+              formControlName="amount"
+              placeholder="0.00"
+              data-testid="transfer-amount"
+            />
+            @if (isInvalid('amount')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                El monto debe ser mayor que 0.
+              </p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="transfer-concept"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Concepto *
+            </label>
+            <input
+              id="transfer-concept"
+              type="text"
+              class="input py-3 text-sm"
+              formControlName="concept"
+              placeholder="Ej: Depósito de efectivo"
+            />
+            @if (isInvalid('concept')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                Describe la transferencia.
+              </p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="transfer-notes"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Observaciones
+            </label>
+            <textarea
+              id="transfer-notes"
+              rows="2"
+              class="input resize-y py-3 text-sm"
+              formControlName="notes"
+              placeholder="Notas opcionales…"
+            ></textarea>
+          </div>
+
+          @if (error(); as message) {
+            <p
+              class="rounded-xl bg-red-50 p-3 text-xs font-bold text-red-600 dark:bg-red-900/10 dark:text-red-400"
+              role="alert"
+            >
+              {{ message }}
+            </p>
+          }
+
+          <footer class="flex items-center justify-end gap-2 pt-1">
+            <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm" data-testid="transfer-save">
+              <i class="fa-solid fa-right-left text-xs" aria-hidden="true"></i>
+              Transferir
+            </button>
+          </footer>
+        </form>
+      }
+    </div>
+  </div>
+}

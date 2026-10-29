@@ -1,0 +1,129 @@
+<section class="flex flex-col gap-4" data-testid="cash-transfers-panel">
+  <div class="grid gap-3 sm:grid-cols-3">
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Transferido</p>
+      <p class="mt-1 font-heading text-lg font-black tabular-nums">
+        {{ summary().totalTransferred | cashMoney }}
+      </p>
+      <p class="text-[10px] text-slate-400">transferencias activas</p>
+    </article>
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Transferencias</p>
+      <p class="mt-1 font-heading text-lg font-black tabular-nums">
+        {{ summary().transfersCount }}
+      </p>
+      <p class="text-[10px] text-slate-400">registradas</p>
+    </article>
+    <article class="card p-4">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Anuladas</p>
+      <p class="mt-1 font-heading text-lg font-black tabular-nums">
+        {{ summary().cancelledCount }}
+      </p>
+      <p class="text-[10px] text-slate-400">sin efecto en saldos</p>
+    </article>
+  </div>
+
+  <div class="card flex flex-col gap-4 p-4 sm:p-5">
+    <header class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-right-left text-sm"></i>
+        </span>
+        <div>
+          <h2 class="font-heading text-lg font-black tracking-tight uppercase">Transferencias</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Mueve dinero entre la caja y tus cuentas sin registrarlo como ingreso o gasto.
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        (click)="requestCreate.emit()"
+        data-testid="transfer-add"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nueva transferencia
+      </button>
+    </header>
+
+    @if (transfers().length === 0) {
+      <div class="flex flex-col items-center gap-2 py-10 text-center">
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-right-left text-lg"></i>
+        </span>
+        <p class="text-sm font-bold">Aún no hay transferencias internas.</p>
+        <p class="max-w-sm text-xs text-slate-500 dark:text-slate-400">
+          Usa las transferencias para depositar efectivo o retirar dinero del banco.
+        </p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[860px] text-left text-sm" data-testid="transfers-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Desde</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Hacia</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Concepto</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Monto</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+              <th scope="col" class="py-2 text-right font-bold">
+                <span class="sr-only">Acciones</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (transfer of transfers(); track transfer.id) {
+              <tr data-testid="transfer-row" [class.opacity-60]="transfer.status === 'anulado'">
+                <td class="py-3 pr-3 text-xs whitespace-nowrap">
+                  {{ transfer.date | appDate: 'short' }}
+                </td>
+                <td class="py-3 pr-3 text-xs">{{ transfer.fromLabel }}</td>
+                <td class="py-3 pr-3 text-xs">{{ transfer.toLabel }}</td>
+                <td
+                  class="max-w-[220px] truncate py-3 pr-3 text-xs text-slate-500 dark:text-slate-400"
+                >
+                  {{ transfer.concept }}
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ transfer.amount | cashMoney }}
+                </td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="badge"
+                    [class.badge-success]="transfer.status === 'completado'"
+                    [class.badge-neutral]="transfer.status === 'anulado'"
+                  >
+                    {{ transfer.status === 'completado' ? 'Completada' : 'Anulada' }}
+                  </span>
+                </td>
+                <td class="py-3 text-right">
+                  @if (transfer.status === 'completado') {
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm px-2.5 text-red-600"
+                      (click)="requestCancel.emit(transfer.id)"
+                      [attr.aria-label]="'Anular transferencia ' + transfer.concept"
+                      data-testid="transfer-cancel"
+                    >
+                      <i class="fa-solid fa-ban text-xs" aria-hidden="true"></i>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
