@@ -8,12 +8,12 @@ import { WishlistStore } from '../../features/applications/wishlist/public-api';
 import { StoreConfigService } from '../../core/services/store-config/store-config.service';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-header',
   imports: [RouterLink, RouterLinkActive, CommonModule, UpperCasePipe],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.css',
 })
-export class Navbar {
+export class Header {
   readonly authStore = inject(AuthStore);
   readonly cartStore = inject(CartStore);
   readonly cartUiStore = inject(CartUiStore);

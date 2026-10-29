@@ -57,12 +57,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render app layout and navbar', async () => {
+  it('should render app layout and header', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.app-layout')).toBeTruthy();
-    expect(compiled.querySelector('app-navbar')).toBeTruthy();
+    expect(compiled.querySelector('app-header')).toBeTruthy();
   });
 
   it('oculta el chrome del storefront en las invitaciones', async () => {
@@ -73,7 +73,7 @@ describe('App', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-navbar')).toBeNull();
+    expect(compiled.querySelector('app-header')).toBeNull();
     expect(compiled.querySelector('app-footer')).toBeNull();
   });
 });

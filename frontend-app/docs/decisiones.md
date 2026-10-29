@@ -247,7 +247,7 @@ contexto y consecuencias.
   - **`shared/`** — presentación y utilidades **reutilizables y sin lógica de
     negocio**: `ui/`, `directives/`, `pipes/`, `constants/`. Puede depender de
     `core/`, nunca de `features/`.
-  - **`layout/`** — chrome de la aplicación (`navbar/`, `footer/`, drawers)
+  - **`layout/`** — chrome de la aplicación (`header/`, `footer/`, drawers)
     montado por `app.component`; sin reglas de negocio.
   - **`features/<feature>/`** — dominios de negocio con **clean/hexagonal**
     interno: `pages/`, `components/`, `state/` (signal stores), `services/`,

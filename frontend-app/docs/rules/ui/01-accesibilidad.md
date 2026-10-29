@@ -14,7 +14,7 @@ Aplica a: todos los componentes y plantillas de la aplicación.
 
 ## Notas
 
-- Base actual: `star-rating`, `quick-view-modal`, `cart-sidebar`, `navbar`,
+- Base actual: `star-rating`, `quick-view-modal`, `cart-sidebar`, `header`,
   `search-autocomplete` y `pwa-install-banner` ya declaran `aria-label`/`role`
   (evidencia en `AUDIT.md`); el resto se alinea en cada PR que toque la vista.
 - Los selectores de prueba (`R-CP-2`) usan `data-testid`, no clases Tailwind, para

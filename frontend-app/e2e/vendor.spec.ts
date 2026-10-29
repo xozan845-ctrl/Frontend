@@ -104,9 +104,9 @@ test('R-E-19: la lista de pedidos filtra por estado y el detalle carga', async (
 test('R-E-21: la portada separa el onboarding de los módulos internos', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  await expect(page.getByTestId('navbar-vendor-link')).toHaveCount(0);
-  await expect(page.getByTestId('navbar-billing-link')).toHaveCount(0);
-  await expect(page.getByTestId('navbar-logistica-link')).toHaveCount(0);
+  await expect(page.getByTestId('header-vendor-link')).toHaveCount(0);
+  await expect(page.getByTestId('header-billing-link')).toHaveCount(0);
+  await expect(page.getByTestId('header-logistica-link')).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Crear empresa' }).click();
   await expect(page).toHaveURL(/\/crear-empresa/);

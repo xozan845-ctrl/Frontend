@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Navbar } from './layout/navbar/navbar.component';
+import { Header } from './layout/header/header.component';
 import { Footer } from './layout/footer/footer.component';
 import { CartDrawerComponent } from './features/applications/cart/pages/cart-drawer/cart-drawer.component';
 import { ToastComponent } from './shared/ui/notification/toast.component';
@@ -13,7 +13,7 @@ import { FloatingSupportComponent } from './shared/ui/floating-support/floating-
   standalone: true,
   imports: [
     RouterOutlet,
-    Navbar,
+    Header,
     Footer,
     CartDrawerComponent,
     ToastComponent,
@@ -40,7 +40,7 @@ export class App {
 
   private isBackofficeUrl(url: string): boolean {
     // Los workspaces autenticados y las invitaciones públicas no llevan el
-    // chrome del storefront (navbar, footer, carrito y soporte flotante).
+    // chrome del storefront (header, footer, carrito y soporte flotante).
     return /^\/(empresa|vendedor|facturacion|logistica|admin|ia|i|registro\/vendedor)(\/|$|\?)/.test(
       url,
     );

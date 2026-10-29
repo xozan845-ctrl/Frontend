@@ -30,7 +30,7 @@ casi todas las demás.
 src/app/
 ├── core/        # infra transversal · SIN UI · NO importa shared/ ni features/
 ├── shared/      # ui/ directives/ pipes/ constants/ reports/ · sin negocio · puede usar core/
-├── layout/      # navbar/ footer/ drawers (chrome de la app)
+├── layout/      # header/ footer/ drawers (chrome de la app)
 └── features/    # applications/<feature>, domains/<feature>, modules/<module>
                  # cada uno con sus capas, API pública y rutas declaradas
 ```

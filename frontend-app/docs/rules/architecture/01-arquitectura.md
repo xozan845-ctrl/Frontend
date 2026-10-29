@@ -9,7 +9,7 @@ La estructura es **empresarial por capas de primer nivel** (ADR-12):
 src/app/
 ├── core/        # infraestructura transversal · SIN UI · NO depende de features
 ├── shared/      # presentación/utilidades reutilizables · sin lógica de negocio
-├── layout/      # chrome de la app (navbar/header, footer, drawers)
+├── layout/      # chrome de la app (header, footer, drawers)
 └── features/    # dominios de negocio (clean/hexagonal dentro de cada uno)
 ```
 
@@ -44,7 +44,7 @@ src/app/
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `core/`     | `config/`, `tokens/`, `models/` genéricos, `services/` de aplicación sin UI, `interceptors/`/`guards/` **genéricos** (sin depender de features) | Componentes/plantillas, lógica de negocio, importar features                   |
 | `shared/`   | `ui/` (presentacionales), `directives/`, `pipes/`, `constants/`, `reports/` (configuración transversal)                                         | Estado de un feature, reglas de negocio, importar features                     |
-| `layout/`   | `navbar/`, `footer/`, drawers/chrome visual                                                                                                     | Reglas de negocio; inyectar stores directamente si puede resolverse con inputs |
+| `layout/`   | `header/`, `footer/`, drawers/chrome visual                                                                                                     | Reglas de negocio; inyectar stores directamente si puede resolverse con inputs |
 | `features/` | Todo el dominio de negocio y sus capas internas                                                                                                 | Importar rutas internas de otro feature                                        |
 
 ## Notas

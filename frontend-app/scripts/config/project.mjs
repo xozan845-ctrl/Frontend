@@ -388,7 +388,7 @@ export const APP_LAYER_ALLOWED_DIRECTORIES = {
     'reports',
     'ui',
   ]),
-  layout: new Set(['footer', 'navbar']),
+  layout: new Set(['footer', 'header']),
 };
 
 /** `core/shared/layout` solo admiten README en su raíz. */
@@ -522,7 +522,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'layout',
   'mocks',
   'models',
-  'navbar',
+  'header',
   'orders',
   'repositories',
   'resolvers',

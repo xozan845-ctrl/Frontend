@@ -8,7 +8,7 @@ import { mockApi } from './api-mock';
 const STORE = '/tienda/tienda-demo';
 
 const expectNoSeriousIssues = async (page: Page) => {
-  // Determinismo: espera a las fuentes y evita el solape del navbar fijo (R-AC).
+  // Determinismo: espera a las fuentes y evita el solape del header fijo (R-AC).
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.evaluate(() => document.fonts.ready);
 

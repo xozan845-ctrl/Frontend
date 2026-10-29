@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class CartFlyService {
   /**
-   * Animates a product image flying from sourceEl to the cart icon in the navbar.
+   * Animates a product image flying from sourceEl to the cart icon in the header.
    * Uses Web Animations API for smooth, performant animation.
    */
   fly(sourceEl: HTMLElement, imageUrl: string): void {
