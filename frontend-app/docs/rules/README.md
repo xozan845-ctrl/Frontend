@@ -25,7 +25,7 @@ rules/
 ├── test/               ✅ activa — unit, componentes, E2E, contrato, robustez, cobertura, QA (R-U/…/R-QA, G-*)
 ├── git/                ✅ activa (sin auditar) — trunk-based: ramas, stage, commits, push y PR (R-GB/R-GA/R-GC/R-GP/R-PR)
 ├── ci/                 ✅ activa (contrato, sin workflow) — integración continua (R-CI/R-EN)
-├── cd/                 ✅ activa (contrato, sin pipeline) — despliegue en Dockploy (R-CD)
+├── cd/                 ✅ activa (contrato, sin pipeline) — despliegue en Firebase Hosting (R-CD)
 ├── ai/                 ✅ activa (nueva) — reglas para contribuciones de IA (R-IA)
 ├── documentation/      ✅ activa (nueva) — documentación como código (R-DO)
 │
@@ -53,7 +53,7 @@ rules/
 | `test/`          | ✅ **activa**                | [`test/README.md`](./test/README.md)                   | Reglas de testing: unit puro, componentes, E2E, contrato, robustez, cobertura y QA gates (IDs `R-U/R-CP/R-E/R-C/…/G-*`)                                                                                                      |
 | `git/`           | ✅ **activa** (sin auditar)  | [`git/README.md`](./git/README.md)                     | Flujo **trunk-based**: `main` protegida, ramas cortas, tags semver, `git add`, `git commit -m`, `git push` y `gh pr` (IDs `R-GB/R-GA/R-GC/R-GP/R-PR`)                                                                        |
 | `ci/`            | ✅ **activa** (implementada) | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. Implementada en `.github/workflows/ci.yml` (6 jobs) (IDs `R-CI/R-EN`)                                                                                               |
-| `cd/`            | ✅ **activa** (contrato)     | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Dockploy** (mismo VPS que Core Engine): build estático, environment `produccion`, smoke y rollback (IDs `R-CD`)                                                                                 |
+| `cd/`            | ✅ **activa** (contrato)     | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Firebase Hosting**: build estático, sitio live, smoke y rollback (IDs `R-CD`)                                                                                                                   |
 | `ai/`            | ✅ **activa** (nueva)        | [`ai/README.md`](./ai/README.md)                       | Reglas obligatorias para IAs: contexto, atomicidad, uso de tools y apego al workflow (IDs `R-IA`)                                                                                                                            |
 | `documentation/` | ✅ **activa** (nueva)        | [`documentation/README.md`](./documentation/README.md) | Documentación como código: READMEs (incluido uno por directorio importante), ADRs, variables de entorno y comentarios (IDs `R-DO`)                                                                                           |
 | `_meta/`         | ⚠️ **no normativo**          | [`_meta/README.md`](./_meta/README.md)                 | Derivados: checklist, snapshots de auditoría, histórico                                                                                                                                                                      |
@@ -93,6 +93,6 @@ se describe el punto fijo.
 
 El flujo elegido es **trunk-based** (`main` protegida + ramas cortas + tags
 semver), no el modelo de tres entornos del backend heredado; el despliegue se
-hace en **Dockploy** (mismo VPS que Core Engine). La estructura de código se rige
+hace en **Firebase Hosting**. La estructura de código se rige
 por **ADR-12** (`core/shared/layout/features` + Smart/Dumb). Las decisiones viven
 en [`../decisiones.md`](../decisiones.md) (ADR-01, ADR-02, ADR-12).

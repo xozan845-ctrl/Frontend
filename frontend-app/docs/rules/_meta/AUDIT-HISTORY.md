@@ -31,6 +31,8 @@
 
 ---
 
+---
+
 ## Auditoría 1 — Primera auditoría ejecutada (2026-10-06)
 
 - **Alcance:** contraste de todo el repo contra `rules/` con dependencias
@@ -358,4 +360,48 @@
     (revisión y merge del mantenedor).
 - **Estado global:** 🟢 **CUMPLE**.
 - **Deudas:** ninguna (frontera del backend documentada en `AUDIT.md`).
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 13 — Cierre de deudas de contrato y operación (2026-10-29)
+
+- **Alcance:** fixtures de contrato `R-C-*`, componentes con lógica `R-CP-*`,
+  fronteras `R-CX-6`, renovación automática ante 401 y operación post-deploy de
+  Dockploy.
+- **Corregido / entregado:**
+  - `test(contract)` — fixtures y `*.contract.spec.ts` para invitaciones,
+    órdenes, ventas y tiendas de empresa; los adaptadores locales quedan
+    identificados como lógica de dominio.
+  - `test(governance)` — `coverage-guards` exige spec hermano con TestBed para
+    cada componente y `architecture-layers` reporta explícitamente R-CX-6.
+  - `fix(auth)` — refresh de 401 sin bucle en `login/registro/refresh`, con
+    query/trailing slash cubiertos y deduplicación de requests concurrentes.
+  - `ci(cd)` — smoke de Dockploy para shell, ruta SPA y `config.json`, con tests
+    herméticos y workflow manual/webhook (`repository_dispatch`).
+- **Resultado:**
+  - ✅ `npm test -- --watch=false --coverage=false` — **327 archivos / 1.785 tests**.
+  - ✅ typecheck, lint, formato, `rules:check` (**40/40 pruebas; 49/255 IDs**),
+    `test:engine` (**43 tests**) y `check-budget`.
+  - ✅ build de producción — initial **547.53 kB**, con la advertencia existente
+    de `leaflet` CommonJS.
+- **Operación pendiente:** configurar en el entorno real de Dockploy el proyecto,
+  dominio, secret `DOCKPLOY_FRONTEND_URL` y webhook; el código verificable ya
+  está versionado.
+- **Estado global:** 🟢 **CUMPLE** para el alcance de código de esta auditoría.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 14 — Ajuste del destino de hosting (2026-10-29)
+
+- **Contexto:** se confirmó que el frontend actual se publica únicamente en
+  Firebase Hosting; Dockploy no es un entorno operativo vigente.
+- **Ajuste:** el smoke y su workflow quedan nombrados y configurados para
+  Firebase Hosting; `firebase-hosting-setup.md` pasa a ser la guía actual y
+  `dockploy-setup.md` queda como referencia futura.
+- **Verificación:** el comando `hosting:smoke` conserva las comprobaciones de
+  shell, fallback SPA y `/config.json`; no se requiere secret ni webhook de
+  Dockploy.
+- **Estado global:** 🟢 **CUMPLE** para el destino actual de hosting.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).

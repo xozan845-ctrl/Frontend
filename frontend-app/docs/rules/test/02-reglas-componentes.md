@@ -20,3 +20,8 @@ salidas). Se ejecutan con **Angular TestBed** dentro de Vitest, sin red real.
 npm test -- --include src/app/features/**/*.spec.ts
 grep -rn "querySelector('.\(bg-\|text-\|flex\)" src --include=*.spec.ts   # R-CP-2: vacío
 ```
+
+Además, `scripts/rules/test/coverage-checks.mjs` mantiene un guard R-CP-1:
+cada `*.component.ts` debe tener un `*.component.spec.ts` hermano que use
+`TestBed`. Así, un componente nuevo no puede entrar a la aplicación sin una
+prueba ejecutable de interacción o estado visible.

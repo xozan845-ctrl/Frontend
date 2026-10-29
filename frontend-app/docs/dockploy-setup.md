@@ -1,13 +1,19 @@
-# Guion operativo: desplegar el frontend en Dockploy (VPS compartido con Core Engine)
+# Referencia futura: desplegar el frontend en Dockploy
+
+> Dockploy no forma parte de la operación actual del frontend. El sitio vigente
+> se publica en Firebase Hosting; la guía operativa actual es
+> [`firebase-hosting-setup.md`](./firebase-hosting-setup.md). Este documento se
+> conserva solo como referencia para una eventual migración al VPS.
 
 > Documento **operativo** (no normativo): la normativa vive en
 > [`rules/cd/`](./rules/cd/README.md) (`R-CD-*`) y el flujo de ramas en
 > [`rules/git/00-flujo.md`](./rules/git/00-flujo.md) (`R-GB-*`). Este guion es la
 > **lista de tareas** para dejar el despliegue acorde a esa normativa.
 >
-> **Estado:** el repo ya incluye `Dockerfile` (multi-stage, `node:22-alpine` →
-> `nginx:1.31-alpine`) y `nginx.conf` versionados; los pasos restantes son la
-> configuración del proyecto/environment en Dockploy y el dominio/HTTPS.
+> **Estado futuro:** el repo conserva `Dockerfile` (multi-stage,
+> `node:22-alpine` → `nginx:1.31-alpine`) y `nginx.conf` para ese destino
+> alterno. No existe actualmente un proyecto, environment, dominio, webhook ni
+> workflow de Dockploy que deba configurarse.
 
 ## 0. Objetivo
 
@@ -92,7 +98,11 @@ Pasos:
   Cada tienda se sirve en su URL `/tienda/:storeId` (ver ADR-15); un mismo build
   atiende a todas. El enlace de cada tienda se comparte con sus clientes.
 
-## 5. Verificaciones tras el despliegue (smoke, `R-CD-9`)
+## 5. Estado del smoke
+
+El smoke operativo actual vive en `scripts/commands/hosting-smoke.mjs` y en el
+workflow `.github/workflows/firebase-hosting-smoke.yml`. No existe un smoke de
+Dockploy activo mientras este destino siga fuera de operación.
 
 | #   | Comprobación                                                              | ☐   |
 | --- | ------------------------------------------------------------------------- | --- |
@@ -103,12 +113,12 @@ Pasos:
 | 5   | El token no viaja en el bundle (`R-CD-2`)                                 | ☐   |
 | 6   | Rollback posible: redesplegar la versión anterior                         | ☐   |
 
-## 6. Rollback en producción (`R-CD-10`)
+## 6. Migración y rollback futuros (`R-CD-10`)
 
-1. En Dockploy, **redesplegar la versión anterior** del environment `produccion`.
-2. Confirmar el smoke (`R-CD-9`).
-3. Corregir con una rama `fix/...` y PR a `main` (`R-GB-6`); nunca editar el
-   servidor a mano.
+1. Registrar la decisión de migración y crear el proyecto propio en Dockploy.
+2. Redesplegar la versión anterior del environment elegido.
+3. Confirmar el smoke (`R-CD-9`) y corregir con una rama `fix/...` y PR a `main`
+   (`R-GB-6`); nunca editar el servidor a mano.
 
 ## 7. Errores frecuentes
 

@@ -1,0 +1,30 @@
+/** Fixture de contrato versionado (R-C-8) de `OrderViewResponseDto`. */
+export const COMPANY_ORDER_VIEW_FIXTURE = {
+  id: '5f0e7b2c-9f61-4f0e-8d6a-2b7c1a9e4d11',
+  vendedor_id: 'vendedor-1',
+  comprador_id: 'comprador-1',
+  tienda_id: 'tienda-1',
+  estado: 'pagada',
+  total_cents: 230000,
+  comision_cents: 27600,
+  moneda: 'C$',
+  items: [
+    {
+      oferta_id: 'oferta-1',
+      sku: 'SKU-001',
+      producto_nombre: 'Teclado Mecánico',
+      cantidad: 2,
+      precio_unitario_cents: 115000,
+      vendedor_id: 'vendedor-1',
+      tienda_id: 'tienda-1',
+    },
+  ],
+  direccion_envio: null,
+  creado_en: '2026-10-22T15:00:00.000Z',
+  actualizado_en: '2026-10-22T15:05:00.000Z',
+  pagada_en: '2026-10-22T15:04:00.000Z',
+  enviada_en: null,
+  entregada_en: null,
+  cancelada_en: null,
+  devuelta_en: null,
+} as const;

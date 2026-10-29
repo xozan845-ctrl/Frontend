@@ -29,7 +29,9 @@ backend; el contrato fija qué se soporta y cómo se prueba.
 
 ## Notas
 
-- Deuda actual (`G-5`): no hay fixtures de contrato ni tests de adapter; los
-  adapters existen y son tolerantes pero no están cubiertos (`R-U-5/R-U-6`).
+- La deuda histórica de fixtures queda cerrada para los adaptadores que cruzan
+  el gateway: cada uno tiene un `*.contract.spec.ts` y un fixture versionado.
+  Los adaptadores puramente locales (por ejemplo, saneo de servicios POS) se
+  prueban como lógica de dominio y no se presentan como DTO del backend.
 - El endpoint base y los paths viven en `environment` + `DEFAULT_API_CONFIG`
   (`R-AR-11`); el contrato no hardcodea hosts.

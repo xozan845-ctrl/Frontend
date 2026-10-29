@@ -92,4 +92,54 @@ describe('authInterceptor', () => {
 
     expect(refreshTokenOnce).not.toHaveBeenCalled();
   });
+
+  it('no reintenta el refresh aunque la URL lleve query string', () => {
+    const refreshTokenOnce = vi.fn().mockResolvedValue(true);
+    const { http, httpMock } = build({ token: () => null, refreshTokenOnce });
+
+    http.post('/api/v1/auth/refresh?source=bootstrap', {}).subscribe({ error: () => undefined });
+
+    httpMock
+      .expectOne('/api/v1/auth/refresh?source=bootstrap')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+
+    expect(refreshTokenOnce).not.toHaveBeenCalled();
+  });
+
+  it('deduplica el refresh cuando dos requests reciben 401 en paralelo', async () => {
+    let token = 'viejo';
+    let resolveRefresh!: (renewed: boolean) => void;
+    const refreshPromise = new Promise<boolean>((resolve) => {
+      resolveRefresh = resolve;
+    });
+    const refreshTokenOnce = vi.fn().mockReturnValue(refreshPromise);
+    const { http, httpMock } = build({ token: () => token, refreshTokenOnce });
+    const results: unknown[] = [];
+
+    http.get('/recurso').subscribe((value) => results.push(value));
+    http.get('/recurso').subscribe((value) => results.push(value));
+
+    const initial = httpMock.match('/recurso');
+    expect(initial).toHaveLength(2);
+    initial.forEach((request) => {
+      expect(request.request.headers.get('Authorization')).toBe('Bearer viejo');
+      request.flush({}, { status: 401, statusText: 'Unauthorized' });
+    });
+
+    await tick();
+    expect(refreshTokenOnce).toHaveBeenCalledOnce();
+
+    token = 'nuevo';
+    resolveRefresh(true);
+    await tick();
+
+    const retries = httpMock.match('/recurso');
+    expect(retries).toHaveLength(2);
+    retries.forEach((request) => {
+      expect(request.request.headers.get('Authorization')).toBe('Bearer nuevo');
+      request.flush({ ok: true });
+    });
+
+    expect(results).toEqual([{ ok: true }, { ok: true }]);
+  });
 });

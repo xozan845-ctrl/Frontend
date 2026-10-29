@@ -9,7 +9,8 @@ aquí**: son reglas de testing y siguen en
 > supply chain (`security-gate` con SBOM, `format`, `lint`, `typecheck`, `rules`,
 > `test`, `build`, `e2e`, `actionlint`, `shellcheck`, `hadolint`, `gitleaks` y
 > `dependency-review`), más `codeql.yml` como SAST y `release.yml` para validar
-> tags de release. En push a `main`, `release-readiness` avisa (sin bloquear) si
+> tags de release. El health check posterior a Firebase Hosting vive separado
+> en `firebase-hosting-smoke.yml` y no reemplaza ningún gate de PR. En push a `main`, `release-readiness` avisa (sin bloquear) si
 > hay cambios de artefacto sin versión/tag. Disparo en push a `main` y en **todo
 > PR** (incluidos los apilados). `main` protegida con los checks obligatorios
 > (`R-CI-7`) y Dependabot activo para npm, actions y docker.
@@ -21,7 +22,7 @@ aquí**: son reglas de testing y siguen en
 | `01-flujos.md`  | Gatillos push/PR, concurrencia, sin `paths`, pipeline único, revisión de workflows, verificación con `gh` | `R-CI` (1–8) |
 | `02-entorno.md` | Runner/Node/npm, evidencia (artifacts), secretos, endurecimiento y SBOM                                   | `R-EN` (1–6) |
 
-> El **despliegue** vive en [`../cd/`](../cd/README.md) (Dockploy). CI integra;
+> El **despliegue** vive en [`../cd/`](../cd/README.md) (Firebase Hosting). CI integra;
 > CD despliega.
 
 ## Mapa de IDs
