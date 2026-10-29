@@ -26,6 +26,8 @@ import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.servi
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { injectSeoCleanup } from '../../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { TrustBadgesComponent } from '../../../../../shared/ui/trust-badges/trust-badges.component';
+import type { TrustBadge } from '../../../../../shared/ui/trust-badges/trust-badges.types';
 
 @Component({
   selector: 'app-product-detail',
@@ -41,6 +43,7 @@ import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
     ProductCarouselComponent,
     EmptyStateComponent,
     AppCurrencyPipe,
+    TrustBadgesComponent,
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css',
@@ -48,6 +51,12 @@ import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 })
 export class ProductDetailComponent {
   readonly productStore = inject(ProductStore);
+  readonly trustBadges: readonly TrustBadge[] = [
+    { icon: 'fa-solid fa-shield-halved', title: 'Pago Seguro', subtitle: 'Datos encriptados' },
+    { icon: 'fa-solid fa-truck-fast', title: 'Envío 24-48h', subtitle: 'Cobertura nacional' },
+    { icon: 'fa-solid fa-rotate-left', title: '30 Días Retorno', subtitle: 'Devolución sin costo' },
+    { icon: 'fa-solid fa-headset', title: 'Soporte 24/7', subtitle: 'Chat y teléfono' },
+  ];
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly wishlistStore = inject(WishlistStore);

@@ -9,6 +9,8 @@ import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skele
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { TrustBadgesComponent } from '../../../../../shared/ui/trust-badges/trust-badges.component';
+import type { TrustBadge } from '../../../../../shared/ui/trust-badges/trust-badges.types';
 
 @Component({
   selector: 'app-cart-view',
@@ -20,11 +22,18 @@ import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
     SkeletonLoaderComponent,
     FocusTrapDirective,
     AppCurrencyPipe,
+    TrustBadgesComponent,
   ],
   templateUrl: './cart-view.component.html',
 })
 export class CartViewComponent {
   readonly cartStore = inject(CartStore);
+  readonly trustBadges: readonly TrustBadge[] = [
+    { icon: 'fa-solid fa-shield-halved', title: 'Pago Seguro', subtitle: 'Datos encriptados' },
+    { icon: 'fa-solid fa-truck-fast', title: 'Envío gratis', subtitle: 'En tu compra' },
+    { icon: 'fa-solid fa-rotate-left', title: '30 Días Retorno', subtitle: 'Devolución sin costo' },
+    { icon: 'fa-solid fa-headset', title: 'Soporte 24/7', subtitle: 'Chat y teléfono' },
+  ];
   readonly authStore = inject(AuthStore);
   private readonly productStore = inject(ProductStore);
   private readonly router = inject(Router);
