@@ -47,7 +47,7 @@
               <div>
                 <p class="text-sm font-black">{{ summary.method.name }}</p>
                 <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                  {{ kindLabel(summary.method.kind) }}
+                  {{ kindLabels[summary.method.kind] ?? 'Otro' }}
                 </p>
               </div>
             </div>

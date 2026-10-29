@@ -3,9 +3,9 @@ import { Component, computed, input, output } from '@angular/core';
 import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
 import {
+  CASH_MOVEMENT_CATEGORIES,
   CASH_PAGE_SIZE,
   CASH_PERIODS,
-  cashCategoryLabel,
   type CashLedgerEntry,
   type CashMovementCategory,
   type CashPaymentMethod,
@@ -47,38 +47,17 @@ export class CashMovementsPanelComponent {
   readonly annul = output<string>();
 
   readonly periods = CASH_PERIODS;
-
-  private readonly methodLabels = computed(
+  readonly categoryLabels = Object.fromEntries(
+    CASH_MOVEMENT_CATEGORIES.map((category) => [category.value, category.label]),
+  ) as Record<CashMovementCategory, string>;
+  readonly categoryBadges = BADGE_BY_CATEGORY;
+  readonly methodLabels = computed(
     () => new Map(this.methods().map((method) => [method.id, method.name])),
   );
   readonly rangeStart = computed(() =>
     this.total() === 0 ? 0 : (this.page() - 1) * CASH_PAGE_SIZE + 1,
   );
   readonly rangeEnd = computed(() => Math.min(this.page() * CASH_PAGE_SIZE, this.total()));
-
-  methodName(id: string): string {
-    const label = this.methodLabels().get(id);
-    if (label) return label;
-    return id.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-  }
-
-  categoryLabel(category: CashMovementCategory): string {
-    return cashCategoryLabel(category);
-  }
-
-  categoryBadge(category: CashMovementCategory): string {
-    return BADGE_BY_CATEGORY[category];
-  }
-
-  balanceClass(balance: number): string {
-    return balance < 0
-      ? 'text-red-600 dark:text-red-400'
-      : 'text-emerald-600 dark:text-emerald-400';
-  }
-
-  canAnnul(entry: CashLedgerEntry): boolean {
-    return entry.movement.source !== 'venta' && entry.movement.status === 'completado';
-  }
 
   onSearch(event: Event): void {
     this.searchChange.emit((event.target as HTMLInputElement).value);

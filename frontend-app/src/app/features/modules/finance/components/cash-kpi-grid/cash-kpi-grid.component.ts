@@ -1,56 +1,14 @@
 import { Component, computed, input } from '@angular/core';
 import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
 import type { CashKpis } from '../../../../domains/finance/public-api';
-
-interface KpiCard {
-  label: string;
-  value: number;
-  hint: string;
-  icon: string;
-  iconClass: string;
-  money: boolean;
-  valueClass?: string;
-}
+import type { KpiCard } from './cash-kpi-grid.component.types';
 
 /** Tarjetas del centro financiero; solo presenta los KPIs del store. */
 @Component({
   selector: 'app-cash-kpi-grid',
   standalone: true,
   imports: [CashMoneyPipe],
-  template: `
-    <section
-      class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6"
-      aria-label="Resumen de caja"
-    >
-      @for (card of cards(); track card.label) {
-        <article class="card flex items-start gap-3 p-4">
-          <span
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-            [class]="card.iconClass"
-            aria-hidden="true"
-          >
-            <i [class]="card.icon"></i>
-          </span>
-          <div class="min-w-0">
-            <p class="truncate text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-              {{ card.label }}
-            </p>
-            <p
-              class="mt-0.5 truncate font-heading text-lg font-black tabular-nums"
-              [class]="card.valueClass ?? ''"
-            >
-              @if (card.money) {
-                {{ card.value | cashMoney }}
-              } @else {
-                {{ card.value }}
-              }
-            </p>
-            <p class="truncate text-[10px] text-slate-400">{{ card.hint }}</p>
-          </div>
-        </article>
-      }
-    </section>
-  `,
+  templateUrl: './cash-kpi-grid.component.html',
 })
 export class CashKpiGridComponent {
   readonly kpis = input.required<CashKpis>();
@@ -71,7 +29,9 @@ export class CashKpiGridComponent {
         label: 'Ingresos del mes',
         value: kpis.monthIncome,
         hint:
-          kpis.monthIncomeCount > 0 ? `${kpis.monthIncomeCount} entradas` : 'Sin entradas este mes',
+          kpis.monthIncomeCount > 0
+            ? `${kpis.monthIncomeCount} ${kpis.monthIncomeCount === 1 ? 'entrada' : 'entradas'}`
+            : 'Sin entradas este mes',
         icon: 'fa-solid fa-chart-line',
         iconClass: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400',
         money: true,
@@ -81,7 +41,9 @@ export class CashKpiGridComponent {
         label: 'Egresos del mes',
         value: kpis.monthExpense,
         hint:
-          kpis.monthExpenseCount > 0 ? `${kpis.monthExpenseCount} salidas` : 'Sin egresos este mes',
+          kpis.monthExpenseCount > 0
+            ? `${kpis.monthExpenseCount} ${kpis.monthExpenseCount === 1 ? 'salida' : 'salidas'}`
+            : 'Sin egresos este mes',
         icon: 'fa-solid fa-arrow-trend-down',
         iconClass: 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400',
         money: true,

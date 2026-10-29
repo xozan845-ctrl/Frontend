@@ -7,8 +7,7 @@ import {
   type PettyCashFund,
   type PettyCashMovementType,
 } from '../../../../domains/finance/public-api';
-
-export type PettyCashModalMode = 'movement' | 'fund';
+import type { PettyCashModalMode } from './petty-cash-modal.component.types';
 
 /** Alta de movimientos o ajuste del fondo de caja chica. */
 @Component({
