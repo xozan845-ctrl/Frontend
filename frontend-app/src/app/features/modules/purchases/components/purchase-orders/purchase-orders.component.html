@@ -1,0 +1,129 @@
+<section class="flex flex-col gap-4" aria-labelledby="purchase-orders-title">
+  <header class="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+    <div class="flex items-center gap-3">
+      <span
+        class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-file-lines"></i>
+      </span>
+      <div>
+        <h1
+          id="purchase-orders-title"
+          class="font-heading text-2xl font-black tracking-tight uppercase"
+        >
+          Órdenes de Compra
+        </h1>
+        <p class="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+          Pide una cotización o solicitud a tu proveedor — no descuenta Caja ni aumenta inventario
+          hasta que la conviertas en una compra real.
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 self-start xl:self-auto">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        data-testid="purchase-orders-back"
+        (click)="back.emit()"
+      >
+        <i class="fa-regular fa-clipboard text-xs" aria-hidden="true"></i>
+        Ver Compras
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-testid="purchase-orders-new"
+        (click)="newOrder.emit()"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nueva Orden
+      </button>
+    </div>
+  </header>
+
+  <p
+    class="rounded-2xl border border-dashed border-slate-200 px-4 py-3 text-xs leading-relaxed text-slate-500 dark:border-surface-600 dark:text-slate-400"
+  >
+    💡 Una orden es solo una solicitud/cotización para tu proveedor — se puede imprimir en PDF.
+    Cuando ya hayas comprado de verdad, dale “Convertir en compra” y ahí sí se descuenta Caja y
+    aumenta el inventario, igual que una Compra normal.
+  </p>
+
+  <div class="overflow-x-auto rounded-2xl border border-slate-100 dark:border-surface-700">
+    <table class="w-full min-w-[820px] text-left text-sm" data-testid="purchase-orders-table">
+      <thead>
+        <tr
+          class="bg-slate-50 text-[10px] tracking-widest text-slate-400 uppercase dark:bg-surface-800"
+        >
+          <th scope="col" class="px-4 py-3 font-bold">N° orden</th>
+          <th scope="col" class="px-4 py-3 font-bold">Fecha</th>
+          <th scope="col" class="px-4 py-3 font-bold">Proveedor</th>
+          <th scope="col" class="px-4 py-3 font-bold">Productos</th>
+          <th scope="col" class="px-4 py-3 text-right font-bold">Total</th>
+          <th scope="col" class="px-4 py-3 font-bold">Estado</th>
+          <th scope="col" class="px-4 py-3 font-bold"><span class="sr-only">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+        @for (row of rows(); track row.id) {
+          <tr data-testid="purchase-orders-row">
+            <td class="px-4 py-3 font-mono text-xs font-bold text-accent-600 dark:text-accent-400">
+              {{ row.number }}
+            </td>
+            <td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
+              {{ row.date | appDate: 'short' }}
+            </td>
+            <td class="max-w-48 truncate px-4 py-3 text-xs font-bold">{{ row.supplierName }}</td>
+            <td class="max-w-52 truncate px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
+              {{ row.productsLabel }} · {{ row.units }} u.
+            </td>
+            <td class="px-4 py-3 text-right text-xs font-bold tabular-nums">
+              {{ row.total | appCurrency }}
+            </td>
+            <td class="px-4 py-3">
+              <span [ngClass]="statusBadgeClass(row.status)">{{ row.statusLabel }}</span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-1">
+                @if (row.status === 'pendiente') {
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-emerald-600"
+                    [attr.aria-label]="'Convertir en compra la orden ' + row.number"
+                    data-testid="purchase-orders-convert"
+                    (click)="convertOrder.emit(row.id)"
+                  >
+                    <i class="fa-solid fa-arrow-right-arrow-left text-xs" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-red-600"
+                    [attr.aria-label]="'Anular la orden ' + row.number"
+                    data-testid="purchase-orders-cancel"
+                    (click)="cancelOrder.emit(row.id)"
+                  >
+                    <i class="fa-solid fa-ban text-xs" aria-hidden="true"></i>
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td
+              colspan="7"
+              class="px-4 py-12 text-center text-sm text-slate-500 dark:text-slate-400"
+            >
+              Todavía no has creado ninguna orden de compra
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+    {{ count() }} órdenes registradas
+  </p>
+</section>

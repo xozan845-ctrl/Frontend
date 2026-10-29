@@ -1,0 +1,187 @@
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="company-purchases-page">
+  <header class="flex flex-col gap-4 2xl:flex-row 2xl:items-end 2xl:justify-between">
+    <div>
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          aria-hidden="true"
+        >
+          <i class="fa-regular fa-clipboard"></i>
+        </span>
+        <div>
+          <h1 class="font-heading text-3xl font-black tracking-tighter uppercase">
+            {{ greeting }}
+          </h1>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Abastece tu inventario y controla tus compras a proveedores.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-start gap-2 md:justify-end">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        data-testid="purchase-action-customize"
+        (click)="openCustomize()"
+      >
+        <i class="fa-solid fa-sliders text-xs" aria-hidden="true"></i>
+        Personalizar
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        data-testid="purchase-action-export"
+        (click)="openExport()"
+      >
+        <i class="fa-solid fa-download text-xs" aria-hidden="true"></i>
+        Exportar
+      </button>
+      <button
+        type="button"
+        [class]="view() === 'orders' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'"
+        data-testid="purchase-action-orders"
+        (click)="setView('orders')"
+      >
+        <i class="fa-regular fa-clipboard text-xs" aria-hidden="true"></i>
+        Órdenes de Compra
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        data-testid="purchase-action-direct"
+        (click)="openDirect()"
+      >
+        <i class="fa-regular fa-file-lines text-xs" aria-hidden="true"></i>
+        Compra Directa
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-testid="purchase-action-new"
+        (click)="openNew('compra')"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nueva Compra
+      </button>
+    </div>
+  </header>
+
+  <app-purchase-kpi-grid [kpis]="purchases.kpis()" />
+
+  @if (view() === 'orders') {
+    <app-purchase-orders
+      [rows]="purchases.orderRows()"
+      [count]="purchases.orderCount()"
+      (back)="setView('history')"
+      (newOrder)="openNew('orden')"
+      (convertOrder)="convertOrder($event)"
+      (cancelOrder)="cancelOrder($event)"
+    />
+  } @else {
+    <nav class="flex flex-wrap items-center gap-2" aria-label="Secciones de compras">
+      <button
+        type="button"
+        [class]="tabClass('history')"
+        [attr.aria-current]="tab() === 'history' ? 'page' : null"
+        data-testid="purchase-tab-history"
+        (click)="setTab('history')"
+      >
+        <i class="fa-regular fa-clipboard text-xs" aria-hidden="true"></i>
+        Historial de compras
+      </button>
+      <button
+        type="button"
+        [class]="tabClass('suppliers')"
+        [attr.aria-current]="tab() === 'suppliers' ? 'page' : null"
+        data-testid="purchase-tab-suppliers"
+        (click)="setTab('suppliers')"
+      >
+        <i class="fa-solid fa-user-group text-xs" aria-hidden="true"></i>
+        Proveedores
+      </button>
+    </nav>
+
+    @if (tab() === 'history') {
+      <app-purchase-history
+        [rows]="purchases.pagedRows()"
+        [filteredCount]="purchases.filteredCount()"
+        [period]="purchases.period()"
+        [statusFilter]="purchases.status()"
+        [query]="purchases.query()"
+        [customFrom]="purchases.customFrom()"
+        [customTo]="purchases.customTo()"
+        [page]="purchases.currentPage()"
+        [pageCount]="purchases.pageCount()"
+        [isFirstPage]="purchases.isFirstPage()"
+        [isLastPage]="purchases.isLastPage()"
+        [isCustomPeriod]="purchases.isCustomPeriod()"
+        (periodChange)="purchases.setPeriod($event)"
+        (statusChange)="purchases.setStatus($event)"
+        (searchChange)="purchases.setQuery($event)"
+        (customFromChange)="purchases.setCustomFrom($event)"
+        (customToChange)="purchases.setCustomTo($event)"
+        (previous)="purchases.previousPage()"
+        (next)="purchases.nextPage()"
+        (newPurchase)="openNew('compra')"
+        (cancelPurchase)="cancelPurchase($event)"
+        (removePurchase)="removePurchase($event)"
+      />
+    } @else {
+      <app-purchase-suppliers
+        [rows]="purchases.supplierRows()"
+        (newSupplier)="openSupplierModal()"
+      />
+    }
+  }
+
+  <app-purchase-customize-modal
+    [open]="customizeOpen()"
+    [settings]="purchases.documentSettings()"
+    [companyName]="companyName()"
+    (dismiss)="closeCustomize()"
+    (save)="saveSettings($event)"
+  />
+
+  <app-purchase-export-modal
+    [open]="exportOpen()"
+    [records]="purchases.records()"
+    [suppliers]="purchases.suppliers()"
+    [settings]="purchases.documentSettings()"
+    [companyName]="companyName()"
+    (dismiss)="closeExport()"
+  />
+
+  <app-purchase-direct-modal
+    [open]="directOpen()"
+    [suppliers]="purchases.suppliers()"
+    [error]="directError()"
+    (dismiss)="closeDirect()"
+    (save)="submitDirect($event)"
+    (createSupplier)="addSupplier($event)"
+  />
+
+  <app-purchase-new-modal
+    [open]="newOpen()"
+    [mode]="newMode()"
+    [products]="productOptions()"
+    [suppliers]="purchases.suppliers()"
+    [nextNumber]="
+      newMode() === 'orden' ? purchases.nextOrderNumber() : purchases.nextPurchaseNumber()
+    "
+    [error]="newError()"
+    (dismiss)="closeNew()"
+    (submitPurchase)="submitPurchase($event)"
+    (submitOrder)="submitOrder($event)"
+    (createProductPurchase)="submitNewProduct($event)"
+    (createSupplier)="addSupplier($event)"
+  />
+
+  <app-purchase-supplier-modal
+    [open]="supplierModalOpen()"
+    [error]="supplierError()"
+    (dismiss)="closeSupplierModal()"
+    (save)="saveSupplier($event)"
+  />
+</div>

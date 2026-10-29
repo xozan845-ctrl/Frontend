@@ -1,0 +1,290 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="purchase-direct-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="purchase-direct-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 p-5 dark:border-surface-700"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+            aria-hidden="true"
+          >
+            <i class="fa-regular fa-clipboard"></i>
+          </span>
+          <h2
+            id="purchase-direct-title"
+            class="font-heading text-xl font-black tracking-tight uppercase"
+          >
+            Compra Directa
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:bg-surface-700 dark:hover:text-slate-200"
+          aria-label="Cerrar"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form class="overflow-y-auto p-5" [formGroup]="form" (ngSubmit)="submit()">
+        <p
+          class="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs leading-relaxed text-slate-500 dark:border-surface-700 dark:bg-surface-900 dark:text-slate-400"
+        >
+          Para un gasto de contado que <strong>no</strong> es compra de mercancía — como un
+          servicio, mantenimiento, o un insumo menor. No afecta tu inventario en absoluto. Se paga
+          de una vez, no es crédito.
+        </p>
+
+        @if (error(); as message) {
+          <p
+            class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+            role="alert"
+          >
+            {{ message }}
+          </p>
+        }
+
+        <div class="mt-4 flex flex-col gap-3">
+          <div>
+            <label
+              for="purchase-direct-supplier"
+              class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Proveedor
+            </label>
+            <select
+              id="purchase-direct-supplier"
+              class="input mt-1 py-2.5 text-xs"
+              formControlName="supplierId"
+            >
+              <option value="">— Sin proveedor —</option>
+              @for (supplier of suppliers(); track supplier.id) {
+                <option [value]="supplier.id">{{ supplier.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="h-px flex-1 bg-slate-100 dark:bg-surface-700"></span>
+            <span class="text-[10px] text-slate-400">o</span>
+            <span class="h-px flex-1 bg-slate-100 dark:bg-surface-700"></span>
+          </div>
+
+          @if (!showSupplierForm()) {
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm w-full"
+              (click)="toggleSupplierForm()"
+            >
+              <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+              Registrar proveedor nuevo
+            </button>
+          } @else {
+            <div class="flex gap-2">
+              <label for="purchase-direct-supplier-new" class="sr-only">Nombre del proveedor</label>
+              <input
+                id="purchase-direct-supplier-new"
+                type="text"
+                class="input py-2.5 text-xs"
+                placeholder="Nombre del proveedor"
+                [value]="manualSupplierName()"
+                (input)="onManualSupplier($event)"
+              />
+              <button type="button" class="btn btn-primary btn-sm" (click)="addSupplier()">
+                Agregar
+              </button>
+            </div>
+          }
+
+          <div>
+            <label
+              for="purchase-direct-concept"
+              class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              ¿De qué es esta compra? *
+            </label>
+            <input
+              id="purchase-direct-concept"
+              type="text"
+              class="input mt-1 py-2.5 text-xs"
+              placeholder="Ej: Reparación del aire acondicionado"
+              formControlName="concept"
+            />
+            @if (form.controls.concept.invalid && form.controls.concept.touched) {
+              <p class="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+                Describe el gasto (máx. 160 caracteres).
+              </p>
+            }
+          </div>
+
+          <div>
+            <label
+              for="purchase-direct-cost-type"
+              class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              ¿Qué tipo de costo es?
+            </label>
+            <select
+              id="purchase-direct-cost-type"
+              class="input mt-1 py-2.5 text-xs"
+              formControlName="costType"
+            >
+              @for (item of costTypes; track item.value) {
+                <option [value]="item.value">{{ item.label }}</option>
+              }
+            </select>
+            <p class="mt-1 text-[10px] text-slate-400">
+              Para la contabilidad: un servicio se asienta en la cuenta “Costo de servicios” que
+              configures, no en Inventario.
+            </p>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label
+                for="purchase-direct-amount"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Monto *
+              </label>
+              <input
+                id="purchase-direct-amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                class="input mt-1 py-2.5 text-xs"
+                placeholder="0.00"
+                formControlName="amount"
+              />
+              @if (form.controls.amount.invalid && form.controls.amount.touched) {
+                <p class="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+                  El monto debe ser mayor que 0.
+                </p>
+              }
+            </div>
+            <div>
+              <label
+                for="purchase-direct-date"
+                class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+              >
+                Fecha *
+              </label>
+              <input
+                id="purchase-direct-date"
+                type="date"
+                class="input mt-1 py-2.5 text-xs"
+                formControlName="date"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400"
+              [attr.aria-expanded]="showRetention()"
+              (click)="toggleRetention()"
+            >
+              <i
+                class="fa-solid text-[10px]"
+                [class.fa-caret-right]="!showRetention()"
+                [class.fa-caret-down]="showRetention()"
+                aria-hidden="true"
+              ></i>
+              ¿Le retienes IR al proveedor? (opcional)
+            </button>
+            @if (showRetention()) {
+              <div class="mt-2 flex items-end gap-2">
+                <div class="flex-1">
+                  <label
+                    for="purchase-direct-retention"
+                    class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    % de retención
+                  </label>
+                  <input
+                    id="purchase-direct-retention"
+                    type="number"
+                    min="0"
+                    max="30"
+                    step="0.01"
+                    class="input mt-1 py-2.5 text-xs"
+                    formControlName="retentionPercent"
+                  />
+                </div>
+                <p class="pb-2 text-xs text-slate-500 dark:text-slate-400">
+                  Retención: {{ form.controls.retentionPercent.value }}%
+                </p>
+              </div>
+            }
+          </div>
+
+          <div>
+            <label
+              for="purchase-direct-payment"
+              class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Método de pago
+            </label>
+            <select
+              id="purchase-direct-payment"
+              class="input mt-1 py-2.5 text-xs"
+              formControlName="paymentMethod"
+            >
+              @for (item of paymentMethods; track item.value) {
+                <option [value]="item.value">{{ item.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="purchase-direct-notes"
+              class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Observaciones
+            </label>
+            <textarea
+              id="purchase-direct-notes"
+              rows="2"
+              maxlength="240"
+              class="input mt-1 resize-y py-2.5 text-xs"
+              placeholder="Opcional"
+              formControlName="notes"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+
+      <footer
+        class="flex items-center justify-end gap-2 border-t border-slate-100 p-4 dark:border-surface-700"
+      >
+        <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          data-testid="purchase-direct-save"
+          (click)="submit()"
+        >
+          <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+          Registrar compra
+        </button>
+      </footer>
+    </div>
+  </div>
+}

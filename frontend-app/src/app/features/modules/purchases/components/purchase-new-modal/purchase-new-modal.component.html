@@ -1,0 +1,852 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      [class.max-w-5xl]="stage() !== 'new-product'"
+      [class.max-w-2xl]="stage() === 'new-product'"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="purchase-new-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="purchase-new-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 p-5 dark:border-surface-700"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+            aria-hidden="true"
+          >
+            <i class="fa-regular fa-clipboard"></i>
+          </span>
+          <div>
+            <h2
+              id="purchase-new-title"
+              class="font-heading text-xl font-black tracking-tight uppercase"
+            >
+              {{ title() }}
+            </h2>
+            @if (stage() === 'wizard') {
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Documento {{ nextNumber() }} · {{ supplierLabel() }}
+              </p>
+            }
+          </div>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:hover:bg-surface-700 dark:hover:text-slate-200"
+          aria-label="Cerrar"
+          data-testid="purchase-new-close"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="overflow-y-auto p-5">
+        @if (error(); as message) {
+          <p
+            class="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+            role="alert"
+          >
+            {{ message }}
+          </p>
+        }
+        @if (localError(); as message) {
+          <p
+            class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+            role="alert"
+          >
+            {{ message }}
+          </p>
+        }
+
+        @if (stage() === 'choice') {
+          <h3 class="font-heading text-xl font-black tracking-tight">¿Qué vas a comprar?</h3>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <button
+              type="button"
+              class="group flex flex-col items-start rounded-2xl border-2 border-slate-200 p-5 text-left transition-colors hover:border-accent-500 hover:bg-accent-50/50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:border-surface-600 dark:hover:bg-accent-900/10"
+              data-testid="purchase-new-existing"
+              (click)="selectStage('existing')"
+            >
+              <span class="text-3xl" aria-hidden="true">📦</span>
+              <span class="mt-3 font-heading text-lg font-black tracking-tight">
+                Producto existente
+              </span>
+              <span class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                Ya está registrado en Productos/Servicios. Busca y agrega al carrito como siempre.
+              </span>
+            </button>
+            <button
+              type="button"
+              class="group flex flex-col items-start rounded-2xl border-2 border-slate-200 p-5 text-left transition-colors hover:border-accent-500 hover:bg-accent-50/50 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:border-surface-600 dark:hover:bg-accent-900/10"
+              data-testid="purchase-new-product-option"
+              (click)="selectStage('new')"
+            >
+              <span class="text-3xl" aria-hidden="true">✨</span>
+              <span class="mt-3 font-heading text-lg font-black tracking-tight">
+                Producto nuevo
+              </span>
+              <span class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                No existe todavía. Se crea, se descuenta de caja y queda registrado como compra —
+                todo en un solo paso.
+              </span>
+            </button>
+          </div>
+        }
+
+        @if (stage() === 'wizard') {
+          <div
+            class="flex flex-wrap items-center gap-1 rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+            role="tablist"
+            aria-label="Pasos de la compra"
+          >
+            @for (item of steps(); track item.value) {
+              <button
+                type="button"
+                role="tab"
+                [class]="stepClass(item.value)"
+                [disabled]="item.value > maxVisited()"
+                [attr.aria-selected]="step() === item.value"
+                [attr.data-testid]="'purchase-new-step-' + item.value"
+                (click)="goToStep(item.value)"
+              >
+                <span [class]="stepCircleClass(item.value)">{{ item.value }}</span>
+                {{ item.label }}
+              </button>
+              @if (!$last) {
+                <span class="text-slate-300 dark:text-surface-500" aria-hidden="true">—</span>
+              }
+            }
+          </div>
+
+          @switch (step()) {
+            @case (1) {
+              <section class="mt-5" aria-labelledby="purchase-step-supplier">
+                <div class="flex items-center gap-2">
+                  <i
+                    class="fa-regular fa-user text-accent-600 dark:text-accent-400"
+                    aria-hidden="true"
+                  ></i>
+                  <h3
+                    id="purchase-step-supplier"
+                    class="font-heading text-lg font-black tracking-tight"
+                  >
+                    Seleccionar proveedor
+                  </h3>
+                </div>
+                <label
+                  for="purchase-new-supplier"
+                  class="mt-4 block text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Proveedor
+                </label>
+                <select
+                  id="purchase-new-supplier"
+                  class="input mt-1 py-3 text-sm"
+                  [value]="selectedSupplierId()"
+                  data-testid="purchase-new-supplier"
+                  (change)="selectedSupplierId.set($any($event.target).value)"
+                >
+                  <option value="">— Sin proveedor / Seleccionar —</option>
+                  @for (supplier of suppliers(); track supplier.id) {
+                    <option [value]="supplier.id" [selected]="selectedSupplierId() === supplier.id">
+                      {{ supplier.name }}
+                    </option>
+                  }
+                </select>
+
+                <div class="mt-4 flex items-center gap-3">
+                  <span class="h-px flex-1 bg-slate-100 dark:bg-surface-700"></span>
+                  <span class="text-[10px] text-slate-400">o</span>
+                  <span class="h-px flex-1 bg-slate-100 dark:bg-surface-700"></span>
+                </div>
+
+                @if (!showSupplierForm()) {
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm mt-4 w-full"
+                    (click)="toggleSupplierForm()"
+                  >
+                    <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+                    Crear nuevo proveedor
+                  </button>
+                } @else {
+                  <div class="mt-4 flex gap-2">
+                    <label for="purchase-new-supplier-name" class="sr-only">
+                      Nombre del proveedor
+                    </label>
+                    <input
+                      id="purchase-new-supplier-name"
+                      type="text"
+                      class="input py-2.5 text-xs"
+                      placeholder="Nombre del proveedor"
+                      [value]="manualSupplierName()"
+                      (input)="onManualSupplier($event)"
+                    />
+                    <button type="button" class="btn btn-primary btn-sm" (click)="addSupplier()">
+                      Agregar
+                    </button>
+                  </div>
+                }
+                @if (manualSupplierName().trim()) {
+                  <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                    Se usará el proveedor: <strong>{{ manualSupplierName() }}</strong>
+                  </p>
+                }
+              </section>
+            }
+
+            @case (2) {
+              <section class="mt-5" aria-labelledby="purchase-step-products">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <h3
+                    id="purchase-step-products"
+                    class="font-heading text-lg font-black tracking-tight"
+                  >
+                    Agregar productos
+                  </h3>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">
+                    {{ lines().length }} en el carrito
+                  </span>
+                </div>
+                <label for="purchase-new-product-search" class="sr-only">Buscar producto</label>
+                <div class="relative mt-3">
+                  <i
+                    class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+                    aria-hidden="true"
+                  ></i>
+                  <input
+                    id="purchase-new-product-search"
+                    type="search"
+                    class="input py-2.5 pl-9 text-xs"
+                    placeholder="Buscar por nombre, SKU o categoría…"
+                    [value]="productQuery()"
+                    (input)="setProductQuery($event)"
+                  />
+                </div>
+
+                @if (filteredProducts().length === 0) {
+                  <div
+                    class="mt-4 rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500 dark:border-surface-600 dark:text-slate-400"
+                  >
+                    No hay productos que coincidan. Si es un producto nuevo, cancela y elige
+                    “Producto nuevo”.
+                  </div>
+                } @else {
+                  <div class="mt-3 grid max-h-72 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
+                    @for (product of filteredProducts(); track product.id) {
+                      <button
+                        type="button"
+                        class="flex items-start justify-between gap-2 rounded-xl border border-slate-100 p-3 text-left transition-colors hover:border-accent-400 hover:bg-accent-50/50 dark:border-surface-700 dark:hover:bg-accent-900/10"
+                        [attr.data-testid]="'purchase-new-product-' + product.id"
+                        (click)="addProduct(product)"
+                      >
+                        <span class="min-w-0">
+                          <span class="block truncate text-xs font-bold">{{ product.name }}</span>
+                          <span class="block truncate text-[10px] text-slate-400">
+                            {{ product.code || 'Sin SKU' }} · Stock {{ product.stock ?? 0 }}
+                          </span>
+                          <span
+                            class="mt-1 block text-[10px] font-bold text-accent-600 dark:text-accent-400"
+                          >
+                            {{ product.cost | appCurrency }}
+                          </span>
+                        </span>
+                        <i class="fa-solid fa-plus text-xs text-accent-600" aria-hidden="true"></i>
+                      </button>
+                    }
+                  </div>
+                }
+              </section>
+            }
+
+            @case (3) {
+              <section class="mt-5" aria-labelledby="purchase-step-cart">
+                <h3 id="purchase-step-cart" class="font-heading text-lg font-black tracking-tight">
+                  Carrito
+                </h3>
+                @if (lines().length === 0) {
+                  <p
+                    class="mt-4 rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500 dark:border-surface-600 dark:text-slate-400"
+                  >
+                    El carrito está vacío.
+                  </p>
+                } @else {
+                  <div class="mt-3 divide-y divide-slate-100 dark:divide-surface-700">
+                    @for (line of lines(); track $index; let index = $index) {
+                      <div
+                        class="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div class="min-w-0">
+                          <p class="truncate text-xs font-bold">{{ line.name }}</p>
+                          <p class="text-[10px] text-slate-400">{{ line.sku || 'Sin SKU' }}</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                          <div class="flex items-center gap-1">
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm h-8 w-8 px-0"
+                              [attr.aria-label]="'Quitar una unidad de ' + line.name"
+                              (click)="decrementLine(index)"
+                            >
+                              <i class="fa-solid fa-minus text-[10px]" aria-hidden="true"></i>
+                            </button>
+                            <label class="sr-only" [for]="'purchase-quantity-' + index"
+                              >Cantidad</label
+                            >
+                            <input
+                              [id]="'purchase-quantity-' + index"
+                              type="number"
+                              min="1"
+                              class="input w-16 px-2 py-1.5 text-center text-xs"
+                              [value]="line.quantity"
+                              (change)="setQuantity(index, $event)"
+                            />
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm h-8 w-8 px-0"
+                              [attr.aria-label]="'Agregar una unidad de ' + line.name"
+                              (click)="incrementLine(index)"
+                            >
+                              <i class="fa-solid fa-plus text-[10px]" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <label class="sr-only" [for]="'purchase-cost-' + index"
+                              >Costo unitario</label
+                            >
+                            <input
+                              [id]="'purchase-cost-' + index"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              class="input w-24 px-2 py-1.5 text-right text-xs"
+                              [value]="line.unitCost"
+                              (change)="setUnitCost(index, $event)"
+                            />
+                          </div>
+                          <p class="w-24 text-right text-xs font-bold tabular-nums">
+                            {{ line.quantity * line.unitCost | appCurrency }}
+                          </p>
+                          <button
+                            type="button"
+                            class="btn btn-ghost btn-sm text-red-600"
+                            [attr.aria-label]="'Quitar ' + line.name + ' del carrito'"
+                            (click)="removeLine(index)"
+                          >
+                            <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                <div
+                  class="mt-3 flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm dark:bg-surface-900"
+                >
+                  <span class="text-slate-500 dark:text-slate-400">{{ units() }} unidades</span>
+                  <span class="font-black tabular-nums">{{ total() | appCurrency }}</span>
+                </div>
+              </section>
+            }
+
+            @case (4) {
+              <section class="mt-5" aria-labelledby="purchase-step-summary">
+                <h3
+                  id="purchase-step-summary"
+                  class="font-heading text-lg font-black tracking-tight"
+                >
+                  Resumen
+                </h3>
+                <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label
+                      for="purchase-new-date"
+                      class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                    >
+                      Fecha
+                    </label>
+                    <input
+                      id="purchase-new-date"
+                      type="date"
+                      class="input mt-1 py-2.5 text-xs"
+                      [value]="date()"
+                      (input)="onDate($event)"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      Proveedor
+                    </p>
+                    <p class="mt-2 text-sm font-bold">{{ supplierLabel() }}</p>
+                  </div>
+                </div>
+                <div
+                  class="mt-4 overflow-hidden rounded-xl border border-slate-100 dark:border-surface-700"
+                >
+                  <table class="w-full text-left text-xs">
+                    <thead
+                      class="bg-slate-50 text-[10px] tracking-widest text-slate-400 uppercase dark:bg-surface-900"
+                    >
+                      <tr>
+                        <th scope="col" class="px-3 py-2 font-bold">Producto</th>
+                        <th scope="col" class="px-3 py-2 text-right font-bold">Cant.</th>
+                        <th scope="col" class="px-3 py-2 text-right font-bold">Costo</th>
+                        <th scope="col" class="px-3 py-2 text-right font-bold">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+                      @for (line of lines(); track $index) {
+                        <tr>
+                          <td class="px-3 py-2">{{ line.name }}</td>
+                          <td class="px-3 py-2 text-right">{{ line.quantity }}</td>
+                          <td class="px-3 py-2 text-right">{{ line.unitCost | appCurrency }}</td>
+                          <td class="px-3 py-2 text-right font-bold">
+                            {{ line.quantity * line.unitCost | appCurrency }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+                <div
+                  class="mt-3 flex items-center justify-between rounded-xl bg-slate-50 p-3 text-sm dark:bg-surface-900"
+                >
+                  <span class="text-slate-500 dark:text-slate-400">Total</span>
+                  <span class="font-heading text-lg font-black tabular-nums">
+                    {{ total() | appCurrency }}
+                  </span>
+                </div>
+                <label
+                  for="purchase-new-notes"
+                  class="mt-3 block text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Observaciones
+                </label>
+                <textarea
+                  id="purchase-new-notes"
+                  rows="2"
+                  maxlength="240"
+                  class="input mt-1 resize-y py-2.5 text-xs"
+                  placeholder="Opcional"
+                  [value]="notes()"
+                  (input)="onNotes($event)"
+                ></textarea>
+              </section>
+            }
+
+            @case (5) {
+              @if (mode() === 'compra') {
+                <section class="mt-5" aria-labelledby="purchase-step-payment">
+                  <h3
+                    id="purchase-step-payment"
+                    class="font-heading text-lg font-black tracking-tight"
+                  >
+                    Forma de pago
+                  </h3>
+                  <div class="mt-3">
+                    <label
+                      for="purchase-new-payment"
+                      class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                    >
+                      Método de pago
+                    </label>
+                    <select
+                      id="purchase-new-payment"
+                      class="input mt-1 py-2.5 text-xs"
+                      [value]="paymentMethod()"
+                      (change)="onPaymentChange($event)"
+                    >
+                      @for (method of paymentMethods; track method.value) {
+                        <option
+                          [value]="method.value"
+                          [selected]="paymentMethod() === method.value"
+                        >
+                          {{ method.label }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                </section>
+              }
+            }
+
+            @case (6) {
+              @if (mode() === 'compra') {
+                <section class="mt-5" aria-labelledby="purchase-step-status">
+                  <h3
+                    id="purchase-step-status"
+                    class="font-heading text-lg font-black tracking-tight"
+                  >
+                    Estado de la compra
+                  </h3>
+                  <div class="mt-3">
+                    <label
+                      for="purchase-new-status"
+                      class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                    >
+                      Estado
+                    </label>
+                    <select
+                      id="purchase-new-status"
+                      class="input mt-1 py-2.5 text-xs"
+                      [value]="status()"
+                      (change)="onStatusChange($event)"
+                    >
+                      <option value="recibida" [selected]="status() === 'recibida'">
+                        Recibida (entra al inventario)
+                      </option>
+                      <option value="pendiente" [selected]="status() === 'pendiente'">
+                        Pendiente (por pagar)
+                      </option>
+                    </select>
+                  </div>
+                </section>
+              }
+            }
+
+            @case (7) {
+              <section class="mt-5" aria-labelledby="purchase-step-confirm">
+                <h3
+                  id="purchase-step-confirm"
+                  class="font-heading text-lg font-black tracking-tight"
+                >
+                  Confirmar
+                </h3>
+                <div class="mt-3 rounded-2xl border border-slate-100 p-4 dark:border-surface-700">
+                  <dl class="grid gap-2 text-xs sm:grid-cols-2">
+                    <div>
+                      <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                        Documento
+                      </dt>
+                      <dd class="font-mono font-bold text-accent-600 dark:text-accent-400">
+                        {{ nextNumber() }}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                        Fecha
+                      </dt>
+                      <dd class="font-bold">{{ date() }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                        Proveedor
+                      </dt>
+                      <dd class="font-bold">{{ supplierLabel() }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                        Estado
+                      </dt>
+                      <dd class="font-bold">
+                        {{ status() === 'recibida' ? 'Recibida' : 'Pendiente' }}
+                      </dd>
+                    </div>
+                  </dl>
+                  <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                    {{ lines().length }} productos · {{ units() }} unidades ·
+                    <strong class="text-slate-900 dark:text-white">{{
+                      total() | appCurrency
+                    }}</strong>
+                  </p>
+                  @if (notes()) {
+                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">{{ notes() }}</p>
+                  }
+                </div>
+              </section>
+            }
+          }
+
+          @if (mode() === 'orden' && step() === 5) {
+            <section class="mt-5" aria-labelledby="purchase-step-confirm-order">
+              <h3
+                id="purchase-step-confirm-order"
+                class="font-heading text-lg font-black tracking-tight"
+              >
+                Confirmar orden
+              </h3>
+              <div class="mt-3 rounded-2xl border border-slate-100 p-4 dark:border-surface-700">
+                <dl class="grid gap-2 text-xs sm:grid-cols-2">
+                  <div>
+                    <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      Documento
+                    </dt>
+                    <dd class="font-mono font-bold text-accent-600 dark:text-accent-400">
+                      {{ nextNumber() }}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      Fecha
+                    </dt>
+                    <dd class="font-bold">{{ date() }}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      Proveedor
+                    </dt>
+                    <dd class="font-bold">{{ supplierLabel() }}</dd>
+                  </div>
+                </dl>
+                <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                  {{ lines().length }} productos · {{ units() }} unidades ·
+                  <strong class="text-slate-900 dark:text-white">{{
+                    total() | appCurrency
+                  }}</strong>
+                </p>
+                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  Esta orden no descuenta caja ni aumenta inventario hasta que se convierta en
+                  compra.
+                </p>
+              </div>
+            </section>
+          }
+
+          <div
+            class="sticky bottom-0 z-10 -mx-5 -mb-5 mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-white px-5 py-4 dark:border-surface-700 dark:bg-surface-800"
+          >
+            <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+              Cancelar
+            </button>
+            <div class="flex items-center gap-2">
+              @if (step() > 1) {
+                <button type="button" class="btn btn-secondary btn-sm" (click)="previous()">
+                  <i class="fa-solid fa-chevron-left text-[10px]" aria-hidden="true"></i>
+                  Anterior
+                </button>
+              }
+              @if (step() >= steps().length) {
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  data-testid="purchase-new-confirm"
+                  (click)="submitWizard()"
+                >
+                  <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+                  {{ mode() === 'orden' ? 'Crear orden' : 'Confirmar compra' }}
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  [disabled]="nextDisabled()"
+                  data-testid="purchase-new-next"
+                  (click)="next()"
+                >
+                  Siguiente
+                  <i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        @if (stage() === 'new-product') {
+          <form [formGroup]="newProductForm" (ngSubmit)="submitNewProduct()">
+            <div class="flex items-center gap-2">
+              <i
+                class="fa-solid fa-plus text-accent-600 dark:text-accent-400"
+                aria-hidden="true"
+              ></i>
+              <h3 class="font-heading text-lg font-black tracking-tight">Producto nuevo</h3>
+            </div>
+            <p class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+              Esto crea el producto en tu inventario, registra la compra y descuenta el costo de
+              Caja automáticamente. A diferencia de Productos/Servicios, aquí siempre se descuenta
+              de caja (no hay opción “ya lo tenía”).
+            </p>
+
+            <div class="mt-4 grid gap-3">
+              <div>
+                <label
+                  for="purchase-new-product-supplier"
+                  class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Proveedor (opcional)
+                </label>
+                <select
+                  id="purchase-new-product-supplier"
+                  class="input mt-1 py-2.5 text-xs"
+                  formControlName="supplierId"
+                >
+                  <option value="">— Sin proveedor / Seleccionar —</option>
+                  @for (supplier of suppliers(); track supplier.id) {
+                    <option [value]="supplier.id">{{ supplier.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label
+                  for="purchase-new-product-name"
+                  class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Nombre del producto *
+                </label>
+                <input
+                  id="purchase-new-product-name"
+                  type="text"
+                  class="input mt-1 py-2.5 text-xs"
+                  placeholder="Ej: Taladro inalámbrico"
+                  formControlName="name"
+                />
+                @if (newProductForm.controls.name.invalid && newProductForm.controls.name.touched) {
+                  <p class="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+                    Indica el nombre del producto.
+                  </p>
+                }
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="purchase-new-product-category"
+                    class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    Categoría
+                  </label>
+                  <input
+                    id="purchase-new-product-category"
+                    type="text"
+                    class="input mt-1 py-2.5 text-xs"
+                    placeholder="Ej: Herramientas"
+                    formControlName="category"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="purchase-new-product-sku"
+                    class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    SKU / código (opcional)
+                  </label>
+                  <input
+                    id="purchase-new-product-sku"
+                    type="text"
+                    class="input mt-1 py-2.5 text-xs"
+                    placeholder="Ej: TAL-001"
+                    formControlName="sku"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  for="purchase-new-product-payment"
+                  class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Método de pago *
+                </label>
+                <select
+                  id="purchase-new-product-payment"
+                  class="input mt-1 py-2.5 text-xs"
+                  formControlName="paymentMethod"
+                >
+                  @for (method of paymentMethods; track method.value) {
+                    <option [value]="method.value">{{ method.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    for="purchase-new-product-cost"
+                    class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    Costo unitario (compra) *
+                  </label>
+                  <input
+                    id="purchase-new-product-cost"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    class="input mt-1 py-2.5 text-xs"
+                    placeholder="0.00"
+                    formControlName="unitCost"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="purchase-new-product-price"
+                    class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    Precio de venta *
+                  </label>
+                  <input
+                    id="purchase-new-product-price"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    class="input mt-1 py-2.5 text-xs"
+                    placeholder="0.00"
+                    formControlName="salePrice"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  for="purchase-new-product-quantity"
+                  class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Cantidad / stock inicial *
+                </label>
+                <input
+                  id="purchase-new-product-quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  class="input mt-1 py-2.5 text-xs"
+                  formControlName="quantity"
+                />
+              </div>
+
+              <p
+                class="rounded-xl bg-emerald-50 p-3 text-xs font-bold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+              >
+                Total a descontar de caja:
+                {{ newProductTotal() | appCurrency }}
+              </p>
+            </div>
+
+            <div
+              class="sticky bottom-0 z-10 -mx-5 -mb-5 mt-5 flex items-center justify-end gap-2 border-t border-slate-100 bg-white px-5 py-4 dark:border-surface-700 dark:bg-surface-800"
+            >
+              <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+                data-testid="purchase-new-product-save"
+              >
+                <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+                Comprar y agregar al inventario
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+
+      @if (stage() === 'choice') {
+        <footer
+          class="flex items-center justify-end border-t border-slate-100 p-4 dark:border-surface-700"
+        >
+          <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+            Cancelar
+          </button>
+        </footer>
+      }
+    </div>
+  </div>
+}
