@@ -12,6 +12,7 @@ const MOVEMENT: CashMovement = {
   paymentMethod: 'efectivo',
   status: 'confirmado',
   account: 'caja-general',
+  source: 'manual',
   reference: 'REC-1',
   counterpart: 'Ana',
   notes: '',

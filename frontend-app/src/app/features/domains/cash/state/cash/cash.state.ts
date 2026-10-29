@@ -17,5 +17,7 @@ export interface CashState {
   category: CashCategoryFilter;
   paymentMethod: CashPaymentFilter;
   search: string;
+  dateFrom: string;
+  dateTo: string;
   page: number;
 }

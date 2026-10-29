@@ -65,6 +65,7 @@ describe('CashStore', () => {
 
     expect(store.addMovement(payload()).ok).toBe(true);
     expect(store.records()).toHaveLength(1);
+    expect(store.records()[0].source).toBe('manual');
     expect(notification.showSuccess).toHaveBeenCalledWith('Movimiento registrado.');
     const id = store.records()[0].id;
 
@@ -88,17 +89,28 @@ describe('CashStore', () => {
   it('debe exponer KPIs, etiquetas y saludo', () => {
     const store = setup();
 
-    expect(store.summary()).toMatchObject({ available: 0, incomeMonth: 0, expenseMonth: 0 });
+    expect(store.summary()).toMatchObject({
+      available: 0,
+      incomeMonth: 0,
+      incomeCountMonth: 0,
+      expenseMonth: 0,
+      expenseCountMonth: 0,
+      otherIncome: 0,
+      otherExpense: 0,
+    });
     expect(store.categoryLabels()['venta']).toBe('Venta');
     expect(store.paymentLabels()['efectivo']).toBe('Efectivo');
     expect(store.statusLabels()['confirmado']).toBe('Confirmado');
     expect(store.typeLabels()['ingreso']).toBe('Ingreso');
     expect(store.accountLabels()['bac']).toBe('BAC Credomatic');
+    expect(store.sourceLabels()['venta']).toBe('Ventas');
+    expect(store.sourceLocks()['venta']).toBe(true);
+    expect(store.sourceLocks()['manual']).toBe(false);
     expect(store.greeting()).toContain('Karla');
     expect(store.today()).toBe(localDate());
   });
 
-  it('debe filtrar por tab, período, tipo, estado, categoría, método y búsqueda', () => {
+  it('debe filtrar por tab, período, rango, tipo, estado, categoría, método y búsqueda', () => {
     const store = setup();
     store.addMovement(payload({ concept: 'Venta', category: 'venta' }));
     store.addMovement(
@@ -121,9 +133,14 @@ describe('CashStore', () => {
 
     store.setPeriod('today');
     expect(store.filteredCount()).toBe(4);
-    store.setPeriod('previous');
+    store.setPeriod('year');
+    expect(store.filteredCount()).toBe(4);
+    store.setPeriod('custom');
+    store.setDateRange(localDate(-40), localDate(-40));
     expect(store.filteredCount()).toBe(0);
-    store.setPeriod('all');
+    store.setDateRange(localDate(), localDate());
+    expect(store.filteredCount()).toBe(4);
+    store.setPeriod('month');
 
     store.setType('egreso');
     expect(store.filteredCount()).toBe(2);
@@ -146,15 +163,17 @@ describe('CashStore', () => {
     expect(store.filteredCount()).toBe(4);
     expect(store.period()).toBe('month');
     expect(store.search()).toBe('');
+    expect(store.dateFrom()).toBe('');
+    expect(store.dateTo()).toBe('');
   });
 
-  it('debe paginar los movimientos filtrados', () => {
+  it('debe paginar los movimientos filtrados en páginas de 15', () => {
     const store = setup();
-    for (let index = 0; index < 6; index += 1) {
+    for (let index = 0; index < 16; index += 1) {
       store.addMovement(payload({ concept: `Movimiento ${index}` }));
     }
 
-    expect(store.pagedRecords()).toHaveLength(5);
+    expect(store.pagedRecords()).toHaveLength(15);
     expect(store.pageCount()).toBe(2);
     store.nextPage();
     expect(store.currentPage()).toBe(2);
@@ -187,6 +206,15 @@ describe('CashStore', () => {
     });
     expect(store.movementRows()).toHaveLength(3);
     expect(store.movementRows()[0].balance).toBeTypeOf('number');
+    expect(store.summary()).toMatchObject({
+      available: 70,
+      incomeMonth: 600,
+      incomeCountMonth: 2,
+      expenseMonth: 30,
+      expenseCountMonth: 1,
+      otherIncome: 600,
+      otherExpense: 30,
+    });
   });
 
   it('debe migrar los movimientos del store anterior', () => {
@@ -206,7 +234,11 @@ describe('CashStore', () => {
     const store = setup();
 
     expect(store.records()).toHaveLength(1);
-    expect(store.records()[0]).toMatchObject({ concept: 'Pago de luz', category: 'gasto' });
+    expect(store.records()[0]).toMatchObject({
+      concept: 'Pago de luz',
+      category: 'gasto',
+      source: 'manual',
+    });
   });
 
   it('debe rechazar movimientos inválidos y respetar el límite', () => {

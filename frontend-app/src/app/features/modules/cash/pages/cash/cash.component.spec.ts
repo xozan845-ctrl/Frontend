@@ -4,6 +4,7 @@ import { SeoService } from '../../../../../core/services/seo/seo.service';
 import {
   CashStore,
   type CashMovement,
+  type CashMovementSource,
   type CashMovementType,
   type CashPeriod,
   type CashReportExport,
@@ -21,6 +22,7 @@ const ROW: CashMovement = {
   paymentMethod: 'efectivo',
   status: 'confirmado',
   account: 'caja-general',
+  source: 'venta',
   reference: 'REC-1',
   counterpart: 'Ana',
   notes: '',
@@ -30,20 +32,26 @@ const ROW: CashMovement = {
 describe('CashComponent', () => {
   const store = {
     summary: signal({
-      available: 1500,
-      incomeMonth: 3200,
-      expenseMonth: 800,
-      movementsMonth: 7,
-      pettyCash: 1850,
-      banks: 5200,
+      available: 1215657.98,
+      incomeMonth: 441435.63,
+      incomeCountMonth: 360,
+      expenseMonth: 0,
+      expenseCountMonth: 0,
+      movementsMonth: 360,
+      otherIncome: 0,
+      otherExpense: 0,
+      pettyCash: 2000,
+      banks: 0,
     }),
-    greeting: signal('Buenos días, Karla'),
+    greeting: signal('Buenas tardes, Karla'),
     today: signal('2026-10-29'),
-    categoryLabels: signal({ venta: 'Venta' }),
+    categoryLabels: signal({ venta: 'Venta', gasto: 'Gasto' }),
     paymentLabels: signal({ efectivo: 'Efectivo' }),
     accountLabels: signal({ 'caja-general': 'Caja general', bac: 'BAC Credomatic' }),
     statusLabels: signal({ confirmado: 'Confirmado', pendiente: 'Pendiente' }),
     typeLabels: signal({ ingreso: 'Ingreso', egreso: 'Egreso' }),
+    sourceLabels: signal({ manual: 'Manual', venta: 'Ventas' }),
+    sourceLocks: signal({ manual: false, venta: true }),
     records: signal([ROW]),
     movementRows: signal([{ record: ROW, balance: 100 }]),
     filteredCount: signal(1),
@@ -55,6 +63,8 @@ describe('CashComponent', () => {
     category: signal('all'),
     paymentMethod: signal<'all' | 'efectivo'>('all'),
     search: signal(''),
+    dateFrom: signal(''),
+    dateTo: signal(''),
     currentPage: signal(1),
     pageCount: signal(1),
     pagedRecords: signal([ROW]),
@@ -95,6 +105,7 @@ describe('CashComponent', () => {
     removeMovement: vi.fn(),
     setTab: vi.fn(),
     setPeriod: vi.fn(),
+    setDateRange: vi.fn(),
     setType: vi.fn(),
     setStatus: vi.fn(),
     setCategory: vi.fn(),
@@ -121,6 +132,9 @@ describe('CashComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     store.tab.set('movements');
+    store.period.set('month');
+    store.dateFrom.set('');
+    store.dateTo.set('');
     store.hasRecords.set(true);
     store.filteredCount.set(1);
     store.currentPage.set(1);
@@ -130,21 +144,23 @@ describe('CashComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe pintar la cabecera, KPIs y movimientos', async () => {
+  it('debe pintar la cabecera, KPIs y movimientos con formato NIO', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.textContent).toContain('Caja');
-    expect(host.textContent).toContain('Buenos días, Karla');
-    expect(host.textContent).toContain('C$1,500.00');
-    expect(host.textContent).toContain('C$3,200.00');
+    expect(host.textContent).toContain('Buenas tardes, Karla');
+    expect(host.textContent).toContain('Centro financiero del negocio');
+    expect(host.textContent).toContain('NIO 1,215,657.98');
+    expect(host.textContent).toContain('NIO 441,435.63');
+    expect(host.textContent).toContain('360 entradas');
     expect(host.textContent).toContain('Venta de contado');
-    expect(host.textContent).toContain('C$100.00');
+    expect(host.textContent).toContain('NIO 100.00');
+    expect(host.textContent).toContain('Ventas');
     expect(host.querySelector('[data-testid="cash-table"]')).not.toBeNull();
-    expect(host.querySelector('[data-testid="cash-kpi-available"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="cash-kpi-other-income"]')).not.toBeNull();
   });
 
-  it('debe pintar cierres, métodos y bancos cuando cambia el tab', async () => {
+  it('debe pintar métodos, cierres, bancos, caja chica y transferencias', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
@@ -159,6 +175,16 @@ describe('CashComponent', () => {
     store.tab.set('banks');
     fixture.detectChanges();
     expect(host.textContent).toContain('BAC Credomatic');
+    expect(host.querySelector('[data-testid="cash-section-table"]')).not.toBeNull();
+
+    store.tab.set('petty-cash');
+    fixture.detectChanges();
+    expect(host.textContent).toContain('Fondo asignado');
+    expect(host.textContent).toContain('Gasto de caja chica');
+
+    store.tab.set('transfers');
+    fixture.detectChanges();
+    expect(host.textContent).toContain('Nueva transferencia');
   });
 
   it('debe abrir el modal de alta y guardar', async () => {
@@ -218,36 +244,39 @@ describe('CashComponent', () => {
     component.closeReport();
     expect(component.reportOpen()).toBe(false);
 
-    component.setPeriod({ target: { value: 'today' } } as unknown as Event);
-    component.setType({ target: { value: 'egreso' } } as unknown as Event);
-    component.setStatus({ target: { value: 'pendiente' } } as unknown as Event);
-    component.selectCategory({ target: { value: 'venta' } } as unknown as Event);
-    component.selectPaymentMethod({ target: { value: 'efectivo' } } as unknown as Event);
+    component.selectPeriod('custom');
+    component.setDateFrom({ target: { value: '2026-10-01' } } as unknown as Event);
+    component.setDateTo({ target: { value: '2026-10-31' } } as unknown as Event);
     component.search({ target: { value: 'venta' } } as unknown as Event);
     component.resetFilters();
 
-    expect(store.setPeriod).toHaveBeenCalledWith('today');
-    expect(store.setType).toHaveBeenCalledWith('egreso');
-    expect(store.setStatus).toHaveBeenCalledWith('pendiente');
-    expect(store.setCategory).toHaveBeenCalledWith('venta');
-    expect(store.setPaymentMethod).toHaveBeenCalledWith('efectivo');
+    expect(store.setPeriod).toHaveBeenCalledWith('custom');
+    expect(store.setDateRange).toHaveBeenCalledWith('2026-10-01', '');
+    expect(store.setDateRange).toHaveBeenCalledWith('', '2026-10-31');
     expect(store.setSearch).toHaveBeenCalledWith('venta');
     expect(store.resetFilters).toHaveBeenCalled();
   });
 
-  it('debe clasificar estados y tabs de movimientos', async () => {
+  it('debe clasificar tabs, periodos, categorías, saldos y orígenes', async () => {
     const fixture = await setup();
     const component = fixture.componentInstance;
 
+    expect(component.tabClass('movements')).toContain('bg-emerald-300');
+    expect(component.tabClass('banks')).toContain('text-slate-500');
+    expect(component.periodClass('month')).toContain('bg-emerald-300');
+    expect(component.periodClass('year')).toContain('text-slate-500');
+    expect(component.categoryBadge('venta')).toBe('badge badge-success normal-case');
+    expect(component.categoryBadge('gasto')).toBe('badge badge-danger normal-case');
+    expect(component.categoryBadge('transferencia')).toBe('badge badge-primary normal-case');
+    expect(component.categoryBadge('caja-chica')).toBe('badge badge-warning normal-case');
+    expect(component.categoryBadge('otro')).toBe('badge badge-neutral normal-case');
+    expect(component.balanceClass(-1)).toContain('text-red-600');
+    expect(component.balanceClass(1)).toContain('text-emerald-600');
     expect(component.statusClass('confirmado')).toBe('badge-success');
     expect(component.statusClass('pendiente')).toBe('badge-warning');
     expect(component.statusClass('anulado')).toBe('badge-danger');
-    expect(component.showsMovements('movements')).toBe(true);
-    expect(component.showsMovements('petty-cash')).toBe(true);
-    expect(component.showsMovements('transfers')).toBe(true);
-    expect(component.showsMovements('banks')).toBe(true);
-    expect(component.showsMovements('closures')).toBe(false);
-    expect(component.showsMovements('payment-methods')).toBe(false);
+    const source = 'venta' as CashMovementSource;
+    expect(component.sourceLabel(source)).toBe('Ventas');
   });
 
   it('debe exportar el reporte en Excel y PDF', async () => {
@@ -270,6 +299,8 @@ describe('CashComponent', () => {
         category: 'all',
         paymentMethod: 'all',
         search: '',
+        dateFrom: '',
+        dateTo: '',
       },
     };
 

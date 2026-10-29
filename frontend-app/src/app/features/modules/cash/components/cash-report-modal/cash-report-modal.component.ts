@@ -1,5 +1,5 @@
 import { Component, HostListener, computed, input, output, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
 import {
   CASH_PAYMENT_METHODS,
   CASH_PERIODS,
@@ -17,7 +17,7 @@ import {
 @Component({
   selector: 'app-cash-report-modal',
   standalone: true,
-  imports: [AppCurrencyPipe],
+  imports: [CashMoneyPipe],
   templateUrl: './cash-report-modal.component.html',
 })
 export class CashReportModalComponent {
@@ -45,6 +45,8 @@ export class CashReportModalComponent {
   readonly status = signal<'all' | CashMovementStatus>('all');
   readonly paymentMethod = signal<'all' | CashPaymentMethod>('all');
   readonly search = signal('');
+  readonly dateFrom = signal('');
+  readonly dateTo = signal('');
 
   readonly filtered = computed(() =>
     filterCashMovements(this.records(), {
@@ -54,6 +56,8 @@ export class CashReportModalComponent {
       category: 'all',
       paymentMethod: this.paymentMethod(),
       search: this.search(),
+      dateFrom: this.dateFrom(),
+      dateTo: this.dateTo(),
     }),
   );
 
@@ -89,6 +93,14 @@ export class CashReportModalComponent {
     this.search.set((event.target as HTMLInputElement).value);
   }
 
+  setDateFrom(event: Event): void {
+    this.dateFrom.set((event.target as HTMLInputElement).value);
+  }
+
+  setDateTo(event: Event): void {
+    this.dateTo.set((event.target as HTMLInputElement).value);
+  }
+
   setType(type: 'all' | CashMovementType): void {
     this.type.set(type);
   }
@@ -109,6 +121,8 @@ export class CashReportModalComponent {
       category: 'all',
       paymentMethod: this.paymentMethod(),
       search: this.search(),
+      dateFrom: this.dateFrom(),
+      dateTo: this.dateTo(),
     };
   }
 }

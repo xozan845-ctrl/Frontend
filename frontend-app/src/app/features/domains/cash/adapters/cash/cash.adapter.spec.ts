@@ -23,10 +23,22 @@ const RECORD: CashMovement = {
   paymentMethod: 'efectivo',
   status: 'confirmado',
   account: 'caja-general',
+  source: 'venta',
   reference: 'REC-1',
   counterpart: 'Ana',
   notes: '',
   createdAt: '2026-10-29T12:00:00.000Z',
+};
+
+const BASE_FILTERS = {
+  period: 'year' as const,
+  type: 'all' as const,
+  status: 'all' as const,
+  category: 'all' as const,
+  paymentMethod: 'all' as const,
+  search: '',
+  dateFrom: '',
+  dateTo: '',
 };
 
 describe('cash.adapter', () => {
@@ -42,11 +54,19 @@ describe('cash.adapter', () => {
         paymentMethod: 'transferencia',
       },
       { id: 'legacy-2', date: '2026-10-02', type: 'ingreso', concept: 'Cobro', amount: 25 },
+      {
+        id: 'sale',
+        date: '2026-10-03',
+        type: 'ingreso',
+        concept: 'Venta V-1',
+        amount: 30,
+        source: 'venta',
+      },
       { id: '', date: '', type: 'ingreso', concept: '', amount: 0 },
       'no-es-movimiento',
     ]);
 
-    expect(records).toHaveLength(3);
+    expect(records).toHaveLength(4);
     expect(records[0]).toEqual(RECORD);
     expect(records[1]).toMatchObject({
       concept: 'Pago de luz',
@@ -54,12 +74,15 @@ describe('cash.adapter', () => {
       category: 'gasto',
       status: 'confirmado',
       account: 'caja-general',
+      source: 'manual',
     });
     expect(records[2]).toMatchObject({
       concept: 'Cobro',
       category: 'venta',
       paymentMethod: 'efectivo',
+      source: 'manual',
     });
+    expect(records[3].source).toBe('venta');
   });
 
   it('debe crear movimientos válidos y rechazar inválidos', () => {
@@ -87,8 +110,38 @@ describe('cash.adapter', () => {
       notes: 'Nota',
       status: 'confirmado',
       account: 'caja-general',
+      source: 'manual',
     });
     expect(created?.id).toMatch(/^cash-/);
+    expect(
+      createCashMovement({
+        date: '2026-10-29',
+        type: 'ingreso',
+        concept: 'Ajuste',
+        category: 'ajuste',
+        amount: 10,
+        paymentMethod: 'efectivo',
+        account: 'caja-general',
+        reference: '',
+        counterpart: '',
+        notes: '',
+      })?.source,
+    ).toBe('ajuste');
+    expect(
+      createCashMovement({
+        date: '2026-10-29',
+        type: 'ingreso',
+        concept: 'Venta',
+        category: 'venta',
+        amount: 10,
+        paymentMethod: 'efectivo',
+        account: 'caja-general',
+        source: 'venta',
+        reference: '',
+        counterpart: '',
+        notes: '',
+      })?.source,
+    ).toBe('venta');
     expect(
       createCashMovement({
         date: '2026-10-29',
@@ -119,7 +172,7 @@ describe('cash.adapter', () => {
     ).toMatchObject({ date: cashToday(), account: 'caja-general' });
   });
 
-  it('debe actualizar un movimiento conservando id, estado y cuenta desconocida', () => {
+  it('debe actualizar un movimiento conservando id, estado, origen y cuenta desconocida', () => {
     const updated = updateCashMovement(RECORD, {
       date: '2026-10-30',
       type: 'egreso',
@@ -128,6 +181,7 @@ describe('cash.adapter', () => {
       amount: 250,
       paymentMethod: 'transferencia',
       account: 'desconocida',
+      source: 'manual',
       reference: 'TRF-9',
       counterpart: 'Luis',
       notes: 'Pagado',
@@ -141,6 +195,7 @@ describe('cash.adapter', () => {
       amount: 250,
       account: 'caja-general',
       category: 'pago-proveedor',
+      source: 'venta',
     });
     expect(
       updateCashMovement(RECORD, {
@@ -180,62 +235,77 @@ describe('cash.adapter', () => {
     }
   });
 
-  it('debe filtrar por período, tipo, estado, categoría, método y búsqueda', () => {
+  it('debe filtrar por período, rango personalizado, tipo, estado, categoría, método y búsqueda', () => {
     const now = new Date(2026, 9, 29);
     const records: CashMovement[] = [
       { ...RECORD, id: 'today', date: '2026-10-29' },
+      { ...RECORD, id: 'week', date: '2026-10-27' },
       { ...RECORD, id: 'month', date: '2026-10-15', type: 'egreso', category: 'gasto' },
       { ...RECORD, id: 'previous', date: '2026-09-15', paymentMethod: 'tarjeta' },
       { ...RECORD, id: 'year', date: '2026-03-01', status: 'pendiente' },
       { ...RECORD, id: 'old', date: '2025-12-31', category: 'transferencia' },
     ];
 
-    const filters = {
-      period: 'all' as const,
-      type: 'all' as const,
-      status: 'all' as const,
-      category: 'all' as const,
-      paymentMethod: 'all' as const,
-      search: '',
-    };
-
     expect(
-      filterCashMovements(records, { ...filters, period: 'today' }, now).map((r) => r.id),
+      filterCashMovements(records, { ...BASE_FILTERS, period: 'today' }, now).map((r) => r.id),
     ).toEqual(['today']);
     expect(
-      filterCashMovements(records, { ...filters, period: 'month' }, now).map((r) => r.id),
-    ).toEqual(['today', 'month']);
+      filterCashMovements(records, { ...BASE_FILTERS, period: 'week' }, now).map((r) => r.id),
+    ).toEqual(['today', 'week']);
     expect(
-      filterCashMovements(records, { ...filters, period: 'previous' }, now).map((r) => r.id),
-    ).toEqual(['previous']);
+      filterCashMovements(records, { ...BASE_FILTERS, period: 'month' }, now).map((r) => r.id),
+    ).toEqual(['today', 'week', 'month']);
     expect(
-      filterCashMovements(records, { ...filters, period: 'year' }, now).map((r) => r.id),
-    ).toEqual(['today', 'month', 'previous', 'year']);
+      filterCashMovements(records, { ...BASE_FILTERS, period: 'year' }, now).map((r) => r.id),
+    ).toEqual(['today', 'week', 'month', 'previous', 'year']);
     expect(
-      filterCashMovements(records, { ...filters, type: 'egreso' }, now).map((r) => r.id),
+      filterCashMovements(
+        records,
+        { ...BASE_FILTERS, period: 'custom', dateFrom: '2026-10-15', dateTo: '2026-10-27' },
+        now,
+      ).map((r) => r.id),
+    ).toEqual(['week', 'month']);
+    expect(
+      filterCashMovements(records, { ...BASE_FILTERS, type: 'egreso' }, now).map((r) => r.id),
     ).toEqual(['month']);
     expect(
-      filterCashMovements(records, { ...filters, status: 'pendiente' }, now).map((r) => r.id),
+      filterCashMovements(records, { ...BASE_FILTERS, status: 'pendiente' }, now).map((r) => r.id),
     ).toEqual(['year']);
     expect(
-      filterCashMovements(records, { ...filters, category: 'gasto' }, now).map((r) => r.id),
+      filterCashMovements(records, { ...BASE_FILTERS, category: 'gasto' }, now).map((r) => r.id),
     ).toEqual(['month']);
     expect(
-      filterCashMovements(records, { ...filters, paymentMethod: 'tarjeta' }, now).map((r) => r.id),
+      filterCashMovements(records, { ...BASE_FILTERS, paymentMethod: 'tarjeta' }, now).map(
+        (r) => r.id,
+      ),
     ).toEqual(['previous']);
-    expect(filterCashMovements(records, { ...filters, search: 'ana' }, now)).toHaveLength(5);
-    expect(filterCashMovements(records, { ...filters, search: 'rec-1' }, now)).toHaveLength(5);
-    expect(filterCashMovements(records, { ...filters, search: 'inexistente' }, now)).toHaveLength(
-      0,
-    );
+    expect(filterCashMovements(records, { ...BASE_FILTERS, search: 'ana' }, now)).toHaveLength(5);
+    expect(filterCashMovements(records, { ...BASE_FILTERS, search: 'rec-1' }, now)).toHaveLength(5);
+    expect(
+      filterCashMovements(records, { ...BASE_FILTERS, search: 'inexistente' }, now),
+    ).toHaveLength(0);
   });
 
-  it('debe calcular los KPIs de caja, caja chica y bancos', () => {
+  it('debe calcular los KPIs de caja, otros movimientos, caja chica y bancos', () => {
     const now = new Date(2026, 9, 29);
     const summary = computeCashSummary(
       [
         { ...RECORD, id: 'in', date: '2026-10-29', amount: 100 },
-        { ...RECORD, id: 'out', date: '2026-10-29', type: 'egreso', amount: 40 },
+        {
+          ...RECORD,
+          id: 'manual-in',
+          date: '2026-10-29',
+          amount: 200,
+          source: 'manual',
+        },
+        {
+          ...RECORD,
+          id: 'out',
+          date: '2026-10-29',
+          type: 'egreso',
+          amount: 40,
+          source: 'manual',
+        },
         { ...RECORD, id: 'bank', date: '2026-10-15', account: 'bac', amount: 500 },
         { ...RECORD, id: 'pending', date: '2026-10-10', amount: 200, status: 'pendiente' },
         {
@@ -253,6 +323,7 @@ describe('cash.adapter', () => {
           type: 'egreso',
           category: 'caja-chica',
           amount: 50,
+          source: 'manual',
         },
         { ...RECORD, id: 'old', date: '2026-09-20', account: 'lafise', amount: 300 },
       ],
@@ -260,10 +331,14 @@ describe('cash.adapter', () => {
     );
 
     expect(summary).toEqual({
-      available: 10,
-      incomeMonth: 600,
+      available: 210,
+      incomeMonth: 800,
+      incomeCountMonth: 3,
       expenseMonth: 90,
-      movementsMonth: 4,
+      expenseCountMonth: 2,
+      movementsMonth: 5,
+      otherIncome: 200,
+      otherExpense: 90,
       pettyCash: 1950,
       banks: 800,
     });

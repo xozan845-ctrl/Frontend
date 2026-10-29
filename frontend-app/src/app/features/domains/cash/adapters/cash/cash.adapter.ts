@@ -2,6 +2,7 @@ import {
   CASH_ACCOUNTS,
   CASH_MAX_RECORDS,
   CASH_PAYMENT_METHODS,
+  CASH_SOURCES,
   PETTY_CASH_FUND,
 } from '../../constants/cash.constants';
 import type {
@@ -11,6 +12,7 @@ import type {
   CashMovement,
   CashMovementCategory,
   CashMovementRow,
+  CashMovementSource,
   CashMovementStatus,
   CashMovementType,
   CashPaymentBreakdown,
@@ -41,6 +43,7 @@ const CATEGORIES: readonly CashMovementCategory[] = [
   'ajuste',
   'otro',
 ];
+const SOURCES: readonly CashMovementSource[] = CASH_SOURCES.map((source) => source.value);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -79,6 +82,10 @@ function isCategory(value: unknown): value is CashMovementCategory {
   return typeof value === 'string' && CATEGORIES.includes(value as CashMovementCategory);
 }
 
+function isSource(value: unknown): value is CashMovementSource {
+  return typeof value === 'string' && SOURCES.includes(value as CashMovementSource);
+}
+
 function isKnownAccount(value: string): boolean {
   return CASH_ACCOUNTS.some((account) => account.value === value);
 }
@@ -93,9 +100,10 @@ function currentMonth(now: Date): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
-function previousMonth(now: Date): string {
-  const date = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+function startOfWeek(now: Date): Date {
+  const day = now.getDay();
+  const offset = day === 0 ? 6 : day - 1;
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
 }
 
 function round(value: number): number {
@@ -134,6 +142,7 @@ export function sanitizeCashMovements(value: unknown): CashMovement[] {
         paymentMethod: isPaymentMethod(item['paymentMethod']) ? item['paymentMethod'] : 'efectivo',
         status: isStatus(item['status']) ? item['status'] : 'confirmado',
         account: isKnownAccount(account) ? account : 'caja-general',
+        source: isSource(item['source']) ? item['source'] : 'manual',
         reference: toText(item['reference']),
         counterpart: toText(item['counterpart']),
         notes: toText(item['notes']),
@@ -155,6 +164,11 @@ export function createCashMovement(
     return null;
   }
   const account = isKnownAccount(payload.account) ? payload.account : 'caja-general';
+  const source = isSource(payload.source)
+    ? payload.source
+    : payload.category === 'ajuste'
+      ? 'ajuste'
+      : 'manual';
   return {
     id: createCashId(),
     date,
@@ -165,6 +179,7 @@ export function createCashMovement(
     paymentMethod: isPaymentMethod(payload.paymentMethod) ? payload.paymentMethod : 'efectivo',
     status: 'confirmado',
     account,
+    source,
     reference: toText(payload.reference),
     counterpart: toText(payload.counterpart),
     notes: toText(payload.notes),
@@ -198,12 +213,29 @@ export function updateCashMovement(
   };
 }
 
-function matchesPeriod(date: string, period: CashFilters['period'], now: Date): boolean {
-  if (period === 'all') return true;
+function matchesPeriod(
+  date: string,
+  period: CashFilters['period'],
+  dateFrom: string,
+  dateTo: string,
+  now: Date,
+): boolean {
   if (period === 'today') return date === todayLocal(now);
+  if (period === 'week') {
+    const start = todayLocal(startOfWeek(now));
+    const end = todayLocal(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 6));
+    return date >= start && date <= end;
+  }
+  if (period === 'month') return date.startsWith(currentMonth(now));
   if (period === 'year') return date.startsWith(String(now.getFullYear()));
-  if (period === 'previous') return date.startsWith(previousMonth(now));
-  return date.startsWith(currentMonth(now));
+  if (period === 'custom') {
+    const from = toDate(dateFrom);
+    const to = toDate(dateTo);
+    if (from && date < from) return false;
+    if (to && date > to) return false;
+    return true;
+  }
+  return true;
 }
 
 function normalizeSearch(value: string): string {
@@ -218,7 +250,9 @@ export function filterCashMovements(
   const search = normalizeSearch(filters.search);
   return records
     .filter((record) => {
-      if (!matchesPeriod(record.date, filters.period, now)) return false;
+      if (!matchesPeriod(record.date, filters.period, filters.dateFrom, filters.dateTo, now)) {
+        return false;
+      }
       if (filters.type !== 'all' && record.type !== filters.type) return false;
       if (filters.status !== 'all' && record.status !== filters.status) return false;
       if (filters.category !== 'all' && record.category !== filters.category) return false;
@@ -237,6 +271,10 @@ export function filterCashMovements(
 
 function isConfirmed(record: CashMovement): boolean {
   return record.status === 'confirmado';
+}
+
+function isOtherSource(record: CashMovement): boolean {
+  return record.source === 'manual' || record.source === 'ajuste';
 }
 
 function cashAccountValues(): Set<string> {
@@ -271,19 +309,34 @@ export function computeCashSummary(
   const bankRecords = confirmed.filter((record) => bankAccounts.has(record.account));
   const pettyRecords = confirmed.filter((record) => record.category === 'caja-chica');
 
+  let incomeMonth = 0;
+  let incomeCountMonth = 0;
+  let expenseMonth = 0;
+  let expenseCountMonth = 0;
+  let otherIncome = 0;
+  let otherExpense = 0;
+
+  for (const record of monthRecords) {
+    if (record.type === 'ingreso') {
+      incomeMonth += record.amount;
+      incomeCountMonth += 1;
+      if (isOtherSource(record)) otherIncome += record.amount;
+    } else {
+      expenseMonth += record.amount;
+      expenseCountMonth += 1;
+      if (isOtherSource(record)) otherExpense += record.amount;
+    }
+  }
+
   return {
     available: round(netOf(cashRecords)),
-    incomeMonth: round(
-      monthRecords
-        .filter((record) => record.type === 'ingreso')
-        .reduce((total, record) => total + record.amount, 0),
-    ),
-    expenseMonth: round(
-      monthRecords
-        .filter((record) => record.type === 'egreso')
-        .reduce((total, record) => total + record.amount, 0),
-    ),
+    incomeMonth: round(incomeMonth),
+    incomeCountMonth,
+    expenseMonth: round(expenseMonth),
+    expenseCountMonth,
     movementsMonth: monthRecords.length,
+    otherIncome: round(otherIncome),
+    otherExpense: round(otherExpense),
     pettyCash: round(PETTY_CASH_FUND + netOf(pettyRecords)),
     banks: round(netOf(bankRecords)),
   };

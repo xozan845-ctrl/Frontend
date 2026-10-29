@@ -28,6 +28,7 @@ import {
   CASH_MAX_RECORDS,
   CASH_PAGE_SIZE,
   CASH_PAYMENT_METHODS,
+  CASH_SOURCES,
   CASH_STATUSES,
   CASH_MOVEMENT_TYPES,
   cashStorageKey,
@@ -37,6 +38,7 @@ import type {
   CashFilters,
   CashMovement,
   CashMutationResult,
+  CashPeriod,
   CashStatusFilter,
   CashTab,
   CreateCashMovementPayload,
@@ -52,6 +54,8 @@ const initialState: CashState = {
   category: 'all',
   paymentMethod: 'all',
   search: '',
+  dateFrom: '',
+  dateTo: '',
   page: 1,
 };
 
@@ -78,7 +82,7 @@ function persist(storageKey: string, records: readonly CashMovement[]): void {
 }
 
 /**
- * Caja del workspace de empresa (ADR-73). Movimientos de caja y bancos con
+ * Caja del workspace de empresa (ADR-73/74). Movimientos de caja y bancos con
  * métodos de pago, cierres diarios, caja chica y transferencias; migra los
  * movimientos del store de finanzas anterior y deriva todo en `withComputed`.
  */
@@ -102,6 +106,12 @@ export const CashStore = signalStore(
     const accountLabels = computed<Record<string, string>>(() =>
       Object.fromEntries(CASH_ACCOUNTS.map((account) => [account.value, account.label])),
     );
+    const sourceLabels = computed<Record<string, string>>(() =>
+      Object.fromEntries(CASH_SOURCES.map((source) => [source.value, source.label])),
+    );
+    const sourceLocks = computed<Record<string, boolean>>(() =>
+      Object.fromEntries(CASH_SOURCES.map((source) => [source.value, source.locked])),
+    );
 
     const filtered = computed(() =>
       filterCashMovements(store.records(), {
@@ -111,6 +121,8 @@ export const CashStore = signalStore(
         category: store.category(),
         paymentMethod: store.paymentMethod(),
         search: store.search(),
+        dateFrom: store.dateFrom(),
+        dateTo: store.dateTo(),
       }),
     );
 
@@ -149,6 +161,8 @@ export const CashStore = signalStore(
       statusLabels,
       typeLabels,
       accountLabels,
+      sourceLabels,
+      sourceLocks,
       filtered,
       activeRecords,
       pageCount,
@@ -169,6 +183,8 @@ export const CashStore = signalStore(
         category: store.category(),
         paymentMethod: store.paymentMethod(),
         search: store.search(),
+        dateFrom: store.dateFrom(),
+        dateTo: store.dateTo(),
       })),
     };
   }),
@@ -229,8 +245,12 @@ export const CashStore = signalStore(
       patchState(store, { tab, category: 'all', page: 1 });
     },
 
-    setPeriod(period: CashState['period']): void {
+    setPeriod(period: CashPeriod): void {
       patchState(store, { period, page: 1 });
+    },
+
+    setDateRange(dateFrom: string, dateTo: string): void {
+      patchState(store, { dateFrom, dateTo, page: 1 });
     },
 
     setType(type: CashState['type']): void {
@@ -261,6 +281,8 @@ export const CashStore = signalStore(
         category: 'all',
         paymentMethod: 'all',
         search: '',
+        dateFrom: '',
+        dateTo: '',
         page: 1,
       });
     },

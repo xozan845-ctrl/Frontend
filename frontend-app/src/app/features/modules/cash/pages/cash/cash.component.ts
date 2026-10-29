@@ -1,20 +1,17 @@
 import { Component, inject, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
 import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import {
-  CASH_CATEGORIES,
   CASH_PAGE_SIZE,
-  CASH_PAYMENT_METHODS,
   CASH_PERIODS,
   CASH_TABS,
   CashStore,
   PETTY_CASH_FUND,
-  type CashCategoryFilter,
   type CashMovement,
+  type CashMovementCategory,
+  type CashMovementSource,
   type CashMovementStatus,
-  type CashMovementType,
-  type CashPaymentMethod,
   type CashPeriod,
   type CashReportExport,
   type CashTab,
@@ -23,11 +20,11 @@ import {
 import { CashMovementModalComponent } from '../../components/cash-movement-modal/cash-movement-modal.component';
 import { CashReportModalComponent } from '../../components/cash-report-modal/cash-report-modal.component';
 
-/** Pantalla de caja de empresa (ADR-73): KPIs, tabs, movimientos y reportes. */
+/** Centro financiero de caja de empresa (ADR-73/74). */
 @Component({
   selector: 'app-cash',
   standalone: true,
-  imports: [AppCurrencyPipe, AppDatePipe, CashMovementModalComponent, CashReportModalComponent],
+  imports: [CashMoneyPipe, AppDatePipe, CashMovementModalComponent, CashReportModalComponent],
   templateUrl: './cash.component.html',
 })
 export default class CashComponent {
@@ -40,29 +37,21 @@ export default class CashComponent {
   readonly pageSize = CASH_PAGE_SIZE;
   readonly pettyCashFund = PETTY_CASH_FUND;
   readonly periods = CASH_PERIODS;
-  readonly categories = CASH_CATEGORIES;
-  readonly paymentMethods = CASH_PAYMENT_METHODS;
   readonly tabs = CASH_TABS;
   readonly tabTitles: Record<CashTab, string> = {
-    movements: 'Movimientos de caja',
+    movements: 'Movimientos financieros',
     'payment-methods': 'Métodos de pago',
     closures: 'Cierres diarios',
     'petty-cash': 'Caja chica',
     banks: 'Bancos',
     transfers: 'Transferencias',
   };
-  readonly tabSubtitles: Record<CashTab, string> = {
-    movements: 'Entradas y salidas en efectivo y bancos.',
-    'payment-methods': 'Totales agrupados por forma de pago.',
-    closures: 'Resumen de operaciones agrupado por día.',
-    'petty-cash': 'Fondo y gastos menores del día a día.',
-    banks: 'Saldo y movimientos por cuenta bancaria.',
-    transfers: 'Movimientos registrados como transferencia.',
-  };
+
+  private readonly cashMoney = new CashMoneyPipe();
 
   private readonly seoService = injectSeoPage(
-    'Caja — Empresa',
-    'Controla el efectivo, los bancos, los cierres diarios y la caja chica de tu negocio.',
+    'Caja / Pagos — Empresa',
+    'Centro financiero del negocio. Todos los movimientos de dinero en un lugar.',
   );
 
   openNewMovement(preset: Partial<CreateCashMovementPayload> | null = null): void {
@@ -98,16 +87,24 @@ export default class CashComponent {
     this.closeMovementModal();
   }
 
-  setPeriod(event: Event): void {
-    this.store.setPeriod((event.target as HTMLSelectElement).value as CashPeriod);
+  selectPeriod(period: CashPeriod): void {
+    this.store.setPeriod(period);
   }
 
-  setType(event: Event): void {
-    this.store.setType((event.target as HTMLSelectElement).value as 'all' | CashMovementType);
+  setDateFrom(event: Event): void {
+    this.store.setDateRange((event.target as HTMLInputElement).value, this.store.dateTo());
   }
 
-  setStatus(event: Event): void {
-    this.store.setStatus((event.target as HTMLSelectElement).value as 'all' | CashMovementStatus);
+  setDateTo(event: Event): void {
+    this.store.setDateRange(this.store.dateFrom(), (event.target as HTMLInputElement).value);
+  }
+
+  search(event: Event): void {
+    this.store.setSearch((event.target as HTMLInputElement).value);
+  }
+
+  resetFilters(): void {
+    this.store.resetFilters();
   }
 
   openReport(): void {
@@ -124,32 +121,53 @@ export default class CashComponent {
     this.closeReport();
   }
 
-  search(event: Event): void {
-    this.store.setSearch((event.target as HTMLInputElement).value);
+  tabClass(tab: CashTab): string {
+    const base =
+      'inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-colors';
+    return this.store.tab() === tab
+      ? `${base} bg-emerald-300 text-emerald-950 shadow-sm`
+      : `${base} text-slate-500 hover:bg-white hover:text-slate-900 dark:text-slate-400 dark:hover:bg-surface-800 dark:hover:text-white`;
   }
 
-  selectCategory(event: Event): void {
-    this.store.setCategory((event.target as HTMLSelectElement).value as CashCategoryFilter);
+  periodClass(period: CashPeriod): string {
+    const base =
+      'inline-flex items-center rounded-xl px-3 py-2 text-xs font-bold transition-colors';
+    return this.store.period() === period
+      ? `${base} bg-emerald-300 text-emerald-950 shadow-sm`
+      : `${base} text-slate-500 hover:bg-white hover:text-slate-900 dark:text-slate-400 dark:hover:bg-surface-800 dark:hover:text-white`;
   }
 
-  selectPaymentMethod(event: Event): void {
-    this.store.setPaymentMethod(
-      (event.target as HTMLSelectElement).value as 'all' | CashPaymentMethod,
-    );
+  categoryBadge(category: CashMovementCategory): string {
+    if (
+      category === 'venta' ||
+      category === 'cobro' ||
+      category === 'aporte' ||
+      category === 'deposito'
+    ) {
+      return 'badge badge-success normal-case';
+    }
+    if (category === 'gasto' || category === 'pago-proveedor' || category === 'retiro') {
+      return 'badge badge-danger normal-case';
+    }
+    if (category === 'transferencia') return 'badge badge-primary normal-case';
+    if (category === 'caja-chica') return 'badge badge-warning normal-case';
+    return 'badge badge-neutral normal-case';
   }
 
-  resetFilters(): void {
-    this.store.resetFilters();
-  }
-
-  showsMovements(tab: CashTab): boolean {
-    return tab === 'movements' || tab === 'petty-cash' || tab === 'transfers' || tab === 'banks';
+  balanceClass(balance: number): string {
+    return balance < 0
+      ? 'text-red-600 dark:text-red-400'
+      : 'text-emerald-600 dark:text-emerald-400';
   }
 
   statusClass(status: CashMovementStatus): string {
     if (status === 'confirmado') return 'badge-success';
     if (status === 'pendiente') return 'badge-warning';
     return 'badge-danger';
+  }
+
+  sourceLabel(source: CashMovementSource): string {
+    return this.store.sourceLabels()[source] ?? source;
   }
 
   private downloadCsv(records: readonly CashMovement[]): void {
@@ -160,6 +178,7 @@ export default class CashComponent {
       'Categoría',
       'Método de pago',
       'Cuenta',
+      'Origen',
       'Referencia',
       'Cliente / proveedor',
       'Entrada',
@@ -174,6 +193,7 @@ export default class CashComponent {
       this.store.categoryLabels()[record.category] ?? record.category,
       this.store.paymentLabels()[record.paymentMethod] ?? record.paymentMethod,
       this.store.accountLabels()[record.account] ?? record.account,
+      this.sourceLabel(record.source),
       record.reference,
       record.counterpart,
       record.type === 'ingreso' ? record.amount.toFixed(2) : '',
@@ -219,7 +239,7 @@ export default class CashComponent {
       .filter((record) => record.type === 'egreso' && record.status === 'confirmado')
       .reduce((sum, record) => sum + record.amount, 0);
     const subtitle = doc.createElement('p');
-    subtitle.textContent = `${records.length} movimientos · Entradas: C$${income.toFixed(2)} · Salidas: C$${expense.toFixed(2)}`;
+    subtitle.textContent = `${records.length} movimientos · Entradas: ${this.cashMoney.transform(income)} · Salidas: ${this.cashMoney.transform(expense)}`;
     const table = doc.createElement('table');
     const headRow = doc.createElement('tr');
     for (const heading of [
@@ -249,8 +269,8 @@ export default class CashComponent {
         this.store.categoryLabels()[record.category] ?? record.category,
         this.store.paymentLabels()[record.paymentMethod] ?? record.paymentMethod,
         this.store.accountLabels()[record.account] ?? record.account,
-        record.type === 'ingreso' ? `C$${record.amount.toFixed(2)}` : '—',
-        record.type === 'egreso' ? `C$${record.amount.toFixed(2)}` : '—',
+        record.type === 'ingreso' ? this.cashMoney.transform(record.amount) : '—',
+        record.type === 'egreso' ? this.cashMoney.transform(record.amount) : '—',
         this.store.statusLabels()[record.status] ?? record.status,
       ];
       values.forEach((value, index) => {

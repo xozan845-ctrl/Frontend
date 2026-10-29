@@ -1,18 +1,26 @@
-<section class="flex flex-col gap-6">
-  <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-    <div>
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Finanzas / Caja</p>
-      <h1 class="font-heading text-3xl font-black tracking-tight uppercase">
-        <span class="text-accent-600">$</span> Caja
-      </h1>
-      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {{ store.greeting() }} · {{ store.today() | appDate: 'long' }}
-      </p>
+<section class="mx-auto flex w-full max-w-7xl flex-col gap-6">
+  <header class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div class="flex items-start gap-3">
+      <span
+        class="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-cash-register text-lg"></i>
+      </span>
+      <div>
+        <h1 class="font-heading text-3xl font-black tracking-tighter">
+          {{ store.greeting() }}
+        </h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Centro financiero del negocio. Todos los movimientos de dinero en un lugar.
+        </p>
+      </div>
     </div>
-    <div class="flex flex-wrap gap-2">
+
+    <div class="flex flex-wrap items-center gap-2 self-start xl:self-auto">
       <button
         type="button"
-        class="btn btn-secondary btn-sm"
+        class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:bg-surface-700"
         (click)="openReport()"
         data-testid="cash-export"
       >
@@ -21,7 +29,7 @@
       </button>
       <button
         type="button"
-        class="btn btn-primary btn-sm"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-950 transition-colors hover:bg-emerald-200"
         (click)="openNewMovement()"
         data-testid="cash-new"
       >
@@ -31,320 +39,327 @@
     </div>
   </header>
 
-  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-available">
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-available">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-cash-register" aria-hidden="true"></i>
+        <i class="fa-solid fa-dollar-sign"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Caja disponible
-        </p>
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Caja disponible</p>
         <p
-          class="text-xl font-black tabular-nums"
+          class="mt-0.5 font-heading text-xl font-black tabular-nums"
           [class.text-red-600]="store.summary().available < 0"
         >
-          {{ store.summary().available | appCurrency }}
+          {{ store.summary().available | cashMoney }}
+        </p>
+        <p
+          class="truncate text-[10px] font-semibold"
+          [class.text-emerald-500]="store.summary().available >= 0"
+          [class.text-red-500]="store.summary().available < 0"
+        >
+          {{ store.summary().available >= 0 ? 'Saldo positivo' : 'Saldo negativo' }}
         </p>
       </div>
     </article>
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-income">
+
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-income">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+        <i class="fa-solid fa-chart-line"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Ingresos del mes
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Ingresos del mes</p>
+        <p class="mt-0.5 font-heading text-xl font-black tabular-nums text-emerald-600">
+          {{ store.summary().incomeMonth | cashMoney }}
         </p>
-        <p class="text-xl font-black tabular-nums text-emerald-600">
-          {{ store.summary().incomeMonth | appCurrency }}
+        <p class="truncate text-[10px] font-semibold text-emerald-500">
+          {{
+            store.summary().incomeCountMonth > 0
+              ? store.summary().incomeCountMonth + ' entradas'
+              : 'Sin entradas este mes'
+          }}
         </p>
       </div>
     </article>
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-expense">
+
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-expense">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+        <i class="fa-solid fa-arrow-trend-down"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Egresos del mes
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Egresos del mes</p>
+        <p
+          class="mt-0.5 font-heading text-xl font-black tabular-nums"
+          [class.text-red-600]="store.summary().expenseMonth > 0"
+        >
+          {{ store.summary().expenseMonth | cashMoney }}
         </p>
-        <p class="text-xl font-black tabular-nums text-red-600">
-          {{ store.summary().expenseMonth | appCurrency }}
+        <p
+          class="truncate text-[10px] font-semibold"
+          [class.text-red-500]="store.summary().expenseMonth > 0"
+          [class.text-slate-400]="store.summary().expenseMonth === 0"
+        >
+          {{
+            store.summary().expenseCountMonth > 0
+              ? store.summary().expenseCountMonth + ' salidas'
+              : 'Sin egresos este mes'
+          }}
         </p>
       </div>
     </article>
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-movements">
+
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-movements">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
+        <i class="fa-solid fa-list-ul"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Movimientos del mes
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Movimientos del mes</p>
+        <p class="mt-0.5 font-heading text-xl font-black tabular-nums">
+          {{ store.summary().movementsMonth }}
         </p>
-        <p class="text-xl font-black tabular-nums">{{ store.summary().movementsMonth }}</p>
+        <p class="truncate text-[10px] text-slate-400">este mes</p>
       </div>
     </article>
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-petty">
+
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-other-income">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+        <i class="fa-solid fa-arrow-up"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Caja chica</p>
-        <p class="text-xl font-black tabular-nums">{{ store.summary().pettyCash | appCurrency }}</p>
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Otros ingresos</p>
+        <p class="mt-0.5 font-heading text-xl font-black tabular-nums">
+          {{ store.summary().otherIncome | cashMoney }}
+        </p>
+        <p class="truncate text-[10px] text-slate-400">
+          {{ store.summary().otherIncome > 0 ? 'movimientos manuales' : 'Sin otros ingresos' }}
+        </p>
       </div>
     </article>
-    <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-banks">
+
+    <article class="card flex items-start gap-3 p-4" data-testid="cash-kpi-other-expense">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-400"
+        aria-hidden="true"
       >
-        <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+        <i class="fa-solid fa-arrow-down"></i>
       </span>
-      <div>
-        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Saldo en bancos
+      <div class="min-w-0">
+        <p class="truncate text-[11px] font-bold text-slate-400">Otros egresos</p>
+        <p class="mt-0.5 font-heading text-xl font-black tabular-nums">
+          {{ store.summary().otherExpense | cashMoney }}
         </p>
-        <p class="text-xl font-black tabular-nums">{{ store.summary().banks | appCurrency }}</p>
+        <p class="truncate text-[10px] text-slate-400">
+          {{ store.summary().otherExpense > 0 ? 'movimientos manuales' : 'Sin otros egresos' }}
+        </p>
       </div>
     </article>
   </div>
 
-  <div
-    class="flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1 dark:border-surface-700 dark:bg-surface-800"
-    role="tablist"
-    aria-label="Secciones de caja"
+  <nav
+    class="card flex flex-wrap gap-1 p-2"
+    aria-label="Secciones de caja y pagos"
+    data-testid="cash-section-tabs"
   >
     @for (tab of tabs; track tab.value) {
       <button
         type="button"
-        role="tab"
-        class="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap transition-colors hover:bg-slate-100 dark:hover:bg-surface-700"
-        [attr.aria-selected]="store.tab() === tab.value"
-        [class.bg-accent-600]="store.tab() === tab.value"
-        [class.text-white]="store.tab() === tab.value"
-        [class.text-slate-500]="store.tab() !== tab.value"
-        (click)="store.setTab(tab.value)"
+        [class]="tabClass(tab.value)"
+        [attr.aria-current]="store.tab() === tab.value ? 'page' : null"
         [attr.data-testid]="'cash-tab-' + tab.value"
+        (click)="store.setTab(tab.value)"
       >
-        <i [class]="'fa-solid text-xs ' + tab.icon" aria-hidden="true"></i>
+        <i [class]="tab.icon" aria-hidden="true"></i>
         {{ tab.label }}
       </button>
     }
-  </div>
+  </nav>
 
-  <div class="card flex flex-col gap-4 p-5">
-    <div class="flex flex-wrap items-start justify-between gap-3">
-      <div>
-        <h2 class="font-heading text-lg font-black tracking-tight uppercase">
-          <i class="fa-solid fa-cash-register mr-2 text-accent-600" aria-hidden="true"></i>
+  <div class="card flex flex-col gap-4 p-4 sm:p-5">
+    <header class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+          aria-hidden="true"
+        >
+          <i class="fa-solid fa-list-ul text-sm"></i>
+        </span>
+        <h2 class="font-heading text-lg font-black tracking-tight">
           {{ tabTitles[store.tab()] }}
         </h2>
-        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-          {{ tabSubtitles[store.tab()] }}
-        </p>
       </div>
-      <div class="flex flex-wrap gap-2">
-        @if (store.tab() === 'petty-cash') {
-          <button
-            type="button"
-            class="btn btn-secondary btn-sm"
-            (click)="
-              openNewMovement({
-                type: 'ingreso',
-                category: 'caja-chica',
-                account: 'caja-general',
-                paymentMethod: 'efectivo',
-              })
-            "
-          >
-            <i class="fa-solid fa-rotate text-xs" aria-hidden="true"></i>
-            Reponer fondo
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            (click)="
-              openNewMovement({
-                type: 'egreso',
-                category: 'caja-chica',
-                account: 'caja-general',
-                paymentMethod: 'efectivo',
-              })
-            "
-          >
-            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
-            Gasto de caja chica
-          </button>
-        }
-        @if (store.tab() === 'transfers') {
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            (click)="
-              openNewMovement({
-                type: 'egreso',
-                category: 'transferencia',
-                paymentMethod: 'transferencia',
-                account: 'bac',
-              })
-            "
-          >
-            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
-            Nueva transferencia
-          </button>
-        }
-      </div>
-    </div>
+      <button
+        type="button"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-950 transition-colors hover:bg-emerald-200"
+        (click)="openNewMovement()"
+        data-testid="cash-new-movement"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nuevo movimiento
+      </button>
+    </header>
 
-    @if (showsMovements(store.tab())) {
-      <div class="flex flex-wrap items-center gap-2">
-        <select
-          class="input max-w-44"
-          [value]="store.period()"
-          (change)="setPeriod($event)"
-          aria-label="Período"
+    @if (store.tab() === 'movements') {
+      <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <div
+          class="flex flex-wrap items-center gap-1 self-start rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+          role="tablist"
+          aria-label="Período de movimientos"
         >
-          @for (period of periods; track period.value) {
-            <option [value]="period.value">{{ period.label }}</option>
+          @for (option of periods; track option.value) {
+            <button
+              type="button"
+              role="tab"
+              [class]="periodClass(option.value)"
+              [attr.aria-selected]="store.period() === option.value"
+              [attr.data-testid]="'cash-period-' + option.value"
+              (click)="selectPeriod(option.value)"
+            >
+              {{ option.label }}
+            </button>
           }
-        </select>
-        <select
-          class="input max-w-40"
-          [value]="store.type()"
-          (change)="setType($event)"
-          aria-label="Tipo de movimiento"
-        >
-          <option value="all">Todos los tipos</option>
-          <option value="ingreso">Ingresos</option>
-          <option value="egreso">Egresos</option>
-        </select>
-        <select
-          class="input max-w-52"
-          [value]="store.category()"
-          (change)="selectCategory($event)"
-          aria-label="Filtrar por categoría"
-        >
-          <option value="all">Todas las categorías</option>
-          @for (category of categories; track category.value) {
-            <option [value]="category.value">{{ category.label }}</option>
-          }
-        </select>
-        <input
-          type="search"
-          class="input max-w-56"
-          placeholder="Buscar concepto…"
-          [value]="store.search()"
-          (input)="search($event)"
-          aria-label="Buscar movimiento"
-        />
-        <button type="button" class="btn btn-ghost btn-sm" (click)="resetFilters()">
-          <i class="fa-solid fa-rotate-left text-xs" aria-hidden="true"></i>
-          Limpiar
-        </button>
-      </div>
-    }
+        </div>
 
-    @if (store.tab() === 'banks') {
-      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        @for (account of store.bankAccounts(); track account.account) {
-          <article class="rounded-2xl border border-slate-200 p-4 dark:border-surface-700">
-            <div class="flex items-center justify-between gap-2">
-              <p class="text-xs font-bold text-slate-600 dark:text-slate-300">
-                {{ account.label }}
-              </p>
-              <span class="badge badge-neutral">{{ account.count }} mov.</span>
-            </div>
-            <p class="mt-2 text-lg font-black tabular-nums">
-              {{ account.balance | appCurrency }}
-            </p>
-            <div class="mt-2 flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
-              <span>+{{ account.income | appCurrency }}</span>
-              <span>-{{ account.expense | appCurrency }}</span>
-            </div>
-          </article>
-        }
+        <label for="cash-search" class="sr-only">Buscar movimiento</label>
+        <div class="relative w-full sm:w-72">
+          <i
+            class="fa-solid fa-magnifying-glass pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-xs text-slate-400"
+            aria-hidden="true"
+          ></i>
+          <input
+            id="cash-search"
+            type="search"
+            class="input py-2.5 pl-9 text-xs"
+            placeholder="Buscar concepto…"
+            [value]="store.search()"
+            data-testid="cash-search"
+            (input)="search($event)"
+          />
+        </div>
       </div>
-    }
 
-    @if (store.tab() === 'petty-cash') {
-      <div class="grid gap-3 sm:grid-cols-3">
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
-          <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-            Fondo asignado
-          </p>
-          <p class="mt-1 text-lg font-black tabular-nums">{{ pettyCashFund | appCurrency }}</p>
-        </article>
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
-          <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Disponible</p>
-          <p class="mt-1 text-lg font-black tabular-nums">
-            {{ store.summary().pettyCash | appCurrency }}
-          </p>
-        </article>
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
-          <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Movimientos</p>
-          <p class="mt-1 text-lg font-black tabular-nums">{{ store.filteredCount() }}</p>
-        </article>
-      </div>
-    }
+      @if (store.period() === 'custom') {
+        <div class="flex flex-wrap items-end gap-3">
+          <label
+            class="flex flex-col gap-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+          >
+            Desde
+            <input
+              type="date"
+              class="input py-2 text-xs"
+              [value]="store.dateFrom()"
+              (change)="setDateFrom($event)"
+            />
+          </label>
+          <label
+            class="flex flex-col gap-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+          >
+            Hasta
+            <input
+              type="date"
+              class="input py-2 text-xs"
+              [value]="store.dateTo()"
+              (change)="setDateTo($event)"
+            />
+          </label>
+        </div>
+      }
 
-    @if (showsMovements(store.tab())) {
       @if (!store.hasRecords()) {
-        <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-          Aún no hay movimientos registrados.
-        </p>
+        <div class="flex flex-col items-center gap-2 py-14 text-center">
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-receipt text-lg"></i>
+          </span>
+          <p class="text-sm font-bold">No hay movimientos registrados.</p>
+          <p class="max-w-sm text-xs text-slate-500 dark:text-slate-400">
+            Registra tu primer ingreso o egreso para empezar a controlar la caja.
+          </p>
+          <button
+            type="button"
+            class="mt-2 inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-950 hover:bg-emerald-200"
+            (click)="openNewMovement()"
+          >
+            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+            Nuevo movimiento
+          </button>
+        </div>
       } @else if (store.filteredCount() === 0) {
-        <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-          No hay movimientos que coincidan con los filtros.
-        </p>
+        <div class="flex flex-col items-center gap-2 py-14 text-center">
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-receipt text-lg"></i>
+          </span>
+          <p class="text-sm font-bold">No hay movimientos para este periodo.</p>
+          <p class="max-w-sm text-xs text-slate-500 dark:text-slate-400">
+            Cambia el periodo o limpia los filtros para ver el historial completo.
+          </p>
+          <button
+            type="button"
+            class="mt-2 inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-surface-600 dark:text-slate-300 dark:hover:bg-surface-700"
+            (click)="resetFilters()"
+          >
+            Limpiar filtros
+          </button>
+        </div>
       } @else {
         <div class="overflow-x-auto">
-          <table class="w-full min-w-[1040px] text-left text-sm" data-testid="cash-table">
+          <table class="w-full min-w-[900px] text-left text-sm" data-testid="cash-table">
             <thead>
               <tr
                 class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
               >
                 <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Tipo</th>
                 <th scope="col" class="py-2 pr-3 font-bold">Concepto</th>
-                <th scope="col" class="py-2 pr-3 font-bold">Categoría</th>
                 <th scope="col" class="py-2 pr-3 font-bold">Método</th>
-                <th scope="col" class="py-2 pr-3 font-bold">Cuenta</th>
                 <th scope="col" class="py-2 pr-3 text-right font-bold">Entrada</th>
                 <th scope="col" class="py-2 pr-3 text-right font-bold">Salida</th>
                 <th scope="col" class="py-2 pr-3 text-right font-bold">Saldo</th>
-                <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
-                <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+                <th scope="col" class="py-2 text-right font-bold">Origen</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
               @for (row of store.movementRows(); track row.record.id) {
-                <tr data-testid="cash-row">
+                <tr class="group" data-testid="cash-row">
                   <td
                     class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
                   >
                     {{ row.record.date | appDate: 'short' }}
                   </td>
-                  <td class="max-w-xs py-3 pr-3">
-                    <p class="truncate text-xs font-bold">{{ row.record.concept }}</p>
-                    @if (row.record.reference) {
-                      <p class="mt-0.5 truncate text-[11px] text-slate-400 dark:text-slate-500">
-                        Ref. {{ row.record.reference }}
-                      </p>
-                    }
-                  </td>
                   <td class="py-3 pr-3">
-                    <span class="badge badge-neutral">
+                    <span [class]="categoryBadge(row.record.category)">
                       {{ store.categoryLabels()[row.record.category] ?? row.record.category }}
                     </span>
+                  </td>
+                  <td class="max-w-[240px] py-3 pr-3">
+                    <p class="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {{ row.record.concept }}
+                    </p>
+                    @if (row.record.reference) {
+                      <p
+                        class="mt-0.5 text-[10px] font-semibold text-violet-500 dark:text-violet-400"
+                      >
+                        Ref: {{ row.record.reference }}
+                      </p>
+                    }
                   </td>
                   <td
                     class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
@@ -353,74 +368,91 @@
                       store.paymentLabels()[row.record.paymentMethod] ?? row.record.paymentMethod
                     }}
                   </td>
-                  <td
-                    class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
-                  >
-                    {{ store.accountLabels()[row.record.account] ?? row.record.account }}
-                  </td>
-                  <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums text-emerald-600">
+                  <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
                     @if (row.record.type === 'ingreso') {
-                      {{ row.record.amount | appCurrency }}
+                      <span class="text-emerald-600 dark:text-emerald-400">
+                        {{ row.record.amount | cashMoney }}
+                      </span>
                     } @else {
-                      —
+                      <span class="text-slate-400">—</span>
                     }
                   </td>
-                  <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums text-red-600">
+                  <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
                     @if (row.record.type === 'egreso') {
-                      {{ row.record.amount | appCurrency }}
+                      <span class="text-red-600 dark:text-red-400">
+                        {{ row.record.amount | cashMoney }}
+                      </span>
                     } @else {
-                      —
+                      <span class="text-slate-400">—</span>
                     }
                   </td>
-                  <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
-                    {{ row.balance | appCurrency }}
+                  <td
+                    class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums"
+                    [class]="balanceClass(row.balance)"
+                  >
+                    {{ row.balance | cashMoney }}
                   </td>
-                  <td class="py-3 pr-3">
-                    <span [class]="'badge ' + statusClass(row.record.status)">
-                      {{ store.statusLabels()[row.record.status] ?? row.record.status }}
-                    </span>
-                  </td>
-                  <td class="flex justify-end gap-1 py-3">
-                    @if (row.record.status === 'pendiente') {
-                      <button
-                        type="button"
-                        class="btn btn-ghost btn-sm text-emerald-600"
-                        (click)="store.confirmMovement(row.record.id)"
-                        [attr.aria-label]="'Confirmar movimiento ' + row.record.concept"
-                        data-testid="cash-confirm"
+                  <td class="py-3 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <span
+                        class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400"
                       >
-                        <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
-                      </button>
-                    }
-                    @if (row.record.status !== 'anulado') {
-                      <button
-                        type="button"
-                        class="btn btn-ghost btn-sm text-amber-600"
-                        (click)="store.annulMovement(row.record.id)"
-                        [attr.aria-label]="'Anular movimiento ' + row.record.concept"
-                        data-testid="cash-annul"
-                      >
-                        <i class="fa-solid fa-ban text-xs" aria-hidden="true"></i>
-                      </button>
-                    }
-                    <button
-                      type="button"
-                      class="btn btn-ghost btn-sm"
-                      (click)="openEditMovement(row.record)"
-                      [attr.aria-label]="'Editar movimiento ' + row.record.concept"
-                      data-testid="cash-edit"
-                    >
-                      <i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-ghost btn-sm text-red-600"
-                      (click)="store.removeMovement(row.record.id)"
-                      [attr.aria-label]="'Eliminar movimiento ' + row.record.concept"
-                      data-testid="cash-remove"
-                    >
-                      <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
-                    </button>
+                        <i
+                          [class]="
+                            'text-[9px] ' +
+                            (store.sourceLocks()[row.record.source]
+                              ? 'fa-solid fa-lock'
+                              : 'fa-solid fa-pen-to-square')
+                          "
+                          aria-hidden="true"
+                        ></i>
+                        {{ store.sourceLabels()[row.record.source] ?? row.record.source }}
+                      </span>
+                      <span class="hidden items-center gap-1 group-hover:inline-flex">
+                        @if (row.record.source === 'manual') {
+                          @if (row.record.status === 'pendiente') {
+                            <button
+                              type="button"
+                              class="btn btn-ghost btn-sm px-2 text-emerald-600"
+                              (click)="store.confirmMovement(row.record.id)"
+                              [attr.aria-label]="'Confirmar movimiento ' + row.record.concept"
+                              data-testid="cash-confirm"
+                            >
+                              <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+                            </button>
+                          }
+                          @if (row.record.status !== 'anulado') {
+                            <button
+                              type="button"
+                              class="btn btn-ghost btn-sm px-2"
+                              (click)="openEditMovement(row.record)"
+                              [attr.aria-label]="'Editar movimiento ' + row.record.concept"
+                              data-testid="cash-edit"
+                            >
+                              <i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-ghost btn-sm px-2 text-amber-600"
+                              (click)="store.annulMovement(row.record.id)"
+                              [attr.aria-label]="'Anular movimiento ' + row.record.concept"
+                              data-testid="cash-annul"
+                            >
+                              <i class="fa-solid fa-ban text-xs" aria-hidden="true"></i>
+                            </button>
+                          }
+                          <button
+                            type="button"
+                            class="btn btn-ghost btn-sm px-2 text-red-600"
+                            (click)="store.removeMovement(row.record.id)"
+                            [attr.aria-label]="'Eliminar movimiento ' + row.record.concept"
+                            data-testid="cash-remove"
+                          >
+                            <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
+                          </button>
+                        }
+                      </span>
+                    </div>
                   </td>
                 </tr>
               }
@@ -429,30 +461,34 @@
         </div>
 
         <footer
-          class="flex flex-col gap-2 border-t border-slate-100 pt-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+          class="flex flex-col gap-3 border-t border-slate-100 pt-3 text-[10px] font-bold text-slate-400 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
         >
-          <p>
+          <span>
             Mostrando {{ (store.currentPage() - 1) * pageSize + 1 }}–{{
               (store.currentPage() - 1) * pageSize + store.pagedRecords().length
             }}
             de {{ store.filteredCount() }}
-          </p>
+          </span>
           <div class="flex items-center gap-2">
             <button
               type="button"
-              class="btn btn-secondary btn-sm"
-              [disabled]="store.currentPage() === 1"
+              class="btn btn-secondary btn-sm normal-case tracking-normal"
+              [disabled]="store.currentPage() <= 1"
               (click)="store.previousPage()"
+              data-testid="cash-previous"
             >
-              ← Anterior
+              <i class="fa-solid fa-arrow-left text-[10px]" aria-hidden="true"></i>
+              Anterior
             </button>
             <button
               type="button"
-              class="btn btn-secondary btn-sm"
+              class="btn btn-secondary btn-sm normal-case tracking-normal"
               [disabled]="store.currentPage() >= store.pageCount()"
               (click)="store.nextPage()"
+              data-testid="cash-next"
             >
-              Siguiente →
+              Siguiente
+              <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
             </button>
           </div>
         </footer>
@@ -477,13 +513,13 @@
                 <td class="py-3 pr-3 text-xs font-bold">{{ method.label }}</td>
                 <td class="py-3 pr-3 text-right text-xs tabular-nums">{{ method.count }}</td>
                 <td class="py-3 pr-3 text-right text-xs tabular-nums text-emerald-600">
-                  {{ method.income | appCurrency }}
+                  {{ method.income | cashMoney }}
                 </td>
                 <td class="py-3 pr-3 text-right text-xs tabular-nums text-red-600">
-                  {{ method.expense | appCurrency }}
+                  {{ method.expense | cashMoney }}
                 </td>
                 <td class="py-3 text-right text-xs font-bold tabular-nums">
-                  {{ method.net | appCurrency }}
+                  {{ method.net | cashMoney }}
                 </td>
               </tr>
             }
@@ -518,13 +554,13 @@
                   </td>
                   <td class="py-3 pr-3 text-right text-xs tabular-nums">{{ closure.count }}</td>
                   <td class="py-3 pr-3 text-right text-xs tabular-nums text-emerald-600">
-                    {{ closure.income | appCurrency }}
+                    {{ closure.income | cashMoney }}
                   </td>
                   <td class="py-3 pr-3 text-right text-xs tabular-nums text-red-600">
-                    {{ closure.expense | appCurrency }}
+                    {{ closure.expense | cashMoney }}
                   </td>
                   <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
-                    {{ closure.net | appCurrency }}
+                    {{ closure.net | cashMoney }}
                   </td>
                   <td class="py-3">
                     <span
@@ -540,6 +576,195 @@
             </tbody>
           </table>
         </div>
+      }
+    } @else {
+      @if (store.tab() === 'petty-cash') {
+        <div class="grid gap-3 sm:grid-cols-3">
+          <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+            <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+              Fondo asignado
+            </p>
+            <p class="mt-1 text-lg font-black tabular-nums">{{ pettyCashFund | cashMoney }}</p>
+          </article>
+          <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+            <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Disponible</p>
+            <p class="mt-1 text-lg font-black tabular-nums">
+              {{ store.summary().pettyCash | cashMoney }}
+            </p>
+          </article>
+          <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+            <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+              Movimientos
+            </p>
+            <p class="mt-1 text-lg font-black tabular-nums">{{ store.filteredCount() }}</p>
+          </article>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-surface-600 dark:text-slate-300 dark:hover:bg-surface-700"
+            (click)="
+              openNewMovement({
+                type: 'ingreso',
+                category: 'caja-chica',
+                account: 'caja-general',
+                paymentMethod: 'efectivo',
+              })
+            "
+          >
+            <i class="fa-solid fa-rotate text-xs" aria-hidden="true"></i>
+            Reponer fondo
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-950 hover:bg-emerald-200"
+            (click)="
+              openNewMovement({
+                type: 'egreso',
+                category: 'caja-chica',
+                account: 'caja-general',
+                paymentMethod: 'efectivo',
+              })
+            "
+          >
+            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+            Gasto de caja chica
+          </button>
+        </div>
+      }
+
+      @if (store.tab() === 'banks') {
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          @for (account of store.bankAccounts(); track account.account) {
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-surface-700">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">
+                  {{ account.label }}
+                </p>
+                <span class="badge badge-neutral">{{ account.count }} mov.</span>
+              </div>
+              <p class="mt-2 text-lg font-black tabular-nums">
+                {{ account.balance | cashMoney }}
+              </p>
+              <div class="mt-2 flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <span>+{{ account.income | cashMoney }}</span>
+                <span>-{{ account.expense | cashMoney }}</span>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      @if (store.tab() === 'transfers') {
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-4 py-2.5 text-xs font-bold text-emerald-950 hover:bg-emerald-200"
+            (click)="
+              openNewMovement({
+                type: 'egreso',
+                category: 'transferencia',
+                paymentMethod: 'transferencia',
+                account: 'bac',
+              })
+            "
+          >
+            <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+            Nueva transferencia
+          </button>
+        </div>
+      }
+
+      @if (!store.hasRecords()) {
+        <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+          Aún no hay movimientos registrados.
+        </p>
+      } @else if (store.filteredCount() === 0) {
+        <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+          No hay movimientos para este periodo.
+        </p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[760px] text-left text-sm" data-testid="cash-section-table">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+              >
+                <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Concepto</th>
+                <th scope="col" class="py-2 pr-3 font-bold">Método</th>
+                <th scope="col" class="py-2 pr-3 text-right font-bold">Monto</th>
+                <th scope="col" class="py-2 font-bold">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+              @for (record of store.pagedRecords(); track record.id) {
+                <tr data-testid="cash-section-row">
+                  <td
+                    class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
+                  >
+                    {{ record.date | appDate: 'short' }}
+                  </td>
+                  <td class="max-w-[260px] py-3 pr-3">
+                    <p class="truncate text-xs font-semibold">{{ record.concept }}</p>
+                    <p class="mt-0.5 truncate text-[10px] text-slate-400">
+                      {{ store.accountLabels()[record.account] ?? record.account }}
+                    </p>
+                  </td>
+                  <td
+                    class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
+                  >
+                    {{ store.paymentLabels()[record.paymentMethod] ?? record.paymentMethod }}
+                  </td>
+                  <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
+                    <span
+                      [class.text-emerald-600]="record.type === 'ingreso'"
+                      [class.text-red-600]="record.type === 'egreso'"
+                    >
+                      {{ record.type === 'ingreso' ? '+' : '-' }}{{ record.amount | cashMoney }}
+                    </span>
+                  </td>
+                  <td class="py-3">
+                    <span [class]="'badge ' + statusClass(record.status)">
+                      {{ store.statusLabels()[record.status] ?? record.status }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <footer
+          class="flex flex-col gap-3 border-t border-slate-100 pt-3 text-[10px] font-bold text-slate-400 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+        >
+          <span>
+            Mostrando {{ (store.currentPage() - 1) * pageSize + 1 }}–{{
+              (store.currentPage() - 1) * pageSize + store.pagedRecords().length
+            }}
+            de {{ store.filteredCount() }}
+          </span>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm normal-case tracking-normal"
+              [disabled]="store.currentPage() <= 1"
+              (click)="store.previousPage()"
+            >
+              <i class="fa-solid fa-arrow-left text-[10px]" aria-hidden="true"></i>
+              Anterior
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm normal-case tracking-normal"
+              [disabled]="store.currentPage() >= store.pageCount()"
+              (click)="store.nextPage()"
+            >
+              Siguiente
+              <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+            </button>
+          </div>
+        </footer>
       }
     }
   </div>

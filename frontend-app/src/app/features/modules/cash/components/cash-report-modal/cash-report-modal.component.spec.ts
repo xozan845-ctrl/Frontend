@@ -21,6 +21,7 @@ function record(overrides: Partial<CashMovement> = {}): CashMovement {
     paymentMethod: 'efectivo',
     status: 'confirmado',
     account: 'caja-general',
+    source: 'venta',
     reference: '',
     counterpart: '',
     notes: '',
@@ -71,25 +72,40 @@ describe('CashReportModalComponent', () => {
       expect.objectContaining({
         format: 'excel',
         records: [expect.objectContaining({ id: 'out' })],
-        filters: expect.objectContaining({ type: 'egreso', period: 'month' }),
+        filters: expect.objectContaining({
+          type: 'egreso',
+          period: 'month',
+          dateFrom: '',
+          dateTo: '',
+        }),
       }),
     );
     expect(exported).toHaveBeenNthCalledWith(2, expect.objectContaining({ format: 'pdf' }));
   });
 
-  it('debe cambiar período, estado, método y búsqueda', async () => {
+  it('debe cambiar período, rango personalizado, estado, método y búsqueda', async () => {
     const fixture = await setup([
       record({ id: 'a', concept: 'Venta' }),
       record({ id: 'b', concept: 'Compra', paymentMethod: 'tarjeta', status: 'pendiente' }),
       record({ id: 'c', date: '2020-01-01', concept: 'Viejo' }),
     ]);
     const component = fixture.componentInstance;
-    const period = { target: { value: 'all' } } as unknown as Event;
+    const period = { target: { value: 'year' } } as unknown as Event;
+    const custom = { target: { value: 'custom' } } as unknown as Event;
+    const from = { target: { value: '2020-01-01' } } as unknown as Event;
+    const to = { target: { value: '2020-01-31' } } as unknown as Event;
     const method = { target: { value: 'tarjeta' } } as unknown as Event;
     const search = { target: { value: 'compra' } } as unknown as Event;
 
     component.setPeriod(period);
-    expect(component.filtered()).toHaveLength(3);
+    expect(component.filtered()).toHaveLength(2);
+    component.setPeriod(custom);
+    component.setDateFrom(from);
+    component.setDateTo(to);
+    expect(component.filtered()).toHaveLength(1);
+    component.setDateFrom({ target: { value: '' } } as unknown as Event);
+    component.setDateTo({ target: { value: '' } } as unknown as Event);
+    component.setPeriod(period);
     component.setPaymentMethod(method);
     expect(component.filtered()).toHaveLength(1);
     component.setPaymentMethod({ target: { value: 'all' } } as unknown as Event);
