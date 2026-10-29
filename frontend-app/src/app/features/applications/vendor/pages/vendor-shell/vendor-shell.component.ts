@@ -8,7 +8,7 @@ import {
   type Workspace,
 } from '../../../auth/public-api';
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-sidebar.component';
+import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
 
 /**
  * Shell del panel del vendedor (ADR-20): sidebar del diseño + `<router-outlet>`.
@@ -18,7 +18,7 @@ import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-s
 @Component({
   selector: 'app-vendor-shell',
   standalone: true,
-  imports: [RouterOutlet, VendorSidebarComponent],
+  imports: [RouterOutlet, WorkspaceSidebarComponent],
   templateUrl: './vendor-shell.component.html',
 })
 export default class VendorShellComponent {

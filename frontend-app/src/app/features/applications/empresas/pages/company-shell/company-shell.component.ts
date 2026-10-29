@@ -8,13 +8,13 @@ import {
   type Workspace,
 } from '../../../auth/public-api';
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { CompanySidebarComponent } from '../../components/company-sidebar/company-sidebar.component';
+import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
 
 /** Shell aislado del workspace del propietario de empresa. */
 @Component({
   selector: 'app-company-shell',
   standalone: true,
-  imports: [RouterOutlet, CompanySidebarComponent],
+  imports: [RouterOutlet, WorkspaceSidebarComponent],
   templateUrl: './company-shell.component.html',
 })
 export default class CompanyShellComponent {

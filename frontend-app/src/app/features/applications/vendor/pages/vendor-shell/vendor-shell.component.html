@@ -22,10 +22,12 @@
   </div>
 
   <div class="lg:flex">
-    <app-vendor-sidebar
+    <app-workspace-sidebar
       id="vendor-sidebar"
       [open]="isSidebarOpen()"
       [groups]="navGroups"
+      sidebarLabel="Navegación del panel del vendedor"
+      [labelTopPadding]="true"
       (closed)="closeSidebar()"
       (itemSelected)="closeSidebar()"
     />
