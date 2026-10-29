@@ -11,7 +11,7 @@ Las suites viven en `e2e/storefront.spec.ts` (tienda) y `e2e/vendor.spec.ts`
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | R-E-1  | El **catálogo** carga productos y permite filtrar por categoría y ordenar; el conteo mostrado coincide con las tarjetas.                                                   | catálogo      |
 | R-E-2  | **Detalle de producto**: navegar desde una tarjeta muestra el nombre, precio e imágenes correctos.                                                                         | catálogo      |
-| R-E-3  | **Agregar al carrito**: cambia el contador del navbar, abre el sidebar y suma el total correcto.                                                                           | carrito       |
+| R-E-3  | **Agregar al carrito**: cambia el contador del header, abre el sidebar y suma el total correcto.                                                                           | carrito       |
 | R-E-4  | **Checkout protegido**: sin sesión redirige a `/login`; con sesión permite completar y llega a `/checkout/confirmation`.                                                   | checkout      |
 | R-E-5  | **Login/registro**: credenciales válidas autentican y permiten acceder al checkout; credenciales inválidas muestran el error sin navegar.                                  | auth          |
 | R-E-6  | **Wishlist**: agregar/quitar actualiza el contador y persiste al recargar.                                                                                                 | wishlist      |
@@ -19,11 +19,11 @@ Las suites viven en `e2e/storefront.spec.ts` (tienda) y `e2e/vendor.spec.ts`
 | R-E-8  | **Ruta inexistente**: una URL desconocida muestra el `not-found` (404).                                                                                                    | navegación    |
 | R-E-15 | **Alta de tienda**: un vendedor crea su cuenta y recorre el asistente (cuenta → tienda → productos → listo) en `/crear-tienda`.                                            | tienda        |
 | R-E-16 | **Dashboard de IA**: el dashboard del feature IA (`/ia`) muestra el panel de conexión del backend (mockeado).                                                              | IA            |
-| R-E-17 | **Enlace de IA**: el enlace "IA" del navbar abre el dashboard del feature (`/ia`).                                                                                         | IA            |
+| R-E-17 | **Enlace de IA**: el enlace "IA" del header abre el dashboard del feature (`/ia`).                                                                                         | IA            |
 | R-E-18 | **POS del vendedor**: un vendedor autenticado registra un pedido (cliente de la cartera, dos productos y stepper de cantidad) y lo ve al instante en "Pedidos recientes".  | vendedor      |
 | R-E-19 | **Pedidos del vendedor**: la lista filtra por estado con conteo y el detalle del pedido carga con sus líneas.                                                              | vendedor      |
 | R-E-20 | **Entrada multi-tienda**: la raíz (`/`) sin tienda en la URL muestra el buscador de tienda y el acceso al asistente de alta; un identificador válido resuelve el catálogo. | navegación    |
-| R-E-21 | **Acceso al panel de vendedor**: el enlace "Vendedor" del navbar es visible sin sesión y guía al alta (login → cuenta de vendedor) hasta entrar al panel.                  | vendedor      |
+| R-E-21 | **Acceso al panel de vendedor**: el enlace "Vendedor" del header es visible sin sesión y guía al alta (login → cuenta de vendedor) hasta entrar al panel.                  | vendedor      |
 | R-E-25 | **Accesibilidad automatizada**: axe-core audita home, catálogo y login sin violaciones `serious`/`critical`, en desktop y viewport móvil.                                  | accesibilidad |
 
 ## Calidad de ejecución

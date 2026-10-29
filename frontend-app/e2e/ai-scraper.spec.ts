@@ -45,7 +45,7 @@ test('R-E-16: el dashboard de IA muestra el panel de conexión', async ({ page }
   await expect(page.getByRole('heading', { name: 'Panel de extracción' })).toBeVisible();
 });
 
-test('R-E-17: el enlace de IA del navbar abre el feature', async ({ page }) => {
+test('R-E-17: el enlace de IA del header abre el feature', async ({ page }) => {
   await mockAiBackend(page);
   await page.goto('/tienda/tienda-demo/shop', { waitUntil: 'domcontentloaded' });
 

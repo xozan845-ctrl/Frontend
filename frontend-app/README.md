@@ -127,7 +127,7 @@ src/
     │   ├── directives/           # scroll-reveal, focus-trap
     │   └── ui/                   # componentes de UI reutilizables
     ├── layout/                   # Chrome de la app
-    │   ├── navbar/
+    │   ├── header/
     │   └── footer/
     ├── features/                 # Dominios de negocio (clean/hexagonal)
     │   ├── account/              # pages/ (perfil, pedidos), state, services, repositories, adapters

@@ -76,7 +76,7 @@ test('R-E-2: el detalle de producto muestra el producto seleccionado', async ({ 
   await expect(page.getByText(name, { exact: false }).first()).toBeVisible();
 });
 
-test('R-E-3: agregar al carrito actualiza el contador del navbar', async ({ page }) => {
+test('R-E-3: agregar al carrito actualiza el contador del header', async ({ page }) => {
   // Invitado: el carrito es local y se vuelca al servidor al iniciar sesión.
   await open(page, `${STORE}/shop`);
 

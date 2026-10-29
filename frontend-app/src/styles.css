@@ -140,7 +140,7 @@ textarea:focus-visible,
 }
 
 @media print {
-  app-navbar,
+  app-header,
   app-footer {
     display: none !important;
   }
