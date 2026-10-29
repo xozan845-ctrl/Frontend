@@ -1879,3 +1879,31 @@ contexto y consecuencias.
   datos migrados. El bundle inicial queda en 544.22 kB (techo 555 kB); el chunk
   de Gastos es lazy (~37 kB). El ledger nuevo puede integrarse con finanzas en
   una fase posterior si se unifican los dominios.
+
+## ADR-73: Módulo dedicado de Caja
+
+- **Fecha**: 2026-10-29
+- **Estado**: Aceptado
+- **Contexto**: Caja vivía como una pestaña del módulo de finanzas, con un
+  movimiento plano (fecha, tipo, concepto, monto y método). La operación real
+  necesita cuentas de caja y banco, métodos de pago, estados, cierres diarios,
+  caja chica y transferencias. Compras se está refactorizando en paralelo, así
+  que compartir el mismo store aumentaría el riesgo de conflicto.
+- **Decisión**:
+  - Se crea `features/domains/cash` como dominio `domainOnly` con modelo,
+    constantes, adaptador, store y migración del ledger anterior.
+  - `CashStore` aporta CRUD, confirmación/anulación, filtros por período, tipo,
+    estado, categoría, método y búsqueda; además deriva KPIs, métodos de pago,
+    cierres diarios, saldos por banco y saldo acumulado por movimiento.
+  - Persiste en `ecom_company_cash_ledger_*` y migra los movimientos de
+    `ecom_company_cash_*` la primera vez.
+  - Se crea `features/modules/cash` con la página (KPIs, tabs Movimientos /
+    Métodos de pago / Cierres diarios / Caja Chica / Bancos / Transferencias) y
+    los modales de alta/edición y reporte. `/empresa/caja` carga este módulo.
+  - El reporte filtra por período, tipo, estado, método y búsqueda; exporta CSV
+    compatible con Excel y genera una vista imprimible para PDF.
+  - Compras sigue en `modules/finance`; el dominio `finance` no cambia en esta
+    entrega y su ledger de caja solo se usa para migrar.
+- **Consecuencias**: Caja evoluciona sin tocar Compras, con una UI completa y
+  datos migrados. El dominio puede integrarse con finanzas en una fase posterior
+  si se unifican los ledgers.
