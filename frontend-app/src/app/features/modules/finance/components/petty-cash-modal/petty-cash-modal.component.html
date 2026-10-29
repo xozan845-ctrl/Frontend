@@ -1,0 +1,148 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="petty-modal-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="petty-modal"
+    >
+      <header class="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h2
+            id="petty-modal-title"
+            class="font-heading text-xl font-black tracking-tight text-slate-900 dark:text-white"
+          >
+            {{
+              mode() === 'fund'
+                ? 'Fondo de caja chica'
+                : type() === 'gasto'
+                  ? 'Gasto de caja chica'
+                  : 'Reposición de caja chica'
+            }}
+          </h2>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            {{
+              mode() === 'fund'
+                ? 'Define el monto fijo y el responsable del fondo.'
+                : 'Registra el movimiento sin afectar la caja principal.'
+            }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm px-2.5 text-slate-400"
+          aria-label="Cerrar"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark text-base" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form class="flex flex-col gap-4" [formGroup]="form" (ngSubmit)="submit()">
+        @if (mode() === 'movement') {
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label for="petty-type" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Tipo *
+              </label>
+              <select
+                id="petty-type"
+                class="input py-3 text-sm"
+                formControlName="type"
+                (change)="setType($any($event.target).value)"
+              >
+                <option value="gasto">Gasto</option>
+                <option value="reposicion">Reposición</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="petty-date" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Fecha
+              </label>
+              <input
+                id="petty-date"
+                type="date"
+                class="input py-3 text-sm"
+                formControlName="date"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="petty-concept" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+              Concepto *
+            </label>
+            <input
+              id="petty-concept"
+              type="text"
+              class="input py-3 text-sm"
+              formControlName="concept"
+              placeholder="Ej: Compra de agua y café"
+              data-testid="petty-concept"
+            />
+            @if (isInvalid('concept')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                Describe el movimiento.
+              </p>
+            }
+          </div>
+        } @else {
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="petty-responsible"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Responsable
+            </label>
+            <input
+              id="petty-responsible"
+              type="text"
+              class="input py-3 text-sm"
+              formControlName="responsible"
+              placeholder="Ej: Karla"
+            />
+          </div>
+        }
+
+        <div class="flex flex-col gap-1.5">
+          <label for="petty-amount" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+            {{ mode() === 'fund' ? 'Fondo asignado *' : 'Monto *' }}
+          </label>
+          <input
+            id="petty-amount"
+            type="number"
+            step="0.01"
+            class="input py-3 text-sm"
+            formControlName="amount"
+            data-testid="petty-amount"
+          />
+          @if (isInvalid('amount')) {
+            <p class="text-xs font-bold text-red-600 dark:text-red-400">
+              {{
+                mode() === 'fund'
+                  ? 'El fondo no puede ser negativo.'
+                  : 'El monto debe ser mayor que 0.'
+              }}
+            </p>
+          }
+        </div>
+
+        <footer class="flex items-center justify-end gap-2 pt-1">
+          <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm" data-testid="petty-save">
+            <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+            Guardar
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

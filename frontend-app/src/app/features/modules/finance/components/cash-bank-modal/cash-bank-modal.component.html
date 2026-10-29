@@ -1,0 +1,146 @@
+@if (open()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-hidden="true"></div>
+
+    <div
+      class="relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl motion-safe:animate-scale-in dark:border-surface-700 dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cash-bank-title"
+      tabindex="-1"
+      [appFocusTrap]="open()"
+      (escape)="dismiss.emit()"
+      data-testid="cash-bank-dialog"
+    >
+      <header
+        class="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-surface-700"
+      >
+        <h2
+          id="cash-bank-title"
+          class="font-heading text-xl font-black tracking-tight text-slate-900 dark:text-white"
+        >
+          {{ account() ? 'Editar cuenta' : 'Nueva cuenta bancaria' }}
+        </h2>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm px-2.5 text-slate-400"
+          aria-label="Cerrar"
+          (click)="dismiss.emit()"
+        >
+          <i class="fa-solid fa-xmark text-base" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form class="flex min-h-0 flex-1 flex-col" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="flex flex-col gap-4 overflow-y-auto px-5 py-5">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-bank-name"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Banco *
+              </label>
+              <input
+                id="cash-bank-name"
+                type="text"
+                class="input py-3 text-sm"
+                formControlName="bank"
+                placeholder="Ej: Banco Lafise"
+              />
+              @if (isInvalid('bank')) {
+                <p class="text-xs font-bold text-red-600 dark:text-red-400">Indica el banco.</p>
+              }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-bank-alias"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Alias *
+              </label>
+              <input
+                id="cash-bank-alias"
+                type="text"
+                class="input py-3 text-sm"
+                formControlName="alias"
+                placeholder="Ej: Operativa"
+              />
+              @if (isInvalid('alias')) {
+                <p class="text-xs font-bold text-red-600 dark:text-red-400">Indica un alias.</p>
+              }
+            </div>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-bank-number"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Número de cuenta *
+              </label>
+              <input
+                id="cash-bank-number"
+                type="text"
+                class="input py-3 text-sm"
+                formControlName="accountNumber"
+                placeholder="Ej: 123456789"
+              />
+              @if (isInvalid('accountNumber')) {
+                <p class="text-xs font-bold text-red-600 dark:text-red-400">Indica el número.</p>
+              }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label
+                for="cash-bank-type"
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                Tipo
+              </label>
+              <select id="cash-bank-type" class="input py-3 text-sm" formControlName="type">
+                @for (type of types; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              for="cash-bank-balance"
+              class="text-xs font-bold text-slate-500 dark:text-slate-400"
+            >
+              Saldo actual *
+            </label>
+            <input
+              id="cash-bank-balance"
+              type="number"
+              min="0"
+              step="0.01"
+              class="input py-3 text-sm"
+              formControlName="balance"
+            />
+            @if (isInvalid('balance')) {
+              <p class="text-xs font-bold text-red-600 dark:text-red-400">
+                El saldo no puede ser negativo.
+              </p>
+            }
+          </div>
+        </div>
+
+        <footer
+          class="flex items-center justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-surface-700"
+        >
+          <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm" data-testid="cash-bank-save">
+            <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+            {{ account() ? 'Guardar cambios' : 'Registrar cuenta' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

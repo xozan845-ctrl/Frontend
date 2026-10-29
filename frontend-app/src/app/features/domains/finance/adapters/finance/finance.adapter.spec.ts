@@ -30,10 +30,19 @@ const EXPENSE: ExpenseRecord = {
 const CASH: CashMovement = {
   id: 'cash-1',
   date: '2026-10-22',
+  createdAt: '2026-10-22T12:00:00.000Z',
   type: 'ingreso',
   concept: 'Pago de cliente',
   amount: 400,
+  currency: 'NIO',
+  originalAmount: 400,
+  exchangeRate: 1,
   paymentMethod: 'efectivo',
+  category: 'aporte',
+  source: 'manual',
+  status: 'completado',
+  reference: '',
+  observations: '',
 };
 
 describe('finance.adapter', () => {

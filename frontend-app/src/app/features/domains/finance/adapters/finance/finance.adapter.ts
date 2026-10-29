@@ -1,8 +1,6 @@
 import { FINANCE_MAX_RECORDS } from '../../constants/finance.constants';
 import type {
   CashMovement,
-  CashMovementType,
-  CreateCashMovementPayload,
   CreateExpensePayload,
   CreatePurchasePayload,
   ExpenseCategory,
@@ -12,6 +10,7 @@ import type {
   PurchaseRecord,
   PurchaseStatus,
 } from '../../models/finance.model';
+import { createCashMovementRecord, sanitizeCashMovements } from '../cash/cash-movements.adapter';
 
 const PURCHASE_STATUS_VALUES: readonly PurchaseStatus[] = ['pendiente', 'pagada'];
 const EXPENSE_CATEGORY_VALUES: readonly ExpenseCategory[] = [
@@ -27,8 +26,6 @@ const PAYMENT_METHOD_VALUES: readonly PaymentMethod[] = [
   'transferencia',
   'credito',
 ];
-const CASH_TYPE_VALUES: readonly CashMovementType[] = ['ingreso', 'egreso'];
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -104,26 +101,6 @@ function adaptExpense(raw: Record<string, unknown>): ExpenseRecord | null {
   return { id, date, category, description, amount, paymentMethod };
 }
 
-function adaptCash(raw: Record<string, unknown>): CashMovement | null {
-  const id = toText(raw['id']);
-  const date = toDate(raw['date']);
-  const concept = toText(raw['concept']);
-  const amount = toAmount(raw['amount']);
-  const type = raw['type'];
-  const paymentMethod = raw['paymentMethod'];
-  if (
-    !id ||
-    !date ||
-    !concept ||
-    amount === 0 ||
-    !includes(CASH_TYPE_VALUES, type) ||
-    !includes(PAYMENT_METHOD_VALUES, paymentMethod)
-  ) {
-    return null;
-  }
-  return { id, date, concept, amount, type, paymentMethod };
-}
-
 /** Normaliza compras persistidas y descarta registros inválidos. */
 export function sanitizePurchaseRecords(value: unknown): PurchaseRecord[] {
   return sanitizeList(value, adaptPurchase);
@@ -135,9 +112,7 @@ export function sanitizeExpenseRecords(value: unknown): ExpenseRecord[] {
 }
 
 /** Normaliza movimientos de caja persistidos y descarta registros inválidos. */
-export function sanitizeCashMovements(value: unknown): CashMovement[] {
-  return sanitizeList(value, adaptCash);
-}
+export { sanitizeCashMovements };
 
 export function createFinanceId(prefix: string): string {
   const random = globalThis.crypto?.randomUUID?.();
@@ -176,20 +151,8 @@ export function createExpenseRecord(payload: CreateExpensePayload): ExpenseRecor
   };
 }
 
-export function createCashMovement(payload: CreateCashMovementPayload): CashMovement | null {
-  const date = toDate(payload.date);
-  const concept = toText(payload.concept);
-  const amount = toAmount(payload.amount);
-  if (!date || !concept || amount === 0) return null;
-  return {
-    id: createFinanceId('cash'),
-    date,
-    type: payload.type,
-    concept,
-    amount,
-    paymentMethod: payload.paymentMethod,
-  };
-}
+/** Compatibilidad: el alta de caja vive en el adaptador de movimientos. */
+export const createCashMovement = createCashMovementRecord;
 
 function isCurrentMonth(date: string, now: Date): boolean {
   const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -222,6 +185,7 @@ export function computeFinanceSummary(
   let cashIncome = 0;
   let cashExpense = 0;
   for (const movement of cash) {
+    if (movement.status === 'anulado') continue;
     if (movement.type === 'ingreso') cashIncome += movement.amount;
     else cashExpense += movement.amount;
   }
