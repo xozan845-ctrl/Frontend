@@ -101,7 +101,7 @@ export const EMPRESAS_ROUTES: Routes = [
         path: 'caja',
         canActivate: [moduleGuard('company.cash')],
         loadChildren: () =>
-          import('../../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
+          import('../../modules/cash/cash.routes').then((module) => module.CASH_ROUTES),
       },
       {
         path: 'bancos',
