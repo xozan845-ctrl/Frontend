@@ -276,6 +276,12 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
+  purchases: {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   finance: {
     kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
@@ -520,6 +526,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'finance',
   'expenses',
   'cash',
+  'purchases',
   'banks',
   'barcodes',
   'credits',
