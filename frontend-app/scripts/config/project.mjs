@@ -204,6 +204,12 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  'modules/purchases': {
+    kind: 'module',
+    layers: ['components', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
   'modules/payables': {
     kind: 'module',
     layers: ['components', 'pages'],
