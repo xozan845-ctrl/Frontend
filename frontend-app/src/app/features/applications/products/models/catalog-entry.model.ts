@@ -2,4 +2,5 @@
 export interface CatalogEntry {
   description: string;
   category: string;
+  imageUrl?: string;
 }

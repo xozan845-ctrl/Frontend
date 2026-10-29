@@ -26,6 +26,13 @@ describe('catalog-product.adapter', () => {
       stock: 10,
       status: 'disponible',
       createdAt: '2026-10-21T00:00:00.000Z',
+      parentProductId: null,
+      attributes: {},
+      hasVariants: false,
+      images: [],
+      variants: [],
+      priceFrom: null,
+      totalStock: null,
     });
   });
 
@@ -41,6 +48,13 @@ describe('catalog-product.adapter', () => {
       stock: 0,
       status: 'disponible',
       createdAt: '',
+      parentProductId: null,
+      attributes: {},
+      hasVariants: false,
+      images: [],
+      variants: [],
+      priceFrom: null,
+      totalStock: null,
     });
   });
 
@@ -53,6 +67,71 @@ describe('catalog-product.adapter', () => {
     expect(page.pages).toBe(2);
     expect(page.items).toHaveLength(2);
     expect(page.items[1]).toMatchObject({ status: 'agotado', stock: 0 });
+  });
+
+  it('debe adaptar imágenes, variantes y URLs de storage del backend real', () => {
+    const product = adaptCatalogProductFromBackend(
+      {
+        id: 'p-1',
+        empresa_id: 'empresa-1',
+        sku: 'SKU-1',
+        nombre: 'Teclado',
+        precio_base: '100.00',
+        stock: 3,
+        estado: 'disponible',
+        atributos: { marca: 'KBC' },
+        imagenes: [
+          {
+            id: 'img-1',
+            objeto_id: 'obj-1',
+            url: '/api/v1/storage/public/objetos/obj-1',
+            orden: 0,
+            es_principal: true,
+          },
+        ],
+        tiene_variantes: true,
+        precio_desde: '100.00',
+        stock_total: 3,
+        variantes: [
+          {
+            id: 'v-1',
+            producto_padre_id: 'p-1',
+            sku: 'SKU-1-RED',
+            nombre: 'Rojo',
+            atributos: { color: 'rojo' },
+            precio_base: '110.00',
+            stock: 3,
+            estado: 'disponible',
+            imagenes: [],
+            creado_en: '2026-10-21T00:00:00.000Z',
+          },
+        ],
+      },
+      'https://api.test/api-proxy/api/v1',
+    );
+
+    expect(product).toMatchObject({
+      companyId: 'empresa-1',
+      attributes: { marca: 'KBC' },
+      hasVariants: true,
+      priceFrom: 100,
+      totalStock: 3,
+    });
+    expect(product?.images?.[0]).toEqual({
+      id: 'img-1',
+      objectId: 'obj-1',
+      url: 'https://api.test/api-proxy/api/v1/storage/public/objetos/obj-1',
+      order: 0,
+      isPrimary: true,
+    });
+    expect(product?.variants?.[0]).toMatchObject({
+      id: 'v-1',
+      parentProductId: 'p-1',
+      sku: 'SKU-1-RED',
+      name: 'Rojo',
+      basePrice: 110,
+      stock: 3,
+    });
   });
 
   it('debe tolerar array directo y respuesta vacía', () => {

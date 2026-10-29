@@ -4,13 +4,18 @@ import {
 } from '../../../../../core/models/api-response.dto';
 import {
   BackendCatalogProductDTO,
+  BackendProductImageDTO,
+  BackendProductVariantDTO,
   BackendPaginaProductosDTO,
 } from '../../models/catalog-product.dto';
 import {
   CatalogProduct,
+  CatalogProductImage,
   CatalogProductPage,
   CatalogProductStatus,
+  CatalogProductVariant,
 } from '../../models/catalog-product.model';
+import { resolveProductResourceUrl } from '../resource-url/resource-url.adapter';
 
 function toObject<T>(raw: unknown): T | null {
   return raw && typeof raw === 'object' && !Array.isArray(raw) ? (raw as T) : null;
@@ -39,14 +44,75 @@ function toStatus(value: unknown): CatalogProductStatus {
   return value === 'agotado' ? 'agotado' : 'disponible';
 }
 
+function toRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return { ...(value as Record<string, unknown>) };
+}
+
+function toId(value: unknown): string {
+  return hasId(value) ? String(value) : '';
+}
+
+function toOptionalAmount(value: unknown): number | null {
+  return value === null || value === undefined || value === '' ? null : toAmount(value);
+}
+
+export function adaptCatalogProductImageFromBackend(
+  raw: BackendProductImageDTO | null | undefined,
+  apiUrl?: string,
+): CatalogProductImage | null {
+  if (!raw || !hasId(raw.id) || !hasId(raw.objeto_id ?? raw.objetoId)) return null;
+
+  return {
+    id: toId(raw.id),
+    objectId: toId(raw.objeto_id ?? raw.objetoId),
+    url: resolveProductResourceUrl(raw.url, apiUrl),
+    order: Math.max(0, toCount(raw.orden)),
+    isPrimary: Boolean(raw.es_principal ?? raw.esPrincipal),
+  };
+}
+
+export function adaptCatalogProductVariantFromBackend(
+  raw: BackendProductVariantDTO | null | undefined,
+  apiUrl?: string,
+): CatalogProductVariant | null {
+  if (!raw || !hasId(raw.id)) return null;
+  const images = (raw.imagenes ?? [])
+    .map((image) => adaptCatalogProductImageFromBackend(image, apiUrl))
+    .filter((image): image is CatalogProductImage => image !== null);
+
+  return {
+    id: toId(raw.id),
+    parentProductId: toId(raw.producto_padre_id ?? raw.productoPadreId),
+    sku: toText(raw.sku, ''),
+    name: toText(raw.nombre, 'Variante'),
+    attributes: toRecord(raw.atributos),
+    basePrice: toAmount(raw.precio_base ?? raw.precioBase),
+    stock: toCount(raw.stock),
+    status: toStatus(raw.estado),
+    images,
+    createdAt: toText(raw.creado_en ?? raw.creadoEn, ''),
+  };
+}
+
 /**
  * Normaliza `ProductoResponseDto` (snake/camel, precios string/número) al
  * modelo de catálogo. `null` si no hay id.
  */
-export function adaptCatalogProductFromBackend(raw: unknown): CatalogProduct | null {
+export function adaptCatalogProductFromBackend(
+  raw: unknown,
+  apiUrl?: string,
+): CatalogProduct | null {
   const producto = unwrapApiSingleResponse<BackendCatalogProductDTO>(raw);
   if (!producto || typeof producto !== 'object') return null;
   if (!hasId(producto.id)) return null;
+
+  const images = (producto.imagenes ?? [])
+    .map((image) => adaptCatalogProductImageFromBackend(image, apiUrl))
+    .filter((image): image is CatalogProductImage => image !== null);
+  const variants = (producto.variantes ?? [])
+    .map((variant) => adaptCatalogProductVariantFromBackend(variant, apiUrl))
+    .filter((variant): variant is CatalogProductVariant => variant !== null);
 
   return {
     id: String(producto.id),
@@ -61,6 +127,15 @@ export function adaptCatalogProductFromBackend(raw: unknown): CatalogProduct | n
     stock: toCount(producto.stock),
     status: toStatus(producto.estado),
     createdAt: toText(producto.creado_en ?? producto.creadoEn, ''),
+    parentProductId: hasId(producto.producto_padre_id ?? producto.productoPadreId)
+      ? String(producto.producto_padre_id ?? producto.productoPadreId)
+      : null,
+    attributes: toRecord(producto.atributos),
+    hasVariants: Boolean(producto.tiene_variantes ?? producto.tieneVariantes ?? variants.length),
+    images,
+    variants,
+    priceFrom: toOptionalAmount(producto.precio_desde ?? producto.precioDesde),
+    totalStock: toOptionalAmount(producto.stock_total ?? producto.stockTotal),
   };
 }
 
@@ -68,7 +143,10 @@ export function adaptCatalogProductFromBackend(raw: unknown): CatalogProduct | n
  * Normaliza `PaginaProductosResponseDto`: tolera `{ items, total, pagina,
  * limite, paginas }`, arrays directos y envelopes heredados.
  */
-export function adaptCatalogProductPageFromBackend(response: unknown): CatalogProductPage {
+export function adaptCatalogProductPageFromBackend(
+  response: unknown,
+  apiUrl?: string,
+): CatalogProductPage {
   const page =
     toObject<BackendPaginaProductosDTO>(
       unwrapApiSingleResponse<BackendPaginaProductosDTO>(response),
@@ -77,7 +155,7 @@ export function adaptCatalogProductPageFromBackend(response: unknown): CatalogPr
     ? page.items
     : unwrapApiListResponse<unknown>(response);
   const items = rawItems
-    .map((raw) => adaptCatalogProductFromBackend(raw))
+    .map((raw) => adaptCatalogProductFromBackend(raw, apiUrl))
     .filter((product): product is CatalogProduct => product !== null);
 
   return {

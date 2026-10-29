@@ -12,7 +12,10 @@ import {
   CatalogProduct,
   CatalogProductFilters,
   CatalogProductPage,
+  CreateCatalogProductVariantData,
   CreateCatalogProductData,
+  ProductImageData,
+  UpdateCatalogProductVariantData,
   UpdateCatalogProductData,
 } from '../../models/catalog-product.model';
 import { CatalogProductRepository } from '../../repositories/catalog-product.repository';
@@ -33,6 +36,7 @@ export class CatalogProductService implements CatalogProductRepository {
     if (!environment.apiUrl) return this.missingApiUrl();
 
     const params: Record<string, string | number> = {};
+    if (filters.companyId?.trim()) params['empresa_id'] = filters.companyId.trim();
     if (filters.q?.trim()) params['q'] = filters.q.trim();
     if (filters.status) params['estado'] = filters.status;
     if (filters.category?.trim()) params['categoria'] = filters.category.trim();
@@ -43,18 +47,21 @@ export class CatalogProductService implements CatalogProductRepository {
     if (filters.limit && filters.limit !== 20) params['limite'] = filters.limit;
 
     return this.http.get<unknown>(`${environment.apiUrl}${this.endpoint}`, { params }).pipe(
-      map((response) => adaptCatalogProductPageFromBackend(response)),
+      map((response) => adaptCatalogProductPageFromBackend(response, environment.apiUrl)),
       catchError((error: unknown) =>
         throwError(() => new Error(toUserMessage(error, 'No se pudo cargar el catálogo.'))),
       ),
     );
   }
 
-  getById(id: string): Observable<CatalogProduct> {
+  getById(id: string, companyId?: string): Observable<CatalogProduct> {
     if (!environment.apiUrl) return this.missingApiUrl();
 
+    const params: Record<string, string> = {};
+    if (companyId?.trim()) params['empresa_id'] = companyId.trim();
+
     return this.http
-      .get<unknown>(`${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}`)
+      .get<unknown>(`${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}`, { params })
       .pipe(
         map((response) => this.requireProduct(response)),
         catchError((error: unknown) =>
@@ -69,11 +76,19 @@ export class CatalogProductService implements CatalogProductRepository {
     return this.http
       .post<unknown>(`${environment.apiUrl}${this.endpoint}`, {
         sku: data.sku,
+        ...(data.companyId ? { empresa_id: data.companyId } : {}),
         nombre: data.name,
-        descripcion: data.description,
-        categoria: data.category,
+        ...(data.description !== undefined ? { descripcion: data.description } : {}),
+        ...(data.category !== undefined ? { categoria: data.category } : {}),
         precio_base: data.basePrice,
         stock: data.stock,
+        ...(data.attributes !== undefined ? { atributos: data.attributes } : {}),
+        ...(data.images
+          ? { imagenes: data.images.map((image) => this.toImagePayload(image)) }
+          : {}),
+        ...(data.variants
+          ? { variantes: data.variants.map((variant) => this.toVariantPayload(variant)) }
+          : {}),
       })
       .pipe(
         map((response) => this.requireProduct(response)),
@@ -88,12 +103,7 @@ export class CatalogProductService implements CatalogProductRepository {
 
     return this.http
       .patch<unknown>(`${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}`, {
-        nombre: data.name,
-        descripcion: data.description,
-        categoria: data.category,
-        precio_base: data.basePrice,
-        stock: data.stock,
-        motivo: data.reason,
+        ...this.toUpdatePayload(data),
       })
       .pipe(
         map((response) => this.requireProduct(response)),
@@ -103,8 +113,88 @@ export class CatalogProductService implements CatalogProductRepository {
       );
   }
 
+  createVariant(id: string, data: CreateCatalogProductVariantData): Observable<CatalogProduct> {
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .post<unknown>(
+        `${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}/variantes`,
+        this.toVariantPayload(data),
+      )
+      .pipe(
+        map((response) => this.requireProduct(response)),
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo crear la variante.'))),
+        ),
+      );
+  }
+
+  updateVariant(
+    id: string,
+    variantId: string,
+    data: UpdateCatalogProductVariantData,
+  ): Observable<CatalogProduct> {
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .patch<unknown>(
+        `${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}/variantes/${encodeURIComponent(variantId)}`,
+        this.toUpdatePayload(data),
+      )
+      .pipe(
+        map((response) => this.requireProduct(response)),
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo actualizar la variante.'))),
+        ),
+      );
+  }
+
+  deleteVariant(id: string, variantId: string): Observable<void> {
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .delete<void>(
+        `${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}/variantes/${encodeURIComponent(variantId)}`,
+      )
+      .pipe(
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo eliminar la variante.'))),
+        ),
+      );
+  }
+
+  addImage(id: string, data: ProductImageData): Observable<CatalogProduct> {
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .post<unknown>(
+        `${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}/imagenes`,
+        this.toImagePayload(data),
+      )
+      .pipe(
+        map((response) => this.requireProduct(response)),
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo agregar la imagen.'))),
+        ),
+      );
+  }
+
+  deleteImage(id: string, imageId: string): Observable<void> {
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .delete<void>(
+        `${environment.apiUrl}${this.endpoint}/${encodeURIComponent(id)}/imagenes/${encodeURIComponent(imageId)}`,
+      )
+      .pipe(
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo eliminar la imagen.'))),
+        ),
+      );
+  }
+
   private requireProduct(response: unknown): CatalogProduct {
-    const product = adaptCatalogProductFromBackend(response);
+    const product = adaptCatalogProductFromBackend(response, environment.apiUrl);
     if (!product) throw new Error('No se pudo interpretar el producto.');
     return product;
   }
@@ -114,5 +204,36 @@ export class CatalogProductService implements CatalogProductRepository {
       () =>
         new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend real.'),
     );
+  }
+
+  private toImagePayload(data: ProductImageData): Record<string, unknown> {
+    return {
+      objeto_id: data.objectId,
+      ...(data.order !== undefined ? { orden: data.order } : {}),
+      ...(data.isPrimary !== undefined ? { es_principal: data.isPrimary } : {}),
+    };
+  }
+
+  private toVariantPayload(data: CreateCatalogProductVariantData): Record<string, unknown> {
+    return {
+      sku: data.sku,
+      ...(data.name !== undefined ? { nombre: data.name } : {}),
+      ...(data.attributes !== undefined ? { atributos: data.attributes } : {}),
+      precio_base: data.basePrice,
+      stock: data.stock,
+      ...(data.images ? { imagenes: data.images.map((image) => this.toImagePayload(image)) } : {}),
+    };
+  }
+
+  private toUpdatePayload(data: UpdateCatalogProductData): Record<string, unknown> {
+    return {
+      ...(data.name !== undefined ? { nombre: data.name } : {}),
+      ...(data.description !== undefined ? { descripcion: data.description } : {}),
+      ...(data.category !== undefined ? { categoria: data.category } : {}),
+      ...(data.basePrice !== undefined ? { precio_base: data.basePrice } : {}),
+      ...(data.stock !== undefined ? { stock: data.stock } : {}),
+      ...(data.attributes !== undefined ? { atributos: data.attributes } : {}),
+      ...(data.reason !== undefined ? { motivo: data.reason } : {}),
+    };
   }
 }

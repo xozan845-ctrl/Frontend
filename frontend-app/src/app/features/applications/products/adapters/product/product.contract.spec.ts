@@ -79,6 +79,10 @@ describe('product.contract · tienda pública', () => {
       vendorId: 'e9aa395b-1654-48b0-befe-fbe38538a408',
       name: 'Tienda Ofertas',
       description: 'Productos de la empresa',
+      companyId: 'dfe0cfe4-8ddc-42bf-8dd2-6c3cb43544b3',
+      ownerUserId: 'e9aa395b-1654-48b0-befe-fbe38538a408',
+      participationPercentage: 100,
+      createdAt: '2026-10-21T21:20:00.000Z',
     });
     expect(storefront.products).toHaveLength(1);
     expect(storefront.products[0]).toMatchObject({

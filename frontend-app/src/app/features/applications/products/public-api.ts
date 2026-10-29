@@ -11,9 +11,14 @@ export { CATALOG_PRODUCT_REPOSITORY } from './repositories/catalog-product.repos
 export { CatalogProductService } from './services/catalog-product/catalog-product.service';
 export type {
   CatalogProduct,
+  CatalogProductImage,
+  CatalogProductVariant,
   CatalogProductFilters,
   CatalogProductPage,
   CatalogProductStatus,
+  CreateCatalogProductVariantData,
   CreateCatalogProductData,
+  ProductImageData,
+  UpdateCatalogProductVariantData,
   UpdateCatalogProductData,
 } from './models/catalog-product.model';

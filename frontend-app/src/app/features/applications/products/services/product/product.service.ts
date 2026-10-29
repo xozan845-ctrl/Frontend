@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError, forkJoin } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { toUserMessage } from '../../../../../core/models/api-error';
 import { adaptStorefrontFromBackend } from '../../adapters/product/product.adapter';
@@ -19,9 +19,10 @@ export class ProductService implements ProductRepository {
    * Storefront de una tienda: `GET /tiendas/:storeId` → `{ tienda, ofertas }`.
    * La tienda llega por URL (multi-tienda); no se fija en configuración.
    *
-   * Las ofertas no traen descripción/categoría, así que se enriquecen con el
-   * catálogo público (`GET /catalog/productos`), en una sola petición y de
-   * forma **best-effort**: si el catálogo falla, el storefront sigue cargando.
+   * Las ofertas traen la identidad comercial real (precio, stock, imagen y
+   * atributos). Se enriquecen con el catálogo de la empresa solo para los
+   * campos descriptivos que el contrato de ofertas no replica. El enrichment
+   * es best-effort: la tienda sigue cargando aunque falle esa segunda lectura.
    */
   getStorefront(storeId: string): Observable<Storefront> {
     if (!environment.apiUrl) {
@@ -31,18 +32,35 @@ export class ProductService implements ProductRepository {
       );
     }
 
-    const storefront$ = this.http.get<unknown>(
-      `${environment.apiUrl}${this.storefrontEndpoint}/${storeId}`,
-    );
-    const catalog$ = this.http
-      .get<unknown>(`${environment.apiUrl}${this.catalogEndpoint}`)
-      .pipe(catchError(() => of(null)));
+    return this.http
+      .get<unknown>(
+        `${environment.apiUrl}${this.storefrontEndpoint}/${encodeURIComponent(storeId)}`,
+      )
+      .pipe(
+        switchMap((storefront) => {
+          const companyId = this.readCompanyId(storefront);
+          const params: Record<string, string | number> = { limite: 100 };
+          if (companyId) params['empresa_id'] = companyId;
 
-    return forkJoin({ storefront: storefront$, catalog: catalog$ }).pipe(
-      map(({ storefront, catalog }) => adaptStorefrontFromBackend(storefront, catalog)),
-      catchError((error) =>
-        throwError(() => new Error(toUserMessage(error, 'No se pudo cargar la tienda.'))),
-      ),
-    );
+          return this.http
+            .get<unknown>(`${environment.apiUrl}${this.catalogEndpoint}`, { params })
+            .pipe(
+              catchError(() => of(null)),
+              map((catalog) => adaptStorefrontFromBackend(storefront, catalog, environment.apiUrl)),
+            );
+        }),
+        catchError((error) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo cargar la tienda.'))),
+        ),
+      );
+  }
+
+  private readCompanyId(response: unknown): string | null {
+    if (!response || typeof response !== 'object') return null;
+    const storefront = response as {
+      tienda?: { empresa_id?: string | null; empresaId?: string | null };
+    };
+    const companyId = storefront.tienda?.empresa_id ?? storefront.tienda?.empresaId;
+    return typeof companyId === 'string' && companyId.trim() ? companyId : null;
   }
 }

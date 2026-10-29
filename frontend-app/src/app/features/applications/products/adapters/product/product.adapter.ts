@@ -11,6 +11,7 @@ import {
   unwrapApiSingleResponse,
 } from '../../../../../core/models/api-response.dto';
 import type { CatalogEntry } from '../../models/catalog-entry.model';
+import { resolveProductResourceUrl } from '../resource-url/resource-url.adapter';
 
 const DEFAULT_FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
@@ -19,7 +20,7 @@ const DEFAULT_FALLBACK_IMAGE =
  * Convierte cualquier formato de producto de un backend al modelo de dominio Product.
  * Es totalmente tolerante a camelCase, snake_case, nombres alternativos y tipos de datos (strings numéricos).
  */
-export function adaptProductFromBackend(raw: unknown): Product {
+export function adaptProductFromBackend(raw: unknown, apiUrl?: string): Product {
   if (!raw || typeof raw !== 'object') {
     return {
       id: `prod-${Date.now()}`,
@@ -64,16 +65,20 @@ export function adaptProductFromBackend(raw: unknown): Product {
       : undefined;
 
   // Normalizar Imagen Principal
-  const imageUrl =
+  const imageUrl = resolveProductResourceUrl(
     dto.imageUrl ||
-    dto.image_url ||
-    dto.image ||
-    dto.thumbnail ||
-    dto.photo ||
-    DEFAULT_FALLBACK_IMAGE;
+      dto.image_url ||
+      dto.image ||
+      dto.thumbnail ||
+      dto.photo ||
+      DEFAULT_FALLBACK_IMAGE,
+    apiUrl,
+  );
 
   // Normalizar Galería de Imágenes
-  const images = dto.images || dto.gallery || dto.photos || [imageUrl];
+  const images = (dto.images || dto.gallery || dto.photos || [imageUrl]).map((image) =>
+    resolveProductResourceUrl(image, apiUrl),
+  );
 
   // Normalizar Categoría
   let category = 'General';
@@ -109,6 +114,7 @@ export function adaptProductFromBackend(raw: unknown): Product {
     images: images.length > 0 ? images : [imageUrl],
     category,
     stock,
+    sku: dto.sku,
     variants,
   };
 }
@@ -116,17 +122,17 @@ export function adaptProductFromBackend(raw: unknown): Product {
 /**
  * Convierte cualquier respuesta de lista de productos (plana o paginada) a Product[]
  */
-export function adaptProductListFromBackend(response: unknown): Product[] {
+export function adaptProductListFromBackend(response: unknown, apiUrl?: string): Product[] {
   const items = unwrapApiListResponse(response);
-  return items.map(adaptProductFromBackend);
+  return items.map((item) => adaptProductFromBackend(item, apiUrl));
 }
 
 /**
  * Convierte cualquier respuesta de producto individual a Product
  */
-export function adaptSingleProductFromBackend(response: unknown): Product {
+export function adaptSingleProductFromBackend(response: unknown, apiUrl?: string): Product {
   const item = unwrapApiSingleResponse(response);
-  return adaptProductFromBackend(item);
+  return adaptProductFromBackend(item, apiUrl);
 }
 
 /**
@@ -138,30 +144,54 @@ export function adaptSingleProductFromBackend(response: unknown): Product {
 export function adaptOfertaListFromBackend(
   response: unknown,
   catalog?: Map<string, CatalogEntry>,
+  apiUrl?: string,
 ): Product[] {
   const storefront = (response ?? {}) as BackendStorefrontDTO;
   const ofertas = storefront.ofertas;
   if (!Array.isArray(ofertas)) return [];
-  return ofertas.map((oferta) => adaptOfertaFromBackend(oferta, catalog));
+  return ofertas.map((oferta) => adaptOfertaFromBackend(oferta, catalog, apiUrl));
 }
 
-export function adaptOfertaFromBackend(raw: unknown, catalog?: Map<string, CatalogEntry>): Product {
+export function adaptOfertaFromBackend(
+  raw: unknown,
+  catalog?: Map<string, CatalogEntry>,
+  apiUrl?: string,
+): Product {
   const oferta = (raw ?? {}) as BackendOfertaDTO;
-  const rawPrice = oferta.precio_venta ?? oferta.precio_base ?? 0;
+  const rawPrice =
+    oferta.precio_venta ?? oferta.precioVenta ?? oferta.precio_base ?? oferta.precioBase ?? 0;
   const price = typeof rawPrice === 'number' ? rawPrice : parseFloat(String(rawPrice)) || 0;
   const sku = typeof oferta.sku === 'string' ? oferta.sku : '';
 
   const entry =
     catalog?.get(String(oferta.producto_id ?? '')) ?? (sku ? catalog?.get(sku) : undefined);
+  const imageUrl = resolveProductResourceUrl(
+    oferta.imagen_url ?? oferta.imagenUrl ?? entry?.imageUrl ?? DEFAULT_FALLBACK_IMAGE,
+    apiUrl,
+  );
 
   return {
     id: (oferta.id ?? `of-${Date.now()}`) as string | number,
-    name: typeof oferta.producto_nombre === 'string' ? oferta.producto_nombre : 'Producto',
+    name:
+      typeof oferta.producto_nombre === 'string'
+        ? oferta.producto_nombre
+        : typeof oferta.productoNombre === 'string'
+          ? oferta.productoNombre
+          : 'Producto',
     description: entry?.description || (sku ? `SKU ${sku}` : ''),
     price,
-    imageUrl: DEFAULT_FALLBACK_IMAGE,
+    imageUrl,
+    images: [imageUrl],
     category: entry?.category || 'General',
     stock: Number(oferta.stock ?? 0),
+    sku,
+    productId: oferta.producto_id ? String(oferta.producto_id) : undefined,
+    imageObjectId:
+      (oferta.imagen_objeto_id ?? oferta.imagenObjetoId)
+        ? String(oferta.imagen_objeto_id ?? oferta.imagenObjetoId)
+        : undefined,
+    createdAt: oferta.creado_en ?? oferta.creadoEn ?? undefined,
+    variants: oferta.atributos ? { attributes: { ...oferta.atributos } } : undefined,
   };
 }
 
@@ -178,6 +208,16 @@ export function buildCatalogLookup(response: unknown): Map<string, CatalogEntry>
       description: typeof producto.descripcion === 'string' ? producto.descripcion : '',
       category:
         typeof producto.categoria === 'string' && producto.categoria ? producto.categoria : '',
+      imageUrl:
+        typeof producto.image_url === 'string'
+          ? producto.image_url
+          : typeof producto.imageUrl === 'string'
+            ? producto.imageUrl
+            : Array.isArray(producto.imagenes)
+              ? (producto.imagenes.find((image) => image.es_principal ?? image.esPrincipal)?.url ??
+                producto.imagenes[0]?.url ??
+                '')
+              : '',
     };
     for (const key of [producto.id, producto._id, producto.sku]) {
       if (key !== undefined && key !== null && key !== '') {
@@ -198,12 +238,33 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
   const id = tienda.id;
   if (id === null || id === undefined || id === '') return null;
 
-  return {
+  const store: Store = {
     id: String(id),
     vendorId: String(tienda.vendedor_id ?? tienda.vendorId ?? ''),
     name: typeof tienda.nombre === 'string' ? tienda.nombre : 'Tienda',
     description: typeof tienda.descripcion === 'string' ? tienda.descripcion : '',
   };
+
+  const companyId = tienda.empresa_id ?? tienda.empresaId;
+  if (companyId !== null && companyId !== undefined && companyId !== '') {
+    store.companyId = String(companyId);
+  }
+  if (typeof tienda.slug === 'string') store.slug = tienda.slug;
+
+  const ownerUserId = tienda.propietario_usuario_id ?? tienda.propietarioUsuarioId;
+  if (ownerUserId !== null && ownerUserId !== undefined && ownerUserId !== '') {
+    store.ownerUserId = String(ownerUserId);
+  }
+
+  const participationPercentage = tienda.participacion_porcentaje ?? tienda.participacionPorcentaje;
+  if (participationPercentage !== null && participationPercentage !== undefined) {
+    store.participationPercentage = Number(participationPercentage);
+  }
+
+  const createdAt = tienda.creado_en ?? tienda.creadoEn;
+  if (createdAt) store.createdAt = createdAt;
+
+  return store;
 }
 
 /**
@@ -213,6 +274,7 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
 export function adaptStorefrontFromBackend(
   response: unknown,
   catalogResponse?: unknown,
+  apiUrl?: string,
 ): {
   store: Store | null;
   products: Product[];
@@ -222,6 +284,6 @@ export function adaptStorefrontFromBackend(
 
   return {
     store: adaptStoreFromBackend(storefront.tienda),
-    products: adaptOfertaListFromBackend(response, catalog),
+    products: adaptOfertaListFromBackend(response, catalog, apiUrl),
   };
 }

@@ -36,7 +36,6 @@ describe('ProductService', () => {
 
     const storefrontRequest = httpMock.expectOne('https://api.test/tiendas/tienda-1');
     expect(storefrontRequest.request.method).toBe('GET');
-    httpMock.expectOne('https://api.test/catalog/productos').flush({ items: [] });
 
     storefrontRequest.flush({
       tienda: { id: 'tienda-1', nombre: 'Mi Tienda', descripcion: 'Demo' },
@@ -51,6 +50,13 @@ describe('ProductService', () => {
         },
       ],
     });
+    const catalogRequest = httpMock.expectOne(
+      (request) =>
+        request.url === 'https://api.test/catalog/productos' &&
+        request.params.get('limite') === '100',
+    );
+    expect(catalogRequest.request.params.get('limite')).toBe('100');
+    catalogRequest.flush({ items: [] });
 
     expect(result?.store).toMatchObject({ id: 'tienda-1', name: 'Mi Tienda' });
     expect(result?.products[0]).toMatchObject({
@@ -68,17 +74,6 @@ describe('ProductService', () => {
 
     service.getStorefront('tienda-1').subscribe((storefront) => (result = storefront));
 
-    httpMock.expectOne('https://api.test/catalog/productos').flush({
-      items: [
-        {
-          id: 'p-1',
-          sku: 'SKU-TEC',
-          nombre: 'Teclado',
-          descripcion: 'RGB',
-          categoria: 'Periféricos',
-        },
-      ],
-    });
     httpMock.expectOne('https://api.test/tiendas/tienda-1').flush({
       tienda: { id: 'tienda-1', nombre: 'Mi Tienda' },
       ofertas: [
@@ -89,6 +84,22 @@ describe('ProductService', () => {
           precio_venta: '1380.00',
           stock: 10,
           sku: 'SKU-TEC',
+        },
+      ],
+    });
+    const catalogRequest = httpMock.expectOne(
+      (request) =>
+        request.url === 'https://api.test/catalog/productos' &&
+        request.params.get('limite') === '100',
+    );
+    catalogRequest.flush({
+      items: [
+        {
+          id: 'p-1',
+          sku: 'SKU-TEC',
+          nombre: 'Teclado',
+          descripcion: 'RGB',
+          categoria: 'Periféricos',
         },
       ],
     });
@@ -106,11 +117,17 @@ describe('ProductService', () => {
 
     service.getStorefront('tienda-1').subscribe((storefront) => (result = storefront));
 
-    httpMock.expectOne('https://api.test/catalog/productos').error(new ProgressEvent('error'));
     httpMock.expectOne('https://api.test/tiendas/tienda-1').flush({
       tienda: { id: 'tienda-1' },
       ofertas: [{ id: 'of-1', producto_nombre: 'Teclado', precio_venta: '100.00', stock: 1 }],
     });
+    httpMock
+      .expectOne(
+        (request) =>
+          request.url === 'https://api.test/catalog/productos' &&
+          request.params.get('limite') === '100',
+      )
+      .error(new ProgressEvent('error'));
 
     expect(result?.products[0]).toMatchObject({ name: 'Teclado', category: 'General' });
   });
@@ -123,7 +140,6 @@ describe('ProductService', () => {
     service.getStorefront('tienda-1').subscribe({ error: (err: Error) => (error = err) });
 
     const storefront = httpMock.expectOne('https://api.test/tiendas/tienda-1');
-    httpMock.expectOne('https://api.test/catalog/productos').flush({ items: [] });
     storefront.flush({ mensaje: 'Tienda no encontrada' }, { status: 404, statusText: 'Not Found' });
 
     expect(error?.message).toBe('Tienda no encontrada');
