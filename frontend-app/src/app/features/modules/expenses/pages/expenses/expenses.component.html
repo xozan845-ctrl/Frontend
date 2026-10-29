@@ -1,0 +1,344 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div>
+      <h1 class="font-heading text-3xl font-black tracking-tight uppercase">
+        <span class="text-accent-600">$</span> {{ store.greeting() }}
+      </h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Controla los egresos de tu negocio: inmediatos, recurrentes y salarios.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="openReport()"
+        data-testid="expense-export"
+      >
+        <i class="fa-solid fa-download text-xs" aria-hidden="true"></i>
+        Exportar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        (click)="openNewExpense()"
+        data-testid="expense-new"
+      >
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nuevo gasto
+      </button>
+    </div>
+  </header>
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-day">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+      >
+        <i class="fa-solid fa-dollar-sign" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Gastos del día</p>
+        <p class="text-xl font-black tabular-nums">{{ store.summary().day | appCurrency }}</p>
+      </div>
+    </article>
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-month">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+      >
+        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Gastos del mes</p>
+        <p class="text-xl font-black tabular-nums">{{ store.summary().month | appCurrency }}</p>
+      </div>
+    </article>
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-year">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400"
+      >
+        <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Gastos del año</p>
+        <p class="text-xl font-black tabular-nums">{{ store.summary().year | appCurrency }}</p>
+      </div>
+    </article>
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-pending">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+      >
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Gastos pendientes
+        </p>
+        <p class="text-xl font-black tabular-nums">{{ store.summary().pending | appCurrency }}</p>
+      </div>
+    </article>
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-recurring">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400"
+      >
+        <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Recurrentes activos
+        </p>
+        <p class="text-xl font-black tabular-nums">{{ store.summary().recurringActive }}</p>
+      </div>
+    </article>
+    <article class="card flex items-center gap-4 p-4" data-testid="expense-kpi-salaries">
+      <span
+        class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+      >
+        <i class="fa-solid fa-users" aria-hidden="true"></i>
+      </span>
+      <div>
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Salarios pendientes
+        </p>
+        <p class="text-xl font-black tabular-nums">
+          {{ store.summary().salariesPending | appCurrency }}
+        </p>
+      </div>
+    </article>
+  </div>
+
+  <div class="flex flex-wrap gap-2">
+    <button
+      type="button"
+      class="btn btn-sm"
+      [class.btn-primary]="store.tab() === 'all'"
+      [class.btn-secondary]="store.tab() !== 'all'"
+      (click)="store.setTab('all')"
+      data-testid="expenses-tab-all"
+    >
+      <i class="fa-solid fa-list text-xs" aria-hidden="true"></i>
+      Todos los gastos
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm"
+      [class.btn-primary]="store.tab() === 'scheduled'"
+      [class.btn-secondary]="store.tab() !== 'scheduled'"
+      (click)="store.setTab('scheduled')"
+      data-testid="expenses-tab-scheduled"
+    >
+      <i class="fa-solid fa-clock text-xs" aria-hidden="true"></i>
+      Gastos programados
+    </button>
+  </div>
+
+  <div class="card flex flex-col gap-4 p-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-heading text-lg font-black tracking-tight uppercase">
+        <i class="fa-solid fa-dollar-sign mr-2 text-accent-600" aria-hidden="true"></i>
+        Gastos registrados
+      </h2>
+      <button type="button" class="btn btn-primary btn-sm" (click)="openNewExpense()">
+        <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+        Nuevo gasto
+      </button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      @for (option of quickFilters; track option.value) {
+        <button
+          type="button"
+          class="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-bold transition-colors"
+          [class.border-accent-600]="
+            store.type() === option.type && store.statusFilter() === option.status
+          "
+          [class.bg-accent-600]="
+            store.type() === option.type && store.statusFilter() === option.status
+          "
+          [class.text-white]="
+            store.type() === option.type && store.statusFilter() === option.status
+          "
+          (click)="store.setType(option.type); store.setStatus(option.status)"
+        >
+          {{ option.label }}
+        </button>
+      }
+      <select
+        class="input ml-auto max-w-52"
+        [value]="store.category()"
+        (change)="selectCategory($event)"
+        aria-label="Filtrar por categoría"
+      >
+        <option value="all">Todas las categorías</option>
+        @for (category of store.categories(); track category.value) {
+          <option [value]="category.value">{{ category.label }}</option>
+        }
+      </select>
+      <input
+        type="search"
+        class="input max-w-56"
+        placeholder="Buscar concepto…"
+        [value]="store.search()"
+        (input)="search($event)"
+        aria-label="Buscar gasto"
+      />
+    </div>
+
+    @if (!store.hasRecords()) {
+      <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+        Aún no hay gastos registrados.
+      </p>
+    } @else if (store.filteredCount() === 0) {
+      <p class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+        No hay gastos que coincidan con los filtros.
+      </p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[900px] text-left text-sm" data-testid="expenses-table">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th scope="col" class="py-2 pr-3 font-bold">Fecha</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Concepto</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Categoría</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Tipo</th>
+              <th scope="col" class="py-2 pr-3 text-right font-bold">Monto</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Estado</th>
+              <th scope="col" class="py-2 pr-3 font-bold">Proveedor</th>
+              <th scope="col" class="py-2 font-bold"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (record of store.pagedRecords(); track record.id) {
+              <tr data-testid="expense-row">
+                <td class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300">
+                  {{ record.date | appDate: 'short' }}
+                </td>
+                <td class="max-w-xs py-3 pr-3">
+                  <p class="truncate text-xs font-bold">{{ record.concept }}</p>
+                  @if (record.notes) {
+                    <p class="mt-0.5 truncate text-[11px] text-slate-400 dark:text-slate-500">
+                      {{ record.notes }}
+                    </p>
+                  }
+                </td>
+                <td class="py-3 pr-3">
+                  <span class="badge badge-neutral">
+                    {{ store.categoryLabels()[record.category] ?? record.category }}
+                  </span>
+                </td>
+                <td class="py-3 pr-3">
+                  <span class="badge badge-warning">{{ typeLabels[record.type] }}</span>
+                </td>
+                <td class="py-3 pr-3 text-right text-xs font-bold tabular-nums">
+                  {{ record.amount | appCurrency }}
+                </td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="badge"
+                    [class.badge-success]="record.status === 'pagado'"
+                    [class.badge-warning]="record.status === 'pendiente'"
+                    [class.badge-danger]="record.status === 'cancelado'"
+                  >
+                    {{ statusLabels[record.status] }}
+                  </span>
+                </td>
+                <td class="max-w-40 truncate py-3 pr-3 text-xs text-slate-600 dark:text-slate-300">
+                  {{ record.beneficiary || '—' }}
+                </td>
+                <td class="flex justify-end gap-1 py-3">
+                  @if (record.status === 'pendiente') {
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm text-emerald-600"
+                      (click)="store.markPaid(record.id)"
+                      [attr.aria-label]="'Marcar como pagado ' + record.concept"
+                      data-testid="expense-mark-paid"
+                    >
+                      <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+                    </button>
+                  }
+                  @if (record.status !== 'cancelado') {
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm text-amber-600"
+                      (click)="store.cancelExpense(record.id)"
+                      [attr.aria-label]="'Cancelar gasto ' + record.concept"
+                      data-testid="expense-cancel"
+                    >
+                      <i class="fa-solid fa-ban text-xs" aria-hidden="true"></i>
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    (click)="openEditExpense(record)"
+                    [attr.aria-label]="'Editar gasto ' + record.concept"
+                    data-testid="expense-edit"
+                  >
+                    <i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-red-600"
+                    (click)="store.removeExpense(record.id)"
+                    [attr.aria-label]="'Eliminar gasto ' + record.concept"
+                    data-testid="expense-remove"
+                  >
+                    <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer
+        class="flex flex-col gap-2 border-t border-slate-100 pt-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
+      >
+        <p>
+          Mostrando {{ (store.currentPage() - 1) * pageSize + 1 }}–{{
+            (store.currentPage() - 1) * pageSize + store.pagedRecords().length
+          }}
+          de {{ store.filteredCount() }}
+        </p>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="store.currentPage() === 1"
+            (click)="store.previousPage()"
+          >
+            ← Anterior
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            [disabled]="store.currentPage() >= store.pageCount()"
+            (click)="store.nextPage()"
+          >
+            Siguiente →
+          </button>
+        </div>
+      </footer>
+    }
+  </div>
+</section>
+
+<app-expense-modal
+  [open]="expenseModalOpen()"
+  [expense]="editingExpense()"
+  [categories]="store.categories()"
+  [error]="modalError()"
+  (save)="saveExpense($event)"
+  (closed)="closeExpenseModal()"
+/>
+
+<app-expense-report-modal
+  [open]="reportOpen()"
+  [records]="store.records()"
+  (closed)="closeReport()"
+  (exportReport)="handleExport($event)"
+/>

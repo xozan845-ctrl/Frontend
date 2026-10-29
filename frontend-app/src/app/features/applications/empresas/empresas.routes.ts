@@ -95,7 +95,7 @@ export const EMPRESAS_ROUTES: Routes = [
         path: 'gastos',
         canActivate: [moduleGuard('company.expenses')],
         loadChildren: () =>
-          import('../../modules/finance/finance.routes').then((module) => module.EXPENSES_ROUTES),
+          import('../../modules/expenses/expenses.routes').then((module) => module.EXPENSES_ROUTES),
       },
       {
         path: 'caja',
