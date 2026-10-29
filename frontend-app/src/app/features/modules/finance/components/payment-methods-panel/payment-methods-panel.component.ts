@@ -19,7 +19,7 @@ export class PaymentMethodsPanelComponent {
   readonly requestToggle = output<string>();
   readonly requestRemove = output<string>();
 
-  kindLabel(kind: string): string {
-    return CASH_PAYMENT_METHOD_KINDS.find((item) => item.value === kind)?.label ?? 'Otro';
-  }
+  readonly kindLabels = Object.fromEntries(
+    CASH_PAYMENT_METHOD_KINDS.map((kind) => [kind.value, kind.label]),
+  ) as Record<string, string>;
 }

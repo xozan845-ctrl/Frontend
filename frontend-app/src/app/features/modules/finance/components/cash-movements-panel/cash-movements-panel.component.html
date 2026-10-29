@@ -98,8 +98,8 @@
                 {{ entry.movement.date | appDate: 'short' }}
               </td>
               <td class="py-3 pr-3">
-                <span [class]="categoryBadge(entry.movement.category)">
-                  {{ categoryLabel(entry.movement.category) }}
+                <span [class]="categoryBadges[entry.movement.category]">
+                  {{ categoryLabels[entry.movement.category] }}
                 </span>
               </td>
               <td class="max-w-[240px] py-3 pr-3">
@@ -113,7 +113,7 @@
                 }
               </td>
               <td class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300">
-                {{ methodName(entry.movement.paymentMethod) }}
+                {{ methodLabels().get(entry.movement.paymentMethod) ?? 'Otro' }}
               </td>
               <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
                 @if (entry.movement.type === 'ingreso') {
@@ -135,12 +135,16 @@
               </td>
               <td
                 class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums"
-                [ngClass]="balanceClass(entry.balance)"
+                [ngClass]="
+                  entry.balance < 0
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-emerald-600 dark:text-emerald-400'
+                "
               >
                 {{ entry.balance | cashMoney }}
               </td>
               <td class="py-3 text-right">
-                @if (canAnnul(entry)) {
+                @if (entry.movement.source !== 'venta' && entry.movement.status === 'completado') {
                   <button
                     type="button"
                     class="btn btn-ghost btn-sm px-2.5 text-red-600"

@@ -23,7 +23,8 @@ export class PettyCashPanelComponent {
   readonly openFund = output<void>();
   readonly openMovement = output<PettyCashMovementType>();
 
-  typeLabel(type: PettyCashMovementType): string {
-    return type === 'gasto' ? 'Gasto' : 'Reposición';
-  }
+  readonly typeLabels: Readonly<Record<PettyCashMovementType, string>> = {
+    gasto: 'Gasto',
+    reposicion: 'Reposición',
+  };
 }

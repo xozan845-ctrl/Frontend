@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
 import {
   BANK_ACCOUNT_TYPES,
@@ -21,12 +21,15 @@ export class CashBanksPanelComponent {
   readonly edit = output<BankAccount>();
   readonly remove = output<string>();
 
-  typeLabel(type: BankAccount['type']): string {
-    return BANK_ACCOUNT_TYPES.find((item) => item.value === type)?.label ?? 'Cuenta';
-  }
-
-  maskedNumber(account: BankAccount): string {
-    const digits = account.accountNumber.replace(/\s/g, '');
-    return digits.length > 4 ? `•••• ${digits.slice(-4)}` : account.accountNumber;
-  }
+  readonly accountViews = computed(() =>
+    this.accounts().map((account) => {
+      const digits = account.accountNumber.replace(/\s/g, '');
+      return {
+        account,
+        typeLabel:
+          BANK_ACCOUNT_TYPES.find((item) => item.value === account.type)?.label ?? 'Cuenta',
+        maskedNumber: digits.length > 4 ? `•••• ${digits.slice(-4)}` : account.accountNumber,
+      };
+    }),
+  );
 }

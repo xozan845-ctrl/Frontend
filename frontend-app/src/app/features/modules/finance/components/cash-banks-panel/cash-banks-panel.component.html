@@ -56,25 +56,25 @@
       </div>
     } @else {
       <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        @for (account of accounts(); track account.id) {
+        @for (view of accountViews(); track view.account.id) {
           <article
             class="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-surface-700 dark:bg-surface-900"
             data-testid="bank-card"
           >
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
-                <p class="truncate text-sm font-black">{{ account.bank }}</p>
+                <p class="truncate text-sm font-black">{{ view.account.bank }}</p>
                 <p class="truncate text-xs text-slate-500 dark:text-slate-400">
-                  {{ account.alias }}
+                  {{ view.account.alias }}
                 </p>
               </div>
-              <span class="badge badge-neutral">{{ typeLabel(account.type) }}</span>
+              <span class="badge badge-neutral">{{ view.typeLabel }}</span>
             </div>
             <p class="mt-3 font-heading text-lg font-black tabular-nums">
-              {{ account.balance | cashMoney }}
+              {{ view.account.balance | cashMoney }}
             </p>
             <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-              {{ maskedNumber(account) }}
+              {{ view.maskedNumber }}
             </p>
             <div
               class="mt-3 flex items-center justify-end gap-2 border-t border-slate-200 pt-3 dark:border-surface-700"
@@ -82,7 +82,7 @@
               <button
                 type="button"
                 class="btn btn-ghost btn-sm text-xs"
-                (click)="edit.emit(account)"
+                (click)="edit.emit(view.account)"
                 data-testid="bank-edit"
               >
                 <i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>
@@ -91,8 +91,8 @@
               <button
                 type="button"
                 class="btn btn-ghost btn-sm px-2.5 text-red-600"
-                (click)="remove.emit(account.id)"
-                [attr.aria-label]="'Eliminar cuenta ' + account.alias"
+                (click)="remove.emit(view.account.id)"
+                [attr.aria-label]="'Eliminar cuenta ' + view.account.alias"
                 data-testid="bank-remove"
               >
                 <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>

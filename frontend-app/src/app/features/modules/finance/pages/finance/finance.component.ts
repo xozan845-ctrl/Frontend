@@ -40,10 +40,8 @@ import { CashMovementModalComponent } from '../../components/cash-movement-modal
 import { CashMovementsPanelComponent } from '../../components/cash-movements-panel/cash-movements-panel.component';
 import { CashTransferModalComponent } from '../../components/cash-transfer-modal/cash-transfer-modal.component';
 import { CashTransfersPanelComponent } from '../../components/cash-transfers-panel/cash-transfers-panel.component';
-import {
-  PettyCashModalComponent,
-  type PettyCashModalMode,
-} from '../../components/petty-cash-modal/petty-cash-modal.component';
+import { PettyCashModalComponent } from '../../components/petty-cash-modal/petty-cash-modal.component';
+import type { PettyCashModalMode } from '../../components/petty-cash-modal/petty-cash-modal.component.types';
 import { PettyCashPanelComponent } from '../../components/petty-cash-panel/petty-cash-panel.component';
 import { PaymentMethodsPanelComponent } from '../../components/payment-methods-panel/payment-methods-panel.component';
 
@@ -118,9 +116,27 @@ export default class FinanceComponent {
   readonly editingBank = signal<BankAccount | null>(null);
   readonly transferOpen = signal(false);
 
-  /** Ventas cobradas que alimentan el libro de caja. */
-  readonly saleInputs = computed<CashSaleInput[]>(() =>
-    this.sales
+  /** Cuentas disponibles para el modal de transferencias. */
+  transferAccounts(): CashTransferAccount[] {
+    return [
+      {
+        id: CASH_TRANSFER_CASH_ID,
+        label: 'Caja',
+        kind: 'cash',
+        balance: this.finance.cashKpis().available,
+      },
+      ...this.banks.accounts().map((account) => ({
+        id: account.id,
+        label: `${account.bank} · ${account.alias}`,
+        kind: 'bank' as const,
+        balance: account.balance,
+      })),
+    ];
+  }
+
+  private readonly loadOrders = this.sales.loadOrders();
+  private readonly syncSales = effect(() => {
+    const inputs: CashSaleInput[] = this.sales
       .rows()
       .filter((row) => row.paymentGroup === 'cash' && !isCancelled(row.status, row.statusLabel))
       .map((row) => ({
@@ -133,28 +149,9 @@ export default class FinanceComponent {
         source: row.source,
         cancelled: false,
       }))
-      .filter((sale) => sale.date !== ''),
-  );
-
-  readonly transferAccounts = computed<CashTransferAccount[]>(() => [
-    {
-      id: CASH_TRANSFER_CASH_ID,
-      label: 'Caja',
-      kind: 'cash',
-      balance: this.finance.cashKpis().available,
-    },
-    ...this.banks.accounts().map((account) => ({
-      id: account.id,
-      label: `${account.bank} · ${account.alias}`,
-      kind: 'bank' as const,
-      balance: account.balance,
-    })),
-  ]);
-
-  constructor() {
-    this.sales.loadOrders();
-    effect(() => this.finance.setExternalCash(salesToCashMovements(this.saleInputs())));
-  }
+      .filter((sale) => sale.date !== '');
+    this.finance.setExternalCash(salesToCashMovements(inputs));
+  });
 
   private readonly seoService = injectSeoPage(
     'Caja / Pagos — Empresa',
