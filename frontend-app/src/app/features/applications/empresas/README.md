@@ -17,7 +17,8 @@ empresa, consulta, modalidad logística, tiendas e invitaciones de vendedores.
 La página y los modales de **Ventas** se componen en
 `features/modules/sales` (ADR-63); el catálogo administrable de productos,
 servicios y materia prima se compone en `features/modules/catalog` (ADR-65),
-Compras/Gastos/Caja en `features/modules/finance` (ADR-66), Cuentas por pagar
+Compras/Caja en `features/modules/finance` (ADR-66) y Gastos en
+`features/modules/expenses` (ADR-72). Cuentas por pagar
 en `features/modules/payables` (ADR-67), Bancos en `features/modules/banks`
 (ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69), Créditos
 en `features/modules/credits` (ADR-70) y Reportes en

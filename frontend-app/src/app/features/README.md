@@ -49,7 +49,9 @@ un dominio reutilizable y un módulo de composición.
 | `modules/sales`           | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
 | `modules/catalog`         | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
 | `domains/orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
-| `domains/finance`         | Dominio de compras, gastos y caja con persistencia local (ADR-66).                 |
+| `domains/finance`         | Dominio de compras y caja con persistencia local (ADR-66).                         |
+| `domains/expenses`        | Dominio de gastos con tipos, estados, beneficiarios y reportes (ADR-72).           |
+| `modules/expenses`        | Composición de la pantalla de Gastos y sus modales (ADR-72).                       |
 | `domains/payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
 | `domains/banks`           | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
 | `domains/barcodes`        | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
