@@ -198,6 +198,12 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
+  'modules/cash': {
+    kind: 'module',
+    layers: ['components', 'pages'],
+    publicApi: false,
+    publicUi: false,
+  },
   'modules/payables': {
     kind: 'module',
     layers: ['components', 'pages'],
@@ -259,6 +265,12 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   expenses: {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  cash: {
     kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
@@ -507,6 +519,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'empresas',
   'finance',
   'expenses',
+  'cash',
   'banks',
   'barcodes',
   'credits',
