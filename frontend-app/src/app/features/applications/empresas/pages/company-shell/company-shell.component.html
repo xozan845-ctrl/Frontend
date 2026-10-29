@@ -20,10 +20,14 @@
   </div>
 
   <div class="lg:flex">
-    <app-company-sidebar
+    <app-workspace-sidebar
       id="company-sidebar"
       [open]="isSidebarOpen()"
       [groups]="navGroups"
+      sidebarLabel="Navegación de la empresa"
+      eyebrow="Empresa"
+      title="Workspace empresarial"
+      [wide]="true"
       (closed)="closeSidebar()"
       (itemSelected)="closeSidebar()"
     />

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import VendorShellComponent from './vendor-shell.component';
-import { VendorSidebarComponent } from '../../components/vendor-sidebar/vendor-sidebar.component';
+import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
 import { AuthStore } from '../../../auth/public-api';
 
 describe('VendorShellComponent', () => {
@@ -22,7 +22,7 @@ describe('VendorShellComponent', () => {
   it('debe montar el sidebar y el outlet del panel', async () => {
     const fixture = await setup();
 
-    expect(fixture.debugElement.query(By.directive(VendorSidebarComponent))).toBeTruthy();
+    expect(fixture.debugElement.query(By.directive(WorkspaceSidebarComponent))).toBeTruthy();
     expect(fixture.debugElement.query(By.css('router-outlet'))).toBeTruthy();
   });
 
@@ -37,8 +37,8 @@ describe('VendorShellComponent', () => {
     expect(fixture.componentInstance.isSidebarOpen()).toBe(true);
     expect(toggle.nativeElement.getAttribute('aria-expanded')).toBe('true');
 
-    const sidebar = fixture.debugElement.query(By.directive(VendorSidebarComponent))
-      .componentInstance as VendorSidebarComponent;
+    const sidebar = fixture.debugElement.query(By.directive(WorkspaceSidebarComponent))
+      .componentInstance as WorkspaceSidebarComponent;
     sidebar.itemSelected.emit();
     fixture.detectChanges();
 
