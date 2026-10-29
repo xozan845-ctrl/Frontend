@@ -8,7 +8,7 @@ nunca `features/`.
 | ------------- | ------------------------------------------------------------------------- |
 | `ui/`         | Componentes visuales: spinner, empty-state, skeleton, lightbox, cart-fly… |
 | `directives/` | Directivas de comportamiento: scroll-reveal, focus-trap.                  |
-| `pipes/`      | Pipes de presentación, como el formateo de moneda.                        |
+| `pipes/`      | Pipes de presentación: moneda del storefront y montos de caja con ISO.    |
 
 ## Reglas
 

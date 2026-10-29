@@ -1907,3 +1907,36 @@ contexto y consecuencias.
 - **Consecuencias**: Caja evoluciona sin tocar Compras, con una UI completa y
   datos migrados. El dominio puede integrarse con finanzas en una fase posterior
   si se unifican los ledgers.
+
+## ADR-74: Rediseño de Caja como centro financiero
+
+- **Fecha**: 2026-10-29
+- **Estado**: Aceptado
+- **Contexto**: La primera versión de Caja priorizaba la estructura de tabs,
+  pero la operación necesitaba una lectura inmediata del dinero: saldo,
+  entradas y salidas del mes, otros movimientos y origen de cada registro.
+  La referencia visual define una cabecera con saludo, seis KPIs, filtros de
+  período en pills y una tabla con tipo, concepto, método, entrada, salida,
+  saldo y origen.
+- **Decisión**:
+  - La cabecera usa el saludo del usuario y el subtítulo «Centro financiero del
+    negocio. Todos los movimientos de dinero en un lugar.».
+  - Los KPIs pasan a: caja disponible, ingresos del mes, egresos del mes,
+    movimientos del mes, otros ingresos y otros egresos. «Otros» agrupa los
+    movimientos manuales y ajustes; ventas, compras y gastos quedan fuera.
+  - Los períodos se muestran como pills: Hoy, Semana, Mes, Año y Personalizado.
+    El rango personalizado agrega `dateFrom`/`dateTo` a los filtros del dominio.
+  - Cada movimiento incorpora `source` (manual, venta, compra, gasto,
+    transferencia, ajuste u otro). La tabla muestra el origen con candado para
+    los registros ligados a otros módulos y acciones solo para los manuales.
+  - La tabla usa tipo/categoría, concepto con referencia, método, entrada,
+    salida, saldo acumulado y origen; pagina de 15 en 15.
+  - Los montos de caja usan el pipe `cashMoney`, que muestra el código ISO
+    (`NIO 1,234.56`) sin alterar `appCurrency` del storefront.
+  - El acento esmeralda se usa en los botones primarios y estados activos del
+    centro financiero para mantener la identidad de Caja sin cambiar el tema
+    global de la aplicación.
+- **Consecuencias**: La pantalla se lee como un centro financiero y mantiene
+  los tabs existentes. La integración automática con Ventas queda como fase
+  posterior: hoy los movimientos se registran manualmente o se migran del
+  ledger anterior, y los KPIs «otros» reflejan ese origen.
