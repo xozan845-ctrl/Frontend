@@ -52,6 +52,8 @@ que son verificables por máquina.
 > del feature en el mismo PR (`R-AR-16`). Ejemplos vigentes: `logistica`
 > incorpora `adapters` y `repositories` para los envíos reales (ADR-37), y
 > `storage` nace con esas capas para el bucket del tenant (ADR-42).
+> `empresas` ya no declara `components/`: su sidebar pasó a
+> `shared/ui/workspace-sidebar` y el resto de composición vive en módulos.
 > El feature `clients` es un dominio compartido por empresa y vendedor
 > (`kind: 'domain'`); su composición vive en `features/modules/clients`. Los
 > módulos anidados se descubren bajo `features/modules/<módulo>` y los features
