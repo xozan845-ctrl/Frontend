@@ -1,4 +1,13 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
 import { CashMoneyPipe } from '../../../../../shared/pipes/cash-money.pipe';
@@ -44,7 +53,7 @@ export class CashTransferModalComponent {
 
   private readonly resetOnOpen = effect(() => {
     if (!this.open()) return;
-    const accounts = this.accounts();
+    const accounts = untracked(() => this.accounts());
     const from = accounts[0]?.id ?? '';
     const to = accounts[1]?.id ?? accounts[0]?.id ?? '';
     this.fromId.set(from);

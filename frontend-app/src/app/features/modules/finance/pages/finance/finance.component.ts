@@ -116,9 +116,10 @@ export default class FinanceComponent {
   readonly editingBank = signal<BankAccount | null>(null);
   readonly transferOpen = signal(false);
 
-  /** Cuentas disponibles para el modal de transferencias. */
-  transferAccounts(): CashTransferAccount[] {
-    return [
+  /** Cuentas del modal de transferencias; se recalcula solo si cambian los saldos. */
+  readonly transferAccounts = signal<CashTransferAccount[]>([]);
+  private readonly syncTransferAccounts = effect(() => {
+    this.transferAccounts.set([
       {
         id: CASH_TRANSFER_CASH_ID,
         label: 'Caja',
@@ -131,8 +132,8 @@ export default class FinanceComponent {
         kind: 'bank' as const,
         balance: account.balance,
       })),
-    ];
-  }
+    ]);
+  });
 
   private readonly loadOrders = this.sales.loadOrders();
   private readonly syncSales = effect(() => {
