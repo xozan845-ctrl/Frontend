@@ -62,7 +62,8 @@ que son verificables por máquina.
 > compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64), el catálogo
 > administrable de empresa (ADR-65), Compras/Gastos/Caja (ADR-66), Cuentas por
 > pagar, Bancos, Códigos de barras, Créditos y Reportes con scope
-> empresa/tienda (ADR-67/68/69/70/71).
+> empresa/tienda (ADR-67/68/69/70/71). `modules/expenses` compone la pantalla de
+> Gastos, su ledger y sus reportes (ADR-72).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz

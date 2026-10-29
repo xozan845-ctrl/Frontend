@@ -1852,3 +1852,30 @@ contexto y consecuencias.
   reportes sin compartir datos ni endpoints. El bundle inicial queda en
   554.97 kB (techo 555 kB) y la página sigue lazy. Con esto se completa el
   bloque de módulos compartidos por scope.
+
+## ADR-72: Módulo dedicado de Gastos
+
+- **Fecha**: 2026-10-29
+- **Estado**: Aceptado
+- **Contexto**: Gastos vivía dentro del módulo de finanzas con un modelo plano
+  (fecha, categoría, descripción, monto y método). La operación real necesita
+  tipos inmediatos/programados/recurrentes, estados, beneficiarios, IVA/IR,
+  reportes filtrables y exportación. Compras se está refactorizando en paralelo,
+  así que compartir el mismo store aumentaría el riesgo de conflicto.
+- **Decisión**:
+  - Se crea `features/domains/expenses` como dominio `domainOnly` con modelo,
+    constantes, adaptador, store y migración del ledger anterior.
+  - `ExpensesStore` aporta CRUD, estados, filtros, paginación, KPIs y categorías
+    personalizadas; persiste en `ecom_company_expenses_ledger_*` y migra los
+    registros de `ecom_company_expenses_*` la primera vez.
+  - Se crea `features/modules/expenses` con la página y los modales de alta y
+    reporte; `/empresa/gastos` carga este módulo en lugar de la pestaña de
+    finanzas.
+  - El reporte filtra por período, estado, tipo, categoría, pago y beneficiario,
+    exporta CSV compatible con Excel y genera una vista imprimible para PDF.
+  - Compras y Caja siguen en `modules/finance`; el dominio `finance` no cambia
+    en esta entrega.
+- **Consecuencias**: Gastos evoluciona sin tocar Compras, con una UI completa y
+  datos migrados. El bundle inicial queda en 544.22 kB (techo 555 kB); el chunk
+  de Gastos es lazy (~37 kB). El ledger nuevo puede integrarse con finanzas en
+  una fase posterior si se unifican los dominios.
