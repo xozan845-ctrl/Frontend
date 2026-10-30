@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { storagePublicObjectUrl } from '../../../storage/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 
 /**
@@ -22,5 +23,22 @@ export default class VendorStoreComponent {
     'Consulta la ficha de tu tienda, su empresa, participación y enlace público.',
   );
 
-  private readonly loadStore = this.vendorStore.load();
+  /** Refleja el nombre de la tienda en la pestaña. */
+  private readonly syncTitle = effect(() => {
+    const store = this.vendorStore.store();
+    if (store) {
+      this.seoService.updateTitle(`${store.name} — Mi tienda`);
+    }
+  });
+
+  /** Logo de la tienda (derivado o fallback público de storage). */
+  readonly logoUrl = computed(() => {
+    const store = this.vendorStore.store();
+    if (!store) return null;
+    return (
+      store.logoUrl ??
+      store.companyLogoUrl ??
+      (store.logoObjectId ? storagePublicObjectUrl(store.logoObjectId) : null)
+    );
+  });
 }

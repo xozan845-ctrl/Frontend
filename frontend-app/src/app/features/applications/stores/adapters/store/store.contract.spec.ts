@@ -38,6 +38,8 @@ describe('store.contract', () => {
       companyId: 'e-1',
       ownerUserId: 'u-1',
       participationPercentage: 100,
+      logoObjectId: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+      logoUrl: 'https://cdn.empresa.test/tienda.png',
       createdAt: '2026-10-21T20:57:47.870Z',
     });
   });

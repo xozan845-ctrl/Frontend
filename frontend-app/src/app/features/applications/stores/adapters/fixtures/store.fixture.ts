@@ -42,5 +42,7 @@ export const TIENDA_VENDEDOR_FIXTURE = {
   vendedor_id: 'u-1',
   nombre: 'Mi Tienda',
   descripcion: 'Ropa y accesorios',
+  logo_objeto_id: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+  logo_url: 'https://cdn.empresa.test/tienda.png',
   creado_en: '2026-10-21T20:57:47.870Z',
 } as const;

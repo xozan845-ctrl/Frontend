@@ -159,13 +159,6 @@ export default class CompanySettingsComponent {
     logisticsMode: this.fb.nonNullable.control<LogisticsMode>('plataforma', Validators.required),
   });
 
-  /** Carga la empresa del `tenant_id` del JWT (login o refresh posterior al alta). */
-  private readonly loadCompany = effect(() => {
-    const id = this.tenantId();
-    if (!id || this.companyStore.company()?.id === id) return;
-    this.companyStore.load(id);
-  });
-
   /** Sube el logo elegido en el alta en cuanto la empresa existe. */
   private readonly uploadPendingLogo = effect(() => {
     const company = this.companyStore.company();

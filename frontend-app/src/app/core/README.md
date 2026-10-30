@@ -16,6 +16,8 @@ Contiene infraestructura sin UI ni reglas de negocio (`R-AR-13`). No importa
   helpers `injectSeoPage`/`injectSeoCleanup` para el ciclo de vida (`R-UX-6`,
   `R-AR-15`).
 - `services/store-config/` — configuración y datos de la tienda activa.
+- `services/branding/` — favicon reactivo de la pestaña según la empresa o
+  tienda activa; restaura el icono de la plataforma al salir del workspace.
 - `services/notification.service.ts` — avisos de éxito, error e información.
 
 ## Reglas

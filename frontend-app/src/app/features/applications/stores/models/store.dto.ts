@@ -14,6 +14,17 @@ export interface BackendTiendaDTO {
   vendorId?: string | number | null;
   nombre?: string;
   descripcion?: string;
+  /** Logo de la tienda (storage) si el contrato de tienda lo expone. */
+  logo_objeto_id?: string | null;
+  logoObjectId?: string | null;
+  logo_url?: string | null;
+  logoUrl?: string | null;
+  imagen_url?: string | null;
+  imagenUrl?: string | null;
+  /** Logo de la empresa dueña si la ficha de tienda lo expone. */
+  empresa_logo_url?: string | null;
+  company_logo_url?: string | null;
+  companyLogoUrl?: string | null;
   /** Fecha de creación ISO 8601 UTC (no consumida hoy; parte del contrato). */
   creado_en?: string;
 }
