@@ -1,6 +1,13 @@
 /** Contrato de configuración del API (tipos puros). */
 export interface ApiEndpointsConfig {
   products: string;
+  companyServices: string;
+  catalogInventorySettings: string;
+  catalogImport: string;
+  catalogScan: string;
+  catalogCombos: string;
+  catalogPromotions: string;
+  catalogMovements: string;
   storefront: string;
   auth: string;
   orders: string;

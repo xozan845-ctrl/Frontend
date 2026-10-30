@@ -1,0 +1,98 @@
+@if (open()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" data-testid="scan-modal">
+    <div
+      class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+      aria-hidden="true"
+      (click)="close()"
+    ></div>
+    <div
+      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="scan-modal-title"
+      [appFocusTrap]="true"
+      (escape)="close()"
+    >
+      <h2
+        id="scan-modal-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Escanear código
+      </h2>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Escribe el código de barras o SKU para buscar el producto o servicio.
+      </p>
+
+      @if (error(); as message) {
+        <div
+          class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+          role="alert"
+        >
+          {{ message }}
+        </div>
+      }
+
+      <form class="mt-4 flex gap-2" (submit)="$event.preventDefault(); submit()">
+        <input
+          class="input flex-1"
+          type="text"
+          placeholder="Ej. 7501234567890"
+          aria-label="Código de barras o SKU"
+          data-testid="scan-code"
+          [value]="code()"
+          (input)="code.set($any($event.target).value)"
+        />
+        <button
+          type="submit"
+          class="btn btn-primary"
+          data-testid="scan-submit"
+          [disabled]="scanning()"
+        >
+          {{ scanning() ? 'Buscando…' : 'Buscar' }}
+        </button>
+      </form>
+
+      @if (result(); as found) {
+        <div
+          class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4"
+          data-testid="scan-result"
+        >
+          <p class="text-[10px] font-black tracking-widest text-emerald-700 uppercase">
+            {{ found.kind }}
+          </p>
+          @if (found.product; as product) {
+            <p class="mt-1 font-bold text-slate-900">{{ product.name }}</p>
+            <p class="text-xs text-slate-500">
+              {{ product.sku }} · {{ product.basePrice | appCurrency }}
+            </p>
+          }
+          @if (found.service; as service) {
+            <p class="mt-1 font-bold text-slate-900">{{ service.name }}</p>
+            <p class="text-xs text-slate-500">
+              {{ service.code }} · {{ service.price | appCurrency }}
+            </p>
+          }
+          <button
+            type="button"
+            class="btn btn-primary mt-3 w-full"
+            data-testid="scan-edit"
+            (click)="editResult()"
+          >
+            Editar registro
+          </button>
+        </div>
+      }
+
+      <div class="mt-4 flex justify-end">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="close-scan-modal"
+          (click)="close()"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+}

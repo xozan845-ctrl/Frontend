@@ -1,48 +1,34 @@
-import { computed, effect, inject } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, of, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../auth/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
 import {
   buildInventoryCsv,
   buildProductRow,
   buildProductTemplateCsv,
   computeProductKpis,
-  defaultProductMetadata,
   filterCatalogRows,
   formToProductCreate,
   formToProductUpdate,
-  metadataFromForm,
   parseCatalogMoney,
-  sanitizeProductMetadataMap,
   sortCatalogRows,
 } from '../../adapters/company-catalog/company-catalog.adapter';
 import {
   COMPANY_CATALOG_PAGE_SIZE,
   COMPANY_PRODUCT_API_PAGE_SIZE,
-  companyProductMetadataStorageKey,
 } from '../../constants/company-products.constants';
 import type {
   CompanyCatalogFormValue,
   CompanyCatalogSort,
   CompanyCatalogStatusFilter,
 } from '../../models/company-catalog.model';
-import type { CompanyProductMetadata } from '../../models/company-product.model';
 import type { CompanyProductsState } from './company-products.state';
 
 const initialState: CompanyProductsState = {
   products: [],
-  metadata: {},
   query: '',
   status: 'todos',
   brand: '',
@@ -55,42 +41,25 @@ const initialState: CompanyProductsState = {
   lastSaved: null,
 };
 
-/** Lee los metadatos locales sin romper la UI si el storage no está disponible. */
-function loadStoredProductMetadata(storageKey: string): Record<string, CompanyProductMetadata> {
-  try {
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) return {};
-    return sanitizeProductMetadataMap(JSON.parse(raw) as unknown);
-  } catch {
-    return {};
+/** Valida precio y costo antes de enviar; `null` si el formulario es válido. */
+function validateProductForm(form: CompanyCatalogFormValue): string | null {
+  if (parseCatalogMoney(form.price) === null) return 'Revisa el precio del producto.';
+  if (form.cost.trim() && parseCatalogMoney(form.cost) === null) {
+    return 'Revisa el costo del producto.';
   }
-}
-
-/** Persiste los metadatos; un storage lleno o bloqueado no rompe la página. */
-function persistProductMetadata(
-  storageKey: string,
-  metadata: Record<string, CompanyProductMetadata>,
-): void {
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(metadata));
-  } catch {
-    // Storage no disponible: los metadatos viven solo en memoria.
-  }
+  return null;
 }
 
 /**
  * Catálogo administrable de productos (ADR-55): carga todas las páginas del
- * API, combina los metadatos locales (costo, marca, stock mínimo, materia
- * prima…) y expone las filas, filtros y KPIs ya derivados en `withComputed`.
+ * API y deriva filas, filtros y KPIs. Los metadatos operativos vienen del
+ * backend en el propio producto; `localStorage` ya no es fuente de verdad
+ * (R-PS-01).
  */
 export const CompanyProductsStore = signalStore(
   withState(initialState),
-  withComputed(({ products, metadata, query, status, brand, sort, page, onlyRawMaterial }) => {
-    const rows = computed(() =>
-      products().map((product) =>
-        buildProductRow(product, metadata()[product.id] ?? defaultProductMetadata(product)),
-      ),
-    );
+  withComputed(({ products, query, status, brand, sort, page, onlyRawMaterial }) => {
+    const rows = computed(() => products().map((product) => buildProductRow(product)));
     const filteredRows = computed(() =>
       sortCatalogRows(
         filterCatalogRows(rows(), {
@@ -187,27 +156,25 @@ export const CompanyProductsStore = signalStore(
           ),
         ),
 
-        /** Alta de producto apoyada en el API + metadatos locales. */
+        /** Alta de producto: el backend persiste producto y metadatos juntos. */
         create: rxMethod<CompanyCatalogFormValue>(
           pipe(
             tap(() => patchState(store, { saving: true, error: null })),
             switchMap((form) => {
-              if (parseCatalogMoney(form.price) === null || parseCatalogMoney(form.cost) === null) {
-                const message = 'Revisa el precio y el costo del producto.';
-                patchState(store, { saving: false, error: message });
-                notificationService.showError(message);
+              const validationError = validateProductForm(form);
+              if (validationError) {
+                patchState(store, { saving: false, error: validationError });
+                notificationService.showError(validationError);
                 return EMPTY;
               }
 
               return repo.create(formToProductCreate(form)).pipe(
                 tap((product) => {
-                  const productMetadata = metadataFromForm(form, defaultProductMetadata(product));
                   patchState(store, {
                     products: [
                       product,
                       ...store.products().filter((current) => current.id !== product.id),
                     ],
-                    metadata: { ...store.metadata(), [product.id]: productMetadata },
                     saving: false,
                     error: null,
                     lastSaved: product,
@@ -225,29 +192,24 @@ export const CompanyProductsStore = signalStore(
           ),
         ),
 
-        /** Edición del producto (SKU inmutable) + metadatos locales. */
+        /** Edición del producto (SKU inmutable); se confirma con la respuesta. */
         update: rxMethod<{ id: string; data: CompanyCatalogFormValue }>(
           pipe(
             tap(() => patchState(store, { saving: true, error: null })),
             switchMap(({ id, data }) => {
-              if (parseCatalogMoney(data.price) === null || parseCatalogMoney(data.cost) === null) {
-                const message = 'Revisa el precio y el costo del producto.';
-                patchState(store, { saving: false, error: message });
-                notificationService.showError(message);
+              const validationError = validateProductForm(data);
+              if (validationError) {
+                patchState(store, { saving: false, error: validationError });
+                notificationService.showError(validationError);
                 return EMPTY;
               }
 
               return repo.update(id, formToProductUpdate(data)).pipe(
                 tap((product) => {
-                  const productMetadata = metadataFromForm(
-                    data,
-                    store.metadata()[id] ?? defaultProductMetadata(product),
-                  );
                   patchState(store, {
                     products: store
                       .products()
                       .map((current) => (current.id === id ? product : current)),
-                    metadata: { ...store.metadata(), [id]: productMetadata },
                     saving: false,
                     error: null,
                     lastSaved: product,
@@ -335,16 +297,4 @@ export const CompanyProductsStore = signalStore(
       };
     },
   ),
-  withHooks({
-    onInit(store) {
-      const authStore = inject(AuthStore);
-      const storageKey = companyProductMetadataStorageKey(authStore.user()?.tenantId);
-      const stored = loadStoredProductMetadata(storageKey);
-      if (Object.keys(stored).length > 0) patchState(store, { metadata: stored });
-
-      effect(() => {
-        persistProductMetadata(storageKey, store.metadata());
-      });
-    },
-  }),
 );

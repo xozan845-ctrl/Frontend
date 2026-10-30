@@ -1291,7 +1291,7 @@ contexto y consecuencias.
 ## ADR-52: Productos y servicios en el workspace de empresa
 
 - **Fecha**: 2026-10-27
-- **Estado**: Aceptado
+- **Estado**: Sustituido parcialmente por ADR-74 (persistencia server-side)
 - **Contexto**: el sidebar del workspace de empresa ofrecía "Productos /
   Servicios" (`/empresa/productos`), pero la página solo embebía el catálogo
   maestro de productos. No existía forma de registrar servicios ni de
@@ -1377,7 +1377,7 @@ contexto y consecuencias.
 ## ADR-55: Catálogo administrable con metadatos locales y modal unificado
 
 - **Fecha**: 2026-10-27
-- **Estado**: Aceptado
+- **Estado**: Sustituido parcialmente por ADR-74 (persistencia server-side)
 - **Contexto**: el empresario necesita administrar el catálogo como un
   inventario real (KPIs, stock mínimo/máximo, costo, margen, marca, código de
   barras, garantía, materia prima, ubicación y estado) y dar de alta productos
@@ -1907,3 +1907,39 @@ contexto y consecuencias.
 - **Consecuencias**: Caja evoluciona sin tocar Compras, con una UI completa y
   datos migrados. El dominio puede integrarse con finanzas en una fase posterior
   si se unifican los ledgers.
+
+## ADR-74: Catálogo de productos y servicios con persistencia server-side
+
+- **Fecha**: 2026-10-30
+- **Estado**: Aceptado
+- **Contexto**: el QA del módulo Productos / Servicios (R-PS-01/02/03/04)
+  confirmó que costo, marca, código de barras, stock mínimo, unidad y estado
+  operativo vivían solo en `localStorage`, y que los servicios no sobrevivían a
+  una sesión nueva. Core Engine ya define `catalog.servicios`, los metadatos del
+  producto y `estado_operativo` separado de la disponibilidad de stock.
+- **Decisión**:
+  - `CatalogProduct` incorpora costo, marca, código de barras, unidad, compra,
+    contenido, tipo de precio/costo, stock mínimo/máximo, garantía, materia
+    prima, ubicación, estado operativo y timestamps; el adapter tolera
+    snake_case/camelCase y no convierte un costo ausente en `0` (`null`).
+  - `CatalogProductService` envía esos campos inline en
+    `POST/PATCH /catalog/productos`; `CompanyProductsStore` deja de leer/escribir
+    `localStorage` y se hidrata solo con la respuesta del API.
+  - Se agrega `CompanyServiceRepository` + `CompanyServiceApiService` contra
+    `/catalog/servicios` (listado paginado, alta, edición y baja lógica).
+    `CompanyServicesStore` usa la respuesta remota y expone loading/saving/error;
+    ya no persiste servicios por tenant.
+  - El KPI de valor de inventario queda en `null` y la UI muestra `—` cuando
+    algún producto no informa costo, en lugar de un total parcial engañoso.
+  - `CompanyCatalogOperationsStore` consume las operaciones del catálogo:
+    configuración de inventario (`GET/PUT`), importación CSV validada con vista
+    previa y confirmación, escaneo por código, combos, promociones y movimientos
+    de inventario. Todos usan los endpoints `/catalog/**` del contrato y
+    actualizan la UI solo con la respuesta del backend (R-PS-04).
+- **Consecuencias**: el frontend queda alineado con el contrato versionado y la
+  persistencia se verifica con una nueva carga de la vista. Si el backend aún no
+  despliega los campos, la UI los muestra como incompletos en vez de inventar
+  valores. Los endpoints de operaciones viven en
+  `environment.apiConfig.endpoints` (`companyServices`, `catalogCombos`,
+  `catalogPromotions`, etc.) para ajustarlos sin tocar los stores. El backend
+  debe mantener el aislamiento por empresa y la validación de códigos únicos.

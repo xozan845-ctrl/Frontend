@@ -199,6 +199,15 @@ test('R-E-26: el empresario crea un producto en el catálogo', async ({ page }) 
   await expect(
     page.locator('[data-testid="catalog-row"]').filter({ hasText: 'Producto Nuevo' }),
   ).toHaveCount(1);
+
+  // R-PS-01: costo y stock mínimo vuelven del backend al reconstruir la vista.
+  await page.getByTestId('company-nav-inicio').click();
+  await page.getByTestId('company-nav-productos').click();
+  const persisted = page
+    .locator('[data-testid="catalog-row"]')
+    .filter({ hasText: 'Producto Nuevo' });
+  await expect(persisted).toHaveCount(1);
+  await expect(persisted).toContainText('C$150.00');
 });
 
 // R-E-41: las pestañas y KPIs del catálogo reflejan el estado del inventario
@@ -217,7 +226,7 @@ test('R-E-41: el empresario navega las pestañas del catálogo', async ({ page }
 });
 
 // R-E-40: el empresario administra servicios desde "Productos / Servicios"
-// (ADR-52/55): alta, edición y eliminación con persistencia local por tenant.
+// (ADR-52/55, R-PS-02): alta, recarga desde el backend, edición y baja.
 test('R-E-40: el empresario administra servicios de la empresa', async ({ page }) => {
   await login(page, '/empresa/productos', 'empresario@tienda.test');
 
@@ -234,6 +243,15 @@ test('R-E-40: el empresario administra servicios de la empresa', async ({ page }
   await page.getByTestId('product-modal-duration').fill('90');
   await page.getByTestId('save-product-modal').click();
 
+  await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText(
+    'Mantenimiento preventivo',
+  );
+
+  // R-PS-02: el servicio debe sobrevivir a reconstruir la vista y volver del GET.
+  await page.getByTestId('company-nav-inicio').click();
+  await page.getByTestId('company-nav-productos').click();
+  await page.getByTestId('services-tab').click();
   await expect(page.locator('[data-testid="catalog-row"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="catalog-row"]').first()).toContainText(
     'Mantenimiento preventivo',

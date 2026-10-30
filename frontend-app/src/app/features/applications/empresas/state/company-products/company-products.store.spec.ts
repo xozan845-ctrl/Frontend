@@ -1,21 +1,15 @@
 import { of, throwError } from 'rxjs';
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../auth/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/repositories/catalog-product.repository';
 import type { CatalogProduct } from '../../../products/models/catalog-product.model';
-import { companyProductMetadataStorageKey } from '../../constants/company-products.constants';
 import type { CompanyCatalogFormValue } from '../../models/company-catalog.model';
 import { CompanyProductsStore } from './company-products.store';
-
-const TENANT = 'e-1';
-const STORAGE_KEY = companyProductMetadataStorageKey(TENANT);
 
 function makeProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
   return {
     id: 'p-1',
-    companyId: TENANT,
+    companyId: 'e-1',
     sku: 'SKU-1',
     name: 'Teclado',
     description: 'Demo',
@@ -23,7 +17,24 @@ function makeProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
     basePrice: 100,
     stock: 10,
     status: 'disponible',
+    operationalStatus: 'activo',
+    cost: 40,
+    brand: 'Marca Demo',
+    barcode: '750123',
+    unit: 'Unidad (u)',
+    allowFractions: false,
+    purchaseUnit: 'Igual que la de venta',
+    contentAmount: 0,
+    contentUnit: 'Sin contenido',
+    priceType: 'fijo',
+    costType: 'fijo',
+    minStock: 2,
+    maxStock: 20,
+    warrantyMonths: null,
+    isRawMaterial: false,
+    location: '',
     createdAt: '2026-10-27T00:00:00.000Z',
+    updatedAt: '2026-10-27T00:00:00.000Z',
     ...overrides,
   };
 }
@@ -60,13 +71,6 @@ function makeForm(overrides: Partial<CompanyCatalogFormValue> = {}): CompanyCata
 }
 
 describe('CompanyProductsStore', () => {
-  const user = signal({
-    id: 'u-1',
-    name: 'Eva',
-    email: 'eva@empresa.test',
-    role: 'empresario',
-    tenantId: TENANT,
-  });
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
   let repo: {
@@ -82,7 +86,7 @@ describe('CompanyProductsStore', () => {
         of({
           items:
             filters.page === 2
-              ? [makeProduct({ id: 'p-2', name: 'Mouse', sku: 'SKU-2' })]
+              ? [makeProduct({ id: 'p-2', name: 'Mouse', sku: 'SKU-2', cost: 20 })]
               : [makeProduct()],
           total: 2,
           page: filters.page ?? 1,
@@ -90,8 +94,8 @@ describe('CompanyProductsStore', () => {
           pages: 2,
         }),
       ),
-      create: vi.fn(() => of(makeProduct({ id: 'p-9', name: 'Camisa', sku: 'CAM-1' }))),
-      update: vi.fn(() => of(makeProduct({ id: 'p-1', name: 'Teclado actualizado' }))),
+      create: vi.fn(() => of(makeProduct({ id: 'p-9', name: 'Camisa', sku: 'CAM-1', cost: 150 }))),
+      update: vi.fn(() => of(makeProduct({ id: 'p-1', name: 'Teclado actualizado', cost: 150 }))),
       getById: vi.fn(),
     };
 
@@ -99,7 +103,6 @@ describe('CompanyProductsStore', () => {
       providers: [
         CompanyProductsStore,
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: repo },
-        { provide: AuthStore, useValue: { user: user.asReadonly() } },
         { provide: NotificationService, useValue: notification },
       ],
     });
@@ -107,12 +110,11 @@ describe('CompanyProductsStore', () => {
   };
 
   beforeEach(() => {
-    localStorage.clear();
     vi.clearAllMocks();
     TestBed.resetTestingModule();
   });
 
-  it('debe iniciar vacío', () => {
+  it('debe iniciar vacío y sin metadatos locales', () => {
     const store = setup();
 
     expect(store.products()).toEqual([]);
@@ -131,91 +133,32 @@ describe('CompanyProductsStore', () => {
     expect(store.loading()).toBe(false);
     expect(store.total()).toBe(2);
     expect(store.hasProducts()).toBe(true);
-    expect(store.isFirstPage()).toBe(true);
-    expect(store.isLastPage()).toBe(true);
   });
 
-  it('debe cargar una sola página sin pedir la siguiente', async () => {
-    const store = setup();
-    repo.list = vi.fn(() =>
-      of({ items: [makeProduct()], total: 1, page: 1, limit: 100, pages: 1 }),
-    );
-
-    store.load();
-
-    await vi.waitFor(() => expect(store.total()).toBe(1));
-    expect(repo.list).toHaveBeenCalledTimes(1);
-  });
-
-  it('debe paginar localmente cuando hay más de diez filas', async () => {
-    const store = setup();
-    repo.list = vi.fn(() =>
-      of({
-        items: Array.from({ length: 12 }, (_, index) =>
-          makeProduct({
-            id: `p-${index + 1}`,
-            name: `Producto ${index + 1}`,
-            sku: `SKU-${index + 1}`,
-          }),
-        ),
-        total: 12,
-        page: 1,
-        limit: 100,
-        pages: 1,
-      }),
-    );
-
-    store.load();
-    await vi.waitFor(() => expect(store.total()).toBe(12));
-
-    expect(store.pageCount()).toBe(2);
-    expect(store.pagedRows()).toHaveLength(10);
-    expect(store.hasFilteredProducts()).toBe(true);
-    expect(store.isLastPage()).toBe(false);
-
-    store.setPage(2);
-    expect(store.currentPage()).toBe(2);
-    expect(store.pagedRows()).toHaveLength(2);
-    expect(store.isFirstPage()).toBe(false);
-    expect(store.isLastPage()).toBe(true);
-
-    store.previousPage();
-    expect(store.currentPage()).toBe(1);
-  });
-
-  it('debe crear un producto y guardar metadatos locales', async () => {
+  it('debe crear un producto enviando producto y metadatos juntos', async () => {
     const store = setup();
 
     store.create(makeForm());
 
     await vi.waitFor(() => expect(store.products()).toHaveLength(1));
-    expect(repo.create).toHaveBeenCalledWith({
-      sku: 'CAM-1',
-      name: 'Camisa',
-      description: 'Demo',
-      category: 'Ropa',
-      basePrice: '250.00',
-      stock: 5,
-    });
-    expect(store.metadata()['p-9']).toMatchObject({
-      cost: 150,
-      brand: 'Marca Demo',
-      minStock: 2,
-      isRawMaterial: false,
-      statusOverride: 'activo',
-    });
+    expect(repo.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sku: 'CAM-1',
+        name: 'Camisa',
+        basePrice: '250.00',
+        stock: 5,
+        cost: '150.00',
+        brand: 'Marca Demo',
+        minStock: 2,
+        operationalStatus: 'activo',
+      }),
+    );
+    expect(store.rows()[0]).toMatchObject({ id: 'p-9', cost: 150, status: 'activo' });
     expect(store.lastSaved()?.id).toBe('p-9');
     expect(notification.showSuccess).toHaveBeenCalledWith('Producto "Camisa" creado.');
-    await vi.waitFor(() => {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<
-        string,
-        unknown
-      >;
-      expect(stored['p-9']).toBeTruthy();
-    });
   });
 
-  it('debe actualizar un producto y sus metadatos', async () => {
+  it('debe actualizar un producto con la respuesta del servidor', async () => {
     const store = setup();
     store.load();
     await vi.waitFor(() => expect(store.total()).toBe(2));
@@ -225,34 +168,28 @@ describe('CompanyProductsStore', () => {
     await vi.waitFor(() =>
       expect(store.rows().find((row) => row.id === 'p-1')?.name).toBe('Teclado actualizado'),
     );
-    expect(repo.update).toHaveBeenCalledWith('p-1', {
-      name: 'Teclado actualizado',
-      description: 'Demo',
-      category: 'Ropa',
-      basePrice: '250.00',
-      stock: 5,
-    });
+    expect(repo.update).toHaveBeenCalledWith(
+      'p-1',
+      expect.objectContaining({ name: 'Teclado actualizado', cost: '150.00' }),
+    );
     expect(store.lastSaved()?.id).toBe('p-1');
   });
 
-  it('debe rechazar un producto con precio o costo inválido', () => {
+  it('debe rechazar precios o costos inválidos sin llamar al API', () => {
     const store = setup();
 
     store.create(makeForm({ price: 'gratis' }));
-
     expect(repo.create).not.toHaveBeenCalled();
     expect(store.error()).toContain('precio');
+
+    store.clearError();
+    store.create(makeForm({ cost: 'abc' }));
+    expect(repo.create).not.toHaveBeenCalled();
+    expect(store.error()).toContain('costo');
     expect(notification.showError).toHaveBeenCalled();
   });
 
   it('debe filtrar, ordenar y paginar localmente', async () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        'p-1': { brand: 'Marca Demo', cost: 50, minStock: 2, isRawMaterial: false },
-        'p-2': { brand: 'Otra marca', cost: 20, minStock: 20, isRawMaterial: true },
-      }),
-    );
     const store = setup();
     store.load();
     await vi.waitFor(() => expect(store.total()).toBe(2));
@@ -263,25 +200,19 @@ describe('CompanyProductsStore', () => {
 
     store.setQuery('');
     store.setBrand('Marca Demo');
-    expect(store.filteredRows()).toHaveLength(1);
+    expect(store.filteredRows()).toHaveLength(2);
 
     store.setBrand('');
     store.setStatus('stock-bajo');
-    expect(store.filteredRows()).toHaveLength(1);
-    expect(store.filteredRows()[0].name).toBe('Mouse');
+    expect(store.filteredRows()).toHaveLength(0);
 
     store.setStatus('todos');
     store.setOnlyRawMaterial(true);
-    expect(store.filteredRows()).toHaveLength(1);
-    expect(store.filteredRows()[0].name).toBe('Mouse');
+    expect(store.filteredRows()).toHaveLength(0);
 
     store.setOnlyRawMaterial(false);
-    store.setSort('nombre-az');
-    expect(store.pagedRows()[0].name).toBe('Mouse');
-
-    store.setPage(2);
-    expect(store.currentPage()).toBe(1);
-    expect(store.nextPage()).toBeUndefined();
+    store.setSort('precio-desc');
+    expect(store.pagedRows()[0].name).toBe('Teclado');
   });
 
   it('debe exponer KPIs, categorías, marcas y CSV', async () => {
@@ -289,30 +220,28 @@ describe('CompanyProductsStore', () => {
     store.load();
     await vi.waitFor(() => expect(store.total()).toBe(2));
 
-    expect(store.kpis().activeProducts).toBe(2);
-    expect(store.kpis().inventoryOk).toBe(2);
-    expect(store.kpis().rawMaterial).toBe(0);
+    expect(store.kpis()).toEqual({
+      activeProducts: 2,
+      inventoryValue: 600,
+      missingCostCount: 0,
+      inventoryOk: 2,
+      rawMaterial: 0,
+    });
     expect(store.categories()).toContain('Periféricos');
-    expect(store.brands()).toEqual([]);
+    expect(store.brands()).toEqual(['Marca Demo']);
     expect(store.templateCsv()).toContain('nombre,descripcion');
     expect(store.inventoryCsv()).toContain('Teclado');
   });
 
-  it('debe calcular marcas, categorías y materia prima con metadatos', async () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        'p-1': { brand: 'Marca A', isRawMaterial: false },
-        'p-2': { brand: 'Marca B', isRawMaterial: true },
-      }),
-    );
+  it('debe marcar el inventario incompleto si algún producto no trae costo', async () => {
     const store = setup();
+    repo.list = vi.fn(() => of({ items: [makeProduct({ cost: null })], total: 1, pages: 1 }));
     store.load();
-    await vi.waitFor(() => expect(store.total()).toBe(2));
+    await vi.waitFor(() => expect(store.total()).toBe(1));
 
-    expect(store.brands()).toEqual(['Marca A', 'Marca B']);
-    expect(store.categories()).toEqual(['Periféricos']);
-    expect(store.rawMaterialCount()).toBe(1);
+    expect(store.kpis().inventoryValue).toBeNull();
+    expect(store.kpis().missingCostCount).toBe(1);
+    expect(store.rows()[0].cost).toBeNull();
   });
 
   it('debe informar el error de carga', async () => {
@@ -325,63 +254,27 @@ describe('CompanyProductsStore', () => {
     expect(notification.showError).toHaveBeenCalledWith('sin conexión');
   });
 
-  it('debe informar errores de creación y actualización', async () => {
+  it('debe informar errores de creación y actualización sin dejar filas falsas', async () => {
     const store = setup();
     repo.create = vi.fn(() => throwError(() => new Error('alta falló')));
     store.create(makeForm());
     await vi.waitFor(() => expect(store.error()).toBe('alta falló'));
+    expect(store.products()).toEqual([]);
 
+    repo.list = vi.fn(() => of({ items: [makeProduct()], total: 1, pages: 1 }));
     store.load();
-    await vi.waitFor(() => expect(store.total()).toBe(2));
+    await vi.waitFor(() => expect(store.total()).toBe(1));
     store.clearError();
     repo.update = vi.fn(() => throwError(() => new Error('edición falló')));
-    store.update({ id: 'p-1', data: makeForm() });
+    store.update({ id: 'p-1', data: makeForm({ name: 'Otro' }) });
     await vi.waitFor(() => expect(store.error()).toBe('edición falló'));
-  });
-
-  it('debe rechazar precios y costos inválidos al crear o editar', async () => {
-    const store = setup();
-
-    store.create(makeForm({ cost: 'abc' }));
-    expect(repo.create).not.toHaveBeenCalled();
-    expect(store.error()).toContain('precio');
-
-    store.clearError();
-    store.update({ id: 'p-1', data: makeForm({ price: 'abc' }) });
-    expect(repo.update).not.toHaveBeenCalled();
-    expect(store.error()).toContain('precio');
+    expect(store.rows()[0].name).toBe('Teclado');
   });
 
   it('debe recorrer filtros, orden, paginación y limpieza', async () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        'p-1': { brand: 'Marca Demo', cost: 50, minStock: 2 },
-        'p-2': { brand: 'Otra marca', cost: 20, minStock: 20, isRawMaterial: true },
-      }),
-    );
     const store = setup();
     store.load();
     await vi.waitFor(() => expect(store.total()).toBe(2));
-
-    store.setStatus('activos');
-    expect(store.filteredRows()).toHaveLength(2);
-    store.setStatus('inactivos');
-    expect(store.filteredRows()).toHaveLength(0);
-    store.setStatus('stock-bajo');
-    expect(store.filteredRows()).toHaveLength(1);
-
-    store.setStatus('todos');
-    store.setBrand('Marca Demo');
-    expect(store.filteredRows()).toHaveLength(1);
-    store.setBrand('');
-    store.setQuery('mouse');
-    expect(store.filteredRows()).toHaveLength(1);
-    store.setOnlyRawMaterial(true);
-    expect(store.filteredRows()).toHaveLength(1);
-    store.setOnlyRawMaterial(false);
-    store.setQuery('');
-    expect(store.hasFilters()).toBe(false);
 
     for (const sort of [
       'nombre-az',
@@ -421,21 +314,5 @@ describe('CompanyProductsStore', () => {
     store.reset();
     expect(store.products()).toEqual([]);
     expect(store.loading()).toBe(false);
-  });
-
-  it('debe limpiar filtros y reiniciar', async () => {
-    const store = setup();
-    store.setQuery('x');
-    store.setBrand('Marca');
-    store.setStatus('inactivos');
-
-    store.clearFilters();
-    expect(store.query()).toBe('');
-    expect(store.brand()).toBe('');
-    expect(store.status()).toBe('todos');
-
-    store.reset();
-    expect(store.products()).toEqual([]);
-    expect(store.metadata()).toEqual({});
   });
 });

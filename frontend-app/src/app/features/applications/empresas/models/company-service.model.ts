@@ -3,10 +3,7 @@ import type { CompanyCatalogSort } from './company-catalog.model';
 /** Estado visible de un servicio de la empresa. */
 export type CompanyServiceStatus = 'activo' | 'inactivo';
 
-/**
- * Servicio ofrecido por la empresa. Mientras Core Engine no exponga un
- * endpoint de servicios, se persiste localmente por tenant (ADR-52/55).
- */
+/** Servicio ofrecido por la empresa, persistido en Core Engine (R-PS-02). */
 export interface CompanyService {
   id: string;
   companyId: string;
@@ -63,13 +60,6 @@ export interface UpdateCompanyServiceData {
   unit?: string;
   durationMinutes?: number;
   status?: CompanyServiceStatus;
-}
-
-/** Resultado de una mutación local; la página explica el motivo si falla. */
-export interface CompanyServiceMutationResult {
-  ok: boolean;
-  message?: string;
-  service?: CompanyService;
 }
 
 /** Filtros locales del listado de servicios. */

@@ -40,8 +40,10 @@ export interface CompanyCatalogRow {
   brand: string;
   barcode: string;
   price: number;
-  cost: number;
-  margin: number;
+  /** `null` cuando el costo no está informado por el API (R-PS-01). */
+  cost: number | null;
+  /** `null` cuando no hay costo o el precio no permite calcularlo. */
+  margin: number | null;
   stock: number | null;
   minStock: number;
   maxStock: number | null;
@@ -93,7 +95,13 @@ export interface CompanyCatalogFormValue {
 /** KPIs de productos del catálogo. */
 export interface CompanyProductKpis {
   activeProducts: number;
-  inventoryValue: number;
+  /**
+   * Valor del inventario (stock × costo). `null` si algún producto no tiene
+   * costo conocido: mostrar un total parcial sería engañoso (R-PS-01).
+   */
+  inventoryValue: number | null;
+  /** Productos sin costo informado por el backend. */
+  missingCostCount: number;
   inventoryOk: number;
   rawMaterial: number;
 }

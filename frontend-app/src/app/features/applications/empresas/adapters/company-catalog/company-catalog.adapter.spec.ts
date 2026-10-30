@@ -4,16 +4,13 @@ import {
   buildProductTemplateCsv,
   buildServiceRow,
   computeProductKpis,
-  defaultProductMetadata,
   filterCatalogRows,
   formToProductCreate,
   formToProductUpdate,
   formToServiceCreate,
   formToServiceUpdate,
-  metadataFromForm,
   parseCatalogMoney,
   rowToFormValue,
-  sanitizeProductMetadataMap,
   sortCatalogRows,
 } from './company-catalog.adapter';
 import type {
@@ -33,7 +30,24 @@ const product: CatalogProduct = {
   basePrice: 100,
   stock: 10,
   status: 'disponible',
+  operationalStatus: 'activo',
+  cost: 40,
+  brand: 'Marca',
+  barcode: '750123',
+  unit: 'Unidad (u)',
+  allowFractions: false,
+  purchaseUnit: 'Igual que la de venta',
+  contentAmount: 0,
+  contentUnit: 'Sin contenido',
+  priceType: 'fijo',
+  costType: 'fijo',
+  minStock: 2,
+  maxStock: 20,
+  warrantyMonths: null,
+  isRawMaterial: false,
+  location: 'Estante 1',
   createdAt: '2026-10-27T00:00:00.000Z',
+  updatedAt: '2026-10-27T00:00:00.000Z',
 };
 
 const service: CompanyService = {
@@ -86,65 +100,15 @@ function makeForm(overrides: Partial<CompanyCatalogFormValue> = {}): CompanyCata
 }
 
 describe('company-catalog adapter', () => {
-  it('valida importes y construye metadatos por defecto', () => {
+  it('valida importes con punto o coma', () => {
     expect(parseCatalogMoney('1,50')).toBe(1.5);
+    expect(parseCatalogMoney('150.00')).toBe(150);
     expect(parseCatalogMoney('abc')).toBeNull();
-    expect(defaultProductMetadata(product)).toMatchObject({
-      cost: 0,
-      unit: 'Unidad (u)',
-      minStock: 0,
-      isRawMaterial: false,
-      createdAt: product.createdAt,
-    });
+    expect(parseCatalogMoney('-1')).toBeNull();
   });
 
-  it('sanea metadatos y descarta valores inválidos', () => {
-    const map = sanitizeProductMetadataMap({
-      'p-1': {
-        cost: '50.5',
-        brand: 'Marca',
-        minStock: '2',
-        maxStock: '',
-        warrantyMonths: '12',
-        isRawMaterial: true,
-        priceType: 'escala',
-        statusOverride: 'inactivo',
-      },
-      'p-2': null,
-    });
-
-    expect(map['p-1']).toMatchObject({
-      cost: 50.5,
-      brand: 'Marca',
-      minStock: 2,
-      maxStock: null,
-      warrantyMonths: 12,
-      isRawMaterial: true,
-      priceType: 'escala',
-      statusOverride: 'inactivo',
-    });
-    expect(map['p-2']).toBeUndefined();
-  });
-
-  it('construye metadatos desde el formulario', () => {
-    const metadata = metadataFromForm(makeForm());
-
-    expect(metadata).toMatchObject({
-      cost: 150,
-      brand: 'Marca Demo',
-      barcode: '750123',
-      minStock: 2,
-      maxStock: 20,
-      warrantyMonths: 12,
-      statusOverride: 'activo',
-    });
-  });
-
-  it('combina producto y metadatos en una fila', () => {
-    const metadata = { ...defaultProductMetadata(product), cost: 40, brand: 'Marca' };
-    const row = buildProductRow(product, metadata);
-
-    expect(row).toMatchObject({
+  it('construye una fila con los campos server-side del producto', () => {
+    expect(buildProductRow(product)).toMatchObject({
       id: 'p-1',
       kind: 'producto',
       name: 'Teclado',
@@ -152,7 +116,18 @@ describe('company-catalog adapter', () => {
       margin: 60,
       stock: 10,
       status: 'activo',
+      brand: 'Marca',
+      minStock: 2,
+      isRawMaterial: false,
     });
+  });
+
+  it('no sustituye un costo ausente por 0', () => {
+    const row = buildProductRow({ ...product, cost: null });
+
+    expect(row.cost).toBeNull();
+    expect(row.margin).toBeNull();
+    expect(buildInventoryCsv([row])).toContain('Teclado,SKU-1,Periféricos,100.00,,,10');
   });
 
   it('normaliza servicios a filas de catálogo', () => {
@@ -168,10 +143,8 @@ describe('company-catalog adapter', () => {
     });
   });
 
-  it('convierte una fila al formulario', () => {
-    const form = rowToFormValue(buildServiceRow(service));
-
-    expect(form).toMatchObject({
+  it('convierte una fila al formulario y respeta el costo desconocido', () => {
+    expect(rowToFormValue(buildServiceRow(service))).toMatchObject({
       type: 'servicio',
       code: 'SRV-1',
       cost: '80.00',
@@ -179,18 +152,26 @@ describe('company-catalog adapter', () => {
       durationMinutes: 60,
       createdAt: '2026-10-27',
     });
+    expect(rowToFormValue(buildProductRow({ ...product, cost: null })).cost).toBe('');
   });
 
   it('mapea el formulario a los payloads de producto y servicio', () => {
-    expect(formToProductCreate(makeForm())).toEqual({
+    expect(formToProductCreate(makeForm())).toMatchObject({
       sku: 'CAM-1',
       name: 'Camisa',
-      description: 'Demo',
-      category: 'Ropa',
       basePrice: '250.00',
       stock: 5,
+      cost: '150.00',
+      brand: 'Marca Demo',
+      barcode: '750123',
+      unit: 'Unidad (u)',
+      minStock: 2,
+      maxStock: 20,
+      warrantyMonths: 12,
+      operationalStatus: 'activo',
     });
     expect(formToProductUpdate(makeForm())).not.toHaveProperty('sku');
+    expect(formToProductCreate(makeForm({ cost: '' }))).toMatchObject({ cost: undefined });
     expect(formToServiceCreate(makeForm({ type: 'servicio', durationMinutes: 90 }))).toMatchObject({
       code: 'CAM-1',
       name: 'Camisa',
@@ -202,172 +183,16 @@ describe('company-catalog adapter', () => {
       durationMinutes: 90,
       status: 'activo',
     });
+    expect(formToServiceUpdate(makeForm({ type: 'servicio' }))).not.toHaveProperty('code');
   });
 
   it('filtra por texto, estado, marca y materia prima', () => {
     const rows: CompanyCatalogRow[] = [
-      buildProductRow(product, {
-        ...defaultProductMetadata(product),
-        brand: 'Marca',
-        minStock: 20,
-      }),
-      buildProductRow(
-        { ...product, id: 'p-2', name: 'Mouse', status: 'agotado' },
-        {
-          ...defaultProductMetadata(product),
-          brand: 'Otra',
-          isRawMaterial: true,
-        },
-      ),
+      buildProductRow(product),
+      buildProductRow({ ...product, id: 'p-2', name: 'Mouse', operationalStatus: 'inactivo' }),
+      buildProductRow({ ...product, id: 'p-3', name: 'Harina', isRawMaterial: true }),
       buildServiceRow(service),
     ];
-
-    expect(
-      filterCatalogRows(rows, {
-        query: 'mouse',
-        status: 'todos',
-        brand: '',
-        sort: 'nombre-az',
-        onlyRawMaterial: false,
-      }),
-    ).toHaveLength(1);
-    expect(
-      filterCatalogRows(rows, {
-        query: '',
-        status: 'inactivos',
-        brand: '',
-        sort: 'nombre-az',
-        onlyRawMaterial: false,
-      }),
-    ).toHaveLength(1);
-    expect(
-      filterCatalogRows(rows, {
-        query: '',
-        status: 'todos',
-        brand: 'marca',
-        sort: 'nombre-az',
-        onlyRawMaterial: false,
-      }),
-    ).toHaveLength(1);
-    expect(
-      filterCatalogRows(rows, {
-        query: '',
-        status: 'todos',
-        brand: '',
-        sort: 'nombre-az',
-        onlyRawMaterial: true,
-      }),
-    ).toHaveLength(1);
-    expect(
-      filterCatalogRows(rows, {
-        query: '',
-        status: 'stock-bajo',
-        brand: '',
-        sort: 'nombre-az',
-        onlyRawMaterial: false,
-      }),
-    ).toHaveLength(1);
-  });
-
-  it('ordena por nombre, precio, stock y reciente', () => {
-    const rows = [
-      buildProductRow(product, defaultProductMetadata(product)),
-      buildProductRow(
-        { ...product, id: 'p-2', name: 'Mouse', basePrice: 50, stock: 2 },
-        {
-          ...defaultProductMetadata(product),
-          updatedAt: '2026-10-28T00:00:00.000Z',
-        },
-      ),
-    ];
-
-    expect(sortCatalogRows(rows, 'nombre-az').map((row) => row.name)).toEqual(['Mouse', 'Teclado']);
-    expect(sortCatalogRows(rows, 'precio-desc').map((row) => row.name)).toEqual([
-      'Teclado',
-      'Mouse',
-    ]);
-    expect(sortCatalogRows(rows, 'stock-asc').map((row) => row.name)).toEqual(['Mouse', 'Teclado']);
-    expect(sortCatalogRows(rows, 'reciente').map((row) => row.name)).toEqual(['Mouse', 'Teclado']);
-  });
-
-  it('calcula KPIs de productos', () => {
-    const rows = [
-      buildProductRow(product, { ...defaultProductMetadata(product), cost: 40 }),
-      buildProductRow(
-        { ...product, id: 'p-2', stock: 0, status: 'agotado' },
-        {
-          ...defaultProductMetadata(product),
-          cost: 10,
-          isRawMaterial: true,
-        },
-      ),
-      buildServiceRow(service),
-    ];
-
-    expect(computeProductKpis(rows)).toEqual({
-      activeProducts: 1,
-      inventoryValue: 400,
-      inventoryOk: 1,
-      rawMaterial: 1,
-    });
-  });
-
-  it('genera la plantilla y el CSV de inventario', () => {
-    const template = buildProductTemplateCsv();
-    expect(template).toContain('nombre,descripcion,categoria,sku');
-    expect(template).toContain('CAM-POLO-M-001');
-
-    const csv = buildInventoryCsv([buildProductRow(product, defaultProductMetadata(product))]);
-    expect(csv).toContain('nombre,sku,categoria,precio,costo,margen,stock');
-    expect(csv).toContain('Teclado,SKU-1,Periféricos,100.00,0.00,100.0,10');
-  });
-
-  it('sanea metadatos vacíos y valores límite', () => {
-    expect(sanitizeProductMetadataMap(null)).toEqual({});
-    const map = sanitizeProductMetadataMap({
-      'p-1': {
-        cost: -1,
-        unit: '',
-        purchaseUnit: '',
-        contentUnit: '',
-        priceType: 'otro',
-        costType: 'otro',
-        maxStock: 'abc',
-        warrantyMonths: -1,
-        statusOverride: 'otro',
-      },
-    });
-
-    expect(map['p-1']).toMatchObject({
-      cost: 0,
-      unit: 'Unidad (u)',
-      purchaseUnit: 'Igual que la de venta',
-      contentUnit: 'Sin contenido',
-      priceType: 'fijo',
-      costType: 'fijo',
-      maxStock: null,
-      warrantyMonths: null,
-      statusOverride: null,
-    });
-  });
-
-  it('cubre estados alternos de producto y servicio', () => {
-    const inactive = buildProductRow(
-      { ...product, status: 'agotado' },
-      { ...defaultProductMetadata(product), statusOverride: 'inactivo', cost: 150, maxStock: 5 },
-    );
-    expect(inactive.status).toBe('inactivo');
-    expect(inactive.margin).toBeLessThan(0);
-
-    const serviceRow = buildServiceRow({ ...service, status: 'inactivo' });
-    expect(serviceRow.status).toBe('inactivo');
-
-    const free = buildProductRow({ ...product, basePrice: 0 }, defaultProductMetadata(product));
-    expect(free.margin).toBe(0);
-  });
-
-  it('filtra por estado y marca sin coincidencias', () => {
-    const rows = [buildProductRow(product, defaultProductMetadata(product))];
     const base = {
       query: '',
       status: 'todos' as const,
@@ -376,90 +201,100 @@ describe('company-catalog adapter', () => {
       onlyRawMaterial: false,
     };
 
-    expect(filterCatalogRows(rows, { ...base, status: 'activos' })).toHaveLength(1);
-    expect(filterCatalogRows(rows, { ...base, status: 'inactivos' })).toHaveLength(0);
-    expect(filterCatalogRows(rows, { ...base, brand: 'otra' })).toHaveLength(0);
+    expect(filterCatalogRows(rows, { ...base, query: 'mouse' })).toHaveLength(1);
+    expect(filterCatalogRows(rows, { ...base, status: 'inactivos' })).toHaveLength(1);
+    expect(filterCatalogRows(rows, { ...base, brand: 'marca' })).toHaveLength(3);
+    expect(filterCatalogRows(rows, { ...base, onlyRawMaterial: true })).toHaveLength(1);
     expect(filterCatalogRows(rows, { ...base, query: 'no existe' })).toHaveLength(0);
   });
 
-  it('ordena en todas las direcciones', () => {
+  it('ordena por nombre, precio, stock y fecha', () => {
     const rows = [
-      buildProductRow(product, defaultProductMetadata(product)),
-      buildProductRow(
-        { ...product, id: 'p-2', name: 'Mouse', basePrice: 50, stock: 2 },
-        {
-          ...defaultProductMetadata(product),
-          updatedAt: '2026-10-28T00:00:00.000Z',
-        },
-      ),
+      buildProductRow(product),
+      buildProductRow({
+        ...product,
+        id: 'p-2',
+        name: 'Mouse',
+        basePrice: 50,
+        stock: 2,
+        updatedAt: '2026-10-28T00:00:00.000Z',
+      }),
     ];
 
+    expect(sortCatalogRows(rows, 'nombre-az').map((row) => row.name)).toEqual(['Mouse', 'Teclado']);
     expect(sortCatalogRows(rows, 'nombre-za').map((row) => row.name)).toEqual(['Teclado', 'Mouse']);
     expect(sortCatalogRows(rows, 'precio-asc').map((row) => row.name)).toEqual([
       'Mouse',
       'Teclado',
     ]);
+    expect(sortCatalogRows(rows, 'precio-desc').map((row) => row.name)).toEqual([
+      'Teclado',
+      'Mouse',
+    ]);
+    expect(sortCatalogRows(rows, 'stock-asc').map((row) => row.name)).toEqual(['Mouse', 'Teclado']);
     expect(sortCatalogRows(rows, 'stock-desc').map((row) => row.name)).toEqual([
       'Teclado',
       'Mouse',
     ]);
+    expect(sortCatalogRows(rows, 'reciente')[0].name).toBe('Mouse');
   });
 
-  it('usa el fallback de fecha y ordena servicios con stock nulo', () => {
-    const row = buildProductRow(product, { ...defaultProductMetadata(product), updatedAt: '' });
-    expect(row.updatedAt).toBe(product.createdAt);
-
-    const serviceRows = [
+  it('calcula KPIs y bloquea el valor si falta algún costo', () => {
+    const rows = [
+      buildProductRow(product),
+      buildProductRow({
+        ...product,
+        id: 'p-2',
+        stock: 0,
+        status: 'agotado',
+        cost: 10,
+        isRawMaterial: true,
+      }),
       buildServiceRow(service),
-      buildServiceRow({ ...service, id: 's-2', name: 'Otro servicio' }),
     ];
-    expect(sortCatalogRows(serviceRows, 'stock-asc').map((item) => item.id)).toEqual([
-      's-1',
-      's-2',
-    ]);
-    expect(sortCatalogRows(serviceRows, 'stock-desc').map((item) => item.id)).toEqual([
-      's-1',
-      's-2',
-    ]);
+
+    expect(computeProductKpis(rows)).toEqual({
+      activeProducts: 2,
+      inventoryValue: 400,
+      missingCostCount: 0,
+      inventoryOk: 1,
+      rawMaterial: 1,
+    });
+
+    const withMissing = [...rows, buildProductRow({ ...product, id: 'p-3', cost: null })];
+    expect(computeProductKpis(withMissing)).toMatchObject({
+      inventoryValue: null,
+      missingCostCount: 1,
+    });
   });
 
   it('calcula KPIs con filas vacías o solo servicios', () => {
     expect(computeProductKpis([])).toEqual({
       activeProducts: 0,
       inventoryValue: 0,
+      missingCostCount: 0,
       inventoryOk: 0,
       rawMaterial: 0,
     });
-    expect(computeProductKpis([buildServiceRow(service)])).toEqual({
+    expect(computeProductKpis([buildServiceRow(service)])).toMatchObject({
       activeProducts: 0,
       inventoryValue: 0,
-      inventoryOk: 0,
-      rawMaterial: 0,
+      missingCostCount: 0,
     });
-    expect(
-      computeProductKpis([
-        { ...buildProductRow(product, defaultProductMetadata(product)), stock: null, cost: 10 },
-      ]),
-    ).toMatchObject({ inventoryValue: 0, inventoryOk: 0 });
   });
 
-  it('escapa comas y comillas en el CSV', () => {
-    const csv = buildInventoryCsv([
-      buildProductRow({ ...product, name: 'Teclado, "Pro"' }, defaultProductMetadata(product)),
-    ]);
+  it('genera la plantilla y el CSV de inventario escapando comas y comillas', () => {
+    const template = buildProductTemplateCsv();
+    expect(template).toContain('nombre,descripcion,categoria,sku');
+    expect(template).toContain('CAM-POLO-M-001');
 
+    const csv = buildInventoryCsv([buildProductRow({ ...product, name: 'Teclado, "Pro"' })]);
+    expect(csv).toContain('nombre,sku,categoria,precio,costo,margen,stock');
     expect(csv).toContain('"Teclado, ""Pro"""');
   });
 
-  it('mapea la actualización de servicio y filas de producto al formulario', () => {
-    const form = rowToFormValue(buildProductRow(product, defaultProductMetadata(product)));
-    expect(form.type).toBe('producto');
-    expect(form.createdAt).toBe('2026-10-27');
-
-    expect(formToServiceUpdate(makeForm({ type: 'servicio' }))).toMatchObject({
-      name: 'Camisa',
-      price: '250.00',
-      durationMinutes: 60,
-    });
+  it('usa margen nulo cuando el precio no permite calcularlo', () => {
+    expect(buildProductRow({ ...product, basePrice: 0 }).margin).toBeNull();
+    expect(buildProductRow({ ...product, operationalStatus: 'inactivo' }).status).toBe('inactivo');
   });
 });

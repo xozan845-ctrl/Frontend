@@ -1,14 +1,17 @@
 import {
-  COMPANY_SERVICE_MAX_DURATION_MINUTES,
-  COMPANY_SERVICE_MAX_RECORDS,
-} from '../../constants/company-services.constants';
+  unwrapApiListResponse,
+  unwrapApiSingleResponse,
+} from '../../../../../core/models/api-response.dto';
+import { COMPANY_SERVICE_MAX_DURATION_MINUTES } from '../../constants/company-services.constants';
 import type { CompanyCatalogSort } from '../../models/company-catalog.model';
+import type {
+  BackendCompanyServiceDTO,
+  BackendCompanyServiceListDTO,
+} from '../../models/company-service.dto';
 import type {
   CompanyService,
   CompanyServiceFilters,
   CompanyServiceStatus,
-  CreateCompanyServiceData,
-  UpdateCompanyServiceData,
 } from '../../models/company-service.model';
 
 const CODE_PATTERN = /^[A-Za-z0-9-]{2,32}$/;
@@ -20,6 +23,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function toText(value: unknown, fallback = ''): string {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+}
+
+function hasId(value: unknown): boolean {
+  return value !== null && value !== undefined && value !== '';
 }
 
 /** Acepta precios guardados como número o string antes de validarlos. */
@@ -85,119 +92,72 @@ export function findCompanyServiceByCode(
   );
 }
 
-/** Normaliza un registro leído de `localStorage`; `null` si es inválido. */
-export function sanitizeCompanyService(raw: unknown): CompanyService | null {
+/**
+ * Normaliza `ServicioResponseDto` al modelo de la aplicación. `null` si el
+ * registro no tiene id/código/nombre, precio o duración válidos.
+ */
+export function adaptCompanyServiceFromBackend(raw: unknown): CompanyService | null {
   if (!isRecord(raw)) return null;
+  const service = unwrapApiSingleResponse<BackendCompanyServiceDTO>(raw);
+  if (!service || typeof service !== 'object') return null;
 
-  const id = toText(raw['id']);
-  const code = normalizeCompanyServiceCode(toText(raw['code']));
-  const name = toText(raw['name']);
-  const price = parseCompanyServicePrice(toPriceInput(raw['price']));
-  const durationMinutes = parseCompanyServiceDuration(raw['durationMinutes']);
-  if (!id || !CODE_PATTERN.test(code) || !name || price === null || durationMinutes === null) {
-    return null;
-  }
+  const id = service.id;
+  if (!hasId(id)) return null;
 
-  const createdAt = toIso(raw['createdAt'], new Date(0).toISOString());
+  const code = normalizeCompanyServiceCode(toText(service.codigo ?? service.code));
+  const name = toText(service.nombre ?? service.name);
+  const price = parseCompanyServicePrice(
+    toPriceInput(service.precio ?? service.precio_venta ?? service.price ?? null),
+  );
+  const durationMinutes = parseCompanyServiceDuration(
+    service.duracion_minutos ?? service.duracionMinutos ?? service.durationMinutes,
+  );
+  if (!CODE_PATTERN.test(code) || !name || price === null || durationMinutes === null) return null;
+
+  const createdAt = toIso(service.creado_en ?? service.creadoEn, new Date(0).toISOString());
   return {
-    id,
-    companyId: toText(raw['companyId']),
+    id: String(id),
+    companyId: hasId(service.empresa_id ?? service.empresaId)
+      ? String(service.empresa_id ?? service.empresaId)
+      : '',
     code,
     name,
-    description: toText(raw['description']),
-    category: toText(raw['category']),
-    brand: toText(raw['brand']),
-    barcode: toText(raw['barcode']),
+    description: toText(service.descripcion),
+    category: toText(service.categoria),
+    brand: toText(service.marca),
+    barcode: toText(service.codigo_barras ?? service.codigoBarras),
     price,
-    cost: parseCompanyServicePrice(toPriceInput(raw['cost'])) ?? 0,
-    unit: toText(raw['unit'], 'Hora (h)'),
+    cost: parseCompanyServicePrice(toPriceInput(service.costo)) ?? 0,
+    unit: toText(service.unidad, 'Hora (h)'),
     durationMinutes,
-    status: toStatus(raw['status']),
+    status: toStatus(service.estado),
     createdAt,
-    updatedAt: toIso(raw['updatedAt'], createdAt),
+    updatedAt: toIso(service.actualizado_en ?? service.actualizadoEn, createdAt),
   };
 }
 
-/**
- * Sanea la lista completa de servicios: descarta registros inválidos, limita
- * el tamaño y elimina duplicados por id o código.
- */
-export function sanitizeCompanyServices(raw: unknown): CompanyService[] {
-  if (!Array.isArray(raw)) return [];
+/** Extrae la lista de servicios de arrays o envelopes conocidos. */
+function extractServiceList(response: unknown): unknown[] {
+  const direct = unwrapApiListResponse<unknown>(response);
+  if (direct.length > 0) return direct;
+  if (!isRecord(response)) return [];
+  const wrapped = unwrapApiSingleResponse<BackendCompanyServiceListDTO>(response);
+  if (!wrapped || typeof wrapped !== 'object') return [];
+  const list = wrapped.servicios ?? wrapped.items ?? wrapped.data ?? wrapped.results;
+  return Array.isArray(list) ? list : [];
+}
 
+/** Normaliza el listado completo; descarta registros inválidos y duplicados. */
+export function adaptCompanyServicesFromBackend(response: unknown): CompanyService[] {
   const services: CompanyService[] = [];
-  for (const item of raw) {
-    const service = sanitizeCompanyService(item);
+  for (const item of extractServiceList(response)) {
+    const service = adaptCompanyServiceFromBackend(item);
     if (!service) continue;
     if (services.some((current) => current.id === service.id)) continue;
     if (findCompanyServiceByCode(services, service.code)) continue;
     services.push(service);
-    if (services.length >= COMPANY_SERVICE_MAX_RECORDS) break;
   }
   return services;
-}
-
-/** Construye el registro a guardar a partir del formulario. */
-export function createCompanyServiceRecord(
-  data: CreateCompanyServiceData,
-  options: { id: string; companyId: string; now: string },
-): CompanyService | null {
-  const code = normalizeCompanyServiceCode(data.code);
-  const name = data.name.trim();
-  const price = parseCompanyServicePrice(data.price);
-  const durationMinutes = parseCompanyServiceDuration(data.durationMinutes);
-  if (!CODE_PATTERN.test(code) || !name || price === null || durationMinutes === null) return null;
-
-  return {
-    id: options.id,
-    companyId: options.companyId,
-    code,
-    name,
-    description: data.description?.trim() ?? '',
-    category: data.category?.trim() ?? '',
-    brand: data.brand?.trim() ?? '',
-    barcode: data.barcode?.trim() ?? '',
-    price,
-    cost: parseCompanyServicePrice(data.cost ?? '0') ?? 0,
-    unit: data.unit?.trim() || 'Hora (h)',
-    durationMinutes,
-    status: data.status === 'inactivo' ? 'inactivo' : 'activo',
-    createdAt: options.now,
-    updatedAt: options.now,
-  };
-}
-
-/** Aplica los cambios editables del formulario a un servicio existente. */
-export function updateCompanyServiceRecord(
-  current: CompanyService,
-  data: UpdateCompanyServiceData,
-  now: string,
-): CompanyService | null {
-  const price = data.price === undefined ? current.price : parseCompanyServicePrice(data.price);
-  const cost = data.cost === undefined ? current.cost : parseCompanyServicePrice(data.cost);
-  const durationMinutes =
-    data.durationMinutes === undefined
-      ? current.durationMinutes
-      : parseCompanyServiceDuration(data.durationMinutes);
-  if (price === null || cost === null || durationMinutes === null) return null;
-
-  const name = data.name === undefined ? current.name : data.name.trim();
-  if (!name) return null;
-
-  return {
-    ...current,
-    name,
-    description: data.description === undefined ? current.description : data.description.trim(),
-    category: data.category === undefined ? current.category : data.category.trim(),
-    brand: data.brand === undefined ? current.brand : data.brand.trim(),
-    barcode: data.barcode === undefined ? current.barcode : data.barcode.trim(),
-    price,
-    cost,
-    unit: data.unit === undefined ? current.unit : data.unit.trim() || current.unit,
-    durationMinutes,
-    status: data.status ?? current.status,
-    updatedAt: now,
-  };
 }
 
 /** Filtra por texto (nombre, código, categoría, marca o descripción), categoría, marca y estado. */

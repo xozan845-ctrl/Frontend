@@ -83,6 +83,7 @@ export default class CompanySalesComponent {
   private readonly loadProducts = this.sales.loadProducts();
   private readonly loadStores = this.sales.loadStores();
   private readonly loadSales = this.sales.loadSales();
+  private readonly loadServices = this.services.load();
 
   onSearchInput(event: Event): void {
     this.sales.setSearch((event.target as HTMLInputElement).value);
@@ -109,6 +110,7 @@ export default class CompanySalesComponent {
     this.sales.loadProducts();
     this.sales.loadStores();
     this.sales.loadSales();
+    this.services.load();
   }
 
   openNewSale(): void {

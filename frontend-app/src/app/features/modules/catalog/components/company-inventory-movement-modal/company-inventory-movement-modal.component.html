@@ -1,0 +1,202 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="inventory-movement-modal"
+  >
+    <div
+      class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+      aria-hidden="true"
+      (click)="close()"
+    ></div>
+    <div
+      class="relative flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="movement-modal-title"
+      [appFocusTrap]="true"
+      (escape)="close()"
+    >
+      <header
+        class="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-surface-700"
+      >
+        <h2
+          id="movement-modal-title"
+          class="font-heading text-xl font-black text-slate-900 dark:text-white"
+        >
+          Registrar movimiento
+        </h2>
+        <button
+          type="button"
+          aria-label="Cerrar"
+          class="text-slate-400"
+          data-testid="close-movement-modal"
+          (click)="close()"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form
+        class="min-h-0 flex-1 overflow-y-auto px-6 py-4"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        novalidate
+      >
+        @if (error(); as message) {
+          <div
+            class="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+            role="alert"
+          >
+            {{ message }}
+          </div>
+        }
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="flex flex-col gap-1">
+            <label
+              for="movement-type"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Tipo</label
+            >
+            <select
+              id="movement-type"
+              class="input"
+              formControlName="type"
+              data-testid="movement-type"
+            >
+              <option value="entrada">Entrada</option>
+              <option value="salida">Salida</option>
+              <option value="ajuste">Ajuste</option>
+              <option value="traslado">Traslado</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="movement-reference"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Referencia</label
+            >
+            <input
+              id="movement-reference"
+              class="input"
+              formControlName="reference"
+              data-testid="movement-reference"
+            />
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label
+              for="movement-reason"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Motivo</label
+            >
+            <input
+              id="movement-reason"
+              class="input"
+              formControlName="reason"
+              data-testid="movement-reason"
+            />
+          </div>
+          @if (isTransfer()) {
+            <div class="flex flex-col gap-1">
+              <label
+                for="movement-origin"
+                class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+                >Origen</label
+              >
+              <input
+                id="movement-origin"
+                class="input"
+                formControlName="origin"
+                data-testid="movement-origin"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label
+                for="movement-destination"
+                class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+                >Destino</label
+              >
+              <input
+                id="movement-destination"
+                class="input"
+                formControlName="destination"
+                data-testid="movement-destination"
+              />
+            </div>
+          }
+        </div>
+
+        <section class="mt-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-[11px] font-black tracking-widest text-slate-400 uppercase">Líneas</h3>
+            <button
+              type="button"
+              class="text-xs font-bold text-emerald-600"
+              data-testid="movement-add-line"
+              (click)="addLine()"
+            >
+              + Agregar
+            </button>
+          </div>
+          <div class="mt-2 flex flex-col gap-2">
+            @for (line of lines(); track $index) {
+              <div
+                class="grid gap-2 rounded-xl border border-slate-200 p-2 sm:grid-cols-[1fr_80px_auto] dark:border-surface-700"
+              >
+                <select
+                  class="input"
+                  [value]="line.productId"
+                  [attr.data-testid]="'movement-line-' + $index"
+                  (change)="selectProduct($index, $any($event.target).value)"
+                >
+                  <option value="">Selecciona un producto</option>
+                  @for (product of products(); track product.id) {
+                    <option [value]="product.id">{{ product.name }} · {{ product.sku }}</option>
+                  }
+                </select>
+                <input
+                  class="input"
+                  type="number"
+                  min="1"
+                  [value]="line.quantity"
+                  [attr.data-testid]="'movement-quantity-' + $index"
+                  (input)="setQuantity($index, $any($event.target).value)"
+                />
+                <button
+                  type="button"
+                  class="text-xs font-bold text-red-500"
+                  data-testid="movement-remove-line"
+                  (click)="removeLine($index)"
+                >
+                  Quitar
+                </button>
+              </div>
+            }
+          </div>
+        </section>
+      </form>
+
+      <footer
+        class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4 dark:border-surface-700"
+      >
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-movement"
+          (click)="close()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-testid="save-movement"
+          [disabled]="saving()"
+          (click)="submit()"
+        >
+          {{ saving() ? 'Guardando…' : 'Registrar' }}
+        </button>
+      </footer>
+    </div>
+  </div>
+}

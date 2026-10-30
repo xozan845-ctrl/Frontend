@@ -113,6 +113,29 @@ describe('CompanyProductModalComponent', () => {
     );
   });
 
+  it('debe permitir escribir una marca nueva y emitirla (R-PS-05)', async () => {
+    const fixture = await setup();
+    const emit = vi.fn();
+    fixture.componentInstance.save.subscribe(emit);
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+
+    const brandInput = fixture.nativeElement.querySelector(
+      '[data-testid="product-modal-brand"]',
+    ) as HTMLElement;
+    expect(brandInput.tagName).toBe('INPUT');
+
+    fixture.componentInstance.form.patchValue({
+      name: 'Camisa',
+      code: 'CAM-2',
+      price: '250.00',
+      brand: 'Marca Nueva',
+    });
+    fixture.componentInstance.submitForm();
+
+    expect(emit).toHaveBeenCalledWith(expect.objectContaining({ brand: 'Marca Nueva' }));
+  });
+
   it('no debe emitir si el formulario es inválido', async () => {
     const fixture = await setup();
     const emit = vi.fn();
@@ -126,16 +149,18 @@ describe('CompanyProductModalComponent', () => {
     expect(fixture.componentInstance.form.controls.name.touched).toBe(true);
   });
 
-  it('debe mostrar el aviso de escaneo y cerrar', async () => {
+  it('debe mostrar el escaneo como próximamente y cerrar', async () => {
     const fixture = await setup();
     const dismissed = vi.fn();
     fixture.componentInstance.dismiss.subscribe(dismissed);
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
 
-    fixture.componentInstance.requestScan();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('escaneo con cámara');
+    const scanButton = Array.from(
+      fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
+    ).find((button) => button.textContent?.includes('Escanear'));
+    expect(scanButton?.disabled).toBe(true);
+    expect(scanButton?.textContent).toContain('Próximamente');
 
     fixture.componentInstance.close();
     expect(dismissed).toHaveBeenCalled();

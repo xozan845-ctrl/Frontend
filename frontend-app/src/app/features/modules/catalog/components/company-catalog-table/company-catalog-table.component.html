@@ -81,10 +81,20 @@
               {{ row.price | appCurrency }}
             </td>
             <td class="px-1.5 py-3 tabular-nums text-slate-600 dark:text-slate-300">
-              {{ row.cost | appCurrency }}
+              @if (row.cost === null) {
+                <span class="text-slate-400" title="El backend no informa el costo de este registro"
+                  >—</span
+                >
+              } @else {
+                {{ row.cost | appCurrency }}
+              }
             </td>
             <td class="px-1.5 py-3 tabular-nums text-slate-600 dark:text-slate-300">
-              {{ row.margin.toFixed(1) }}%
+              @if (row.margin === null) {
+                <span class="text-slate-400" title="Margen no calculable sin costo">—</span>
+              } @else {
+                {{ row.margin.toFixed(1) }}%
+              }
             </td>
             <td class="px-1.5 py-3 tabular-nums text-slate-600 dark:text-slate-300">
               @if (isService()) {

@@ -11,6 +11,7 @@ import {
   type CompanyCatalogModalMode,
   type CompanyCatalogRow,
   type CompanyCatalogStatus,
+  COMPANY_SERVICE_MAX_DURATION_MINUTES,
 } from '../../../../applications/empresas/public-api';
 
 /**
@@ -38,7 +39,6 @@ export class CompanyProductModalComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly type = signal<CompanyCatalogKind>('producto');
-  readonly scanMessage = signal<string | null>(null);
   readonly isEdit = computed(() => this.mode() === 'edit');
   readonly isService = computed(() => this.type() === 'servicio');
   readonly productUnits = COMPANY_PRODUCT_UNITS;
@@ -76,7 +76,14 @@ export class CompanyProductModalComponent {
     location: ['', [Validators.maxLength(120)]],
     status: ['activo' as CompanyCatalogStatus],
     createdAt: ['', [Validators.required]],
-    durationMinutes: [60, [Validators.required, Validators.min(1), Validators.max(10_080)]],
+    durationMinutes: [
+      60,
+      [
+        Validators.required,
+        Validators.min(1),
+        Validators.max(COMPANY_SERVICE_MAX_DURATION_MINUTES),
+      ],
+    ],
   });
 
   /** Reinicia el formulario al abrirse o cambiar la fila editada. */
@@ -85,7 +92,6 @@ export class CompanyProductModalComponent {
     const item = this.item();
     const type = item?.kind ?? this.initialType();
     this.type.set(type);
-    this.scanMessage.set(null);
     this.form.reset(item ? this.fromRow(item) : this.emptyForm(type));
     if (item) this.form.controls.code.disable();
     else this.form.controls.code.enable();
@@ -112,12 +118,6 @@ export class CompanyProductModalComponent {
     this.form.controls.costType.setValue(type);
   }
 
-  requestScan(): void {
-    this.scanMessage.set(
-      'El escaneo con cámara se habilitará en una próxima fase. Puedes escribir el código manualmente.',
-    );
-  }
-
   close(): void {
     if (this.saving()) return;
     this.dismiss.emit();
@@ -138,7 +138,7 @@ export class CompanyProductModalComponent {
       code: raw.code.trim(),
       brand: raw.brand.trim(),
       barcode: raw.barcode.trim(),
-      cost: raw.cost.trim() || '0',
+      cost: raw.cost.trim(),
       price: raw.price.trim(),
       unit: raw.unit,
       allowFractions: raw.allowFractions,
@@ -221,7 +221,7 @@ export class CompanyProductModalComponent {
       code: row.code,
       brand: row.brand,
       barcode: row.barcode,
-      cost: row.cost.toFixed(2),
+      cost: row.cost === null ? '' : row.cost.toFixed(2),
       price: row.price.toFixed(2),
       unit: row.unit,
       allowFractions: row.allowFractions,

@@ -1,8 +1,9 @@
-import type { CatalogProduct } from '../../../products/public-api';
-import {
-  COMPANY_PRODUCT_METADATA_MAX_RECORDS,
-  COMPANY_PRODUCT_TEMPLATE_HEADERS,
-} from '../../constants/company-products.constants';
+import type {
+  CatalogProduct,
+  CreateCatalogProductData,
+  UpdateCatalogProductData,
+} from '../../../products/public-api';
+import { COMPANY_PRODUCT_TEMPLATE_HEADERS } from '../../constants/company-products.constants';
 import type {
   CompanyCatalogFilters,
   CompanyCatalogFormValue,
@@ -10,7 +11,6 @@ import type {
   CompanyCatalogSort,
   CompanyProductKpis,
 } from '../../models/company-catalog.model';
-import type { CompanyProductMetadata } from '../../models/company-product.model';
 import type {
   CompanyService,
   CreateCompanyServiceData,
@@ -18,20 +18,6 @@ import type {
 } from '../../models/company-service.model';
 
 const MONEY_PATTERN = /^\d+(\.\d{1,2})?$/;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === 'object' && !Array.isArray(value);
-}
-
-function toText(value: unknown, fallback = ''): string {
-  return typeof value === 'string' && value.trim() ? value.trim() : fallback;
-}
-
-function toAmount(value: unknown): number {
-  const n = typeof value === 'string' ? Number(value.replace(',', '.')) : value;
-  if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return 0;
-  return Math.round(n * 100) / 100;
-}
 
 function toInt(value: unknown, fallback = 0): number {
   const n = typeof value === 'string' ? Number(value) : value;
@@ -44,12 +30,6 @@ function toNullableInt(value: unknown): number | null {
   const n = typeof value === 'string' ? Number(value) : value;
   if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return null;
   return Math.trunc(n);
-}
-
-function toIso(value: unknown, fallback: string): string {
-  if (typeof value !== 'string' || !value.trim()) return fallback;
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? fallback : new Date(parsed).toISOString();
 }
 
 function toDateInput(value: string): string {
@@ -77,110 +57,8 @@ export function parseCatalogMoney(value: string): number | null {
   return round2(amount);
 }
 
-/** Metadatos por defecto cuando un producto aún no tiene extras guardados. */
-export function defaultProductMetadata(product: CatalogProduct): CompanyProductMetadata {
-  return {
-    cost: 0,
-    brand: '',
-    barcode: '',
-    unit: 'Unidad (u)',
-    allowFractions: false,
-    purchaseUnit: 'Igual que la de venta',
-    contentAmount: 0,
-    contentUnit: 'Sin contenido',
-    priceType: 'fijo',
-    costType: 'fijo',
-    minStock: 0,
-    maxStock: null,
-    warrantyMonths: null,
-    isRawMaterial: false,
-    location: '',
-    statusOverride: null,
-    createdAt: product.createdAt,
-    updatedAt: product.createdAt,
-  };
-}
-
-/** Sanea un registro de metadatos leído de `localStorage`. */
-export function sanitizeProductMetadata(raw: unknown): CompanyProductMetadata | null {
-  if (!isRecord(raw)) return null;
-  const now = new Date(0).toISOString();
-  return {
-    cost: toAmount(raw['cost']),
-    brand: toText(raw['brand']),
-    barcode: toText(raw['barcode']),
-    unit: toText(raw['unit'], 'Unidad (u)'),
-    allowFractions: raw['allowFractions'] === true,
-    purchaseUnit: toText(raw['purchaseUnit'], 'Igual que la de venta'),
-    contentAmount: toInt(raw['contentAmount']),
-    contentUnit: toText(raw['contentUnit'], 'Sin contenido'),
-    priceType: raw['priceType'] === 'escala' ? 'escala' : 'fijo',
-    costType: raw['costType'] === 'escala' ? 'escala' : 'fijo',
-    minStock: toInt(raw['minStock']),
-    maxStock: toNullableInt(raw['maxStock']),
-    warrantyMonths: toNullableInt(raw['warrantyMonths']),
-    isRawMaterial: raw['isRawMaterial'] === true,
-    location: toText(raw['location']),
-    statusOverride:
-      raw['statusOverride'] === 'activo' || raw['statusOverride'] === 'inactivo'
-        ? raw['statusOverride']
-        : null,
-    createdAt: toIso(raw['createdAt'], now),
-    updatedAt: toIso(raw['updatedAt'], now),
-  };
-}
-
-/** Sanea el mapa completo de metadatos por id de producto. */
-export function sanitizeProductMetadataMap(raw: unknown): Record<string, CompanyProductMetadata> {
-  if (!isRecord(raw)) return {};
-  const result: Record<string, CompanyProductMetadata> = {};
-  for (const [id, value] of Object.entries(raw).slice(0, COMPANY_PRODUCT_METADATA_MAX_RECORDS)) {
-    const metadata = sanitizeProductMetadata(value);
-    if (metadata) result[id] = metadata;
-  }
-  return result;
-}
-
-/** Construye los metadatos a partir del modal. */
-export function metadataFromForm(
-  form: CompanyCatalogFormValue,
-  current?: CompanyProductMetadata,
-): CompanyProductMetadata {
-  const now = new Date().toISOString();
-  const createdAt = toIso(
-    form.createdAt ? `${form.createdAt}T00:00:00.000Z` : '',
-    current?.createdAt ?? now,
-  );
-  return {
-    cost: parseCatalogMoney(form.cost) ?? current?.cost ?? 0,
-    brand: form.brand.trim(),
-    barcode: form.barcode.trim(),
-    unit: form.unit,
-    allowFractions: form.allowFractions,
-    purchaseUnit: form.purchaseUnit,
-    contentAmount: toInt(form.contentAmount),
-    contentUnit: form.contentUnit,
-    priceType: form.priceType,
-    costType: form.costType,
-    minStock: toInt(form.minStock),
-    maxStock: toNullableInt(form.maxStock),
-    warrantyMonths: toNullableInt(form.warrantyMonths),
-    isRawMaterial: form.isRawMaterial,
-    location: form.location.trim(),
-    statusOverride: form.status,
-    createdAt,
-    updatedAt: now,
-  };
-}
-
-/** Convierte un producto del API + metadatos en una fila de tabla. */
-export function buildProductRow(
-  product: CatalogProduct,
-  metadata: CompanyProductMetadata,
-): CompanyCatalogRow {
-  const price = product.basePrice;
-  const status =
-    metadata.statusOverride ?? (product.status === 'disponible' ? 'activo' : 'inactivo');
+/** Convierte un producto del API en una fila de tabla, sin metadatos locales. */
+export function buildProductRow(product: CatalogProduct): CompanyCatalogRow {
   return {
     id: product.id,
     kind: 'producto',
@@ -188,32 +66,32 @@ export function buildProductRow(
     name: product.name,
     description: product.description,
     category: product.category,
-    brand: metadata.brand,
-    barcode: metadata.barcode,
-    price,
-    cost: metadata.cost,
-    margin: computeMargin(price, metadata.cost),
+    brand: product.brand,
+    barcode: product.barcode,
+    price: product.basePrice,
+    cost: product.cost,
+    margin: computeMargin(product.basePrice, product.cost),
     stock: product.stock,
-    minStock: metadata.minStock,
-    maxStock: metadata.maxStock,
+    minStock: product.minStock,
+    maxStock: product.maxStock,
     durationMinutes: null,
-    status,
-    unit: metadata.unit,
-    allowFractions: metadata.allowFractions,
-    purchaseUnit: metadata.purchaseUnit,
-    contentAmount: metadata.contentAmount,
-    contentUnit: metadata.contentUnit,
-    priceType: metadata.priceType,
-    costType: metadata.costType,
-    warrantyMonths: metadata.warrantyMonths,
-    isRawMaterial: metadata.isRawMaterial,
-    location: metadata.location,
-    createdAt: metadata.createdAt || product.createdAt,
-    updatedAt: metadata.updatedAt || product.createdAt,
+    status: product.operationalStatus,
+    unit: product.unit,
+    allowFractions: product.allowFractions,
+    purchaseUnit: product.purchaseUnit,
+    contentAmount: product.contentAmount,
+    contentUnit: product.contentUnit,
+    priceType: product.priceType,
+    costType: product.costType,
+    warrantyMonths: product.warrantyMonths,
+    isRawMaterial: product.isRawMaterial,
+    location: product.location,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt || product.createdAt,
   };
 }
 
-/** Convierte un servicio local en una fila de tabla. */
+/** Convierte un servicio de la empresa en una fila de tabla. */
 export function buildServiceRow(service: CompanyService): CompanyCatalogRow {
   return {
     id: service.id,
@@ -257,7 +135,7 @@ export function rowToFormValue(row: CompanyCatalogRow): CompanyCatalogFormValue 
     code: row.code,
     brand: row.brand,
     barcode: row.barcode,
-    cost: row.cost.toFixed(2),
+    cost: row.cost === null ? '' : row.cost.toFixed(2),
     price: row.price.toFixed(2),
     unit: row.unit,
     allowFractions: row.allowFractions,
@@ -278,55 +156,65 @@ export function rowToFormValue(row: CompanyCatalogRow): CompanyCatalogFormValue 
   };
 }
 
-/** Datos del API para crear un producto. */
-export function formToProductCreate(form: CompanyCatalogFormValue): {
-  sku: string;
-  name: string;
-  description: string;
-  category: string;
-  basePrice: string;
-  stock: number;
-} {
+/** Datos del API para crear un producto, incluidos sus metadatos (R-PS-01). */
+export function formToProductCreate(form: CompanyCatalogFormValue): CreateCatalogProductData {
   return {
     sku: form.code.trim(),
+    ...productPayloadFromForm(form),
+  };
+}
+
+/** Datos del API para editar un producto (el SKU no se modifica). */
+export function formToProductUpdate(form: CompanyCatalogFormValue): UpdateCatalogProductData {
+  return productPayloadFromForm(form);
+}
+
+function productPayloadFromForm(
+  form: CompanyCatalogFormValue,
+): Omit<CreateCatalogProductData, 'sku'> {
+  return {
     name: form.name.trim(),
     description: form.description.trim(),
     category: form.category.trim(),
     basePrice: form.price.trim(),
     stock: form.stock,
+    cost: form.cost.trim() || undefined,
+    brand: form.brand.trim(),
+    barcode: form.barcode.trim(),
+    unit: form.unit,
+    allowFractions: form.allowFractions,
+    purchaseUnit: form.purchaseUnit,
+    contentAmount: toInt(form.contentAmount),
+    contentUnit: form.contentUnit,
+    priceType: form.priceType,
+    costType: form.costType,
+    minStock: toInt(form.minStock),
+    maxStock: toNullableInt(form.maxStock),
+    warrantyMonths: toNullableInt(form.warrantyMonths),
+    isRawMaterial: form.isRawMaterial,
+    location: form.location.trim(),
+    operationalStatus: form.status,
   };
 }
 
-/** Datos del API para editar un producto (el SKU no se modifica). */
-export function formToProductUpdate(form: CompanyCatalogFormValue): {
-  name: string;
-  description: string;
-  category: string;
-  basePrice: string;
-  stock: number;
-} {
-  const { name, description, category, basePrice, stock } = formToProductCreate(form);
-  return { name, description, category, basePrice, stock };
-}
-
-/** Datos locales para crear un servicio. */
+/** Datos del API para crear un servicio. */
 export function formToServiceCreate(form: CompanyCatalogFormValue): CreateCompanyServiceData {
   return {
-    code: form.code.trim(),
+    code: form.code.trim().toUpperCase(),
     name: form.name.trim(),
     description: form.description.trim(),
     category: form.category.trim(),
     brand: form.brand.trim(),
     barcode: form.barcode.trim(),
     price: form.price.trim(),
-    cost: form.cost.trim(),
+    cost: form.cost.trim() || '0.00',
     unit: form.unit,
     durationMinutes: form.durationMinutes,
     status: form.status,
   };
 }
 
-/** Datos locales para editar un servicio. */
+/** Datos del API para editar un servicio. */
 export function formToServiceUpdate(form: CompanyCatalogFormValue): UpdateCompanyServiceData {
   const data = formToServiceCreate(form);
   return {
@@ -398,16 +286,24 @@ export function sortCatalogRows(
 /** Calcula los KPIs de productos (los servicios se calculan en su store). */
 export function computeProductKpis(rows: readonly CompanyCatalogRow[]): CompanyProductKpis {
   const products = rows.filter((row) => row.kind === 'producto');
+  const withCost = products.filter((row) => row.cost !== null);
+  const missingCostCount = products.length - withCost.length;
+
   return {
     activeProducts: products.filter((row) => row.status === 'activo').length,
-    inventoryValue: round2(products.reduce((sum, row) => sum + (row.stock ?? 0) * row.cost, 0)),
+    // Un total parcial sería engañoso: si falta algún costo, el KPI queda nulo.
+    inventoryValue:
+      missingCostCount === 0
+        ? round2(withCost.reduce((sum, row) => sum + (row.stock ?? 0) * (row.cost ?? 0), 0))
+        : null,
+    missingCostCount,
     inventoryOk: products.filter((row) => (row.stock ?? 0) > 0).length,
     rawMaterial: rows.filter((row) => row.isRawMaterial).length,
   };
 }
 
-function computeMargin(price: number, cost: number): number {
-  if (price <= 0) return 0;
+function computeMargin(price: number, cost: number | null): number | null {
+  if (cost === null || price <= 0) return null;
   return Math.round(((price - cost) / price) * 1000) / 10;
 }
 
@@ -460,8 +356,8 @@ export function buildInventoryCsv(rows: readonly CompanyCatalogRow[]): string {
       row.code,
       row.category,
       row.price.toFixed(2),
-      row.cost.toFixed(2),
-      row.margin.toFixed(1),
+      row.cost === null ? '' : row.cost.toFixed(2),
+      row.margin === null ? '' : row.margin.toFixed(1),
       row.stock ?? '',
       row.status,
       row.createdAt,

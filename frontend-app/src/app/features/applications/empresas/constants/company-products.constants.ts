@@ -1,16 +1,10 @@
 import type { CompanyCatalogSort } from '../models/company-catalog.model';
 
-/** Clave base de los metadatos locales de producto; se sufija con el tenant. */
-export const COMPANY_PRODUCT_METADATA_STORAGE_KEY = 'ecom_company_product_meta';
-
 /** Filas por página en las tablas del catálogo. */
 export const COMPANY_CATALOG_PAGE_SIZE = 10;
 
 /** Límite máximo que acepta `GET /catalog/productos` (validado por Core Engine). */
 export const COMPANY_PRODUCT_API_PAGE_SIZE = 100;
-
-/** Tope defensivo de metadatos guardados por empresa. */
-export const COMPANY_PRODUCT_METADATA_MAX_RECORDS = 5_000;
 
 /** Unidades de venta admitidas. */
 export const COMPANY_PRODUCT_UNITS = [
@@ -71,13 +65,3 @@ export const COMPANY_PRODUCT_TEMPLATE_HEADERS = [
   'codigo_barras',
   'marca',
 ] as const;
-
-/** Clave de storage aislada por empresa; sin tenant usa un espacio seguro. */
-export function companyProductMetadataStorageKey(tenantId?: string | null): string {
-  const suffix =
-    (tenantId ?? 'default')
-      .trim()
-      .replace(/[^a-zA-Z0-9_-]/g, '_')
-      .slice(0, 80) || 'default';
-  return `${COMPANY_PRODUCT_METADATA_STORAGE_KEY}_${suffix}`;
-}

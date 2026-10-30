@@ -61,7 +61,24 @@ const product: CatalogProduct = {
   basePrice: 150,
   stock: 10,
   status: 'disponible',
+  operationalStatus: 'activo',
+  cost: 60,
+  brand: 'Marca Demo',
+  barcode: '',
+  unit: 'Unidad (u)',
+  allowFractions: false,
+  purchaseUnit: 'Igual que la de venta',
+  contentAmount: 0,
+  contentUnit: 'Sin contenido',
+  priceType: 'fijo',
+  costType: 'fijo',
+  minStock: 2,
+  maxStock: null,
+  warrantyMonths: null,
+  isRawMaterial: false,
+  location: '',
   createdAt: '2026-09-01T12:00:00.000Z',
+  updatedAt: '2026-09-01T12:00:00.000Z',
 };
 
 const service: CompanyServiceModel = {
@@ -134,7 +151,7 @@ describe('CompanySalesComponent', () => {
     createSale: vi.fn((): { ok: boolean; message?: string } => ({ ok: true })),
   };
 
-  const servicesStore = { services: signal([service]).asReadonly() };
+  const servicesStore = { services: signal([service]).asReadonly(), load: vi.fn() };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
   const auth = {
     user: computed(() => ({

@@ -1,0 +1,225 @@
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="promotion-modal"
+  >
+    <div
+      class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+      aria-hidden="true"
+      (click)="close()"
+    ></div>
+    <div
+      class="relative flex max-h-[90dvh] w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-surface-800"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="promotion-modal-title"
+      [appFocusTrap]="true"
+      (escape)="close()"
+    >
+      <header
+        class="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-surface-700"
+      >
+        <h2
+          id="promotion-modal-title"
+          class="font-heading text-xl font-black text-slate-900 dark:text-white"
+        >
+          {{ isEdit() ? 'Editar' : 'Nueva' }} promoción
+        </h2>
+        <button
+          type="button"
+          aria-label="Cerrar"
+          class="text-slate-400"
+          data-testid="close-promotion-modal"
+          (click)="close()"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <form
+        class="min-h-0 flex-1 overflow-y-auto px-6 py-4"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        novalidate
+      >
+        @if (error(); as message) {
+          <div
+            class="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+            role="alert"
+          >
+            {{ message }}
+          </div>
+        }
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label
+              for="promotion-name"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Nombre</label
+            >
+            <input
+              id="promotion-name"
+              class="input"
+              formControlName="name"
+              data-testid="promotion-name"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="promotion-type"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Tipo</label
+            >
+            <select
+              id="promotion-type"
+              class="input"
+              formControlName="type"
+              data-testid="promotion-type"
+            >
+              <option value="2x1">2 × 1</option>
+              <option value="descuento_cantidad">Descuento por cantidad</option>
+              <option value="descuento_porcentaje">Descuento porcentual</option>
+              <option value="regalo">Regalo</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="promotion-status"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Estado</label
+            >
+            <select
+              id="promotion-status"
+              class="input"
+              formControlName="status"
+              data-testid="promotion-status"
+            >
+              <option value="activo">Activa</option>
+              <option value="inactivo">Inactiva</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label
+              for="promotion-product"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Producto</label
+            >
+            <select
+              id="promotion-product"
+              class="input"
+              formControlName="productId"
+              data-testid="promotion-product"
+              (change)="selectProduct($any($event.target).value)"
+            >
+              <option value="">Todos / sin producto</option>
+              @for (product of products(); track product.id) {
+                <option [value]="product.id">{{ product.name }} · {{ product.sku }}</option>
+              }
+            </select>
+          </div>
+          @if (isType('descuento_cantidad') || isType('regalo')) {
+            <div class="flex flex-col gap-1">
+              <label
+                for="promotion-required"
+                class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+                >Cantidad requerida</label
+              >
+              <input
+                id="promotion-required"
+                class="input"
+                type="number"
+                min="1"
+                formControlName="requiredQuantity"
+                data-testid="promotion-required"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label
+                for="promotion-free"
+                class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+                >Cantidad gratis</label
+              >
+              <input
+                id="promotion-free"
+                class="input"
+                type="number"
+                min="1"
+                formControlName="freeQuantity"
+                data-testid="promotion-free"
+              />
+            </div>
+          }
+          @if (isType('descuento_porcentaje')) {
+            <div class="flex flex-col gap-1">
+              <label
+                for="promotion-discount"
+                class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+                >Descuento %</label
+              >
+              <input
+                id="promotion-discount"
+                class="input"
+                type="number"
+                min="1"
+                max="100"
+                formControlName="discountPercentage"
+                data-testid="promotion-discount"
+              />
+            </div>
+          }
+          <div class="flex flex-col gap-1">
+            <label
+              for="promotion-from"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Desde</label
+            >
+            <input
+              id="promotion-from"
+              class="input"
+              type="date"
+              formControlName="from"
+              data-testid="promotion-from"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label
+              for="promotion-to"
+              class="text-xs font-semibold text-slate-600 dark:text-slate-300"
+              >Hasta</label
+            >
+            <input
+              id="promotion-to"
+              class="input"
+              type="date"
+              formControlName="to"
+              data-testid="promotion-to"
+            />
+          </div>
+        </div>
+      </form>
+
+      <footer
+        class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4 dark:border-surface-700"
+      >
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-promotion"
+          (click)="close()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-testid="save-promotion"
+          [disabled]="saving()"
+          (click)="submit()"
+        >
+          {{ saving() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </footer>
+    </div>
+  </div>
+}

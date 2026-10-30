@@ -5,6 +5,7 @@ import { NotificationService } from '../../../../../core/services/notification/n
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import type { CatalogProduct } from '../../../../applications/products/public-api';
 import {
+  CompanyCatalogOperationsStore,
   CompanyProductsStore,
   CompanyServicesStore,
   type CompanyCatalogRow,
@@ -61,11 +62,20 @@ describe('CompanyProductsComponent', () => {
   const servicesSearch = signal('');
   const servicesBrand = signal('');
   const servicesSort = signal<CompanyCatalogSort>('nombre-az');
+  const servicesSaving = signal(false);
+  const servicesLoading = signal(false);
+  const servicesError = signal<string | null>(null);
+  const servicesLastSaved = signal<
+    import('../../../../applications/empresas/public-api').CompanyServiceModel | null
+  >(null);
+  const servicesLastRemoved = signal<string | null>(null);
 
   const products = {
+    products: signal<CatalogProduct[]>([]).asReadonly(),
     kpis: signal({
       activeProducts: 2,
       inventoryValue: 500,
+      missingCostCount: 0,
       inventoryOk: 1,
       rawMaterial: 1,
     }).asReadonly(),
@@ -106,6 +116,11 @@ describe('CompanyProductsComponent', () => {
 
   const services = {
     activeCount: signal(1).asReadonly(),
+    loading: servicesLoading.asReadonly(),
+    saving: servicesSaving.asReadonly(),
+    error: servicesError.asReadonly(),
+    lastSaved: servicesLastSaved.asReadonly(),
+    lastRemovedId: servicesLastRemoved.asReadonly(),
     total: signal(1).asReadonly(),
     pagedRows: servicesRows.asReadonly(),
     filteredCount: signal(1).asReadonly(),
@@ -125,10 +140,76 @@ describe('CompanyProductsComponent', () => {
     clearFilters: vi.fn(),
     previousPage: vi.fn(),
     nextPage: vi.fn(),
-    createFromForm: vi.fn(() => ({ ok: true })),
-    updateFromForm: vi.fn(() => ({ ok: true })),
-    remove: vi.fn(() => ({ ok: true })),
+    load: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    remove: vi.fn(),
+    acknowledgeSaved: vi.fn(() => servicesLastSaved.set(null)),
+    acknowledgeRemoved: vi.fn(() => servicesLastRemoved.set(null)),
+    clearError: vi.fn(),
     inventoryCsv: vi.fn(() => 'csv'),
+  };
+
+  const operations = {
+    settings: signal(null).asReadonly(),
+    settingsLoading: signal(false).asReadonly(),
+    settingsSaving: signal(false).asReadonly(),
+    settingsError: signal<string | null>(null).asReadonly(),
+    settingsSaved: signal(false).asReadonly(),
+    combos: signal([]).asReadonly(),
+    combosLoading: signal(false).asReadonly(),
+    combosSaving: signal(false).asReadonly(),
+    combosError: signal<string | null>(null).asReadonly(),
+    lastComboSaved: signal(null).asReadonly(),
+    lastComboRemovedId: signal<string | null>(null).asReadonly(),
+    activeComboCount: signal(0).asReadonly(),
+    promotions: signal([]).asReadonly(),
+    promotionRows: signal([]).asReadonly(),
+    promotionsLoading: signal(false).asReadonly(),
+    promotionsSaving: signal(false).asReadonly(),
+    promotionsError: signal<string | null>(null).asReadonly(),
+    lastPromotionSaved: signal(null).asReadonly(),
+    lastPromotionRemovedId: signal<string | null>(null).asReadonly(),
+    activePromotionCount: signal(0).asReadonly(),
+    movements: signal([]).asReadonly(),
+    movementRows: signal([]).asReadonly(),
+    movementsLoading: signal(false).asReadonly(),
+    movementsSaving: signal(false).asReadonly(),
+    movementsError: signal<string | null>(null).asReadonly(),
+    lastMovementSaved: signal(null).asReadonly(),
+    movementCount: signal(0).asReadonly(),
+    importing: signal(false).asReadonly(),
+    importResult: signal(null).asReadonly(),
+    importError: signal<string | null>(null).asReadonly(),
+    scanning: signal(false).asReadonly(),
+    scanResult: signal(null).asReadonly(),
+    scanError: signal<string | null>(null).asReadonly(),
+    loadSettings: vi.fn(),
+    saveSettings: vi.fn(),
+    loadCombos: vi.fn(),
+    createCombo: vi.fn(),
+    updateCombo: vi.fn(),
+    removeCombo: vi.fn(),
+    loadPromotions: vi.fn(),
+    createPromotion: vi.fn(),
+    updatePromotion: vi.fn(),
+    removePromotion: vi.fn(),
+    loadMovements: vi.fn(),
+    createMovement: vi.fn(),
+    importProducts: vi.fn(),
+    scan: vi.fn(),
+    clearSettingsError: vi.fn(),
+    clearCombosError: vi.fn(),
+    clearPromotionsError: vi.fn(),
+    clearMovementsError: vi.fn(),
+    clearImport: vi.fn(),
+    clearScan: vi.fn(),
+    acknowledgeSettingsSaved: vi.fn(),
+    acknowledgeComboSaved: vi.fn(),
+    acknowledgeComboRemoved: vi.fn(),
+    acknowledgePromotionSaved: vi.fn(),
+    acknowledgePromotionRemoved: vi.fn(),
+    acknowledgeMovementSaved: vi.fn(),
   };
 
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
@@ -141,6 +222,7 @@ describe('CompanyProductsComponent', () => {
         provideRouter([]),
         { provide: CompanyProductsStore, useValue: products },
         { provide: CompanyServicesStore, useValue: services },
+        { provide: CompanyCatalogOperationsStore, useValue: operations },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
       ],
@@ -168,6 +250,11 @@ describe('CompanyProductsComponent', () => {
     servicesSearch.set('');
     servicesBrand.set('');
     servicesSort.set('nombre-az');
+    servicesSaving.set(false);
+    servicesLoading.set(false);
+    servicesError.set(null);
+    servicesLastSaved.set(null);
+    servicesLastRemoved.set(null);
     TestBed.resetTestingModule();
   });
 
@@ -257,9 +344,28 @@ describe('CompanyProductsComponent', () => {
     fixture.nativeElement.querySelector('[data-testid="save-product-modal"]').click();
     fixture.detectChanges();
 
-    expect(services.createFromForm).toHaveBeenCalledWith(
+    expect(services.create).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'servicio', name: 'Soporte', code: 'SRV-9' }),
     );
+    // El modal solo se cierra cuando el API confirma con un servicio guardado.
+    servicesLastSaved.set({
+      id: 'srv-1',
+      companyId: 'e-1',
+      code: 'SRV-9',
+      name: 'Soporte',
+      description: '',
+      category: '',
+      brand: '',
+      barcode: '',
+      price: 100,
+      cost: 0,
+      unit: 'Hora (h)',
+      durationMinutes: 60,
+      status: 'activo',
+      createdAt: '2026-10-27T00:00:00.000Z',
+      updatedAt: '2026-10-27T00:00:00.000Z',
+    });
+    fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[data-testid="company-product-modal"]')).toBeNull();
   });
 
@@ -309,5 +415,9 @@ describe('CompanyProductsComponent', () => {
     fixture.detectChanges();
 
     expect(services.remove).toHaveBeenCalledWith('s-1');
+    // La fila y el diálogo se confirman solo con la respuesta del backend.
+    servicesLastRemoved.set('s-1');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="service-delete-dialog"]')).toBeNull();
   });
 });

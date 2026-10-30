@@ -8,6 +8,13 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
   withCredentials: false,
   endpoints: {
     products: '/catalog/productos',
+    companyServices: '/catalog/servicios',
+    catalogInventorySettings: '/catalog/configuracion-inventario',
+    catalogImport: '/catalog/productos/importar',
+    catalogScan: '/catalog/escanear',
+    catalogCombos: '/catalog/combos',
+    catalogPromotions: '/catalog/promociones',
+    catalogMovements: '/catalog/inventario/movimientos',
     storefront: '/tiendas',
     auth: '/auth',
     orders: '/orders',

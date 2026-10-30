@@ -1,14 +1,9 @@
-import { computed, effect, inject } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { EMPTY, pipe } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../auth/public-api';
 import {
   buildInventoryCsv,
   buildServiceRow,
@@ -16,27 +11,22 @@ import {
   formToServiceUpdate,
 } from '../../adapters/company-catalog/company-catalog.adapter';
 import {
-  createCompanyServiceRecord,
   filterCompanyServices,
   findCompanyServiceByCode,
-  sanitizeCompanyServices,
-  updateCompanyServiceRecord,
+  normalizeCompanyServiceCode,
+  parseCompanyServiceDuration,
+  parseCompanyServicePrice,
 } from '../../adapters/company-service/company-service.adapter';
 import {
+  COMPANY_SERVICE_MAX_DURATION_MINUTES,
   COMPANY_SERVICE_PAGE_SIZE,
-  companyServicesStorageKey,
 } from '../../constants/company-services.constants';
 import type {
   CompanyCatalogFormValue,
   CompanyCatalogSort,
 } from '../../models/company-catalog.model';
-import type {
-  CompanyService,
-  CompanyServiceMutationResult,
-  CompanyServiceStatus,
-  CreateCompanyServiceData,
-  UpdateCompanyServiceData,
-} from '../../models/company-service.model';
+import type { CompanyServiceStatus } from '../../models/company-service.model';
+import { COMPANY_SERVICE_REPOSITORY } from '../../repositories/company-service.repository';
 import type { CompanyServicesState } from './company-services.state';
 
 const initialState: CompanyServicesState = {
@@ -47,40 +37,34 @@ const initialState: CompanyServicesState = {
   status: null,
   sort: 'nombre-az',
   page: 1,
+  loading: false,
+  saving: false,
+  error: null,
   lastSaved: null,
+  lastRemovedId: null,
 };
 
-/** Lee los servicios locales sin romper la UI si el storage no está disponible. */
-function loadStoredCompanyServices(storageKey: string): CompanyService[] {
-  try {
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) return [];
-    return sanitizeCompanyServices(JSON.parse(raw) as unknown);
-  } catch {
-    return [];
+/** Valida el formulario antes de llamar al backend; `null` si es válido. */
+function validateServiceForm(form: CompanyCatalogFormValue): string | null {
+  const code = normalizeCompanyServiceCode(form.code);
+  if (!/^[A-Za-z0-9-]{2,32}$/.test(code)) {
+    return 'Usa un código de 2 a 32 letras, números o guiones.';
   }
-}
-
-/** Persiste los servicios; un storage lleno o bloqueado no rompe la página. */
-function persistCompanyServices(storageKey: string, services: readonly CompanyService[]): void {
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(services));
-  } catch {
-    // Storage no disponible: los servicios viven solo en memoria.
+  if (!form.name.trim()) return 'Escribe el nombre del servicio.';
+  if (parseCompanyServicePrice(form.price) === null) return 'Revisa el precio del servicio.';
+  if (form.cost.trim() && parseCompanyServicePrice(form.cost) === null) {
+    return 'Revisa el costo del servicio.';
   }
-}
-
-function createServiceId(): string {
-  const random = globalThis.crypto?.randomUUID?.();
-  if (random) return `srv-${random}`;
-  return `srv-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  if (parseCompanyServiceDuration(form.durationMinutes) === null) {
+    return `La duración debe estar entre 1 y ${COMPANY_SERVICE_MAX_DURATION_MINUTES} minutos.`;
+  }
+  return null;
 }
 
 /**
- * Servicios de la empresa (ADR-52/55). Mientras Core Engine no exponga un
- * endpoint de servicios, la cartera se persiste en `localStorage` aislada por
- * tenant y se administra con las mismas reglas de validación que el catálogo
- * de productos. Los derivados viven en `withComputed`.
+ * Servicios de la empresa (ADR-52, R-PS-02). El listado y las mutaciones van
+ * al backend; el store solo deriva filtros, orden, paginación y CSV. Después
+ * de cada mutación se usa la respuesta del API para no confirmar estado local.
  */
 export const CompanyServicesStore = signalStore(
   withState(initialState),
@@ -150,89 +134,136 @@ export const CompanyServicesStore = signalStore(
     };
   }),
   withMethods(
-    (store, authStore = inject(AuthStore), notificationService = inject(NotificationService)) => {
-      const companyId = (): string => authStore.user()?.tenantId ?? '';
-
-      const createService = (data: CreateCompanyServiceData): CompanyServiceMutationResult => {
-        if (findCompanyServiceByCode(store.services(), data.code)) {
-          return {
-            ok: false,
-            message: 'Ya existe un servicio con ese código. Usa uno diferente.',
-          };
-        }
-
-        const service = createCompanyServiceRecord(data, {
-          id: createServiceId(),
-          companyId: companyId(),
-          now: new Date().toISOString(),
-        });
-        if (!service) {
-          return {
-            ok: false,
-            message: 'Revisa el código, el precio, el costo y la duración del servicio.',
-          };
-        }
-
-        patchState(store, {
-          services: [service, ...store.services()],
-          page: 1,
-          lastSaved: service,
-        });
-        notificationService.showSuccess(`Servicio "${service.name}" creado.`);
-        return { ok: true, service };
-      };
-
-      const updateService = (
-        id: string,
-        data: UpdateCompanyServiceData,
-      ): CompanyServiceMutationResult => {
-        const current = store.services().find((service) => service.id === id);
-        if (!current) {
-          return { ok: false, message: 'El servicio ya no existe.' };
-        }
-
-        const updated = updateCompanyServiceRecord(current, data, new Date().toISOString());
-        if (!updated) {
-          return {
-            ok: false,
-            message: 'Revisa el precio, el costo y la duración del servicio.',
-          };
-        }
-
-        patchState(store, {
-          services: store.services().map((service) => (service.id === id ? updated : service)),
-          lastSaved: updated,
-        });
-        notificationService.showSuccess(`Servicio "${updated.name}" actualizado.`);
-        return { ok: true, service: updated };
+    (
+      store,
+      repo = inject(COMPANY_SERVICE_REPOSITORY),
+      notificationService = inject(NotificationService),
+    ) => {
+      const fail = (message: string) => {
+        patchState(store, { loading: false, saving: false, error: message });
+        notificationService.showError(message);
       };
 
       return {
-        create: createService,
-        update: updateService,
+        /** Carga la cartera remota; se llama al entrar a la pestaña Servicios. */
+        load: rxMethod<void>(
+          pipe(
+            tap(() => patchState(store, { loading: true, error: null })),
+            switchMap(() =>
+              repo.list().pipe(
+                tap((services) => patchState(store, { services, loading: false, error: null })),
+                catchError((err: Error) => {
+                  fail(err.message || 'No se pudieron cargar los servicios.');
+                  return EMPTY;
+                }),
+              ),
+            ),
+          ),
+        ),
 
-        remove(id: string): CompanyServiceMutationResult {
-          const service = store.services().find((current) => current.id === id);
-          if (!service) {
-            return { ok: false, message: 'El servicio ya no existe.' };
-          }
+        create: rxMethod<CompanyCatalogFormValue>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap((form) => {
+              const validationError = validateServiceForm(form);
+              if (validationError) {
+                fail(validationError);
+                return EMPTY;
+              }
 
-          patchState(store, {
-            services: store.services().filter((current) => current.id !== id),
-          });
-          notificationService.showSuccess(`Servicio "${service.name}" eliminado.`);
-          return { ok: true, service };
-        },
+              const code = normalizeCompanyServiceCode(form.code);
+              if (findCompanyServiceByCode(store.services(), code)) {
+                fail('Ya existe un servicio con ese código. Usa uno diferente.');
+                return EMPTY;
+              }
 
-        /** Crea un servicio mapeando el payload del modal. */
-        createFromForm(form: CompanyCatalogFormValue): CompanyServiceMutationResult {
-          return createService(formToServiceCreate(form));
-        },
+              return repo.create(formToServiceCreate(form)).pipe(
+                tap((service) => {
+                  patchState(store, {
+                    services: [
+                      service,
+                      ...store.services().filter((current) => current.id !== service.id),
+                    ],
+                    page: 1,
+                    saving: false,
+                    error: null,
+                    lastSaved: service,
+                  });
+                  notificationService.showSuccess(`Servicio "${service.name}" creado.`);
+                }),
+                catchError((err: Error) => {
+                  fail(err.message || 'No se pudo crear el servicio.');
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
 
-        /** Actualiza un servicio mapeando el payload del modal. */
-        updateFromForm(id: string, form: CompanyCatalogFormValue): CompanyServiceMutationResult {
-          return updateService(id, formToServiceUpdate(form));
-        },
+        update: rxMethod<{ id: string; form: CompanyCatalogFormValue }>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap(({ id, form }) => {
+              if (!store.services().some((service) => service.id === id)) {
+                fail('El servicio ya no existe.');
+                return EMPTY;
+              }
+
+              const validationError = validateServiceForm(form);
+              if (validationError) {
+                fail(validationError);
+                return EMPTY;
+              }
+
+              return repo.update(id, formToServiceUpdate(form)).pipe(
+                tap((service) => {
+                  patchState(store, {
+                    services: store
+                      .services()
+                      .map((current) => (current.id === id ? service : current)),
+                    saving: false,
+                    error: null,
+                    lastSaved: service,
+                  });
+                  notificationService.showSuccess(`Servicio "${service.name}" actualizado.`);
+                }),
+                catchError((err: Error) => {
+                  fail(err.message || 'No se pudo actualizar el servicio.');
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
+
+        remove: rxMethod<string>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap((id) => {
+              const service = store.services().find((current) => current.id === id);
+              if (!service) {
+                fail('El servicio ya no existe.');
+                return EMPTY;
+              }
+
+              return repo.remove(id).pipe(
+                tap(() => {
+                  patchState(store, {
+                    services: store.services().filter((current) => current.id !== id),
+                    saving: false,
+                    error: null,
+                    lastRemovedId: id,
+                  });
+                  notificationService.showSuccess(`Servicio "${service.name}" eliminado.`);
+                }),
+                catchError((err: Error) => {
+                  fail(err.message || 'No se pudo eliminar el servicio.');
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
 
         /** CSV de los servicios filtrados (misma forma que el inventario). */
         inventoryCsv(): string {
@@ -290,22 +321,18 @@ export const CompanyServicesStore = signalStore(
           patchState(store, { lastSaved: null });
         },
 
+        acknowledgeRemoved(): void {
+          patchState(store, { lastRemovedId: null });
+        },
+
+        clearError(): void {
+          patchState(store, { error: null });
+        },
+
         reset(): void {
           patchState(store, initialState);
         },
       };
     },
   ),
-  withHooks({
-    onInit(store) {
-      const authStore = inject(AuthStore);
-      const storageKey = companyServicesStorageKey(authStore.user()?.tenantId);
-      const stored = loadStoredCompanyServices(storageKey);
-      if (stored.length > 0) patchState(store, { services: stored });
-
-      effect(() => {
-        persistCompanyServices(storageKey, store.services());
-      });
-    },
-  }),
 );
