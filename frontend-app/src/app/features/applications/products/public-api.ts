@@ -9,6 +9,8 @@ export { ReviewsStore } from './state/reviews/reviews.store';
 export { CatalogProductsStore } from './state/catalog-product/catalog-product.store';
 export { CATALOG_PRODUCT_REPOSITORY } from './repositories/catalog-product.repository';
 export { CatalogProductService } from './services/catalog-product/catalog-product.service';
+export { adaptCatalogProductFromBackend } from './adapters/catalog-product/catalog-product.adapter';
+export type { BackendCatalogProductDTO } from './models/catalog-product.dto';
 export type {
   CatalogProduct,
   CatalogProductFilters,

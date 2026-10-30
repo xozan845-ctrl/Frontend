@@ -109,6 +109,51 @@ describe('CatalogProductService', () => {
     expect(result).toMatchObject({ id: 'p-1', basePrice: 100 });
   });
 
+  it('debe enviar los metadatos operativos junto al producto (R-PS-01)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+
+    service
+      .create({
+        sku: 'SKU-2',
+        name: 'Camisa',
+        basePrice: '250.00',
+        stock: 3,
+        cost: '150.00',
+        brand: 'Marca Demo',
+        barcode: '750123',
+        unit: 'Unidad (u)',
+        allowFractions: true,
+        purchaseUnit: 'Caja',
+        contentAmount: 12,
+        contentUnit: 'Unidades',
+        priceType: 'escala',
+        costType: 'fijo',
+        minStock: 2,
+        maxStock: 10,
+        warrantyMonths: 6,
+        isRawMaterial: true,
+        location: 'A-1',
+        operationalStatus: 'inactivo',
+      })
+      .subscribe();
+
+    const request = httpMock.expectOne('https://api.test/catalog/productos');
+    expect(request.request.body).toMatchObject({
+      sku: 'SKU-2',
+      costo: '150.00',
+      marca: 'Marca Demo',
+      codigo_barras: '750123',
+      permite_fracciones: true,
+      stock_minimo: 2,
+      stock_maximo: 10,
+      garantia_meses: 6,
+      es_materia_prima: true,
+      estado_operativo: 'inactivo',
+    });
+    request.flush({ id: 'p-2', sku: 'SKU-2', nombre: 'Camisa', precio_base: '250.00', stock: 3 });
+  });
+
   it('debe actualizar un producto', () => {
     environment.apiUrl = 'https://api.test';
     build();

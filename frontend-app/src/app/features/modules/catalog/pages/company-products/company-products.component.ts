@@ -1,12 +1,21 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
 import { CompanyCatalogTableComponent } from '../../components/company-catalog-table/company-catalog-table.component';
+import { CompanyComboModalComponent } from '../../components/company-combo-modal/company-combo-modal.component';
+import { CompanyImportProductsModalComponent } from '../../components/company-import-products-modal/company-import-products-modal.component';
+import { CompanyInventoryMovementModalComponent } from '../../components/company-inventory-movement-modal/company-inventory-movement-modal.component';
+import { CompanyInventorySettingsModalComponent } from '../../components/company-inventory-settings-modal/company-inventory-settings-modal.component';
 import { CompanyProductModalComponent } from '../../components/company-product-modal/company-product-modal.component';
+import { CompanyPromotionModalComponent } from '../../components/company-promotion-modal/company-promotion-modal.component';
+import { CompanyScanModalComponent } from '../../components/company-scan-modal/company-scan-modal.component';
 import {
+  buildProductRow,
+  buildServiceRow,
   COMPANY_CATALOG_SORT_LABELS,
+  CompanyCatalogOperationsStore,
   CompanyProductsStore,
   CompanyServicesStore,
   type CompanyCatalogFormValue,
@@ -15,6 +24,15 @@ import {
   type CompanyCatalogSort,
   type CompanyCatalogStatusFilter,
   type CompanyCatalogTab,
+  type CompanyCombo,
+  type CompanyComboFormValue,
+  type CompanyInventoryMovementFormValue,
+  type CompanyInventoryMovementType,
+  type CompanyInventorySettingsFormValue,
+  type CompanyProductImportRow,
+  type CompanyPromotion,
+  type CompanyPromotionFormValue,
+  type CompanyScanResult,
 } from '../../../../applications/empresas/public-api';
 
 /**
@@ -28,7 +46,14 @@ import {
   imports: [
     CompanyCatalogTableComponent,
     CompanyProductModalComponent,
+    CompanyComboModalComponent,
+    CompanyImportProductsModalComponent,
+    CompanyInventoryMovementModalComponent,
+    CompanyInventorySettingsModalComponent,
+    CompanyPromotionModalComponent,
+    CompanyScanModalComponent,
     AppCurrencyPipe,
+    AppDatePipe,
     FocusTrapDirective,
   ],
   templateUrl: './company-products.component.html',
@@ -36,7 +61,7 @@ import {
 export default class CompanyProductsComponent {
   readonly products = inject(CompanyProductsStore);
   readonly services = inject(CompanyServicesStore);
-  private readonly notification = inject(NotificationService);
+  readonly operations = inject(CompanyCatalogOperationsStore);
   private readonly seoService = injectSeoPage(
     'Productos y servicios — Empresa',
     'Administra tu catálogo, precios, costos y stock.',
@@ -49,6 +74,25 @@ export default class CompanyProductsComponent {
   readonly editingRow = signal<CompanyCatalogRow | null>(null);
   readonly modalError = signal<string | null>(null);
   readonly serviceToDelete = signal<CompanyCatalogRow | null>(null);
+
+  readonly settingsOpen = signal(false);
+  readonly importOpen = signal(false);
+  readonly scanOpen = signal(false);
+
+  readonly comboOpen = signal(false);
+  readonly comboMode = signal<'create' | 'edit'>('create');
+  readonly editingCombo = signal<CompanyCombo | null>(null);
+  readonly comboError = signal<string | null>(null);
+  readonly comboToDelete = signal<CompanyCombo | null>(null);
+
+  readonly promotionOpen = signal(false);
+  readonly promotionMode = signal<'create' | 'edit'>('create');
+  readonly editingPromotion = signal<CompanyPromotion | null>(null);
+  readonly promotionError = signal<string | null>(null);
+  readonly promotionToDelete = signal<CompanyPromotion | null>(null);
+
+  readonly movementOpen = signal(false);
+  readonly movementInitialType = signal<CompanyInventoryMovementType>('entrada');
 
   readonly statusFilters: readonly {
     value: CompanyCatalogStatusFilter;
@@ -67,6 +111,10 @@ export default class CompanyProductsComponent {
   }));
 
   private readonly loadProducts = this.products.load();
+  private readonly loadServices = this.services.load();
+  private readonly loadCombos = this.operations.loadCombos();
+  private readonly loadPromotions = this.operations.loadPromotions();
+  private readonly loadMovements = this.operations.loadMovements();
 
   /** Cierra el modal cuando el API confirma la creación/edición del producto. */
   private readonly closeOnProductSaved = effect(() => {
@@ -76,10 +124,80 @@ export default class CompanyProductsComponent {
     }
   });
 
+  /** Cierra el modal cuando el API confirma el servicio. */
+  private readonly closeOnServiceSaved = effect(() => {
+    if (this.services.lastSaved()) {
+      this.services.acknowledgeSaved();
+      this.closeModal();
+    }
+  });
+
+  /** Cierra el diálogo de baja solo cuando el backend confirmó la eliminación. */
+  private readonly closeOnServiceRemoved = effect(() => {
+    if (this.services.lastRemovedId()) {
+      this.services.acknowledgeRemoved();
+      this.serviceToDelete.set(null);
+    }
+  });
+
+  private readonly closeOnSettingsSaved = effect(() => {
+    if (this.operations.settingsSaved()) {
+      this.operations.acknowledgeSettingsSaved();
+      this.settingsOpen.set(false);
+    }
+  });
+
+  private readonly closeOnComboSaved = effect(() => {
+    if (this.operations.lastComboSaved()) {
+      this.operations.acknowledgeComboSaved();
+      this.comboOpen.set(false);
+      this.editingCombo.set(null);
+    }
+  });
+
+  private readonly closeOnComboRemoved = effect(() => {
+    if (this.operations.lastComboRemovedId()) {
+      this.operations.acknowledgeComboRemoved();
+      this.comboToDelete.set(null);
+    }
+  });
+
+  private readonly closeOnPromotionSaved = effect(() => {
+    if (this.operations.lastPromotionSaved()) {
+      this.operations.acknowledgePromotionSaved();
+      this.promotionOpen.set(false);
+      this.editingPromotion.set(null);
+    }
+  });
+
+  private readonly closeOnPromotionRemoved = effect(() => {
+    if (this.operations.lastPromotionRemovedId()) {
+      this.operations.acknowledgePromotionRemoved();
+      this.promotionToDelete.set(null);
+    }
+  });
+
+  private readonly closeOnMovementSaved = effect(() => {
+    if (this.operations.lastMovementSaved()) {
+      this.operations.acknowledgeMovementSaved();
+      this.movementOpen.set(false);
+      this.products.load();
+    }
+  });
+
+  /** Tras importar, refresca el catálogo para no mostrar una lista obsoleta. */
+  private readonly reloadProductsOnImport = effect(() => {
+    const result = this.operations.importResult();
+    if (result && result.imported > 0) this.products.load();
+  });
+
   setTab(tab: CompanyCatalogTab): void {
     this.activeTab.set(tab);
     this.cancelDelete();
-    if (tab === 'servicios') return;
+    if (tab === 'servicios') {
+      this.services.load();
+      return;
+    }
     this.products.setOnlyRawMaterial(tab === 'materia-prima');
     this.products.setPage(1);
   }
@@ -118,7 +236,7 @@ export default class CompanyProductsComponent {
 
   refresh(): void {
     if (this.activeTab() === 'servicios') {
-      this.notification.showInfo('Los servicios locales ya están actualizados.');
+      this.services.load();
       return;
     }
     this.products.load();
@@ -135,6 +253,7 @@ export default class CompanyProductsComponent {
     this.editingRow.set(null);
     this.modalError.set(null);
     this.products.clearError();
+    this.services.clearError();
     this.modalOpen.set(true);
   }
 
@@ -144,11 +263,12 @@ export default class CompanyProductsComponent {
     this.editingRow.set(row);
     this.modalError.set(null);
     this.products.clearError();
+    this.services.clearError();
     this.modalOpen.set(true);
   }
 
   closeModal(): void {
-    if (this.products.saving()) return;
+    if (this.activeSaving()) return;
     this.modalOpen.set(false);
     this.editingRow.set(null);
     this.modalError.set(null);
@@ -158,12 +278,7 @@ export default class CompanyProductsComponent {
     const editing = this.editingRow();
     if (editing) {
       if (editing.kind === 'servicio') {
-        const result = this.services.updateFromForm(editing.id, form);
-        if (!result.ok) {
-          this.modalError.set(result.message ?? 'No se pudo actualizar el servicio.');
-          return;
-        }
-        this.closeModal();
+        this.services.update({ id: editing.id, form });
         return;
       }
       this.products.update({ id: editing.id, data: form });
@@ -171,12 +286,7 @@ export default class CompanyProductsComponent {
     }
 
     if (form.type === 'servicio') {
-      const result = this.services.createFromForm(form);
-      if (!result.ok) {
-        this.modalError.set(result.message ?? 'No se pudo crear el servicio.');
-        return;
-      }
-      this.closeModal();
+      this.services.create(form);
       return;
     }
 
@@ -195,7 +305,163 @@ export default class CompanyProductsComponent {
     const row = this.serviceToDelete();
     if (!row) return;
     this.services.remove(row.id);
-    this.serviceToDelete.set(null);
+  }
+
+  openSettings(): void {
+    this.operations.clearSettingsError();
+    this.operations.loadSettings();
+    this.settingsOpen.set(true);
+  }
+
+  onSettingsSubmit(form: CompanyInventorySettingsFormValue): void {
+    this.operations.saveSettings(form);
+  }
+
+  closeSettings(): void {
+    if (this.operations.settingsSaving()) return;
+    this.settingsOpen.set(false);
+  }
+
+  openImport(): void {
+    this.operations.clearImport();
+    this.importOpen.set(true);
+  }
+
+  onImportRows(rows: readonly CompanyProductImportRow[]): void {
+    this.operations.importProducts(rows);
+  }
+
+  closeImport(): void {
+    if (this.operations.importing()) return;
+    this.importOpen.set(false);
+    this.operations.clearImport();
+  }
+
+  openScan(): void {
+    this.operations.clearScan();
+    this.scanOpen.set(true);
+  }
+
+  onScan(code: string): void {
+    this.operations.scan(code);
+  }
+
+  onScanEdit(result: CompanyScanResult): void {
+    this.scanOpen.set(false);
+    if (result.kind === 'producto' && result.product) {
+      this.openEdit(buildProductRow(result.product));
+      return;
+    }
+    if (result.service) this.openEdit(buildServiceRow(result.service));
+  }
+
+  closeScan(): void {
+    if (this.operations.scanning()) return;
+    this.scanOpen.set(false);
+    this.operations.clearScan();
+  }
+
+  openNewCombo(): void {
+    this.comboMode.set('create');
+    this.editingCombo.set(null);
+    this.comboError.set(null);
+    this.operations.clearCombosError();
+    this.comboOpen.set(true);
+  }
+
+  openEditCombo(combo: CompanyCombo): void {
+    this.comboMode.set('edit');
+    this.editingCombo.set(combo);
+    this.comboError.set(null);
+    this.operations.clearCombosError();
+    this.comboOpen.set(true);
+  }
+
+  onComboSubmit(form: CompanyComboFormValue): void {
+    const editing = this.editingCombo();
+    if (editing) {
+      this.operations.updateCombo({ id: editing.id, form });
+      return;
+    }
+    this.operations.createCombo(form);
+  }
+
+  closeCombo(): void {
+    if (this.operations.combosSaving()) return;
+    this.comboOpen.set(false);
+    this.editingCombo.set(null);
+  }
+
+  confirmDeleteCombo(combo: CompanyCombo): void {
+    this.comboToDelete.set(combo);
+  }
+
+  cancelDeleteCombo(): void {
+    this.comboToDelete.set(null);
+  }
+
+  deleteCombo(): void {
+    const combo = this.comboToDelete();
+    if (combo) this.operations.removeCombo(combo.id);
+  }
+
+  openNewPromotion(): void {
+    this.promotionMode.set('create');
+    this.editingPromotion.set(null);
+    this.promotionError.set(null);
+    this.operations.clearPromotionsError();
+    this.promotionOpen.set(true);
+  }
+
+  openEditPromotion(promotion: CompanyPromotion): void {
+    this.promotionMode.set('edit');
+    this.editingPromotion.set(promotion);
+    this.promotionError.set(null);
+    this.operations.clearPromotionsError();
+    this.promotionOpen.set(true);
+  }
+
+  onPromotionSubmit(form: CompanyPromotionFormValue): void {
+    const editing = this.editingPromotion();
+    if (editing) {
+      this.operations.updatePromotion({ id: editing.id, form });
+      return;
+    }
+    this.operations.createPromotion(form);
+  }
+
+  closePromotion(): void {
+    if (this.operations.promotionsSaving()) return;
+    this.promotionOpen.set(false);
+    this.editingPromotion.set(null);
+  }
+
+  confirmDeletePromotion(promotion: CompanyPromotion): void {
+    this.promotionToDelete.set(promotion);
+  }
+
+  cancelDeletePromotion(): void {
+    this.promotionToDelete.set(null);
+  }
+
+  deletePromotion(): void {
+    const promotion = this.promotionToDelete();
+    if (promotion) this.operations.removePromotion(promotion.id);
+  }
+
+  openMovement(type: CompanyInventoryMovementType = 'entrada'): void {
+    this.movementInitialType.set(type);
+    this.operations.clearMovementsError();
+    this.movementOpen.set(true);
+  }
+
+  onMovementSubmit(form: CompanyInventoryMovementFormValue): void {
+    this.operations.createMovement(form);
+  }
+
+  closeMovement(): void {
+    if (this.operations.movementsSaving()) return;
+    this.movementOpen.set(false);
   }
 
   downloadTemplate(): void {
@@ -209,19 +475,6 @@ export default class CompanyProductsComponent {
         : this.products.inventoryCsv(),
       'inventario.csv',
     );
-  }
-
-  onImportFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    this.notification.showInfo(
-      'La importación de Excel estará disponible en una próxima fase. Mientras tanto usa la plantilla y el alta manual.',
-    );
-    input.value = '';
-  }
-
-  showComingSoon(feature: string): void {
-    this.notification.showInfo(`${feature} estará disponible en una próxima fase.`);
   }
 
   activeRows(): readonly CompanyCatalogRow[] {
@@ -257,7 +510,15 @@ export default class CompanyProductsComponent {
   }
 
   activeLoading(): boolean {
-    return this.activeTab() === 'servicios' ? false : this.products.loading();
+    return this.activeTab() === 'servicios' ? this.services.loading() : this.products.loading();
+  }
+
+  activeSaving(): boolean {
+    return this.activeTab() === 'servicios' ? this.services.saving() : this.products.saving();
+  }
+
+  activeError(): string | null {
+    return this.activeTab() === 'servicios' ? this.services.error() : this.products.error();
   }
 
   activeSearch(): string {

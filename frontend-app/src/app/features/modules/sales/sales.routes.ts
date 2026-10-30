@@ -6,8 +6,10 @@ import {
 import {
   COMPANY_ORDERS_SOURCE,
   COMPANY_PORTAL_REPOSITORY,
+  COMPANY_SERVICE_REPOSITORY,
   CompanyPortalService,
   CompanySalesStore,
+  CompanyServiceApiService,
   CompanyServicesStore,
   createCompanyOrdersSource,
   type CompanyPortalRepository,
@@ -32,6 +34,7 @@ export const SALES_ROUTES: Routes = [
         deps: [COMPANY_PORTAL_REPOSITORY],
       },
       { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
+      { provide: COMPANY_SERVICE_REPOSITORY, useClass: CompanyServiceApiService },
     ],
   },
 ];

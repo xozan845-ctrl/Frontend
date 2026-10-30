@@ -1,4 +1,4 @@
-/** `ProductoResponseDto` real del catálogo. */
+/** `ProductoResponseDto` real del catálogo (R-PS-01). */
 export const CATALOG_PRODUCT_FIXTURE = {
   id: 'c13a201e-060e-4f05-87ae-2e24871b95b2',
   empresa_id: 'dfe0cfe4-8ddc-42bf-8dd2-6c3cb43544b3',
@@ -9,7 +9,24 @@ export const CATALOG_PRODUCT_FIXTURE = {
   precio_base: '1000.00',
   stock: 10,
   estado: 'disponible',
+  estado_operativo: 'activo',
+  costo: '600.00',
+  marca: 'Logitech',
+  codigo_barras: '7501234567890',
+  unidad: 'Unidad (u)',
+  permite_fracciones: false,
+  unidad_compra: 'Igual que la de venta',
+  contenido_cantidad: 0,
+  contenido_unidad: 'Sin contenido',
+  tipo_precio: 'fijo',
+  tipo_costo: 'fijo',
+  stock_minimo: 2,
+  stock_maximo: 20,
+  garantia_meses: 12,
+  es_materia_prima: false,
+  ubicacion: 'A-1',
   creado_en: '2026-10-21T00:00:00.000Z',
+  actualizado_en: '2026-10-22T00:00:00.000Z',
 } as const;
 
 /** `PaginaProductosResponseDto` real con metadatos de paginación. */

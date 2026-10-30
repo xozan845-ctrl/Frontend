@@ -211,17 +211,20 @@
               >
                 Marca / Proveedor <span class="font-normal text-slate-400">(opcional)</span>
               </label>
-              <select
+              <input
                 id="product-brand"
                 class="input"
                 formControlName="brand"
                 data-testid="product-modal-brand"
-              >
-                <option value="">Sin marca / proveedor</option>
+                list="product-brand-options"
+                placeholder="Sin marca / proveedor"
+                autocomplete="off"
+              />
+              <datalist id="product-brand-options">
                 @for (brand of brandOptions(); track brand) {
                   <option [value]="brand">{{ brand }}</option>
                 }
-              </select>
+              </datalist>
             </div>
 
             <div class="mt-3 flex flex-col gap-1">
@@ -242,26 +245,25 @@
                 />
                 <button
                   type="button"
-                  class="btn btn-secondary whitespace-nowrap"
-                  (click)="requestScan()"
+                  class="btn btn-secondary whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
+                  aria-disabled="true"
+                  title="Próximamente: el escaneo con cámara aún no está disponible"
                 >
                   <i class="fa-solid fa-expand" aria-hidden="true"></i>
-                  Escanear
+                  Escanear · Próximamente
                 </button>
                 <button
                   type="button"
-                  class="btn btn-secondary whitespace-nowrap"
-                  (click)="requestScan()"
+                  class="btn btn-secondary whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
+                  aria-disabled="true"
+                  title="Próximamente: el escaneo con celular aún no está disponible"
                 >
                   <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i>
-                  Con celular
+                  Con celular · Próximamente
                 </button>
               </div>
-              @if (scanMessage(); as message) {
-                <p class="text-[10px] font-bold text-amber-600 dark:text-amber-400" role="status">
-                  {{ message }}
-                </p>
-              }
             </div>
           </section>
 
@@ -521,7 +523,7 @@
                     id="service-duration"
                     type="number"
                     min="1"
-                    max="10080"
+                    max="1440"
                     step="1"
                     class="input"
                     formControlName="durationMinutes"

@@ -384,7 +384,42 @@ interface CatalogoProductoFixture {
   precio_base: number;
   stock: number;
   estado: string;
+  estado_operativo: string;
+  costo: string;
+  marca: string;
+  codigo_barras: string;
+  unidad: string;
+  permite_fracciones: boolean;
+  unidad_compra: string;
+  contenido_cantidad: number;
+  contenido_unidad: string;
+  tipo_precio: string;
+  tipo_costo: string;
+  stock_minimo: number;
+  stock_maximo: number | null;
+  garantia_meses: number | null;
+  es_materia_prima: boolean;
+  ubicacion: string;
   creado_en: string;
+  actualizado_en: string;
+}
+
+interface ServicioFixture {
+  id: string;
+  empresa_id: string;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  categoria: string;
+  marca: string;
+  codigo_barras: string;
+  precio: string;
+  costo: string;
+  unidad: string;
+  duracion_minutos: number;
+  estado: string;
+  creado_en: string;
+  actualizado_en: string;
 }
 
 const CATALOGO_INICIAL: readonly CatalogoProductoFixture[] = PRODUCTOS.map((producto) => ({
@@ -397,7 +432,24 @@ const CATALOGO_INICIAL: readonly CatalogoProductoFixture[] = PRODUCTOS.map((prod
   precio_base: producto.precio,
   stock: producto.stock,
   estado: producto.stock > 0 ? 'disponible' : 'agotado',
+  estado_operativo: 'activo',
+  costo: (producto.precio * 0.6).toFixed(2),
+  marca: 'Marca Demo',
+  codigo_barras: '',
+  unidad: 'Unidad (u)',
+  permite_fracciones: false,
+  unidad_compra: 'Igual que la de venta',
+  contenido_cantidad: 0,
+  contenido_unidad: 'Sin contenido',
+  tipo_precio: 'fijo',
+  tipo_costo: 'fijo',
+  stock_minimo: 2,
+  stock_maximo: null,
+  garantia_meses: null,
+  es_materia_prima: false,
+  ubicacion: '',
   creado_en: '2026-10-21T10:00:00.000Z',
+  actualizado_en: '2026-10-21T10:00:00.000Z',
 }));
 
 /** Minúsculas sin acentos para que la búsqueda de cartera sea tolerante. */
@@ -428,6 +480,19 @@ export async function mockApi(page: Page): Promise<void> {
   const pedidos = pedidosIniciales(new Date());
   const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
   const catalogo = CATALOGO_INICIAL.map((producto) => ({ ...producto }));
+  const servicios: ServicioFixture[] = [];
+  const catalogSettings = {
+    empresa_id: 'empresa-demo',
+    metodo_costeo: 'promedio',
+    permitir_stock_negativo: false,
+    alerta_stock_bajo: true,
+    actualizar_costo_en_compra: true,
+    unidad_defecto: 'Unidad (u)',
+    actualizado_en: '2026-10-27T00:00:00.000Z',
+  };
+  const combos: Array<Record<string, unknown>> = [];
+  const promotions: Array<Record<string, unknown>> = [];
+  const movements: Array<Record<string, unknown>> = [];
   const ordenes = [
     {
       id: 'o-100',
@@ -1160,7 +1225,30 @@ export async function mockApi(page: Page): Promise<void> {
           precio_base: Number(payload?.['precio_base'] ?? 0),
           stock: Number(payload?.['stock'] ?? 0),
           estado: Number(payload?.['stock'] ?? 0) > 0 ? 'disponible' : 'agotado',
+          estado_operativo: String(payload?.['estado_operativo'] ?? 'activo'),
+          costo: String(payload?.['costo'] ?? '0.00'),
+          marca: String(payload?.['marca'] ?? ''),
+          codigo_barras: String(payload?.['codigo_barras'] ?? ''),
+          unidad: String(payload?.['unidad'] ?? 'Unidad (u)'),
+          permite_fracciones: Boolean(payload?.['permite_fracciones']),
+          unidad_compra: String(payload?.['unidad_compra'] ?? 'Igual que la de venta'),
+          contenido_cantidad: Number(payload?.['contenido_cantidad'] ?? 0),
+          contenido_unidad: String(payload?.['contenido_unidad'] ?? 'Sin contenido'),
+          tipo_precio: String(payload?.['tipo_precio'] ?? 'fijo'),
+          tipo_costo: String(payload?.['tipo_costo'] ?? 'fijo'),
+          stock_minimo: Number(payload?.['stock_minimo'] ?? 0),
+          stock_maximo:
+            payload?.['stock_maximo'] === null || payload?.['stock_maximo'] === undefined
+              ? null
+              : Number(payload['stock_maximo']),
+          garantia_meses:
+            payload?.['garantia_meses'] === null || payload?.['garantia_meses'] === undefined
+              ? null
+              : Number(payload['garantia_meses']),
+          es_materia_prima: Boolean(payload?.['es_materia_prima']),
+          ubicacion: String(payload?.['ubicacion'] ?? ''),
           creado_en: '2026-10-21T12:00:00.000Z',
+          actualizado_en: '2026-10-21T12:00:00.000Z',
         };
         catalogo.unshift(producto);
         await route.fulfill({ status: 201, json: producto });
@@ -1185,7 +1273,367 @@ export async function mockApi(page: Page): Promise<void> {
           producto.stock = Number(payload['stock']);
           producto.estado = producto.stock > 0 ? 'disponible' : 'agotado';
         }
+        const metadataKeys = [
+          'estado_operativo',
+          'costo',
+          'marca',
+          'codigo_barras',
+          'unidad',
+          'permite_fracciones',
+          'unidad_compra',
+          'contenido_cantidad',
+          'contenido_unidad',
+          'tipo_precio',
+          'tipo_costo',
+          'stock_minimo',
+          'stock_maximo',
+          'garantia_meses',
+          'es_materia_prima',
+          'ubicacion',
+        ] as const;
+        for (const key of metadataKeys) {
+          if (payload?.[key] !== undefined) {
+            (producto as unknown as Record<string, unknown>)[key] = payload[key];
+          }
+        }
+        producto.actualizado_en = '2026-10-21T12:30:00.000Z';
         await route.fulfill({ json: producto });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/servicios') {
+        await route.fulfill({ json: { items: servicios } });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/servicios') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        if (
+          servicios.some(
+            (item) => item.codigo.toUpperCase() === String(payload?.['codigo'] ?? '').toUpperCase(),
+          )
+        ) {
+          await route.fulfill({
+            status: 409,
+            json: { mensaje: 'Ya existe un servicio con ese código.' },
+          });
+          return;
+        }
+        const servicio: ServicioFixture = {
+          id: `srv-${Date.now()}`,
+          empresa_id: 'empresa-demo',
+          codigo: String(payload?.['codigo'] ?? '').toUpperCase(),
+          nombre: String(payload?.['nombre'] ?? 'Servicio'),
+          descripcion: String(payload?.['descripcion'] ?? ''),
+          categoria: String(payload?.['categoria'] ?? ''),
+          marca: String(payload?.['marca'] ?? ''),
+          codigo_barras: String(payload?.['codigo_barras'] ?? ''),
+          precio: String(payload?.['precio'] ?? '0.00'),
+          costo: String(payload?.['costo'] ?? '0.00'),
+          unidad: String(payload?.['unidad'] ?? 'Hora (h)'),
+          duracion_minutos: Number(payload?.['duracion_minutos'] ?? 60),
+          estado: String(payload?.['estado'] ?? 'activo'),
+          creado_en: '2026-10-23T10:00:00.000Z',
+          actualizado_en: '2026-10-23T10:00:00.000Z',
+        };
+        servicios.unshift(servicio);
+        await route.fulfill({ status: 201, json: servicio });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/catalog\/servicios\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const servicio = servicios.find((item) => item.id === id);
+        if (!servicio) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Servicio no encontrado.' } });
+          return;
+        }
+        if (payload?.['nombre'] !== undefined) servicio.nombre = String(payload['nombre']);
+        if (payload?.['descripcion'] !== undefined)
+          servicio.descripcion = String(payload['descripcion']);
+        if (payload?.['categoria'] !== undefined) servicio.categoria = String(payload['categoria']);
+        if (payload?.['marca'] !== undefined) servicio.marca = String(payload['marca']);
+        if (payload?.['codigo_barras'] !== undefined)
+          servicio.codigo_barras = String(payload['codigo_barras']);
+        if (payload?.['precio'] !== undefined) servicio.precio = String(payload['precio']);
+        if (payload?.['costo'] !== undefined) servicio.costo = String(payload['costo']);
+        if (payload?.['unidad'] !== undefined) servicio.unidad = String(payload['unidad']);
+        if (payload?.['duracion_minutos'] !== undefined)
+          servicio.duracion_minutos = Number(payload['duracion_minutos']);
+        if (payload?.['estado'] !== undefined) servicio.estado = String(payload['estado']);
+        servicio.actualizado_en = '2026-10-23T10:30:00.000Z';
+        await route.fulfill({ json: servicio });
+        return;
+      }
+
+      if (method === 'DELETE' && /^\/catalog\/servicios\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const index = servicios.findIndex((item) => item.id === id);
+        if (index < 0) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Servicio no encontrado.' } });
+          return;
+        }
+        servicios.splice(index, 1);
+        await route.fulfill({ status: 204, body: '' });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/configuracion-inventario') {
+        await route.fulfill({ json: catalogSettings });
+        return;
+      }
+
+      if (method === 'PUT' && path === '/catalog/configuracion-inventario') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        Object.assign(catalogSettings, payload, { actualizado_en: '2026-10-30T10:00:00.000Z' });
+        await route.fulfill({ json: catalogSettings });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/combos') {
+        await route.fulfill({
+          json: { items: combos, total: combos.length, pagina: 1, limite: 100, paginas: 1 },
+        });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/combos') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const componentes = Array.isArray(payload?.['componentes'])
+          ? (payload['componentes'] as Array<Record<string, unknown>>)
+          : [];
+        const componentesDetalle = componentes.map((componente) => {
+          const sku = String(componente['sku'] ?? '');
+          const product = catalogo.find((item) => item.sku === sku);
+          const cantidad = Number(componente['cantidad'] ?? 1);
+          const costoUnitario = Number(product?.costo ?? 0);
+          return {
+            producto_id: product?.id ?? null,
+            sku,
+            nombre: product?.nombre ?? sku,
+            cantidad,
+            costo_unitario: costoUnitario.toFixed(2),
+            subtotal: (costoUnitario * cantidad).toFixed(2),
+          };
+        });
+        const costoTotal = componentesDetalle.reduce(
+          (sum, component) => sum + Number(component.subtotal),
+          0,
+        );
+        const precio = Number(payload?.['precio'] ?? 0);
+        const combo = {
+          id: `combo-${Date.now()}`,
+          empresa_id: 'empresa-demo',
+          sku: String(payload?.['sku'] ?? ''),
+          nombre: String(payload?.['nombre'] ?? 'Combo'),
+          descripcion: String(payload?.['descripcion'] ?? ''),
+          codigo_barras: String(payload?.['codigo_barras'] ?? ''),
+          precio: precio.toFixed(2),
+          costo_total: costoTotal.toFixed(2),
+          margen: precio > 0 ? Math.round(((precio - costoTotal) / precio) * 1000) / 10 : 0,
+          estado: String(payload?.['estado'] ?? 'activo'),
+          componentes: componentesDetalle,
+          creado_en: '2026-10-30T10:00:00.000Z',
+          actualizado_en: '2026-10-30T10:00:00.000Z',
+        };
+        combos.unshift(combo);
+        await route.fulfill({ status: 201, json: combo });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/catalog\/combos\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const combo = combos.find((item) => item['id'] === id);
+        if (!combo) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Combo no encontrado.' } });
+          return;
+        }
+        for (const key of ['nombre', 'descripcion', 'codigo_barras', 'precio', 'estado']) {
+          if (payload?.[key] !== undefined) combo[key] = payload[key];
+        }
+        combo['actualizado_en'] = '2026-10-30T10:30:00.000Z';
+        await route.fulfill({ json: combo });
+        return;
+      }
+
+      if (method === 'DELETE' && /^\/catalog\/combos\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const index = combos.findIndex((item) => item['id'] === id);
+        if (index < 0) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Combo no encontrado.' } });
+          return;
+        }
+        combos.splice(index, 1);
+        await route.fulfill({ status: 204, body: '' });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/promociones') {
+        await route.fulfill({
+          json: { items: promotions, total: promotions.length, pagina: 1, limite: 100, paginas: 1 },
+        });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/promociones') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const promotion = {
+          id: `promo-${Date.now()}`,
+          empresa_id: 'empresa-demo',
+          nombre: String(payload?.['nombre'] ?? 'Promoción'),
+          tipo: String(payload?.['tipo'] ?? '2x1'),
+          producto_id: payload?.['producto_id'] ?? null,
+          sku: String(payload?.['sku'] ?? ''),
+          cantidad_requerida: payload?.['cantidad_requerida'] ?? null,
+          cantidad_gratis: payload?.['cantidad_gratis'] ?? null,
+          descuento_porcentaje: payload?.['descuento_porcentaje'] ?? null,
+          fecha_desde: String(payload?.['fecha_desde'] ?? '2026-10-01'),
+          fecha_hasta: String(payload?.['fecha_hasta'] ?? '2026-10-31'),
+          estado: String(payload?.['estado'] ?? 'activo'),
+          creado_en: '2026-10-30T10:00:00.000Z',
+          actualizado_en: '2026-10-30T10:00:00.000Z',
+        };
+        promotions.unshift(promotion);
+        await route.fulfill({ status: 201, json: promotion });
+        return;
+      }
+
+      if (method === 'PATCH' && /^\/catalog\/promociones\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const promotion = promotions.find((item) => item['id'] === id);
+        if (!promotion) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Promoción no encontrada.' } });
+          return;
+        }
+        Object.assign(promotion, payload, { actualizado_en: '2026-10-30T10:30:00.000Z' });
+        await route.fulfill({ json: promotion });
+        return;
+      }
+
+      if (method === 'DELETE' && /^\/catalog\/promociones\/[^/]+$/.test(path)) {
+        const id = decodeURIComponent(path.split('/')[3]);
+        const index = promotions.findIndex((item) => item['id'] === id);
+        if (index < 0) {
+          await route.fulfill({ status: 404, json: { mensaje: 'Promoción no encontrada.' } });
+          return;
+        }
+        promotions.splice(index, 1);
+        await route.fulfill({ status: 204, body: '' });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/inventario/movimientos') {
+        await route.fulfill({
+          json: { items: movements, total: movements.length, pagina: 1, limite: 100, paginas: 1 },
+        });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/inventario/movimientos') {
+        const payload = request.postDataJSON() as Record<string, unknown> | null;
+        const lineas = Array.isArray(payload?.['lineas'])
+          ? (payload['lineas'] as Array<Record<string, unknown>>)
+          : [];
+        const movement = {
+          id: `mov-${Date.now()}`,
+          empresa_id: 'empresa-demo',
+          tipo: String(payload?.['tipo'] ?? 'entrada'),
+          motivo: String(payload?.['motivo'] ?? ''),
+          referencia: String(payload?.['referencia'] ?? ''),
+          ubicacion_origen: String(payload?.['ubicacion_origen'] ?? ''),
+          ubicacion_destino: String(payload?.['ubicacion_destino'] ?? ''),
+          lineas: lineas.map((linea) => {
+            const product = catalogo.find((item) => item.sku === linea['sku']);
+            return {
+              producto_id: product?.id ?? null,
+              sku: String(linea['sku'] ?? ''),
+              nombre: product?.nombre ?? String(linea['sku'] ?? ''),
+              cantidad: Number(linea['cantidad'] ?? 0),
+            };
+          }),
+          creado_por: null,
+          creado_en: '2026-10-30T10:00:00.000Z',
+        };
+        movements.unshift(movement);
+        await route.fulfill({ status: 201, json: movement });
+        return;
+      }
+
+      if (method === 'POST' && path === '/catalog/productos/importar') {
+        const payload = request.postDataJSON() as { filas?: Array<Record<string, unknown>> } | null;
+        const filas = Array.isArray(payload?.filas) ? payload.filas : [];
+        let importados = 0;
+        let omitidos = 0;
+        const errores: string[] = [];
+        for (const fila of filas) {
+          const sku = String(fila['sku'] ?? '');
+          if (catalogo.some((item) => item.sku === sku)) {
+            omitidos += 1;
+            errores.push(`SKU duplicado: ${sku}`);
+            continue;
+          }
+          const precio = Number(fila['precio_base'] ?? 0);
+          const stock = Number(fila['stock'] ?? 0);
+          catalogo.unshift({
+            id: `p-${Date.now()}-${importados}`,
+            empresa_id: 'empresa-demo',
+            sku,
+            nombre: String(fila['nombre'] ?? sku),
+            descripcion: String(fila['descripcion'] ?? ''),
+            categoria: String(fila['categoria'] ?? ''),
+            precio_base: precio,
+            stock,
+            estado: stock > 0 ? 'disponible' : 'agotado',
+            estado_operativo: 'activo',
+            costo: String(fila['costo'] ?? '0.00'),
+            marca: String(fila['marca'] ?? ''),
+            codigo_barras: String(fila['codigo_barras'] ?? ''),
+            unidad: String(fila['unidad'] ?? 'Unidad (u)'),
+            permite_fracciones: false,
+            unidad_compra: 'Igual que la de venta',
+            contenido_cantidad: 0,
+            contenido_unidad: 'Sin contenido',
+            tipo_precio: 'fijo',
+            tipo_costo: 'fijo',
+            stock_minimo: Number(fila['stock_minimo'] ?? 0),
+            stock_maximo: fila['stock_maximo'] === undefined ? null : fila['stock_maximo'],
+            garantia_meses: null,
+            es_materia_prima: Boolean(fila['es_materia_prima']),
+            ubicacion: String(fila['ubicacion'] ?? ''),
+            creado_en: '2026-10-30T10:00:00.000Z',
+            actualizado_en: '2026-10-30T10:00:00.000Z',
+          });
+          importados += 1;
+        }
+        await route.fulfill({ status: 201, json: { importados, omitidos, errores } });
+        return;
+      }
+
+      if (method === 'GET' && path === '/catalog/escanear') {
+        const code = (url.searchParams.get('codigo') ?? '').trim().toLowerCase();
+        const producto = catalogo.find(
+          (item) =>
+            item.sku.toLowerCase() === code || (item.codigo_barras ?? '').toLowerCase() === code,
+        );
+        if (producto) {
+          await route.fulfill({ json: { tipo: 'producto', producto } });
+          return;
+        }
+        const servicio = servicios.find(
+          (item) =>
+            item.codigo.toLowerCase() === code || (item.codigo_barras ?? '').toLowerCase() === code,
+        );
+        if (servicio) {
+          await route.fulfill({ json: { tipo: 'servicio', servicio } });
+          return;
+        }
+        await route.fulfill({
+          status: 404,
+          json: { mensaje: 'No se encontró un producto o servicio con ese código.' },
+        });
         return;
       }
 

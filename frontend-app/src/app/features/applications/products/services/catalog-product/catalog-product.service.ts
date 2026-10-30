@@ -11,16 +11,42 @@ import {
 import {
   CatalogProduct,
   CatalogProductFilters,
+  CatalogProductMetadataData,
   CatalogProductPage,
   CreateCatalogProductData,
   UpdateCatalogProductData,
 } from '../../models/catalog-product.model';
 import { CatalogProductRepository } from '../../repositories/catalog-product.repository';
 
+/** Campos operativos que viajan junto al producto (R-PS-01). */
+function metadataPayload(data: CatalogProductMetadataData): Record<string, unknown> {
+  const payload: Record<string, unknown> = {};
+  if (data.cost !== undefined && data.cost.trim()) payload['costo'] = data.cost.trim();
+  if (data.brand !== undefined) payload['marca'] = data.brand;
+  if (data.barcode !== undefined) payload['codigo_barras'] = data.barcode;
+  if (data.unit !== undefined) payload['unidad'] = data.unit;
+  if (data.allowFractions !== undefined) payload['permite_fracciones'] = data.allowFractions;
+  if (data.purchaseUnit !== undefined) payload['unidad_compra'] = data.purchaseUnit;
+  if (data.contentAmount !== undefined) payload['contenido_cantidad'] = data.contentAmount;
+  if (data.contentUnit !== undefined) payload['contenido_unidad'] = data.contentUnit;
+  if (data.priceType !== undefined) payload['tipo_precio'] = data.priceType;
+  if (data.costType !== undefined) payload['tipo_costo'] = data.costType;
+  if (data.minStock !== undefined) payload['stock_minimo'] = data.minStock;
+  if (data.maxStock !== undefined) payload['stock_maximo'] = data.maxStock;
+  if (data.warrantyMonths !== undefined) payload['garantia_meses'] = data.warrantyMonths;
+  if (data.isRawMaterial !== undefined) payload['es_materia_prima'] = data.isRawMaterial;
+  if (data.location !== undefined) payload['ubicacion'] = data.location;
+  if (data.operationalStatus !== undefined) {
+    payload['estado_operativo'] = data.operationalStatus;
+  }
+  return payload;
+}
+
 /**
  * Catálogo maestro (`/catalog/productos`): listado público con filtros, detalle
  * y CRUD del empresario. Normaliza con el adapter tolerante (`R-AR-4`) y
- * traduce los errores (`R-AR-9`).
+ * traduce los errores (`R-AR-9`). Los metadatos operativos viajan inline, sin
+ * `localStorage` (R-PS-01).
  */
 @Injectable({
   providedIn: 'root',
@@ -74,6 +100,7 @@ export class CatalogProductService implements CatalogProductRepository {
         categoria: data.category,
         precio_base: data.basePrice,
         stock: data.stock,
+        ...metadataPayload(data),
       })
       .pipe(
         map((response) => this.requireProduct(response)),
@@ -94,6 +121,7 @@ export class CatalogProductService implements CatalogProductRepository {
         precio_base: data.basePrice,
         stock: data.stock,
         motivo: data.reason,
+        ...metadataPayload(data),
       })
       .pipe(
         map((response) => this.requireProduct(response)),

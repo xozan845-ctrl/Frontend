@@ -16,7 +16,7 @@
         type="button"
         class="flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden"
         data-testid="inventory-settings"
-        (click)="showComingSoon('La configuración de inventario')"
+        (click)="openSettings()"
       >
         <i class="fa-solid fa-sliders" aria-hidden="true"></i>
         Configuración de inventario
@@ -35,21 +35,13 @@
 
       <button
         type="button"
-        class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden dark:border-surface-600 dark:bg-surface-800 dark:text-slate-200"
+        class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-200"
         data-testid="import-excel"
-        (click)="importInput.click()"
+        (click)="openImport()"
       >
         <i class="fa-solid fa-file-excel text-emerald-500" aria-hidden="true"></i>
-        Importar Excel
+        Importar CSV
       </button>
-      <input
-        #importInput
-        type="file"
-        class="hidden"
-        accept=".csv,.xlsx,.xls"
-        aria-label="Importar archivo de productos"
-        (change)="onImportFile($event)"
-      />
 
       <button
         type="button"
@@ -119,9 +111,20 @@
         >
       </div>
       <p class="mt-2 text-3xl font-black text-slate-900 dark:text-white">
-        {{ products.kpis().inventoryValue | appCurrency }}
+        @if (products.kpis().inventoryValue === null) {
+          <span title="Falta el costo de al menos un producto">—</span>
+        } @else {
+          {{ products.kpis().inventoryValue | appCurrency }}
+        }
       </p>
-      <p class="text-xs text-slate-400">Stock × Costo</p>
+      <p class="text-xs text-slate-400">
+        @if (products.kpis().missingCostCount > 0) {
+          Falta costo en {{ products.kpis().missingCostCount }}
+          {{ products.kpis().missingCostCount === 1 ? 'producto' : 'productos' }}
+        } @else {
+          Stock × Costo
+        }
+      </p>
     </article>
 
     <article
@@ -230,8 +233,8 @@
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
-          (click)="showComingSoon('El escaneo de código de barras')"
+          class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
+          (click)="openScan()"
         >
           <i class="fa-solid fa-barcode" aria-hidden="true"></i>
           Escanear código de barras…
@@ -300,7 +303,8 @@
         <button
           type="button"
           class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
-          (click)="showComingSoon('Mover productos')"
+          data-testid="move-products"
+          (click)="openMovement('traslado')"
         >
           <i class="fa-solid fa-boxes-stacked text-emerald-500" aria-hidden="true"></i>
           Mover productos
@@ -311,7 +315,8 @@
         <button
           type="button"
           class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
-          (click)="showComingSoon('Trasladar varios productos')"
+          data-testid="transfer-products"
+          (click)="openMovement('traslado')"
         >
           <i class="fa-solid fa-truck-fast text-emerald-500" aria-hidden="true"></i>
           Trasladar varios
@@ -319,10 +324,11 @@
         <button
           type="button"
           class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300"
-          (click)="showComingSoon('Los traslados')"
+          data-testid="movements-button"
+          (click)="openMovement('entrada')"
         >
           <i class="fa-solid fa-clipboard-list text-emerald-500" aria-hidden="true"></i>
-          Traslados
+          Movimientos
         </button>
         <button
           type="button"
@@ -405,55 +411,112 @@
         >
           <span aria-hidden="true">📦</span>
           Combos
+          <span
+            class="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-700 uppercase dark:bg-emerald-900/30 dark:text-emerald-300"
+          >
+            {{ operations.activeComboCount() }} activos
+          </span>
         </h2>
         <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
           Agrupa varios productos bajo un mismo nombre, SKU y código de barras. Al venderse, se
           descuenta el stock de cada componente.
         </p>
       </div>
-    </header>
-    <div class="mt-3 flex flex-wrap items-center gap-2">
-      <input
-        type="search"
-        class="input min-w-64 flex-1 py-2 text-xs"
-        placeholder="Buscar combo por nombre, SKU o código…"
-        aria-label="Buscar combos"
-      />
-      <select class="input w-auto py-2 text-xs" aria-label="Ordenar combos">
-        <option>Más reciente</option>
-      </select>
-      <span class="text-xs text-slate-400">0 combos</span>
       <button
         type="button"
         class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
-        (click)="showComingSoon('Los combos')"
+        data-testid="new-combo"
+        (click)="openNewCombo()"
       >
         + Crear combo
       </button>
-    </div>
+    </header>
+
+    @if (operations.combosError(); as message) {
+      <div
+        class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+    }
+
     <div class="mt-3 overflow-x-auto">
-      <table class="w-full min-w-[760px] text-left text-xs">
-        <thead>
-          <tr
-            class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
-          >
-            <th class="py-2 pr-3 font-bold">Combo</th>
-            <th class="py-2 pr-3 font-bold">SKU / Código de barras</th>
-            <th class="py-2 pr-3 font-bold">Componentes</th>
-            <th class="py-2 pr-3 font-bold">Costo</th>
-            <th class="py-2 pr-3 font-bold">Precio</th>
-            <th class="py-2 pr-3 font-bold">Estado</th>
-            <th class="py-2 text-right font-bold">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="7" class="py-8 text-center text-slate-400">
-              Aún no has creado ningún combo.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      @if (operations.combosLoading()) {
+        <p class="py-6 text-center text-xs text-slate-400" role="status">Cargando combos…</p>
+      } @else {
+        <table class="w-full min-w-[760px] text-left text-xs">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th class="py-2 pr-3 font-bold">Combo</th>
+              <th class="py-2 pr-3 font-bold">SKU / Código de barras</th>
+              <th class="py-2 pr-3 font-bold">Componentes</th>
+              <th class="py-2 pr-3 font-bold">Costo</th>
+              <th class="py-2 pr-3 font-bold">Precio</th>
+              <th class="py-2 pr-3 font-bold">Margen</th>
+              <th class="py-2 pr-3 font-bold">Estado</th>
+              <th class="py-2 text-right font-bold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (combo of operations.combos(); track combo.id) {
+              <tr data-testid="combo-row" [attr.data-combo-id]="combo.id">
+                <td class="py-3 pr-3">
+                  <p class="font-bold text-slate-900 dark:text-white">{{ combo.name }}</p>
+                  <p class="text-[10px] text-slate-400">{{ combo.description || '—' }}</p>
+                </td>
+                <td class="py-3 pr-3 font-mono text-[10px] text-slate-500">
+                  {{ combo.sku }}<br />{{ combo.barcode || '—' }}
+                </td>
+                <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                  {{ combo.components.length }} componentes
+                </td>
+                <td class="py-3 pr-3 tabular-nums">{{ combo.totalCost | appCurrency }}</td>
+                <td class="py-3 pr-3 tabular-nums">{{ combo.price | appCurrency }}</td>
+                <td class="py-3 pr-3 tabular-nums">{{ combo.margin.toFixed(1) }}%</td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full px-2 py-1 text-[9px] font-black uppercase"
+                    [class]="
+                      combo.status === 'activo'
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-slate-100 text-slate-500'
+                    "
+                  >
+                    {{ combo.status }}
+                  </span>
+                </td>
+                <td class="py-3 text-right">
+                  <button
+                    type="button"
+                    class="text-xs font-bold text-emerald-700"
+                    [attr.data-testid]="'edit-combo-' + combo.id"
+                    (click)="openEditCombo(combo)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="ml-2 text-xs font-bold text-red-600"
+                    [attr.data-testid]="'delete-combo-' + combo.id"
+                    (click)="confirmDeleteCombo(combo)"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="py-8 text-center text-slate-400" data-testid="combos-empty">
+                  Aún no has creado ningún combo.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
   </section>
 
@@ -469,6 +532,11 @@
         >
           <span aria-hidden="true">🎉</span>
           Promociones
+          <span
+            class="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-700 uppercase dark:bg-emerald-900/30 dark:text-emerald-300"
+          >
+            {{ operations.activePromotionCount() }} activas
+          </span>
         </h2>
         <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
           2×1, descuentos por cantidad o regalos al comprar — se aplican solas en Ventas cuando se
@@ -476,39 +544,198 @@
         </p>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-xs text-slate-400">0 promociones</span>
         <button
           type="button"
           class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
-          (click)="showComingSoon('Las promociones')"
+          data-testid="new-promotion"
+          (click)="openNewPromotion()"
         >
           + Nueva promoción
         </button>
       </div>
     </header>
+
+    @if (operations.promotionsError(); as message) {
+      <div
+        class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+    }
+
     <div class="mt-3 overflow-x-auto">
-      <table class="w-full min-w-[680px] text-left text-xs">
-        <thead>
-          <tr
-            class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+      @if (operations.promotionsLoading()) {
+        <p class="py-6 text-center text-xs text-slate-400" role="status">Cargando promociones…</p>
+      } @else {
+        <table class="w-full min-w-[680px] text-left text-xs">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th class="py-2 pr-3 font-bold">Promoción</th>
+              <th class="py-2 pr-3 font-bold">Tipo</th>
+              <th class="py-2 pr-3 font-bold">Detalle</th>
+              <th class="py-2 pr-3 font-bold">Vigencia</th>
+              <th class="py-2 pr-3 font-bold">Estado</th>
+              <th class="py-2 text-right font-bold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (promotion of operations.promotionRows(); track promotion.id) {
+              <tr data-testid="promotion-row" [attr.data-promotion-id]="promotion.id">
+                <td class="py-3 pr-3 font-bold text-slate-900 dark:text-white">
+                  {{ promotion.name }}
+                </td>
+                <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                  {{ promotion.typeLabel }}
+                </td>
+                <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                  {{ promotion.detail }}
+                </td>
+                <td class="py-3 pr-3 text-slate-500">{{ promotion.from }} → {{ promotion.to }}</td>
+                <td class="py-3 pr-3">
+                  <span
+                    class="rounded-full px-2 py-1 text-[9px] font-black uppercase"
+                    [class]="
+                      promotion.status === 'activo'
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-slate-100 text-slate-500'
+                    "
+                  >
+                    {{ promotion.status }}
+                  </span>
+                </td>
+                <td class="py-3 text-right">
+                  <button
+                    type="button"
+                    class="text-xs font-bold text-emerald-700"
+                    [attr.data-testid]="'edit-promotion-' + promotion.id"
+                    (click)="openEditPromotion(promotion)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="ml-2 text-xs font-bold text-red-600"
+                    [attr.data-testid]="'delete-promotion-' + promotion.id"
+                    (click)="confirmDeletePromotion(promotion)"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td
+                  colspan="6"
+                  class="py-8 text-center text-slate-400"
+                  data-testid="promotions-empty"
+                >
+                  Aún no has creado ninguna promoción.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </section>
+
+  <section
+    class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-surface-700 dark:bg-surface-800"
+    aria-labelledby="movements-title"
+  >
+    <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h2
+          id="movements-title"
+          class="flex items-center gap-2 font-heading text-lg font-black text-slate-900 dark:text-white"
+        >
+          <span aria-hidden="true">📋</span>
+          Movimientos de inventario
+          <span
+            class="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-500 uppercase dark:bg-surface-700"
           >
-            <th class="py-2 pr-3 font-bold">Promoción</th>
-            <th class="py-2 pr-3 font-bold">Tipo</th>
-            <th class="py-2 pr-3 font-bold">Detalle</th>
-            <th class="py-2 pr-3 font-bold">Precio</th>
-            <th class="py-2 pr-3 font-bold">Vigencia</th>
-            <th class="py-2 pr-3 font-bold">Estado</th>
-            <th class="py-2 text-right font-bold">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="7" class="py-8 text-center text-slate-400">
-              Aún no has creado ninguna promoción.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            {{ operations.movementCount() }} registros
+          </span>
+        </h2>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Entradas, salidas, ajustes y traslados con su referencia y ubicaciones.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
+        data-testid="new-movement"
+        (click)="openMovement('entrada')"
+      >
+        + Registrar movimiento
+      </button>
+    </header>
+
+    @if (operations.movementsError(); as message) {
+      <div
+        class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+    }
+
+    <div class="mt-3 overflow-x-auto">
+      @if (operations.movementsLoading()) {
+        <p class="py-6 text-center text-xs text-slate-400" role="status">Cargando movimientos…</p>
+      } @else {
+        <table class="w-full min-w-[720px] text-left text-xs">
+          <thead>
+            <tr
+              class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+            >
+              <th class="py-2 pr-3 font-bold">Fecha</th>
+              <th class="py-2 pr-3 font-bold">Tipo</th>
+              <th class="py-2 pr-3 font-bold">Motivo</th>
+              <th class="py-2 pr-3 font-bold">Referencia</th>
+              <th class="py-2 pr-3 font-bold">Ubicaciones</th>
+              <th class="py-2 pr-3 font-bold">Líneas</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+            @for (movement of operations.movementRows(); track movement.id) {
+              <tr data-testid="movement-row" [attr.data-movement-id]="movement.id">
+                <td class="py-3 pr-3 text-slate-500">
+                  {{ movement.createdAt | appDate: 'short' }}
+                </td>
+                <td class="py-3 pr-3 font-bold text-slate-700 dark:text-slate-200">
+                  {{ movement.typeLabel }}
+                </td>
+                <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                  {{ movement.reason || '—' }}
+                </td>
+                <td class="py-3 pr-3 font-mono text-[10px] text-slate-500">
+                  {{ movement.reference || '—' }}
+                </td>
+                <td class="py-3 pr-3 text-slate-500">
+                  {{ movement.origin || '—' }} → {{ movement.destination || '—' }}
+                </td>
+                <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                  {{ movement.lines.length }}
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td
+                  colspan="6"
+                  class="py-8 text-center text-slate-400"
+                  data-testid="movements-empty"
+                >
+                  Aún no hay movimientos registrados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
   </section>
 </div>
@@ -519,8 +746,8 @@
   [initialType]="modalType()"
   [item]="editingRow()"
   [brands]="allBrands()"
-  [saving]="products.saving()"
-  [error]="modalError() ?? products.error()"
+  [saving]="activeSaving()"
+  [error]="modalError() ?? activeError()"
   (save)="onModalSubmit($event)"
   (dismiss)="closeModal()"
 />
@@ -565,6 +792,160 @@
           class="btn btn-danger"
           data-testid="confirm-delete-service"
           (click)="deleteService()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-company-inventory-settings-modal
+  [open]="settingsOpen()"
+  [settings]="operations.settings()"
+  [saving]="operations.settingsSaving()"
+  [error]="operations.settingsError()"
+  (save)="onSettingsSubmit($event)"
+  (dismiss)="closeSettings()"
+/>
+
+<app-company-import-products-modal
+  [open]="importOpen()"
+  [saving]="operations.importing()"
+  [result]="operations.importResult()"
+  [error]="operations.importError()"
+  (importRows)="onImportRows($event)"
+  (dismiss)="closeImport()"
+/>
+
+<app-company-scan-modal
+  [open]="scanOpen()"
+  [scanning]="operations.scanning()"
+  [result]="operations.scanResult()"
+  [error]="operations.scanError()"
+  (scan)="onScan($event)"
+  (edit)="onScanEdit($event)"
+  (dismiss)="closeScan()"
+/>
+
+<app-company-combo-modal
+  [open]="comboOpen()"
+  [mode]="comboMode()"
+  [item]="editingCombo()"
+  [products]="products.products()"
+  [saving]="operations.combosSaving()"
+  [error]="comboError() ?? operations.combosError()"
+  (save)="onComboSubmit($event)"
+  (dismiss)="closeCombo()"
+/>
+
+<app-company-promotion-modal
+  [open]="promotionOpen()"
+  [mode]="promotionMode()"
+  [item]="editingPromotion()"
+  [products]="products.products()"
+  [saving]="operations.promotionsSaving()"
+  [error]="promotionError() ?? operations.promotionsError()"
+  (save)="onPromotionSubmit($event)"
+  (dismiss)="closePromotion()"
+/>
+
+<app-company-inventory-movement-modal
+  [open]="movementOpen()"
+  [initialType]="movementInitialType()"
+  [products]="products.products()"
+  [saving]="operations.movementsSaving()"
+  [error]="operations.movementsError()"
+  (save)="onMovementSubmit($event)"
+  (dismiss)="closeMovement()"
+/>
+
+@if (comboToDelete(); as combo) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="combo-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+    <div
+      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-surface-800"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="combo-delete-title"
+      [appFocusTrap]="true"
+      (escape)="cancelDeleteCombo()"
+    >
+      <h2
+        id="combo-delete-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Eliminar combo
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ combo.name }}</strong
+        >?
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-combo"
+          (click)="cancelDeleteCombo()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-combo"
+          (click)="deleteCombo()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (promotionToDelete(); as promotion) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="promotion-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+    <div
+      class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-surface-800"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="promotion-delete-title"
+      [appFocusTrap]="true"
+      (escape)="cancelDeletePromotion()"
+    >
+      <h2
+        id="promotion-delete-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Eliminar promoción
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ promotion.name }}</strong
+        >?
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-promotion"
+          (click)="cancelDeletePromotion()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-promotion"
+          (click)="deletePromotion()"
         >
           Eliminar
         </button>
