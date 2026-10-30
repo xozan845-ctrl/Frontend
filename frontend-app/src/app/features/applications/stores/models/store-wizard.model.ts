@@ -30,6 +30,8 @@ export interface StoreCompanySetup {
   logisticsMode: StoreCompanyMode;
   /** Clasificación inicial; identity-service usa `comercial` si se omite. */
   type?: CompanyType;
+  /** Archivo elegido en el paso 2; se sube tras crear la empresa. */
+  logoFile?: File;
 }
 
 /** Datos del formulario de creación de tienda (`POST /vendedores/tienda`). */

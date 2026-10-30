@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -15,6 +15,7 @@ import {
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import type { NewProductRow, ProductRow } from './create-store.types';
 
@@ -34,6 +35,7 @@ const MIN_INITIAL_PRODUCTS = 5;
     CreateStoreStepperComponent,
     EmptyStateComponent,
     SkeletonLoaderComponent,
+    ImageDropzoneComponent,
     NgClass,
   ],
   templateUrl: './create-store.component.html',
@@ -42,6 +44,10 @@ export default class CreateStoreComponent {
   private readonly fb = inject(FormBuilder);
   readonly wizard = inject(StoreWizardStore);
   readonly authStore = inject(AuthStore);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cleanup = this.destroyRef.onDestroy(() => this.clearCompanyLogoPreview());
+  readonly companyLogoPreview = signal<string | null>(null);
+  private companyLogoFile: File | null = null;
   private readonly router = inject(Router);
   private readonly seoService = injectSeoPage(
     'Crear empresa',
@@ -139,9 +145,25 @@ export default class CreateStoreComponent {
     const { name, description, companyName, logisticsMode, companyType } =
       this.storeForm.getRawValue();
     const company = this.needsCompany()
-      ? { name: companyName.trim() || name, logisticsMode, type: companyType }
+      ? {
+          name: companyName.trim() || name,
+          logisticsMode,
+          type: companyType,
+          ...(this.companyLogoFile ? { logoFile: this.companyLogoFile } : {}),
+        }
       : undefined;
     this.wizard.createStore({ name, description, ...(company ? { company } : {}) });
+  }
+
+  onCompanyLogoSelected(file: File): void {
+    this.clearCompanyLogoPreview();
+    this.companyLogoFile = file;
+    this.companyLogoPreview.set(this.objectUrl(file));
+  }
+
+  onCompanyLogoRemoved(): void {
+    this.companyLogoFile = null;
+    this.clearCompanyLogoPreview();
   }
 
   // ── Paso 3: productos ──────────────────────────────────────────────────────
@@ -167,6 +189,28 @@ export default class CreateStoreComponent {
   readonly retryCatalog = (): void => {
     this.wizard.loadCatalog();
   };
+
+  private objectUrl(file: File): string | null {
+    try {
+      return typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function'
+        ? URL.createObjectURL(file)
+        : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private clearCompanyLogoPreview(): void {
+    const url = this.companyLogoPreview();
+    try {
+      if (url && typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // La vista previa es opcional; no debe romper el alta.
+    }
+    this.companyLogoPreview.set(null);
+  }
 
   publish(): void {
     if (this.isCompanyOwner()) {

@@ -6,6 +6,7 @@ import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
 import { StoreService } from './services/store/store.service';
 import { CatalogService } from './services/catalog/catalog.service';
 import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../products/public-api';
+import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';
 import { companyOwnerRedirectGuard } from '../auth/public-api';
 
 /**
@@ -28,6 +29,7 @@ export const STORES_ROUTES: Routes = [
       { provide: CATALOG_REPOSITORY, useClass: CatalogService },
       { provide: CATALOG_PRODUCT_REPOSITORY, useClass: CatalogProductService },
       { provide: COMPANY_REPOSITORY, useClass: CompanyService },
+      { provide: STORAGE_REPOSITORY, useClass: StorageService },
     ],
   },
   {
