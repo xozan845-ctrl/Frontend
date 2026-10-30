@@ -1,7 +1,9 @@
 /** API de aplicación pública de `empresas` para dominios consumidores. */
 export type {
   Company,
+  CompanyProfileData,
   CompanySeller,
+  CompanyType,
   CreateCompanyData,
   CreateCompanySellerData,
   LogisticsMode,

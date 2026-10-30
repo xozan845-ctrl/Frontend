@@ -54,12 +54,16 @@ describe('CreateStoreComponent', () => {
           id: 'c-1',
           name: 'Mi Empresa',
           logisticsMode: 'plataforma' as const,
+          type: 'comercial' as const,
           status: 'activa',
           createdBy: 'u-1',
           createdAt: '2026-10-21T00:00:00.000Z',
         }),
       ),
       getById: vi.fn(),
+      updateProfile: vi.fn(),
+      updateSlug: vi.fn(),
+      updateType: vi.fn(),
       updateLogistics: vi.fn(),
       createSeller: vi.fn(),
     };
@@ -142,6 +146,7 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.storeForm.setValue({
       companyName: 'Mi Empresa',
       logisticsMode: 'hibrida',
+      companyType: 'comercial',
       name: 'Mi Tienda',
       description: 'Demo',
     });
@@ -151,6 +156,7 @@ describe('CreateStoreComponent', () => {
     expect(companyRepo.create).toHaveBeenCalledWith({
       name: 'Mi Empresa',
       logisticsMode: 'hibrida',
+      type: 'comercial',
     });
     expect(repo.createStore).toHaveBeenCalledWith({
       name: 'Mi Tienda',
@@ -167,6 +173,7 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.storeForm.setValue({
       companyName: '',
       logisticsMode: 'plataforma',
+      companyType: 'comercial',
       name: 'Mi Tienda',
       description: '',
     });
@@ -176,6 +183,7 @@ describe('CreateStoreComponent', () => {
     expect(companyRepo.create).toHaveBeenCalledWith({
       name: 'Mi Tienda',
       logisticsMode: 'plataforma',
+      type: 'comercial',
     });
   });
 
@@ -193,6 +201,7 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.storeForm.setValue({
       companyName: '',
       logisticsMode: 'plataforma',
+      companyType: 'comercial',
       name: 'Mi Tienda',
       description: 'Demo',
     });
@@ -359,6 +368,7 @@ describe('CreateStoreComponent', () => {
     fixture.componentInstance.storeForm.setValue({
       companyName: '',
       logisticsMode: 'plataforma',
+      companyType: 'comercial',
       name: 'Mi Tienda',
       description: '',
     });

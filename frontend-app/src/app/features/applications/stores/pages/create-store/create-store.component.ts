@@ -3,6 +3,7 @@ import { NgClass } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
+import type { CompanyType } from '../../../empresas/public-api';
 import { StoreWizardStore } from '../../state/store-wizard/store-wizard.store';
 import {
   CatalogProductOption,
@@ -71,6 +72,7 @@ export default class CreateStoreComponent {
   readonly storeForm = this.fb.nonNullable.group({
     companyName: [''],
     logisticsMode: this.fb.nonNullable.control<StoreCompanyMode>('plataforma'),
+    companyType: this.fb.nonNullable.control<CompanyType>('comercial'),
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     description: [''],
   });
@@ -134,9 +136,10 @@ export default class CreateStoreComponent {
       this.storeForm.markAllAsTouched();
       return;
     }
-    const { name, description, companyName, logisticsMode } = this.storeForm.getRawValue();
+    const { name, description, companyName, logisticsMode, companyType } =
+      this.storeForm.getRawValue();
     const company = this.needsCompany()
-      ? { name: companyName.trim() || name, logisticsMode }
+      ? { name: companyName.trim() || name, logisticsMode, type: companyType }
       : undefined;
     this.wizard.createStore({ name, description, ...(company ? { company } : {}) });
   }

@@ -10,9 +10,7 @@ import {
   COMPANY_CLIENTS_SCOPE_CONFIG,
 } from './constants/company-clients-page.config';
 import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
-import { COMPANY_REPOSITORY } from './repositories/company.repository';
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
-import { CompanyService } from './services/company/company.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
 import { COMPANY_BANKS_SCOPE_CONFIG } from './constants/company-banks.config';
@@ -22,7 +20,6 @@ import { PAYABLES_SCOPE_CONFIG } from '../../../shared/payables/constants/payabl
 import { BANKS_SCOPE_CONFIG } from '../../../shared/banks/constants/banks-config.tokens';
 import { BARCODES_SCOPE_CONFIG } from '../../../shared/barcodes/constants/barcodes-config.tokens';
 import { CREDITS_SCOPE_CONFIG } from '../../../shared/credits/constants/credits-config.tokens';
-import { CompanyStore } from './state/company/company.store';
 
 const companySoonRoute = (
   path: string,
@@ -55,7 +52,6 @@ export const EMPRESAS_ROUTES: Routes = [
     path: 'empresa',
     canActivate: [companyGuard],
     loadComponent: () => import('./pages/company-shell/company-shell.component'),
-    providers: [CompanyStore, { provide: COMPANY_REPOSITORY, useClass: CompanyService }],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       {

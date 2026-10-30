@@ -23,7 +23,82 @@ describe('company.adapter', () => {
         id: 'c-1',
         name: 'Mi Empresa',
         logisticsMode: 'propia',
+        type: 'comercial',
         status: 'activa',
+      });
+    });
+
+    it('debe mapear los metadatos de empresa del contrato público', () => {
+      expect(
+        adaptCompanyFromBackend({
+          id: 'c-2',
+          nombre: 'Mi Empresa',
+          slug: 'mi-empresa',
+          tipo_empresa: 'logistica',
+          ruc: 'J0310000000000',
+          razon_social: 'Mi Empresa S.A.',
+          nombre_comercial: 'Mi Store',
+          descripcion: 'Descripción',
+          telefono: '+505 8888 0000',
+          correo_contacto: 'hola@empresa.test',
+          sitio_web: 'https://empresa.test',
+          direccion: 'Calle 1',
+          ciudad: 'Managua',
+          departamento: 'Managua',
+          pais: 'Nicaragua',
+          moneda: 'NIO',
+          zona_horaria: 'America/Managua',
+          sector: 'Comercio',
+          representante_legal: 'Ana Pérez',
+          horario_atencion: 'Lun–Vie',
+          logo_objeto_id: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+          logo_url: 'https://cdn.empresa.test/logo.png',
+          actualizado_en: '2026-10-22T00:00:00.000Z',
+        }),
+      ).toEqual({
+        id: 'c-2',
+        name: 'Mi Empresa',
+        slug: 'mi-empresa',
+        logisticsMode: 'plataforma',
+        type: 'logistica',
+        status: 'activa',
+        createdBy: '',
+        createdAt: '',
+        taxId: 'J0310000000000',
+        legalName: 'Mi Empresa S.A.',
+        commercialName: 'Mi Store',
+        description: 'Descripción',
+        phone: '+505 8888 0000',
+        contactEmail: 'hola@empresa.test',
+        website: 'https://empresa.test',
+        address: 'Calle 1',
+        city: 'Managua',
+        department: 'Managua',
+        country: 'Nicaragua',
+        currency: 'NIO',
+        timezone: 'America/Managua',
+        sector: 'Comercio',
+        legalRepresentative: 'Ana Pérez',
+        businessHours: 'Lun–Vie',
+        logoObjectId: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+        logoUrl: 'https://cdn.empresa.test/logo.png',
+        updatedAt: '2026-10-22T00:00:00.000Z',
+      });
+    });
+
+    it('debe conservar un logo nulo y degradar un tipo desconocido a comercial', () => {
+      expect(
+        adaptCompanyFromBackend({
+          id: 'c-3',
+          tipo_empresa: 'desconocido',
+          logo_objeto_id: null,
+          logo_url: null,
+        }),
+      ).toMatchObject({
+        id: 'c-3',
+        type: 'comercial',
+        logoObjectId: null,
+        logoUrl: null,
       });
     });
 
@@ -48,6 +123,7 @@ describe('company.adapter', () => {
         id: 'c-3',
         name: 'Empresa',
         logisticsMode: 'plataforma',
+        type: 'comercial',
         status: 'activa',
         createdBy: '',
         createdAt: '',

@@ -1,4 +1,4 @@
-import { inject, untracked } from '@angular/core';
+import { inject, untracked, type Provider } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, from, pipe } from 'rxjs';
@@ -7,11 +7,14 @@ import { NotificationService } from '../../../../../core/services/notification/n
 import { AuthStore } from '../../../auth/public-api';
 import {
   Company,
+  CompanyProfileData,
+  CompanyType,
   CreateCompanyData,
   CreateCompanySellerData,
   LogisticsMode,
 } from '../../models/company.model';
 import { COMPANY_REPOSITORY } from '../../repositories/company.repository';
+import { CompanyService } from '../../services/company/company.service';
 import type { CompanyState } from './company.state';
 
 const initialState: CompanyState = {
@@ -99,6 +102,78 @@ export const CompanyStore = signalStore(
           ),
         ),
 
+        /** Actualiza los metadatos comerciales, fiscales y el logo. */
+        updateProfile: rxMethod<CompanyProfileData>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap((data) => {
+              const company = untracked(() => store.company());
+              if (!company) return EMPTY;
+
+              return companyRepo.updateProfile(company.id, data).pipe(
+                tap((updated: Company) => {
+                  patchState(store, { company: updated, saving: false, error: null });
+                  notificationService.showSuccess('Perfil de la empresa actualizado.');
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'No se pudo actualizar el perfil.';
+                  patchState(store, { saving: false, error: message });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
+
+        /** Cambia el slug público de la empresa activa. */
+        updateSlug: rxMethod<string>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap((slug) => {
+              const company = untracked(() => store.company());
+              if (!company) return EMPTY;
+
+              return companyRepo.updateSlug(company.id, slug).pipe(
+                tap((updated: Company) => {
+                  patchState(store, { company: updated, saving: false, error: null });
+                  notificationService.showSuccess('Slug público actualizado.');
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'No se pudo actualizar el slug.';
+                  patchState(store, { saving: false, error: message });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
+
+        /** Clasifica la empresa activa (comercial, logística o plataforma). */
+        updateType: rxMethod<CompanyType>(
+          pipe(
+            tap(() => patchState(store, { saving: true, error: null })),
+            switchMap((type) => {
+              const company = untracked(() => store.company());
+              if (!company) return EMPTY;
+
+              return companyRepo.updateType(company.id, type).pipe(
+                tap((updated: Company) => {
+                  patchState(store, { company: updated, saving: false, error: null });
+                  notificationService.showSuccess('Tipo de empresa actualizado.');
+                }),
+                catchError((err: Error) => {
+                  const message = err.message || 'No se pudo actualizar el tipo de empresa.';
+                  patchState(store, { saving: false, error: message });
+                  notificationService.showError(message);
+                  return EMPTY;
+                }),
+              );
+            }),
+          ),
+        ),
+
         /** Cambia la modalidad logística de la empresa activa. */
         updateLogistics: rxMethod<LogisticsMode>(
           pipe(
@@ -151,6 +226,11 @@ export const CompanyStore = signalStore(
           ),
         ),
 
+        /** Refleja una empresa actualizada por otra operación (p. ej. el logo). */
+        applyCompanyUpdate(company: Company): void {
+          patchState(store, { company, error: null });
+        },
+
         /** Limpia el error visible sin tocar la empresa cargada. */
         clearError(): void {
           patchState(store, { error: null });
@@ -164,3 +244,9 @@ export const CompanyStore = signalStore(
     },
   ),
 );
+
+/** Providers del workspace de empresa, cargados junto al shell lazy. */
+export const COMPANY_WORKSPACE_PROVIDERS: Provider[] = [
+  CompanyStore,
+  { provide: COMPANY_REPOSITORY, useClass: CompanyService },
+];
