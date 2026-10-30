@@ -42,6 +42,28 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
     ...(typeof tienda.creado_en === 'string' && tienda.creado_en
       ? { createdAt: tienda.creado_en }
       : {}),
+    ...(typeof (tienda.logo_objeto_id ?? tienda.logoObjectId) === 'string' &&
+    (tienda.logo_objeto_id ?? tienda.logoObjectId)
+      ? { logoObjectId: String(tienda.logo_objeto_id ?? tienda.logoObjectId) }
+      : {}),
+    ...(typeof (tienda.logo_url ?? tienda.logoUrl ?? tienda.imagen_url ?? tienda.imagenUrl) ===
+      'string' &&
+    (tienda.logo_url ?? tienda.logoUrl ?? tienda.imagen_url ?? tienda.imagenUrl)
+      ? {
+          logoUrl: String(
+            tienda.logo_url ?? tienda.logoUrl ?? tienda.imagen_url ?? tienda.imagenUrl,
+          ),
+        }
+      : {}),
+    ...(typeof (tienda.empresa_logo_url ?? tienda.company_logo_url ?? tienda.companyLogoUrl) ===
+      'string' &&
+    (tienda.empresa_logo_url ?? tienda.company_logo_url ?? tienda.companyLogoUrl)
+      ? {
+          companyLogoUrl: String(
+            tienda.empresa_logo_url ?? tienda.company_logo_url ?? tienda.companyLogoUrl,
+          ),
+        }
+      : {}),
   };
 }
 

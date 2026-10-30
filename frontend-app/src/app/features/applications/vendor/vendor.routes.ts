@@ -82,6 +82,8 @@ export const VENDOR_ROUTES: Routes = [
       },
       { provide: CLIENT_REPOSITORY, useClass: ClientService },
       { provide: VENDOR_PRODUCT_REPOSITORY, useClass: VendorProductService },
+      { provide: STORE_REPOSITORY, useClass: StoreService },
+      VendorStoreStore,
       OrderDraftStore,
       VendorOrdersStore,
       ClientSearchStore,
@@ -142,7 +144,6 @@ export const VENDOR_ROUTES: Routes = [
         path: 'tienda',
         canActivate: [moduleGuard('store.my-store')],
         loadComponent: () => import('./pages/store/store.component'),
-        providers: [VendorStoreStore, { provide: STORE_REPOSITORY, useClass: StoreService }],
       },
       // Compatibilidad con enlaces antiguos: la administración vive en su
       // workspace propio, fuera del panel operativo.

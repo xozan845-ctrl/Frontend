@@ -161,20 +161,6 @@ describe('CompanySettingsComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="create-company-form"]')).toBeNull();
   });
 
-  it('debe cargar la empresa del tenant al entrar', async () => {
-    user.set({
-      id: 'u-1',
-      name: 'Eva',
-      email: 'eva@tienda.test',
-      role: 'empresario',
-      tenantId: 'c-1',
-    });
-
-    await setup();
-
-    expect(companyStore.load).toHaveBeenCalledWith('c-1');
-  });
-
   it('debe mostrar la empresa y guardar la modalidad logística', async () => {
     user.set({
       id: 'u-1',

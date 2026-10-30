@@ -17,6 +17,12 @@ export interface Store {
   ownerUserId?: string;
   /** Participación del vendedor sobre las ventas (0–100). */
   participationPercentage?: number;
+  /** UUID del objeto de storage con el logo de la tienda. */
+  logoObjectId?: string;
+  /** URL pública del logo; puede venir derivada del backend. */
+  logoUrl?: string;
+  /** Logo de la empresa dueña, si el contrato de tienda lo incluye. */
+  companyLogoUrl?: string;
   /** Fecha de creación ISO 8601 UTC. */
   createdAt?: string;
 }

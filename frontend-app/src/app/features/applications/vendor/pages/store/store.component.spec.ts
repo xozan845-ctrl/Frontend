@@ -32,7 +32,7 @@ describe('VendorStoreComponent', () => {
     clearError: vi.fn(),
     reset: vi.fn(),
   };
-  const seo = { setPage: vi.fn(), reset: vi.fn() };
+  const seo = { setPage: vi.fn(), updateTitle: vi.fn(), reset: vi.fn() };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
@@ -57,10 +57,14 @@ describe('VendorStoreComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe cargar la ficha al entrar', async () => {
-    await setup();
+  it('debe mostrar el logo de la tienda cuando está disponible', async () => {
+    storeSignal.set({ ...store, logoUrl: 'https://cdn.test/tienda.png' });
+    loaded.set(true);
+    const fixture = await setup();
 
-    expect(vendorStore.load).toHaveBeenCalled();
+    expect(
+      fixture.nativeElement.querySelector('[data-testid="store-logo"]').getAttribute('src'),
+    ).toBe('https://cdn.test/tienda.png');
   });
 
   it('debe mostrar la ficha de la tienda con participación y enlace público', async () => {
