@@ -1,0 +1,101 @@
+<div class="flex flex-col gap-2">
+  <span class="text-[10px] font-black tracking-widest text-slate-500 uppercase">{{ label() }}</span>
+
+  <div
+    class="group relative overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition-colors dark:border-surface-600 dark:bg-surface-900"
+    [class]="frameClass()"
+    [class.border-accent-500]="isDragging()"
+    [class.bg-accent-50]="isDragging()"
+    [class.opacity-70]="disabled()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    data-testid="image-dropzone"
+  >
+    <input
+      #fileInput
+      type="file"
+      class="sr-only"
+      [accept]="accept()"
+      [disabled]="disabled() || uploading()"
+      (change)="onInputChange($event)"
+      data-testid="image-dropzone-input"
+    />
+
+    @if (previewUrl(); as preview) {
+      <img
+        [src]="preview"
+        [alt]="alt()"
+        class="h-full w-full object-contain p-3"
+        data-testid="image-dropzone-preview"
+      />
+
+      @if (!disabled() && !uploading()) {
+        <div
+          class="absolute inset-0 flex items-center justify-center gap-2 bg-slate-950/55 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
+        >
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            (click)="fileInput.click()"
+            data-testid="image-dropzone-change"
+          >
+            <i class="fa-solid fa-arrows-rotate text-xs" aria-hidden="true"></i>
+            Cambiar
+          </button>
+          @if (removable()) {
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm text-white hover:bg-white/10"
+              (click)="remove()"
+              data-testid="image-dropzone-remove"
+            >
+              <i class="fa-solid fa-trash text-xs" aria-hidden="true"></i>
+              Quitar
+            </button>
+          }
+        </div>
+      }
+    } @else {
+      <button
+        type="button"
+        class="flex h-full w-full flex-col items-center justify-center gap-2 px-4 py-6 text-center transition-colors hover:bg-slate-100 disabled:cursor-not-allowed dark:hover:bg-surface-800"
+        [disabled]="disabled() || uploading()"
+        (click)="fileInput.click()"
+        data-testid="image-dropzone-pick"
+      >
+        <i class="fa-solid fa-cloud-arrow-up text-2xl text-accent-500" aria-hidden="true"></i>
+        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">
+          Arrastra una imagen o haz clic para seleccionarla
+        </span>
+        <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          {{ maxSizeLabel() }} máx.
+        </span>
+      </button>
+    }
+
+    @if (uploading()) {
+      <div
+        class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/65 text-white"
+        role="status"
+        aria-live="polite"
+        data-testid="image-dropzone-uploading"
+      >
+        <i class="fa-solid fa-circle-notch animate-spin text-2xl" aria-hidden="true"></i>
+        <span class="text-xs font-black tracking-widest uppercase">Subiendo…</span>
+      </div>
+    }
+  </div>
+
+  <p class="text-xs text-slate-500 dark:text-slate-400">{{ hint() }}</p>
+
+  @if (error(); as message) {
+    <p
+      class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+      role="alert"
+      data-testid="image-dropzone-error"
+    >
+      {{ message }}
+    </p>
+  }
+</div>
