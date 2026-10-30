@@ -57,19 +57,25 @@ export const StoreWizardStore = signalStore(
        * lleve el `tenant_id` que exige `POST /vendedores/tienda`.
        */
       const setupCompany = (company: StoreCompanySetup): Observable<void> =>
-        companyRepo.create({ name: company.name, logisticsMode: company.logisticsMode }).pipe(
-          switchMap(() => from(authStore.refreshTokenOnce())),
-          switchMap((renewed) =>
-            renewed
-              ? of(undefined)
-              : throwError(
-                  () =>
-                    new Error(
-                      'La empresa se creó, pero la sesión no se pudo renovar. Inicia sesión de nuevo.',
-                    ),
-                ),
-          ),
-        );
+        companyRepo
+          .create({
+            name: company.name,
+            logisticsMode: company.logisticsMode,
+            ...(company.type ? { type: company.type } : {}),
+          })
+          .pipe(
+            switchMap(() => from(authStore.refreshTokenOnce())),
+            switchMap((renewed) =>
+              renewed
+                ? of(undefined)
+                : throwError(
+                    () =>
+                      new Error(
+                        'La empresa se creó, pero la sesión no se pudo renovar. Inicia sesión de nuevo.',
+                      ),
+                  ),
+            ),
+          );
 
       const loadCatalog = rxMethod<void>(
         pipe(

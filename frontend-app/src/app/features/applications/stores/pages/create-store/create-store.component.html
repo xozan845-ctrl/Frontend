@@ -213,6 +213,18 @@
                     <option value="hibrida">Híbrida (eliges por envío)</option>
                   </select>
                 </div>
+                <div class="flex flex-col gap-2">
+                  <label
+                    for="company-type"
+                    class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                    >Tipo de empresa</label
+                  >
+                  <select id="company-type" formControlName="companyType" class="input">
+                    <option value="comercial">Comercial (catálogo propio)</option>
+                    <option value="logistica">Logística (envíos para empresas)</option>
+                    <option value="plataforma">Plataforma (operación global)</option>
+                  </select>
+                </div>
               </fieldset>
             }
 

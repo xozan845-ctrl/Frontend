@@ -9,7 +9,9 @@ import { Company, CompanySeller } from '../../models/company.model';
 const company: Company = {
   id: 'c-1',
   name: 'Mi Empresa',
+  slug: 'mi-empresa',
   logisticsMode: 'plataforma',
+  type: 'comercial',
   status: 'activa',
   createdBy: 'u-1',
   createdAt: '2026-10-21T00:00:00.000Z',
@@ -32,6 +34,11 @@ describe('CompanyStore', () => {
     repo = {
       create: vi.fn(() => of(company)),
       getById: vi.fn(() => of(company)),
+      updateProfile: vi.fn(() =>
+        of<Company>({ ...company, commercialName: 'Mi Store', city: 'Managua' }),
+      ),
+      updateSlug: vi.fn(() => of<Company>({ ...company, slug: 'nuevo-slug' })),
+      updateType: vi.fn(() => of<Company>({ ...company, type: 'logistica' as const })),
       updateLogistics: vi.fn(() => of<Company>({ ...company, logisticsMode: 'propia' as const })),
       createSeller: vi.fn(() => of(seller)),
     };
@@ -152,6 +159,87 @@ describe('CompanyStore', () => {
     expect(store.saving()).toBe(false);
   });
 
+  it('debe actualizar el perfil comercial de la empresa activa', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+
+    store.updateProfile({ commercialName: 'Mi Store', city: 'Managua' });
+
+    await vi.waitFor(() => expect(store.company()?.commercialName).toBe('Mi Store'));
+    expect(repo.updateProfile).toHaveBeenCalledWith('c-1', {
+      commercialName: 'Mi Store',
+      city: 'Managua',
+    });
+    expect(notification.showSuccess).toHaveBeenCalledWith('Perfil de la empresa actualizado.');
+  });
+
+  it('no debe actualizar el perfil sin empresa cargada', () => {
+    const store = setup();
+
+    store.updateProfile({ city: 'Managua' });
+
+    expect(repo.updateProfile).not.toHaveBeenCalled();
+  });
+
+  it('debe actualizar el slug público de la empresa activa', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+
+    store.updateSlug('nuevo-slug');
+
+    await vi.waitFor(() => expect(store.company()?.slug).toBe('nuevo-slug'));
+    expect(repo.updateSlug).toHaveBeenCalledWith('c-1', 'nuevo-slug');
+    expect(notification.showSuccess).toHaveBeenCalledWith('Slug público actualizado.');
+  });
+
+  it('debe actualizar el tipo de empresa activa', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+
+    store.updateType('logistica');
+
+    await vi.waitFor(() => expect(store.company()?.type).toBe('logistica'));
+    expect(repo.updateType).toHaveBeenCalledWith('c-1', 'logistica');
+    expect(notification.showSuccess).toHaveBeenCalledWith('Tipo de empresa actualizado.');
+  });
+
+  it('debe registrar el error al actualizar el perfil sin mensaje', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+    vi.mocked(repo.updateProfile).mockReturnValue(throwError(() => new Error('')));
+
+    store.updateProfile({ city: 'Managua' });
+
+    await vi.waitFor(() => expect(store.error()).toBe('No se pudo actualizar el perfil.'));
+    expect(store.saving()).toBe(false);
+  });
+
+  it('debe registrar el error al actualizar el slug sin mensaje', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+    vi.mocked(repo.updateSlug).mockReturnValue(throwError(() => new Error('')));
+
+    store.updateSlug('otro');
+
+    await vi.waitFor(() => expect(store.error()).toBe('No se pudo actualizar el slug.'));
+  });
+
+  it('debe registrar el error al actualizar el tipo sin mensaje', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+    vi.mocked(repo.updateType).mockReturnValue(throwError(() => new Error('')));
+
+    store.updateType('plataforma');
+
+    await vi.waitFor(() => expect(store.error()).toBe('No se pudo actualizar el tipo de empresa.'));
+  });
+
   it('debe crear un vendedor y añadirlo a la lista de la sesión', async () => {
     const store = setup();
     store.load('c-1');
@@ -204,6 +292,16 @@ describe('CompanyStore', () => {
 
     await vi.waitFor(() => expect(store.error()).toBe('ya existe una cuenta con ese correo'));
     expect(store.sellers()).toEqual([]);
+  });
+
+  it('debe reflejar una empresa actualizada por otra operación', async () => {
+    const store = setup();
+    store.load('c-1');
+    await vi.waitFor(() => expect(store.company()).toEqual(company));
+
+    store.applyCompanyUpdate({ ...company, logoObjectId: 'o-1' });
+
+    expect(store.company()?.logoObjectId).toBe('o-1');
   });
 
   it('debe limpiar el error y reiniciar el estado', async () => {

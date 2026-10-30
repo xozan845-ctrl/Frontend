@@ -13,6 +13,7 @@ const company = {
   id: 'c-1',
   name: 'Mi Empresa',
   logisticsMode: 'plataforma' as const,
+  type: 'comercial' as const,
   status: 'activa',
   createdBy: 'u-1',
   createdAt: '2026-10-21T00:00:00.000Z',
@@ -38,6 +39,9 @@ describe('StoreWizardStore', () => {
     companyRepo = {
       create: vi.fn(() => of(company)),
       getById: vi.fn(() => of(company)),
+      updateProfile: vi.fn(() => of(company)),
+      updateSlug: vi.fn(() => of(company)),
+      updateType: vi.fn(() => of(company)),
       updateLogistics: vi.fn(() => of(company)),
       createSeller: vi.fn(() =>
         of({
@@ -178,13 +182,14 @@ describe('StoreWizardStore', () => {
     wizard.createStore({
       name: 'Mi Tienda',
       description: 'Demo',
-      company: { name: 'Mi Empresa', logisticsMode: 'hibrida' },
+      company: { name: 'Mi Empresa', logisticsMode: 'hibrida', type: 'logistica' },
     });
     await vi.waitFor(() => expect(wizard.store()).toEqual(store));
 
     expect(companyRepo.create).toHaveBeenCalledWith({
       name: 'Mi Empresa',
       logisticsMode: 'hibrida',
+      type: 'logistica',
     });
     expect(authStore.refreshTokenOnce).toHaveBeenCalled();
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });

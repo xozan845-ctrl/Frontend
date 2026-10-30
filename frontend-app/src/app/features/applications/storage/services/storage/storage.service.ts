@@ -21,6 +21,16 @@ import {
 } from '../../models/storage.model';
 import { StorageRepository } from '../../repositories/storage.repository';
 
+/**
+ * URL pública de un objeto confirmado. Fallback cuando identity-service no
+ * devuelve `logo_url` en `EmpresaResponseDto`.
+ */
+export function storagePublicObjectUrl(objectId: string): string {
+  const base = (environment.apiUrl ?? '').replace(/\/+$/, '');
+  const endpoint = environment.apiConfig?.endpoints?.storage || '/storage';
+  return `${base}${endpoint}/public/objetos/${encodeURIComponent(objectId)}`;
+}
+
 /** Almacenamiento del tenant (`/storage/bucket`, `/storage/objetos`). */
 @Injectable({
   providedIn: 'root',

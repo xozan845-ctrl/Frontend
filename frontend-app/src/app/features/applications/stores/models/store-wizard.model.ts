@@ -1,3 +1,5 @@
+import type { CompanyType } from '../../empresas/public-api';
+
 /** Paso del asistente de creación de tienda. */
 export interface WizardStep {
   id: number;
@@ -26,6 +28,8 @@ export type StoreCompanyMode = 'plataforma' | 'propia' | 'hibrida';
 export interface StoreCompanySetup {
   name: string;
   logisticsMode: StoreCompanyMode;
+  /** Clasificación inicial; identity-service usa `comercial` si se omite. */
+  type?: CompanyType;
 }
 
 /** Datos del formulario de creación de tienda (`POST /vendedores/tienda`). */
