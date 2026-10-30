@@ -60,20 +60,20 @@ problema de sesión, pero no representa el resultado final de la ronda.
 Se volvió a ejecutar el alcance completo del módulo Productos / Servicios en
 Firebase Hosting con una sesión real de propietario de empresa.
 
-| Área repetida | Resultado | Evidencia de esta ronda |
-| --- | --- | --- |
-| Login, panel y ruta del módulo | OK | Entró al panel de empresa y a `/empresa/productos`, sin errores de consola ni peticiones fallidas. |
-| Alta de producto | OK | Se creó `QA Owner 1793378090874` con SKU `QA-OWNER-1793378090874`. |
-| Edición de precio y stock | OK en sesión | La fila reflejó precio `C$1,600.00` y stock `5`. |
-| Persistencia del costo | FALLO reproducido | En una sesión nueva el mismo producto mostró costo `C$0.00`, inventario `C$0.00` y margen `100%`. Confirma `R-PS-01`. |
-| Filtros, ordenación y estados | OK visual | Pasaron los 7 ordenamientos, búsqueda por SKU, búsqueda vacía, limpieza, Todos/Activos/Inactivos/Stock bajo y Materia Prima. |
-| Validación de producto | OK | El formulario bloqueó el alta inválida y mostró controles inválidos; la validación funcional existe aunque no usa atributos HTML `required`. |
-| Importación/exportación | Parcial esperado | Descargó `plantilla-productos.csv` e `inventario.csv`; la importación informó que queda para una próxima fase. |
-| Acciones futuras | NO IMPLEMENTADAS | Combos, promociones, configuración, movimientos, traslados y barcode continuaron mostrando próxima fase. |
-| Alta de servicio | OK inmediato/local | El contador y el toast se actualizaron en la sesión de creación. |
-| Persistencia del servicio | FALLO reproducido | El servicio no apareció al abrir una sesión nueva; confirma `R-PS-02`. |
-| Ciclo de servicio | OK local | Código duplicado bloqueado, duración inválida bloqueada, cancelar/Escape conservaron la fila y confirmar la eliminó. |
-| Modales y Marca/Proveedor | OK / HALLAZGO | Escape, X y fondo cerraron los modales; Marca/Proveedor siguió ofreciendo solo `Sin marca / proveedor`, confirma `R-PS-05`. |
+| Área repetida                  | Resultado          | Evidencia de esta ronda                                                                                                                      |
+| ------------------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login, panel y ruta del módulo | OK                 | Entró al panel de empresa y a `/empresa/productos`, sin errores de consola ni peticiones fallidas.                                           |
+| Alta de producto               | OK                 | Se creó `QA Owner 1793378090874` con SKU `QA-OWNER-1793378090874`.                                                                           |
+| Edición de precio y stock      | OK en sesión       | La fila reflejó precio `C$1,600.00` y stock `5`.                                                                                             |
+| Persistencia del costo         | FALLO reproducido  | En una sesión nueva el mismo producto mostró costo `C$0.00`, inventario `C$0.00` y margen `100%`. Confirma `R-PS-01`.                        |
+| Filtros, ordenación y estados  | OK visual          | Pasaron los 7 ordenamientos, búsqueda por SKU, búsqueda vacía, limpieza, Todos/Activos/Inactivos/Stock bajo y Materia Prima.                 |
+| Validación de producto         | OK                 | El formulario bloqueó el alta inválida y mostró controles inválidos; la validación funcional existe aunque no usa atributos HTML `required`. |
+| Importación/exportación        | Parcial esperado   | Descargó `plantilla-productos.csv` e `inventario.csv`; la importación informó que queda para una próxima fase.                               |
+| Acciones futuras               | NO IMPLEMENTADAS   | Combos, promociones, configuración, movimientos, traslados y barcode continuaron mostrando próxima fase.                                     |
+| Alta de servicio               | OK inmediato/local | El contador y el toast se actualizaron en la sesión de creación.                                                                             |
+| Persistencia del servicio      | FALLO reproducido  | El servicio no apareció al abrir una sesión nueva; confirma `R-PS-02`.                                                                       |
+| Ciclo de servicio              | OK local           | Código duplicado bloqueado, duración inválida bloqueada, cancelar/Escape conservaron la fila y confirmar la eliminó.                         |
+| Modales y Marca/Proveedor      | OK / HALLAZGO      | Escape, X y fondo cerraron los modales; Marca/Proveedor siguió ofreciendo solo `Sin marca / proveedor`, confirma `R-PS-05`.                  |
 
 El script combinado de flujos faltantes se detuvo al intentar abrir un segundo
 modal mientras el modal de edición seguía visible; es una limitación de
@@ -126,19 +126,19 @@ configuración, combos, promociones y movimientos. La conclusión cambió de
 “frontend antiguo” a “frontend conectado, pero backend sin permisos/contrato
 completo para este rol”.
 
-| Flujo | Resultado | Evidencia HTTP/UI |
-| --- | --- | --- |
-| Login y entrada al módulo | OK | Acceso a `/empresa/productos`; sin errores de consola ni `requestfailed`. |
-| Alta de producto | OK parcial | `POST /catalog/productos` respondió `201`, pero la respuesta omitió costo y metadatos; la tabla mostró costo `—`. |
-| Edición de precio y stock | OK parcial | `PATCH` actualizó precio y stock; costo continuó en `—`. |
-| Lectura de producto | FALLO de contrato/backend | `GET /catalog/productos` respondió `200`, pero no devolvió costo, marca, barcode, stock mínimo ni `estado_operativo`. |
-| Servicios | BLOQUEADO por permisos | `GET` y `POST /catalog/servicios` respondieron `403 ACCESO_DENEGADO`: rol `empresario` sin acceso. |
-| Combos, promociones y movimientos | BLOQUEADOS por permisos | Las rutas respondieron `403`; la UI mostró el mensaje de backend. |
-| Configuración de inventario | BLOQUEADA por permisos | La UI abrió el modal, pero la carga/guardado recibió `403`. |
-| Importación CSV | FALLO de endpoint | La vista previa funcionó; al confirmar, `POST /catalog/productos/importar` respondió `404 Cannot POST`. |
-| Filtros y ordenación | OK | Pasaron búsquedas, limpieza, estados, stock bajo, materia prima y los 7 ordenamientos. |
-| Validación de formularios | OK | El alta inválida quedó bloqueada y mostró cuatro controles inválidos. |
-| Plantilla y exportación | OK | Descargó `plantilla-productos.csv` e `inventario.csv`. |
+| Flujo                             | Resultado                 | Evidencia HTTP/UI                                                                                                     |
+| --------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Login y entrada al módulo         | OK                        | Acceso a `/empresa/productos`; sin errores de consola ni `requestfailed`.                                             |
+| Alta de producto                  | OK parcial                | `POST /catalog/productos` respondió `201`, pero la respuesta omitió costo y metadatos; la tabla mostró costo `—`.     |
+| Edición de precio y stock         | OK parcial                | `PATCH` actualizó precio y stock; costo continuó en `—`.                                                              |
+| Lectura de producto               | FALLO de contrato/backend | `GET /catalog/productos` respondió `200`, pero no devolvió costo, marca, barcode, stock mínimo ni `estado_operativo`. |
+| Servicios                         | BLOQUEADO por permisos    | `GET` y `POST /catalog/servicios` respondieron `403 ACCESO_DENEGADO`: rol `empresario` sin acceso.                    |
+| Combos, promociones y movimientos | BLOQUEADOS por permisos   | Las rutas respondieron `403`; la UI mostró el mensaje de backend.                                                     |
+| Configuración de inventario       | BLOQUEADA por permisos    | La UI abrió el modal, pero la carga/guardado recibió `403`.                                                           |
+| Importación CSV                   | FALLO de endpoint         | La vista previa funcionó; al confirmar, `POST /catalog/productos/importar` respondió `404 Cannot POST`.               |
+| Filtros y ordenación              | OK                        | Pasaron búsquedas, limpieza, estados, stock bajo, materia prima y los 7 ordenamientos.                                |
+| Validación de formularios         | OK                        | El alta inválida quedó bloqueada y mostró cuatro controles inválidos.                                                 |
+| Plantilla y exportación           | OK                        | Descargó `plantilla-productos.csv` e `inventario.csv`.                                                                |
 
 ### Reclasificación de hallazgos
 
@@ -170,24 +170,24 @@ productos existentes. No se creó ningún servicio porque el backend rechazó el
 
 ## Matriz de pruebas ejecutadas
 
-| Flujo                                                                | Resultado                         | Evidencia                                                                   |
-| -------------------------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------- |
-| Login y entrada al panel                                             | OK                                | Acceso a `/empresa/productos`.                                              |
-| Carga del catálogo                                                   | OK                                | Sin errores de aplicación ni fallos de API.                                 |
-| Crear producto                                                       | OK inmediato                      | Fila, KPI y toast actualizados.                                             |
-| Editar precio y stock                                                | OK inmediato                      | La fila reflejó los cambios.                                                |
-| Persistir costo                                                      | FALLO en despliegue; fuente corregida | La versión publicada volvió a `C$0.00`; el código fuente nuevo ya envía/lee el campo. |
+| Flujo                                                                | Resultado                             | Evidencia                                                                                           |
+| -------------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Login y entrada al panel                                             | OK                                    | Acceso a `/empresa/productos`.                                                                      |
+| Carga del catálogo                                                   | OK                                    | Sin errores de aplicación ni fallos de API.                                                         |
+| Crear producto                                                       | OK inmediato                          | Fila, KPI y toast actualizados.                                                                     |
+| Editar precio y stock                                                | OK inmediato                          | La fila reflejó los cambios.                                                                        |
+| Persistir costo                                                      | FALLO en despliegue; fuente corregida | La versión publicada volvió a `C$0.00`; el código fuente nuevo ya envía/lee el campo.               |
 | Estado activo/inactivo                                               | FALLO en despliegue; fuente corregida | La versión publicada solo mostró el ciclo visual; el código fuente nuevo separa `estado_operativo`. |
-| Búsqueda, estados y stock bajo                                       | OK visual                         | Búsqueda positiva, búsqueda vacía y filtros respondieron.                   |
-| Ordenación                                                           | OK                                | Se probaron nombre, precio, stock y fecha, en ambos sentidos cuando aplica. |
-| Limpiar filtros                                                      | OK                                | Restableció el listado.                                                     |
-| Materia Prima                                                        | OK visual                         | La pestaña abrió.                                                           |
-| Validación de alta vacía                                             | OK                                | Bloqueó envío y mostró cuatro controles inválidos.                          |
-| Crear servicio                                                       | OK inmediato                      | Contador y toast se actualizaron.                                           |
-| Persistir servicio                                                   | FALLO en despliegue; fuente corregida | Firebase no llamó `/catalog/servicios`; el código fuente nuevo sí tiene repository HTTP. |
-| Descargar plantilla / exportar                                       | OK                                | Descargó `plantilla-productos.csv` e `inventario.csv`.                      |
-| Importar Excel/CSV                                                   | NO IMPLEMENTADO                   | La UI informa “disponible en una próxima fase”.                             |
-| Combos, promociones, configuración, movimientos, traslados y barcode | NO IMPLEMENTADO                   | Cada acción muestra mensaje de próxima fase.                                |
+| Búsqueda, estados y stock bajo                                       | OK visual                             | Búsqueda positiva, búsqueda vacía y filtros respondieron.                                           |
+| Ordenación                                                           | OK                                    | Se probaron nombre, precio, stock y fecha, en ambos sentidos cuando aplica.                         |
+| Limpiar filtros                                                      | OK                                    | Restableció el listado.                                                                             |
+| Materia Prima                                                        | OK visual                             | La pestaña abrió.                                                                                   |
+| Validación de alta vacía                                             | OK                                    | Bloqueó envío y mostró cuatro controles inválidos.                                                  |
+| Crear servicio                                                       | OK inmediato                          | Contador y toast se actualizaron.                                                                   |
+| Persistir servicio                                                   | FALLO en despliegue; fuente corregida | Firebase no llamó `/catalog/servicios`; el código fuente nuevo sí tiene repository HTTP.            |
+| Descargar plantilla / exportar                                       | OK                                    | Descargó `plantilla-productos.csv` e `inventario.csv`.                                              |
+| Importar Excel/CSV                                                   | NO IMPLEMENTADO                       | La UI informa “disponible en una próxima fase”.                                                     |
+| Combos, promociones, configuración, movimientos, traslados y barcode | NO IMPLEMENTADO                       | Cada acción muestra mensaje de próxima fase.                                                        |
 
 No se observaron errores de consola, errores de Angular ni respuestas fallidas
 del backend durante los flujos del módulo.
