@@ -4,6 +4,7 @@ import { StoreWizardStore } from './store-wizard.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalog.repository';
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
+import { STORAGE_REPOSITORY, StorageRepository } from '../../../storage/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { CATALOG_PRODUCT_REPOSITORY, Store } from '../../../products/public-api';
@@ -23,6 +24,7 @@ describe('StoreWizardStore', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
   let companyRepo: CompanyRepository;
+  let storageRepo: StorageRepository;
   let catalogProductRepo: { create: ReturnType<typeof vi.fn> };
   let authStore: { user: ReturnType<typeof vi.fn>; refreshTokenOnce: ReturnType<typeof vi.fn> };
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
@@ -56,6 +58,43 @@ describe('StoreWizardStore', () => {
     catalogProductRepo = {
       create: vi.fn((data) => of({ id: `created-${data.sku}`, name: data.name })),
     };
+    storageRepo = {
+      bucket: vi.fn(),
+      objects: vi.fn(),
+      requestUpload: vi.fn(() =>
+        of({
+          objectId: 'o-1',
+          bucket: 'bucket',
+          key: 'logo.png',
+          uploadUrl: 'https://upload.test/logo.png',
+          method: 'PUT',
+          headers: {},
+          expiresAt: '',
+          maxBytes: 0,
+        }),
+      ),
+      uploadToUrl: vi.fn(() => of(undefined)),
+      confirm: vi.fn(() =>
+        of({
+          id: 'o-1',
+          bucket: 'bucket',
+          key: 'logo.png',
+          name: 'logo.png',
+          contentType: 'image/png',
+          folder: 'empresa/logo',
+          description: '',
+          tags: {},
+          sizeBytes: 4,
+          status: 'activo' as const,
+          uploadedBy: null,
+          createdAt: '',
+          confirmedAt: '',
+          deletedAt: null,
+        }),
+      ),
+      download: vi.fn(),
+      delete: vi.fn(),
+    };
     authStore = {
       user: vi.fn(() => null),
       refreshTokenOnce: vi.fn().mockResolvedValue(true),
@@ -66,6 +105,7 @@ describe('StoreWizardStore', () => {
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: COMPANY_REPOSITORY, useValue: companyRepo },
+        { provide: STORAGE_REPOSITORY, useValue: storageRepo },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogProductRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
@@ -193,6 +233,62 @@ describe('StoreWizardStore', () => {
     });
     expect(authStore.refreshTokenOnce).toHaveBeenCalled();
     expect(repo.createStore).toHaveBeenCalledWith({ name: 'Mi Tienda', description: 'Demo' });
+  });
+
+  it('debe subir y asociar el logo de la empresa creada', async () => {
+    const wizard = setup();
+    authStore.user.mockReturnValue({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@tienda.test',
+      role: 'empresario',
+    });
+    const file = new File(['logo'], 'logo.png', { type: 'image/png' });
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: 'Demo',
+      company: { name: 'Mi Empresa', logisticsMode: 'plataforma', logoFile: file },
+    });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+
+    expect(storageRepo.requestUpload).toHaveBeenCalledWith({
+      name: 'logo.png',
+      contentType: 'image/png',
+      sizeBytes: file.size,
+      folder: 'empresa/logo',
+      description: 'Logo de la empresa',
+    });
+    expect(storageRepo.confirm).toHaveBeenCalledWith('o-1');
+    expect(companyRepo.updateProfile).toHaveBeenCalledWith('c-1', { logoObjectId: 'o-1' });
+    expect(notification.showError).not.toHaveBeenCalled();
+  });
+
+  it('debe continuar con la tienda si el logo de la empresa falla', async () => {
+    const wizard = setup();
+    authStore.user.mockReturnValue({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@tienda.test',
+      role: 'empresario',
+    });
+    vi.mocked(storageRepo.requestUpload).mockReturnValue(
+      throwError(() => new Error('storage caído')),
+    );
+
+    wizard.createStore({
+      name: 'Mi Tienda',
+      description: 'Demo',
+      company: {
+        name: 'Mi Empresa',
+        logisticsMode: 'plataforma',
+        logoFile: new File(['logo'], 'logo.png', { type: 'image/png' }),
+      },
+    });
+    await vi.waitFor(() => expect(wizard.store()).toEqual(store));
+
+    expect(notification.showError).toHaveBeenCalledWith('storage caído');
+    expect(repo.createStore).toHaveBeenCalled();
   });
 
   it('no debe crear la tienda si falla el alta de la empresa', async () => {

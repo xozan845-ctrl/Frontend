@@ -6,6 +6,7 @@ import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/public-api';
 import { COMPANY_REPOSITORY } from '../../../empresas/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   CreateStoreProductDraft,
   OfferDraft,
@@ -49,9 +50,33 @@ export const StoreWizardStore = signalStore(
       catalogRepo = inject(CATALOG_REPOSITORY),
       companyRepo = inject(COMPANY_REPOSITORY),
       catalogProductRepo = inject(CATALOG_PRODUCT_REPOSITORY),
+      storageRepo = inject(STORAGE_REPOSITORY),
       authStore = inject(AuthStore),
       notificationService = inject(NotificationService),
     ) => {
+      /** Sube y asocia el logo de la empresa recién creada. */
+      const uploadCompanyLogo = (companyId: string, file: File): Observable<void> =>
+        storageRepo
+          .requestUpload({
+            name: file.name,
+            contentType: file.type,
+            sizeBytes: file.size,
+            folder: 'empresa/logo',
+            description: 'Logo de la empresa',
+          })
+          .pipe(
+            switchMap((upload) =>
+              storageRepo
+                .uploadToUrl(upload.uploadUrl, upload.headers, file)
+                .pipe(map(() => upload.objectId)),
+            ),
+            switchMap((objectId) => storageRepo.confirm(objectId)),
+            switchMap((object) =>
+              companyRepo.updateProfile(companyId, { logoObjectId: object.id }),
+            ),
+            map(() => undefined),
+          );
+
       /**
        * Crea la empresa del empresario y renueva la sesión para que el JWT
        * lleve el `tenant_id` que exige `POST /vendedores/tienda`.
@@ -64,6 +89,18 @@ export const StoreWizardStore = signalStore(
             ...(company.type ? { type: company.type } : {}),
           })
           .pipe(
+            switchMap((created) =>
+              company.logoFile
+                ? uploadCompanyLogo(created.id, company.logoFile).pipe(
+                    catchError((err: Error) => {
+                      notificationService.showError(
+                        err.message || 'La empresa se creó, pero el logo no se pudo subir.',
+                      );
+                      return of(undefined);
+                    }),
+                  )
+                : of(undefined),
+            ),
             switchMap(() => from(authStore.refreshTokenOnce())),
             switchMap((renewed) =>
               renewed

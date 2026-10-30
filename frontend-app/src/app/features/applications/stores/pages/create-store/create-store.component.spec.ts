@@ -9,6 +9,7 @@ import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import type { User } from '../../../auth/public-api';
@@ -19,6 +20,39 @@ describe('CreateStoreComponent', () => {
   let repo: StoreRepository;
   let catalogRepo: CatalogRepository;
   let companyRepo: CompanyRepository;
+  const storageRepo = {
+    requestUpload: vi.fn(() =>
+      of({
+        objectId: 'o-1',
+        bucket: 'bucket',
+        key: 'logo.png',
+        uploadUrl: 'https://upload.test/logo.png',
+        method: 'PUT',
+        headers: {},
+        expiresAt: '',
+        maxBytes: 0,
+      }),
+    ),
+    uploadToUrl: vi.fn(() => of(undefined)),
+    confirm: vi.fn(() =>
+      of({
+        id: 'o-1',
+        bucket: 'bucket',
+        key: 'logo.png',
+        name: 'logo.png',
+        contentType: 'image/png',
+        folder: 'empresa/logo',
+        description: '',
+        tags: {},
+        sizeBytes: 4,
+        status: 'activo' as const,
+        uploadedBy: null,
+        createdAt: '',
+        confirmedAt: '',
+        deletedAt: null,
+      }),
+    ),
+  };
   const catalogProductRepo = {
     create: vi.fn((data: { sku: string; name: string }) =>
       of({ id: `created-${data.sku}`, name: data.name }),
@@ -75,6 +109,7 @@ describe('CreateStoreComponent', () => {
         { provide: STORE_REPOSITORY, useValue: repo },
         { provide: CATALOG_REPOSITORY, useValue: catalogRepo },
         { provide: COMPANY_REPOSITORY, useValue: companyRepo },
+        { provide: STORAGE_REPOSITORY, useValue: storageRepo },
         { provide: CATALOG_PRODUCT_REPOSITORY, useValue: catalogProductRepo },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notification },
@@ -163,6 +198,38 @@ describe('CreateStoreComponent', () => {
       description: 'Demo',
     });
     expect(fixture.componentInstance.wizard.step()).toBe(3);
+  });
+
+  it('debe mostrar el dropzone y subir el logo de la empresa al crearla', async () => {
+    currentUser = { id: 2, email: 'e@e.com', name: 'Eva', role: 'empresario' };
+    const fixture = await setup();
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.step()).toBe(2));
+    fixture.detectChanges();
+
+    const dropzone = fixture.nativeElement.querySelector(
+      '[data-testid="company-setup"] [data-testid="image-dropzone"]',
+    );
+    expect(dropzone).not.toBeNull();
+
+    const file = new File(['logo'], 'logo.png', { type: 'image/png' });
+    fixture.componentInstance.onCompanyLogoSelected(file);
+    fixture.componentInstance.storeForm.setValue({
+      companyName: 'Mi Empresa',
+      logisticsMode: 'plataforma',
+      companyType: 'comercial',
+      name: 'Mi Tienda',
+      description: 'Demo',
+    });
+    fixture.componentInstance.createStore();
+
+    await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
+    expect(storageRepo.requestUpload).toHaveBeenCalledWith({
+      name: 'logo.png',
+      contentType: 'image/png',
+      sizeBytes: file.size,
+      folder: 'empresa/logo',
+      description: 'Logo de la empresa',
+    });
   });
 
   it('debe usar el nombre de la tienda como empresa si se deja vacío', async () => {

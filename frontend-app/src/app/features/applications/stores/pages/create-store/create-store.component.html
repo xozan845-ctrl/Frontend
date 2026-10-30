@@ -225,6 +225,14 @@
                     <option value="plataforma">Plataforma (operación global)</option>
                   </select>
                 </div>
+                <app-image-dropzone
+                  label="Logo de la empresa (opcional)"
+                  hint="PNG, JPG, WebP o SVG · máximo 5 MB. Se sube al crear la empresa."
+                  variant="square"
+                  [previewUrl]="companyLogoPreview()"
+                  (fileSelected)="onCompanyLogoSelected($event)"
+                  (removed)="onCompanyLogoRemoved()"
+                />
               </fieldset>
             }
 
