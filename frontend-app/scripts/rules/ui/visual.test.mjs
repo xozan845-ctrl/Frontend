@@ -1,9 +1,10 @@
 import { defineSuite } from '../../engine/suite.mjs';
-import { findGlassSystemViolations } from './visual-checks.mjs';
+import { GLASS_MIN_COVERAGE } from '../../config/project.mjs';
+import { findGlassSystemViolations, getGlassCoverage } from './visual-checks.mjs';
 import { assertNoFresh } from '../architecture/assertions.mjs';
 
 /**
- * R-UX-7 — el sistema visual Glass es único y centralizado.
+ * R-UX-7 — el sistema visual Glass es único, centralizado y verificable.
  */
 export default defineSuite({
   id: 'visual-guards',
@@ -11,7 +12,25 @@ export default defineSuite({
   rules: ['R-UX-7'],
   mode: 'repo',
   run: ({ test, assert }) => {
-    test('R-UX-7: tokens, utilidades y primitivos Glass viven solo en src/styles.css', () => {
+    test('R-UX-7: cobertura de requisitos Glass >= mínimo configurado', () => {
+      const coverage = getGlassCoverage();
+
+      console.log(
+        `  ℹ Cobertura de requisitos Glass: ${coverage.implemented}/${coverage.total} ` +
+          `(${coverage.percent.toFixed(1)}%), mínimo ${GLASS_MIN_COVERAGE}%.`,
+      );
+      if (coverage.pending.length > 0) {
+        console.log(`  ℹ Pendientes: ${coverage.pending.join(', ')}.`);
+      }
+
+      assert.ok(
+        coverage.percent >= GLASS_MIN_COVERAGE,
+        `Cobertura de requisitos Glass ${coverage.percent.toFixed(1)}% por debajo del mínimo ` +
+          `${GLASS_MIN_COVERAGE}% (${coverage.implemented}/${coverage.total}).`,
+      );
+    });
+
+    test('R-UX-7: tokens, utilidades, primitivos, plantillas y fallback cumplen Glass', () => {
       assertNoFresh({
         assert,
         suiteId: 'visual-guards',

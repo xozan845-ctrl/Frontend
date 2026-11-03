@@ -40,3 +40,14 @@ su API pública (`public-api.ts` / `public-ui.ts`). Ver
 La regla `R-UX-7` y la suite `visual-guards` verifican que este sea el único
 punto de definición: no redefinas tokens, utilidades ni primitivos en los
 estilos de componentes.
+
+### Reglas de uso
+
+- Usa `.glass*`, `.card`, `.btn-*`, `.input`, `.badge` o `.icon-btn`; no
+  reimplementes `backdrop-blur` + fondos translúcidos en plantillas.
+- Los scrims de modales, controles de baja opacidad y etiquetas sobre imagen
+  están permitidos (allowlist de `R-UX-7`).
+- Los shells de página usan `app-page-bg`/`app-shell-bg`; no reintroduzcas
+  fondos planos.
+- La suite falla si la cobertura de requisitos Glass baja del 80% o si aparece
+  una reimplementación nueva.
