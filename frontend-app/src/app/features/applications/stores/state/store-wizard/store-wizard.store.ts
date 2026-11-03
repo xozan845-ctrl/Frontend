@@ -90,6 +90,20 @@ export const StoreWizardStore = signalStore(
             ...(company.type ? { type: company.type } : {}),
           })
           .pipe(
+            // La subida y el PATCH del logo exigen el tenant nuevo en el JWT.
+            switchMap((created) =>
+              from(authStore.refreshTokenOnce()).pipe(map((renewed) => ({ created, renewed }))),
+            ),
+            switchMap(({ created, renewed }) =>
+              renewed
+                ? of(created)
+                : throwError(
+                    () =>
+                      new Error(
+                        'La empresa se creó, pero la sesión no se pudo renovar. Inicia sesión de nuevo.',
+                      ),
+                  ),
+            ),
             switchMap((created) =>
               company.logoFile
                 ? uploadCompanyLogo(created.id, company.logoFile).pipe(
@@ -101,17 +115,6 @@ export const StoreWizardStore = signalStore(
                     }),
                   )
                 : of(undefined),
-            ),
-            switchMap(() => from(authStore.refreshTokenOnce())),
-            switchMap((renewed) =>
-              renewed
-                ? of(undefined)
-                : throwError(
-                    () =>
-                      new Error(
-                        'La empresa se creó, pero la sesión no se pudo renovar. Inicia sesión de nuevo.',
-                      ),
-                  ),
             ),
           );
 

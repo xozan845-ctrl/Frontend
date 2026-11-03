@@ -266,6 +266,10 @@ describe('StoreWizardStore', () => {
     expect(storageRepo.confirm).toHaveBeenCalledWith('o-1');
     expect(companyRepo.updateProfile).toHaveBeenCalledWith('c-1', { logoObjectId: 'o-1' });
     expect(notification.showError).not.toHaveBeenCalled();
+    // El tenant nuevo debe estar en el JWT antes de solicitar la subida.
+    expect(authStore.refreshTokenOnce.mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(storageRepo.requestUpload).mock.invocationCallOrder[0]!,
+    );
   });
 
   it('debe continuar con la tienda si el logo de la empresa falla', async () => {
