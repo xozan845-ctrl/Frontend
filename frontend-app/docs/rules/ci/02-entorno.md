@@ -16,3 +16,7 @@ Aplica a: runner, dependencias y la evidencia que deja cada ejecución.
 - La configuración pública del frontend (`environment.ts`) **no** es un secreto
   (`R-SE-2`); si un build necesita distintas URLs por entorno, se usan
   `fileReplacements` de `angular.json`, no variables secretas.
+- **Permisos por job**: el permiso global sigue siendo `contents: read`. Si una
+  acción necesita más, se declara el mínimo permiso extra en su job y no a nivel
+  de workflow. Ejemplo: `gitleaks` requiere `pull-requests: read` para listar
+  los commits del PR en repositorios privados.
