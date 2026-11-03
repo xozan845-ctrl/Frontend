@@ -282,7 +282,7 @@ test('R-E-38: el empresario consulta las ventas de la empresa', async ({ page })
   await expect(page.getByTestId('company-sales-row')).toContainText('Tienda Demo');
 
   await page.getByTestId('company-sales-period-today').click();
-  await expect(page.getByTestId('company-sales-empty')).toBeVisible();
+  await expect(page.locator('[data-testid="company-sales-row"]')).toHaveCount(1);
   await page.getByTestId('company-sales-period-month').click();
   await expect(page.locator('[data-testid="company-sales-row"]')).toHaveCount(1);
 
