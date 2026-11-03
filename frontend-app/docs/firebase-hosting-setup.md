@@ -129,6 +129,10 @@ El hash vive en **tres** sitios y deben ir sincronizados:
 2. `firebase.json` → cabecera CSP del sitio (este repo).
 3. `nginx.conf` (raíz) → cabecera CSP de producción (Docker).
 
+`img-src` incluye además `blob:` para las vistas previas locales de los
+dropzones de imagen; los logos remotos siguen restringidos a los hosts
+autorizados.
+
 Si al actualizar Angular cambia ese snippet, recalcula el hash (el error de la
 consola del navegador ya muestra el valor correcto) con:
 
