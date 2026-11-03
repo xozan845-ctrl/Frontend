@@ -13,14 +13,45 @@ y metadatos.
 | R-UX-6 | **SEO y metadatos**: cada página actualiza título y meta descripción con `SeoService` y se restauran al salir; el detalle de producto define además `og:title`/`og:description`/`og:type`.                                                                                                                                                                                                                                         |
 | R-UX-7 | **Sistema visual Glass centralizado**: los tokens `--glass-*`, las utilidades `.glass*` y los primitivos `.card`, `.btn-*`, `.input`, `.badge` e `.icon-btn` se definen únicamente en `src/styles.css`, junto con los fondos ambientales y el fallback `@supports not (backdrop-filter: ...)`. Prohibido redefinir tokens/utilidades Glass, duplicar primitivos o usar `backdrop-filter` con valores crudos fuera de `styles.css`. |
 
+## Sistema visual Glass (R-UX-7)
+
+`src/styles.css` es la única fuente de verdad:
+
+- Tokens `--glass-*` en `:root` y `.dark` (paridad derivada).
+- Utilidades `.glass`, `.glass-strong`, `.glass-subtle`, `.glass-hover`,
+  `.glass-card`, `.glass-bar` y `.glass-footer`.
+- Primitivos `.card`, `.btn`, `.input`, `.badge` e `.icon-btn`.
+- Fondos ambientales `app-page-bg`/`app-shell-bg` y fallback
+  `@supports not (backdrop-filter: ...)`.
+
+La suite `visual-guards` (`scripts/rules/ui/visual.test.mjs`) verifica:
+
+1. Tokens, utilidades y primitivos.
+2. Paridad de tokens claro/oscuro.
+3. Fallback derivado de todos los selectores con `backdrop-filter`.
+4. Ausencia de reimplementaciones en CSS, `@apply`, `style` inline,
+   SCSS/SASS/LESS y plantillas.
+5. Shells de página con fondo ambiental.
+
+**Cobertura mínima:** `GLASS_MIN_COVERAGE = 80` en
+`scripts/config/project.mjs`. Hoy se verifican **13/15 requisitos (86.7%)**; los
+pendientes son regresión visual (Playwright) y stylelint.
+
+**Excepciones permitidas (allowlist):**
+
+- Scrims de modales: `fixed|absolute inset-0` sin fondo claro.
+- Controles de baja opacidad: `bg-white/5`, `bg-white/10`, `bg-white/20`.
+- Etiquetas sobre imagen: `bg-black/*` + `text-white`.
+- Controles con estado dinámico que alternan el fondo por binding
+  (`[class.bg-*]`); si añaden un fondo claro estático, deben usar el sistema.
+
+Cualquier otra superficie de cristal debe usar `.glass*` o un primitivo.
+
 ## Notas
 
 - `R-UX-1` está implementado en `products` (`skeleton-loader`, `empty-state`) y
   debe replicarse en toda vista nueva que consuma API.
 - La app incluye banner PWA (`pwa-install-banner`), manifiesto y service worker
   real, cumpliendo `R-UX-6`.
-- El sistema Glass se implementa en `src/styles.css` y se documenta en
-  [`src/app/README.md`](../../../src/app/README.md#sistema-visual-glass). La
-  suite `visual-guards` (`scripts/rules/ui/visual.test.mjs`) verifica tokens,
-  utilidades, primitivos, fondos ambientales y fallback, y falla ante
-  reimplementaciones en estilos de componentes.
+- El sistema Glass se documenta también en
+  [`src/app/README.md`](../../../src/app/README.md#sistema-visual-glass).
