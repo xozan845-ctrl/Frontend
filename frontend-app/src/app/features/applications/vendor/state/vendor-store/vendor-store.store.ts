@@ -5,6 +5,7 @@ import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { STORE_REPOSITORY } from '../../../stores/public-api';
+import type { Store } from '../../../products/public-api';
 import type { VendorStoreState } from '../vendor.state';
 
 const initialState: VendorStoreState = {
@@ -52,6 +53,11 @@ export const VendorStoreStore = signalStore(
         /** Reintenta la carga. */
         refresh(): void {
           load();
+        },
+
+        /** Refleja una tienda actualizada por otra operación (p. ej. el logo). */
+        applyStoreUpdate(updated: Store): void {
+          patchState(store, { store: updated, loaded: true, error: null });
         },
 
         /** Limpia el error visible. */

@@ -74,6 +74,26 @@ export class StoreService implements StoreRepository {
       );
   }
 
+  updateLogo(storeId: string, logoObjectId: string | null): Observable<Store> {
+    if (this.isMock()) return of({ ...MOCK_STORE, id: storeId }).pipe(delay(250));
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .patch<unknown>(`${environment.apiUrl}/tiendas/${encodeURIComponent(storeId)}/logo`, {
+        logo_objeto_id: logoObjectId,
+      })
+      .pipe(
+        map((response) => adaptStoreFromBackend(response)),
+        map((store) => {
+          if (!store) throw new Error('No se pudo interpretar la tienda actualizada.');
+          return store;
+        }),
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo actualizar el logo.'))),
+        ),
+      );
+  }
+
   private isMock(): boolean {
     return environment.apiConfig?.dataSource === 'mock';
   }
