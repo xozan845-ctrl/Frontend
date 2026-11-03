@@ -46,6 +46,7 @@ export default class CompanyVendorsComponent {
   readonly portal = inject(CompanyPortalStore);
   readonly vendors = inject(CompanyInvitationsStore);
   readonly avatars = inject(SellerAvatarStore);
+  readonly sellerRows = this.vendors.sellerRows;
   readonly authStore = inject(AuthStore);
   private readonly fb = inject(FormBuilder);
   private readonly notifications = inject(NotificationService);

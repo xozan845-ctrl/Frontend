@@ -34,6 +34,7 @@ function setup() {
   const invitations = signal<SellerInvitationSummary[]>([]);
   const vendors = {
     sellers: signal([]).asReadonly(),
+    sellerRows: computed(() => []),
     invitations: invitations.asReadonly(),
     pendingInvitations: computed(() =>
       invitations().filter((invitation) => invitation.status === 'pendiente'),

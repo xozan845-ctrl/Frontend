@@ -9,6 +9,7 @@ import type {
   SellerInvitation,
 } from '../../models/company-invitation.model';
 import type { SellerAvatar } from '../../models/company.model';
+import { resolveStorageAssetUrl } from '../../../storage/public-api';
 import { COMPANY_INVITATION_REPOSITORY } from '../../repositories/company-invitation.repository';
 import type { CompanyInvitationsState } from './company-invitations.state';
 
@@ -24,13 +25,20 @@ const initialState: CompanyInvitationsState = {
 /** Estado de vendedores e invitaciones del workspace empresarial. */
 export const CompanyInvitationsStore = signalStore(
   withState(initialState),
-  withComputed(({ invitations }) => ({
+  withComputed(({ sellers, invitations }) => ({
     /** Enlaces todavía utilizables; el resto pasa al historial. */
     pendingInvitations: computed(() =>
       invitations().filter((invitation) => invitation.status === 'pendiente'),
     ),
     pastInvitations: computed(() =>
       invitations().filter((invitation) => invitation.status !== 'pendiente'),
+    ),
+    /** Vendedores con la URL del avatar resuelta para la vista. */
+    sellerRows: computed(() =>
+      sellers().map((seller) => ({
+        ...seller,
+        avatarPreview: resolveStorageAssetUrl(seller.avatarUrl),
+      })),
     ),
   })),
   withMethods(

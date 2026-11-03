@@ -358,7 +358,7 @@
           class="flex flex-col divide-y divide-slate-100 dark:divide-surface-700"
           data-testid="sellers-list"
         >
-          @for (seller of vendors.sellers(); track seller.id) {
+          @for (seller of sellerRows(); track seller.id) {
             <li
               class="flex flex-wrap items-center justify-between gap-3 py-3"
               data-testid="seller-row"
@@ -370,7 +370,7 @@
                   [showHint]="false"
                   variant="avatar"
                   [alt]="'Avatar de ' + seller.name"
-                  [previewUrl]="seller.avatarUrl ?? null"
+                  [previewUrl]="seller.avatarPreview"
                   [uploading]="avatars.uploadingSellerId() === seller.id"
                   (fileSelected)="avatars.upload({ sellerId: seller.id, file: $event })"
                   (removed)="avatars.remove(seller.id)"

@@ -9,6 +9,7 @@ import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import {
   STORAGE_REPOSITORY,
   StorageService,
+  resolveStorageAssetUrl,
   storagePublicObjectUrl,
 } from '../../../storage/public-api';
 import {
@@ -96,7 +97,8 @@ export default class CompanySettingsComponent {
   readonly logoUrl = computed(() => {
     const company = this.company();
     if (!company) return null;
-    if (company.logoUrl) return company.logoUrl;
+    const resolved = resolveStorageAssetUrl(company.logoUrl);
+    if (resolved) return resolved;
     if (!company.logoObjectId) return null;
 
     return storagePublicObjectUrl(company.logoObjectId);

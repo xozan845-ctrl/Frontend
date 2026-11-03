@@ -10,7 +10,7 @@ import {
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
 import { BrandingService } from '../../../../../core/services/branding/branding.service';
 import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
-import { storagePublicObjectUrl } from '../../../storage/public-api';
+import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { COMPANY_WORKSPACE_PROVIDERS, CompanyStore } from '../../state/company/company.store';
 
 /** Shell aislado del workspace del propietario de empresa. */
@@ -47,7 +47,7 @@ export default class CompanyShellComponent {
   private readonly syncBranding = effect(() => {
     const company = this.companyStore.company();
     const logo =
-      company?.logoUrl ??
+      resolveStorageAssetUrl(company?.logoUrl) ??
       (company?.logoObjectId ? storagePublicObjectUrl(company.logoObjectId) : null);
     this.branding.setLogo(logo);
   });

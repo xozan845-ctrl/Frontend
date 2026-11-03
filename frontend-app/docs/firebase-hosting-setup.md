@@ -130,8 +130,8 @@ El hash vive en **tres** sitios y deben ir sincronizados:
 3. `nginx.conf` (raíz) → cabecera CSP de producción (Docker).
 
 `img-src` incluye además `blob:` para las vistas previas locales de los
-dropzones de imagen y `https://storage.kbcoleccion.com` para los logos/avatares
-públicos. `connect-src` autoriza ese mismo host porque la subida se hace con
+dropzones de imagen y `https://storage.kbcoleccion.com` y `https://api.kbcoleccion.com` para los
+logos/avatares públicos. `connect-src` autoriza ese mismo host porque la subida se hace con
 `fetch`/`PUT` directo a la URL prefirmada de MinIO.
 
 Si al actualizar Angular cambia ese snippet, recalcula el hash (el error de la
