@@ -36,3 +36,7 @@ su API pública (`public-api.ts` / `public-ui.ts`). Ver
   sin duplicar clases.
 - Fondos ambientales con gradientes/orbes y fallback para navegadores sin
   `backdrop-filter`.
+
+La regla `R-UX-7` y la suite `visual-guards` verifican que este sea el único
+punto de definición: no redefinas tokens, utilidades ni primitivos en los
+estilos de componentes.

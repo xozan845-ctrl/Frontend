@@ -753,7 +753,8 @@ body {
   .card-elevated,
   .btn-secondary,
   .input,
-  .badge {
+  .badge,
+  .icon-btn {
     background: rgba(248, 250, 252, 0.96);
   }
 
@@ -768,7 +769,8 @@ body {
   .dark .card-elevated,
   .dark .btn-secondary,
   .dark .input,
-  .dark .badge {
+  .dark .badge,
+  .dark .icon-btn {
     background: rgba(20, 20, 22, 0.95);
   }
 }
