@@ -447,6 +447,11 @@ describe('CompanySalesStore', () => {
     );
     localStorage.setItem(companySalesStorageKey('empresa-1'), JSON.stringify(records));
     const store = setup();
+    // El periodo por defecto es "mes": fija un rango amplio para que el test no
+    // dependa del día del calendario en que se ejecute.
+    store.setCustomFrom('2000-01-01');
+    store.setCustomTo('2100-12-31');
+    store.setPeriod('custom');
 
     expect(store.pagedRows()).toHaveLength(10);
     expect(store.pageCount()).toBe(2);

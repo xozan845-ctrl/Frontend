@@ -493,6 +493,7 @@ export async function mockApi(page: Page): Promise<void> {
   const combos: Array<Record<string, unknown>> = [];
   const promotions: Array<Record<string, unknown>> = [];
   const movements: Array<Record<string, unknown>> = [];
+  const fechaVentaDemo = new Date().toISOString();
   const ordenes = [
     {
       id: 'o-100',
@@ -513,8 +514,8 @@ export async function mockApi(page: Page): Promise<void> {
           tienda_id: 'tienda-demo',
         },
       ],
-      creado_en: '2026-10-22T15:00:00.000Z',
-      actualizado_en: '2026-10-22T15:00:00.000Z',
+      creado_en: fechaVentaDemo,
+      actualizado_en: fechaVentaDemo,
     },
   ];
   const companyStores = [
@@ -549,7 +550,7 @@ export async function mockApi(page: Page): Promise<void> {
         comision: '276.00',
         monto_empresario: '2024.00',
         estado: 'acreditada',
-        fecha: '2026-10-22T15:00:00.000Z',
+        fecha: fechaVentaDemo,
       },
     ],
     comisiones_pendientes: '138.00',
