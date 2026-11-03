@@ -101,6 +101,7 @@ describe('CreateStoreComponent', () => {
       updateType: vi.fn(),
       updateLogistics: vi.fn(),
       createSeller: vi.fn(),
+      updateSellerAvatar: vi.fn(),
     };
     await TestBed.configureTestingModule({
       imports: [CreateStoreComponent],

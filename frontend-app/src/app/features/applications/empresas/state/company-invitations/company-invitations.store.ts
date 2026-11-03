@@ -8,6 +8,7 @@ import type {
   CreateSellerInvitationData,
   SellerInvitation,
 } from '../../models/company-invitation.model';
+import type { SellerAvatar } from '../../models/company.model';
 import { COMPANY_INVITATION_REPOSITORY } from '../../repositories/company-invitation.repository';
 import type { CompanyInvitationsState } from './company-invitations.state';
 
@@ -126,6 +127,15 @@ export const CompanyInvitationsStore = signalStore(
 
       clearError(): void {
         patchState(store, { error: null });
+      },
+
+      /** Refleja el avatar actualizado por otra operación. */
+      applySellerAvatar(sellerId: string, avatar: SellerAvatar): void {
+        patchState(store, {
+          sellers: untracked(() => store.sellers()).map((seller) =>
+            seller.id === sellerId ? { ...seller, ...avatar } : seller,
+          ),
+        });
       },
 
       clearLastInvitation(): void {

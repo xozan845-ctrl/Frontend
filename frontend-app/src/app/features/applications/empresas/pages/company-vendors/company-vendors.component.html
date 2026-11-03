@@ -363,13 +363,26 @@
               class="flex flex-wrap items-center justify-between gap-3 py-3"
               data-testid="seller-row"
             >
-              <div>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ seller.name }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">{{ seller.email }}</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  <i class="fa-solid fa-store mr-1" aria-hidden="true"></i>
-                  {{ seller.storeName || 'Tienda asignada' }}
-                </p>
+              <div class="flex min-w-0 items-center gap-3">
+                <app-image-dropzone
+                  label="Avatar"
+                  [showLabel]="false"
+                  [showHint]="false"
+                  variant="avatar"
+                  [alt]="'Avatar de ' + seller.name"
+                  [previewUrl]="seller.avatarUrl ?? null"
+                  [uploading]="avatars.uploadingSellerId() === seller.id"
+                  (fileSelected)="avatars.upload({ sellerId: seller.id, file: $event })"
+                  (removed)="avatars.remove(seller.id)"
+                />
+                <div>
+                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ seller.name }}</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">{{ seller.email }}</p>
+                  <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    <i class="fa-solid fa-store mr-1" aria-hidden="true"></i>
+                    {{ seller.storeName || 'Tienda asignada' }}
+                  </p>
+                </div>
               </div>
               <span class="text-xs font-black text-accent-600 dark:text-accent-400">
                 {{ seller.participationPercentage }} %

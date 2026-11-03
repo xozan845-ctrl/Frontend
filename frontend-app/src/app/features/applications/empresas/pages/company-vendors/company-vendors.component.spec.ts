@@ -6,6 +6,7 @@ import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyPortalStore } from '../../state/company-portal/company-portal.store';
 import { CompanyInvitationsStore } from '../../state/company-invitations/company-invitations.store';
+import { SellerAvatarStore } from '../../state/seller-avatar/seller-avatar.store';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import type {
@@ -47,6 +48,14 @@ function setup() {
     load: vi.fn(),
     createInvitation: vi.fn(),
     revokeInvitation: vi.fn(),
+    applySellerAvatar: vi.fn(),
+  };
+  const avatars = {
+    uploadingSellerId: signal<string | null>(null).asReadonly(),
+    upload: vi.fn(),
+    remove: vi.fn(),
+    clearError: vi.fn(),
+    reset: vi.fn(),
   };
   const stores = signal([
     {
@@ -72,6 +81,7 @@ function setup() {
     company,
     lastInvitation,
     vendors,
+    avatars,
     portal,
     stores,
   };
@@ -88,6 +98,7 @@ async function createFixture() {
       { provide: CompanyStore, useValue: { company: mocks.company.asReadonly(), load: vi.fn() } },
       { provide: CompanyPortalStore, useValue: mocks.portal },
       { provide: CompanyInvitationsStore, useValue: mocks.vendors },
+      { provide: SellerAvatarStore, useValue: mocks.avatars },
       { provide: SeoService, useValue: { setPage: vi.fn(), reset: vi.fn() } },
       { provide: NotificationService, useValue: { showSuccess: vi.fn(), showError: vi.fn() } },
     ],

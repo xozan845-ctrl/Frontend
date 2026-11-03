@@ -40,6 +40,7 @@ describe('CompanyLogoStore', () => {
       updateType: vi.fn(),
       updateLogistics: vi.fn(),
       createSeller: vi.fn(),
+      updateSellerAvatar: vi.fn(),
     };
     storageRepo = {
       bucket: vi.fn(),

@@ -84,6 +84,15 @@ function adaptSeller(raw: unknown): CompanySeller | null {
     ...(text(item['tienda_nombre'] ?? item['storeName'])
       ? { storeName: text(item['tienda_nombre'] ?? item['storeName']) }
       : {}),
+    ...(text(item['estado'] ?? item['status'])
+      ? { status: text(item['estado'] ?? item['status']) }
+      : {}),
+    ...(text(item['avatar_objeto_id'] ?? item['avatarObjectId'])
+      ? { avatarObjectId: text(item['avatar_objeto_id'] ?? item['avatarObjectId']) }
+      : {}),
+    ...(text(item['avatar_url'] ?? item['avatarUrl'])
+      ? { avatarUrl: text(item['avatar_url'] ?? item['avatarUrl']) }
+      : {}),
   };
 }
 

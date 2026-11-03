@@ -5,6 +5,8 @@ import { CompanyInvitationService } from './services/company-invitation/company-
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
 import { CompanyInvitationsStore } from './state/company-invitations/company-invitations.store';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
+import { SellerAvatarStore } from './state/seller-avatar/seller-avatar.store';
+import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';
 
 export const COMPANY_VENDORS_ROUTES: Routes = [
   {
@@ -15,6 +17,8 @@ export const COMPANY_VENDORS_ROUTES: Routes = [
       { provide: COMPANY_INVITATION_REPOSITORY, useClass: CompanyInvitationService },
       CompanyPortalStore,
       { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
+      SellerAvatarStore,
+      { provide: STORAGE_REPOSITORY, useClass: StorageService },
     ],
   },
 ];
