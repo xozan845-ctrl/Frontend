@@ -79,6 +79,7 @@ describe('CreateStoreComponent', () => {
       createStore: vi.fn(() => of(createdStore)),
       getMyStore: vi.fn(() => of(null)),
       publishOffer: vi.fn(() => of(undefined)),
+      updateLogo: vi.fn(),
     };
     catalogRepo = {
       listCatalog: vi.fn(() => of([{ id: 'p-1', name: 'Teclado', sku: 'SKU-1' }])),

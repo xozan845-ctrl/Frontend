@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import VendorStoreComponent from './store.component';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
+import { StoreLogoStore } from '../../state/store-logo/store-logo.store';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { Store } from '../../../products/public-api';
 
@@ -33,6 +34,13 @@ describe('VendorStoreComponent', () => {
     reset: vi.fn(),
   };
   const seo = { setPage: vi.fn(), updateTitle: vi.fn(), reset: vi.fn() };
+  const storeLogo = {
+    uploading: signal(false).asReadonly(),
+    upload: vi.fn(),
+    remove: vi.fn(),
+    clearError: vi.fn(),
+    reset: vi.fn(),
+  };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
@@ -40,6 +48,7 @@ describe('VendorStoreComponent', () => {
       providers: [
         provideRouter([]),
         { provide: VendorStoreStore, useValue: vendorStore },
+        { provide: StoreLogoStore, useValue: storeLogo },
         { provide: SeoService, useValue: seo },
       ],
     }).compileComponents();
@@ -63,7 +72,9 @@ describe('VendorStoreComponent', () => {
     const fixture = await setup();
 
     expect(
-      fixture.nativeElement.querySelector('[data-testid="store-logo"]').getAttribute('src'),
+      fixture.nativeElement
+        .querySelector('[data-testid="image-dropzone-preview"]')
+        .getAttribute('src'),
     ).toBe('https://cdn.test/tienda.png');
   });
 

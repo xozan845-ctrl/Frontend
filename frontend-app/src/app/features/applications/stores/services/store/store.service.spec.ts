@@ -72,6 +72,27 @@ describe('StoreService', () => {
     request.flush({ id: 'of-1' });
   });
 
+  it('debe actualizar el logo de la tienda (PATCH /tiendas/:id/logo)', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: unknown;
+
+    service.updateLogo('t-1', 'l-1').subscribe((store) => (result = store));
+
+    const request = httpMock.expectOne('https://api.test/tiendas/t-1/logo');
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ logo_objeto_id: 'l-1' });
+    request.flush({
+      id: 't-1',
+      vendedor_id: 'v-1',
+      nombre: 'Mi Tienda',
+      logo_objeto_id: 'l-1',
+      logo_url: '/api/v1/storage/public/objetos/l-1',
+    });
+
+    expect(result).toMatchObject({ logoObjectId: 'l-1' });
+  });
+
   it('debe simular la creación en modo mock', async () => {
     environment.apiConfig.dataSource = 'mock';
     build();

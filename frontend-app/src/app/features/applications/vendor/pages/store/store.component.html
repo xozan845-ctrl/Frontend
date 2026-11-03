@@ -61,21 +61,17 @@
     <section class="card flex flex-col gap-6 p-6" data-testid="store-card">
       <header class="flex flex-wrap items-start justify-between gap-3">
         <div class="flex items-start gap-4">
-          @if (logoUrl(); as logo) {
-            <img
-              [src]="logo"
-              [alt]="'Logo de ' + store.name"
-              class="h-16 w-16 rounded-xl border border-slate-200 object-cover dark:border-surface-700"
-              data-testid="store-logo"
-            />
-          } @else {
-            <span
-              class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-300"
-              aria-hidden="true"
-            >
-              <i class="fa-solid fa-store text-2xl"></i>
-            </span>
-          }
+          <app-image-dropzone
+            label="Logo de la tienda"
+            [showLabel]="false"
+            [showHint]="false"
+            variant="avatar"
+            [alt]="'Logo de ' + store.name"
+            [previewUrl]="logoUrl()"
+            [uploading]="storeLogo.uploading()"
+            (fileSelected)="storeLogo.upload($event)"
+            (removed)="storeLogo.remove(store.id)"
+          />
           <div>
             <h2
               class="font-heading text-2xl font-black tracking-tight text-slate-900 uppercase dark:text-white"

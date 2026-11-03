@@ -25,6 +25,7 @@ describe('VendorStoreStore', () => {
       createStore: vi.fn(),
       getMyStore: vi.fn(() => of(store)),
       publishOffer: vi.fn(),
+      updateLogo: vi.fn(),
     };
     TestBed.configureTestingModule({
       providers: [

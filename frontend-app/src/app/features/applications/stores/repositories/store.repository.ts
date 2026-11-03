@@ -11,6 +11,8 @@ export interface StoreRepository {
   getMyStore(): Observable<Store | null>;
   /** Publica un producto con margen (`POST /vendedores/productos`). */
   publishOffer(storeId: string, offer: OfferDraft): Observable<void>;
+  /** Asocia o quita el logo de la tienda (`PATCH /tiendas/:id/logo`). */
+  updateLogo(storeId: string, logoObjectId: string | null): Observable<Store>;
 }
 
 export const STORE_REPOSITORY = new InjectionToken<StoreRepository>('StoreRepository');
