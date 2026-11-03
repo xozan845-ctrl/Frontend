@@ -54,6 +54,7 @@ describe('StoreWizardStore', () => {
           participationPercentage: 10,
         }),
       ),
+      updateSellerAvatar: vi.fn(),
     };
     catalogProductRepo = {
       create: vi.fn((data) => of({ id: `created-${data.sku}`, name: data.name })),

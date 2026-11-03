@@ -35,7 +35,12 @@ describe('company-invitation.contract', () => {
           name: 'Vendedor Prueba',
           email: 'vendedor@tienda.test',
           role: 'vendedor',
+          storeId: 'tienda-1',
+          storeName: 'Tienda Centro',
           participationPercentage: 25,
+          status: 'activo',
+          avatarObjectId: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+          avatarUrl: '/api/v1/storage/public/objetos/3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
         },
       ],
       invitations: [

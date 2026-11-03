@@ -8,6 +8,7 @@ import {
   CreateCompanyData,
   CreateCompanySellerData,
   LogisticsMode,
+  SellerAvatar,
 } from '../models/company.model';
 
 /** Puerto de gestión de empresas (Core Engine, `/api/v1/empresas`). */
@@ -29,6 +30,8 @@ export interface CompanyRepository {
   updateLogistics(id: string, mode: LogisticsMode): Observable<Company>;
   /** Crea un vendedor con participación (`POST /empresas/:id/vendedores`). */
   createSeller(id: string, data: CreateCompanySellerData): Observable<CompanySeller>;
+  /** Asocia o quita el avatar del vendedor (`PATCH /usuarios/:id/avatar`). */
+  updateSellerAvatar(sellerId: string, avatarObjectId: string | null): Observable<SellerAvatar>;
 }
 
 export const COMPANY_REPOSITORY = new InjectionToken<CompanyRepository>('CompanyRepository');

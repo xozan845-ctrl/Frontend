@@ -41,6 +41,7 @@ describe('CompanyStore', () => {
       updateType: vi.fn(() => of<Company>({ ...company, type: 'logistica' as const })),
       updateLogistics: vi.fn(() => of<Company>({ ...company, logisticsMode: 'propia' as const })),
       createSeller: vi.fn(() => of(seller)),
+      updateSellerAvatar: vi.fn(),
     };
     authStore = { refreshTokenOnce: vi.fn().mockResolvedValue(true) };
     notification = { showSuccess: vi.fn(), showError: vi.fn() };

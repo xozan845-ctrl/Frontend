@@ -22,7 +22,12 @@ export const SELLER_INVITATIONS_LIST_FIXTURE = {
       correo: 'vendedor@tienda.test',
       rol: 'vendedor',
       tenant_id: 'dfe0cfe4-8ddc-42bf-8dd2-6c3cb43544b3',
+      tienda_id: 'tienda-1',
+      tienda_nombre: 'Tienda Centro',
       participacion_porcentaje: 25,
+      estado: 'activo',
+      avatar_objeto_id: '3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
+      avatar_url: '/api/v1/storage/public/objetos/3f1c0a8e-7d2b-4c6a-9f10-2b8d5e4a7c01',
     },
   ],
   invitaciones: [

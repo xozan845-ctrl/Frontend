@@ -182,5 +182,14 @@ export function adaptCompanySellerFromBackend(raw: unknown): CompanySeller | nul
     record['logistics_ownership'] === 'logistics_company'
       ? { logisticsOwnership: record['logistics_ownership'] }
       : {}),
+    ...(readString(record, ['estado', 'status'])
+      ? { status: readString(record, ['estado', 'status'])! }
+      : {}),
+    ...(readString(record, ['avatar_objeto_id', 'avatarObjectId'])
+      ? { avatarObjectId: readString(record, ['avatar_objeto_id', 'avatarObjectId'])! }
+      : {}),
+    ...(readString(record, ['avatar_url', 'avatarUrl'])
+      ? { avatarUrl: readString(record, ['avatar_url', 'avatarUrl'])! }
+      : {}),
   };
 }

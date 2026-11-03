@@ -26,6 +26,8 @@ function megabyteLabel(value: number): string {
 })
 export class ImageDropzoneComponent {
   readonly label = input('Imagen');
+  readonly showLabel = input(true);
+  readonly showHint = input(true);
   readonly hint = input('Arrastra una imagen o haz clic para seleccionarla.');
   readonly accept = input('image/*');
   readonly maxBytes = input(DEFAULT_MAX_BYTES);
@@ -34,16 +36,18 @@ export class ImageDropzoneComponent {
   readonly uploading = input(false);
   readonly disabled = input(false);
   readonly removable = input(true);
-  readonly variant = input<'square' | 'wide'>('wide');
+  readonly variant = input<'square' | 'wide' | 'avatar'>('wide');
   readonly fileSelected = output<File>();
   readonly removed = output<void>();
 
   readonly isDragging = signal(false);
   readonly error = signal<string | null>(null);
   readonly maxSizeLabel = computed(() => formatBytes(this.maxBytes()));
-  readonly frameClass = computed(() =>
-    this.variant() === 'square' ? 'aspect-square w-full max-w-48' : 'aspect-video w-full',
-  );
+  readonly frameClass = computed(() => {
+    if (this.variant() === 'avatar') return 'h-24 w-24';
+    return this.variant() === 'square' ? 'aspect-square w-full max-w-48' : 'aspect-video w-full';
+  });
+  readonly isAvatar = computed(() => this.variant() === 'avatar');
 
   onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;

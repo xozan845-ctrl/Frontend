@@ -74,6 +74,18 @@ export interface CompanySeller {
   storeName?: string;
   permissions?: readonly string[];
   logisticsOwnership?: 'company' | 'store' | 'logistics_company';
+  /** Estado de la membresía (`activo`, etc.). */
+  status?: string;
+  /** UUID del objeto de storage con el avatar del vendedor. */
+  avatarObjectId?: string | null;
+  /** URL pública derivada del avatar. */
+  avatarUrl?: string | null;
+}
+
+/** Respuesta mínima de `PATCH /usuarios/:id/avatar`. */
+export interface SellerAvatar {
+  avatarObjectId: string | null;
+  avatarUrl: string | null;
 }
 
 /** Datos para crear un vendedor con participación predeterminada. */

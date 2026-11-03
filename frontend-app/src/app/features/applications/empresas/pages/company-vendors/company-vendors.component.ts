@@ -13,10 +13,12 @@ import { InvitationStatusPipe } from '../../../../../shared/pipes/invitation-sta
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyPortalStore } from '../../state/company-portal/company-portal.store';
 import { CompanyInvitationsStore } from '../../state/company-invitations/company-invitations.store';
+import { SellerAvatarStore } from '../../state/seller-avatar/seller-avatar.store';
 
 /** Dominios frecuentes; el empresario puede cambiarlo o escribir uno propio. */
 const EMAIL_DOMAINS = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com'];
@@ -35,6 +37,7 @@ const DOMAIN_PART = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     NgClass,
     InvitationStatusPipe,
     SkeletonLoaderComponent,
+    ImageDropzoneComponent,
   ],
   templateUrl: './company-vendors.component.html',
 })
@@ -42,6 +45,7 @@ export default class CompanyVendorsComponent {
   readonly companyStore = inject(CompanyStore);
   readonly portal = inject(CompanyPortalStore);
   readonly vendors = inject(CompanyInvitationsStore);
+  readonly avatars = inject(SellerAvatarStore);
   readonly authStore = inject(AuthStore);
   private readonly fb = inject(FormBuilder);
   private readonly notifications = inject(NotificationService);

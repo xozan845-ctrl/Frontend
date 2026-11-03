@@ -222,6 +222,42 @@ describe('CompanyService', () => {
     expect(result?.type).toBe('logistica');
   });
 
+  it('debe actualizar el avatar del vendedor', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: { avatarObjectId: string | null; avatarUrl: string | null } | undefined;
+
+    service.updateSellerAvatar('s-1', 'a-1').subscribe((avatar) => (result = avatar));
+
+    const request = httpMock.expectOne('https://api.test/usuarios/s-1/avatar');
+    expect(request.request.method).toBe('PATCH');
+    expect(request.request.body).toEqual({ avatar_objeto_id: 'a-1' });
+    request.flush({
+      id: 's-1',
+      avatar_objeto_id: 'a-1',
+      avatar_url: '/api/v1/storage/public/objetos/a-1',
+    });
+
+    expect(result).toEqual({
+      avatarObjectId: 'a-1',
+      avatarUrl: '/api/v1/storage/public/objetos/a-1',
+    });
+  });
+
+  it('debe quitar el avatar del vendedor', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: { avatarObjectId: string | null; avatarUrl: string | null } | undefined;
+
+    service.updateSellerAvatar('s-1', null).subscribe((avatar) => (result = avatar));
+
+    const request = httpMock.expectOne('https://api.test/usuarios/s-1/avatar');
+    expect(request.request.body).toEqual({ avatar_objeto_id: null });
+    request.flush({ id: 's-1', avatar_objeto_id: null, avatar_url: null });
+
+    expect(result).toEqual({ avatarObjectId: null, avatarUrl: null });
+  });
+
   it('debe traducir el error 404 al cargar la empresa', () => {
     environment.apiUrl = 'https://api.test';
     build();

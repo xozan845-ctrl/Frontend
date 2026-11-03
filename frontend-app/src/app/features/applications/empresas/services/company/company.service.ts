@@ -16,6 +16,7 @@ import {
   CreateCompanyData,
   CreateCompanySellerData,
   LogisticsMode,
+  SellerAvatar,
 } from '../../models/company.model';
 import { CompanyRepository } from '../../repositories/company.repository';
 
@@ -207,6 +208,31 @@ export class CompanyService implements CompanyRepository {
         }),
         catchError((error: unknown) =>
           throwError(() => new Error(toUserMessage(error, 'No se pudo crear el vendedor.'))),
+        ),
+      );
+  }
+
+  updateSellerAvatar(sellerId: string, avatarObjectId: string | null): Observable<SellerAvatar> {
+    if (this.isMock()) return of({ avatarObjectId, avatarUrl: null }).pipe(delay(250));
+    if (!environment.apiUrl) return this.missingApiUrl();
+
+    return this.http
+      .patch<unknown>(`${environment.apiUrl}/usuarios/${encodeURIComponent(sellerId)}/avatar`, {
+        avatar_objeto_id: avatarObjectId,
+      })
+      .pipe(
+        map((response) => {
+          const record =
+            response && typeof response === 'object' ? (response as Record<string, unknown>) : null;
+          const objectId = record?.['avatar_objeto_id'] ?? record?.['avatarObjectId'];
+          const url = record?.['avatar_url'] ?? record?.['avatarUrl'];
+          return {
+            avatarObjectId: typeof objectId === 'string' ? objectId : null,
+            avatarUrl: typeof url === 'string' ? url : null,
+          };
+        }),
+        catchError((error: unknown) =>
+          throwError(() => new Error(toUserMessage(error, 'No se pudo actualizar el avatar.'))),
         ),
       );
   }
