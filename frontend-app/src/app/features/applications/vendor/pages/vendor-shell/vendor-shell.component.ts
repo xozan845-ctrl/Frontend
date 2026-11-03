@@ -10,7 +10,7 @@ import {
 import { BrandingService } from '../../../../../core/services/branding/branding.service';
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
 import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
-import { storagePublicObjectUrl } from '../../../storage/public-api';
+import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 
 /**
@@ -45,8 +45,8 @@ export default class VendorShellComponent {
   private readonly syncBranding = effect(() => {
     const store = this.vendorStore.store();
     const logo =
-      store?.logoUrl ??
-      store?.companyLogoUrl ??
+      resolveStorageAssetUrl(store?.logoUrl) ??
+      resolveStorageAssetUrl(store?.companyLogoUrl) ??
       (store?.logoObjectId ? storagePublicObjectUrl(store.logoObjectId) : null);
     this.branding.setLogo(logo);
   });

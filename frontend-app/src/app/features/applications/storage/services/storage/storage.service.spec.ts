@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { StorageService } from './storage.service';
+import { resolveStorageAssetUrl, StorageService } from './storage.service';
 import { environment } from '../../../../../../environments/environment';
 import {
   BUCKET_FIXTURE,
@@ -28,6 +28,22 @@ describe('StorageService', () => {
   afterEach(() => {
     environment.apiUrl = originalApiUrl;
     vi.unstubAllGlobals();
+  });
+
+  describe('resolveStorageAssetUrl', () => {
+    it('debe resolver rutas relativas contra el origen del API', () => {
+      environment.apiUrl = 'https://api.test/api/v1';
+
+      expect(resolveStorageAssetUrl('/api/v1/storage/public/objetos/o-1')).toBe(
+        'https://api.test/api/v1/storage/public/objetos/o-1',
+      );
+    });
+
+    it('debe conservar URLs absolutas y devolver null para vacíos', () => {
+      expect(resolveStorageAssetUrl('https://cdn.test/logo.png')).toBe('https://cdn.test/logo.png');
+      expect(resolveStorageAssetUrl(null)).toBeNull();
+      expect(resolveStorageAssetUrl('')).toBeNull();
+    });
   });
 
   it('debe cargar bucket y objetos', () => {

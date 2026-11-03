@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
-import { storagePublicObjectUrl } from '../../../storage/public-api';
+import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from '../../state/store-logo/store-logo.store';
 
@@ -39,8 +39,8 @@ export default class VendorStoreComponent {
     const store = this.vendorStore.store();
     if (!store) return null;
     return (
-      store.logoUrl ??
-      store.companyLogoUrl ??
+      resolveStorageAssetUrl(store.logoUrl) ??
+      resolveStorageAssetUrl(store.companyLogoUrl) ??
       (store.logoObjectId ? storagePublicObjectUrl(store.logoObjectId) : null)
     );
   });

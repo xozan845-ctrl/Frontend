@@ -22,6 +22,23 @@ import {
 import { StorageRepository } from '../../repositories/storage.repository';
 
 /**
+ * Normaliza una URL pública devuelta por identity/stores. Si es relativa
+ * (`/api/v1/storage/public/objetos/...`) la resuelve contra el origen del API;
+ * si ya es absoluta la deja intacta.
+ */
+export function resolveStorageAssetUrl(value: string | null | undefined): string | null {
+  const url = value?.trim();
+  if (!url) return null;
+  if (/^(https?:|data:|blob:)/i.test(url)) return url;
+  if (!url.startsWith('/')) return url;
+  try {
+    return `${new URL(environment.apiUrl).origin}${url}`;
+  } catch {
+    return url;
+  }
+}
+
+/**
  * URL pública de un objeto confirmado. Fallback cuando identity-service no
  * devuelve `logo_url` en `EmpresaResponseDto`.
  */
