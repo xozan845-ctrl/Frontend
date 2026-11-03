@@ -22,3 +22,17 @@ standalone, lazy por feature y zoneless.
 `core/` y `shared/` no importan `features/`; un feature consume a otro solo por
 su API pública (`public-api.ts` / `public-ui.ts`). Ver
 [`../docs/rules/architecture/01-arquitectura.md`](../../docs/rules/architecture/01-arquitectura.md).
+
+## Sistema visual Glass
+
+`src/styles.css` centraliza el lenguaje visual global:
+
+- Tokens `--glass-*` para superficies, bordes, blur, radios y sombras en claro
+  y oscuro.
+- Utilidades `.glass`, `.glass-strong`, `.glass-subtle`, `.glass-hover`,
+  `.glass-card`, `.glass-bar` y `.glass-footer`.
+- Primitivos globales `.card`, `.btn-*`, `.input`, `.badge` e `.icon-btn`
+  heredan el estilo de cristal, por lo que las pantallas existentes lo adoptan
+  sin duplicar clases.
+- Fondos ambientales con gradientes/orbes y fallback para navegadores sin
+  `backdrop-filter`.
