@@ -476,7 +476,7 @@ export const MIN_UNIT_FILES = 2;
  * con check ejecutable real. Súbelo al añadir validadores; nunca lo bajes para
  * silenciar una regresión.
  */
-export const COVERAGE_MIN_VERIFIED = 47;
+export const COVERAGE_MIN_VERIFIED = 50;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).
@@ -636,6 +636,12 @@ export const DOCS_SYNC_GATES = [
     when: [/^\.github\/workflows\/.+\.ya?ml$/],
     require: [/^frontend-app\/docs\/rules\/ci\/.+\.md$/, /^frontend-app\/scripts\/README\.md$/],
     reason: 'Los cambios de CI deben reflejarse en docs/rules/ci o scripts/README.',
+  },
+  {
+    id: 'visual-system',
+    when: [/^frontend-app\/src\/styles\.css$/],
+    require: [/^frontend-app\/docs\/rules\/ui\/.+\.md$/],
+    reason: 'Los cambios del sistema visual global deben reflejarse en docs/rules/ui (R-UX-7).',
   },
 ];
 

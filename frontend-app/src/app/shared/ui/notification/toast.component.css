@@ -19,7 +19,8 @@
   box-shadow:
     0 8px 25px -5px rgba(0, 0, 0, 0.15),
     0 4px 10px -5px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   cursor: pointer;
   pointer-events: auto;
   animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
