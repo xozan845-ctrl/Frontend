@@ -61,7 +61,8 @@ export const StoreWizardStore = signalStore(
             name: file.name,
             contentType: file.type,
             sizeBytes: file.size,
-            folder: 'empresa/logo',
+            folder: 'empresas',
+            isPublic: true,
             description: 'Logo de la empresa',
           })
           .pipe(

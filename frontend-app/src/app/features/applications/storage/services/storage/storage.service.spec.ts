@@ -59,7 +59,12 @@ describe('StorageService', () => {
     let object: unknown;
 
     service
-      .requestUpload({ name: 'nuevo.png', contentType: 'image/png', sizeBytes: 1024 })
+      .requestUpload({
+        name: 'nuevo.png',
+        contentType: 'image/png',
+        sizeBytes: 1024,
+        isPublic: true,
+      })
       .subscribe((value) => (upload = value));
 
     const request = httpMock.expectOne('https://api.test/storage/subidas');
@@ -67,6 +72,7 @@ describe('StorageService', () => {
       nombre: 'nuevo.png',
       content_type: 'image/png',
       tamano_bytes: 1024,
+      publico: true,
     });
     request.flush(PRESIGNED_FIXTURE);
 

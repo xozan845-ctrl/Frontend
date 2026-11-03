@@ -75,6 +75,7 @@ export class StorageService implements StorageRepository {
         tamano_bytes: data.sizeBytes,
         ...(data.folder ? { carpeta: data.folder } : {}),
         ...(data.description ? { descripcion: data.description } : {}),
+        publico: data.isPublic ?? false,
       })
       .pipe(
         map((response) => {

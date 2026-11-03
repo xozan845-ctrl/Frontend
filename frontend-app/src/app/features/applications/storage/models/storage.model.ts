@@ -51,6 +51,8 @@ export interface StorageUploadRequest {
   sizeBytes: number;
   folder?: string;
   description?: string;
+  /** El objeto debe ser público para poder asociarse como logo/avatar. */
+  isPublic?: boolean;
 }
 
 /** URL prefirmada de subida (`SolicitudSubidaResponseDto`). */

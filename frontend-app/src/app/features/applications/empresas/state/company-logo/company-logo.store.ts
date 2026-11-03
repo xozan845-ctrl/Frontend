@@ -51,7 +51,8 @@ export const CompanyLogoStore = signalStore(
                 name: file.name,
                 contentType: file.type,
                 sizeBytes: file.size,
-                folder: 'empresa/logo',
+                folder: 'empresas',
+                isPublic: true,
                 description: `Logo de ${company.name}`,
               })
               .pipe(

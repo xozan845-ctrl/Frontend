@@ -64,7 +64,8 @@ describe('CompanyLogoStore', () => {
           key: 'logo.png',
           name: 'logo.png',
           contentType: 'image/png',
-          folder: 'empresa/logo',
+          folder: 'empresas',
+          isPublic: true,
           description: '',
           tags: {},
           sizeBytes: 4,
@@ -109,7 +110,8 @@ describe('CompanyLogoStore', () => {
       name: 'logo.png',
       contentType: 'image/png',
       sizeBytes: file.size,
-      folder: 'empresa/logo',
+      folder: 'empresas',
+      isPublic: true,
       description: 'Logo de Mi Empresa',
     });
     expect(storageRepo.uploadToUrl).toHaveBeenCalledWith(

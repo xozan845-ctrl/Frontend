@@ -41,7 +41,8 @@ describe('CreateStoreComponent', () => {
         key: 'logo.png',
         name: 'logo.png',
         contentType: 'image/png',
-        folder: 'empresa/logo',
+        folder: 'empresas',
+        isPublic: true,
         description: '',
         tags: {},
         sizeBytes: 4,
@@ -227,7 +228,8 @@ describe('CreateStoreComponent', () => {
       name: 'logo.png',
       contentType: 'image/png',
       sizeBytes: file.size,
-      folder: 'empresa/logo',
+      folder: 'empresas',
+      isPublic: true,
       description: 'Logo de la empresa',
     });
   });
