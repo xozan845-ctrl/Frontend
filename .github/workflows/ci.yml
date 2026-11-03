@@ -258,6 +258,11 @@ jobs:
     needs: security-gate
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # En repos privados el token necesita permiso explícito para listar los
+    # commits del PR; sin esto gitleaks-action recibe 403.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
