@@ -31,5 +31,6 @@ export const DEFAULT_API_CONFIG: ApiConfiguration = {
     storage: '/storage',
     companyStores: '/empresarios/me/tiendas',
     companySales: '/empresarios/me/ventas',
+    siteConfig: '/configuracion/sitio',
   },
 };

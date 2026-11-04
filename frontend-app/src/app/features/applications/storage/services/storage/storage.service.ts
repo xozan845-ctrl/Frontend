@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { from, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
+import { resolveApiAssetUrl } from '../../../../../core/config/asset-url.config';
 import { toUserMessage } from '../../../../../core/models/api-error';
 import {
   adaptPresignedUploadFromBackend,
@@ -27,15 +28,7 @@ import { StorageRepository } from '../../repositories/storage.repository';
  * si ya es absoluta la deja intacta.
  */
 export function resolveStorageAssetUrl(value: string | null | undefined): string | null {
-  const url = value?.trim();
-  if (!url) return null;
-  if (/^(https?:|data:|blob:)/i.test(url)) return url;
-  if (!url.startsWith('/')) return url;
-  try {
-    return `${new URL(environment.apiUrl).origin}${url}`;
-  } catch {
-    return url;
-  }
+  return resolveApiAssetUrl(value);
 }
 
 /**

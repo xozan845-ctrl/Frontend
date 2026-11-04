@@ -2,29 +2,47 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import StoreEntryComponent from './store-entry.component';
+import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { AuthStore } from '../../../auth/public-api';
+import { MediaBackgroundStore } from '../../../../domains/media-background/public-api';
 import type { User } from '../../../auth/public-api';
 
 describe('StoreEntryComponent', () => {
   const seo = { setPage: vi.fn(), reset: vi.fn() };
   const currentUser = signal<User | null>(null);
+  const platformBackground = signal<MediaBackgroundConfig | null>(null);
+  const companyBackground = signal<MediaBackgroundConfig | null>(null);
   const authStoreStub = {
     user: currentUser.asReadonly(),
     hasActiveCompany: computed(
       () => currentUser()?.role === 'empresario' && !!currentUser()?.tenantId,
     ),
   };
+  const mediaBackgroundStoreStub = {
+    platform: platformBackground.asReadonly(),
+    company: companyBackground.asReadonly(),
+    loadPlatform: vi.fn(),
+    loadCompany: vi.fn(),
+  };
 
   const setup = async () => {
-    await TestBed.configureTestingModule({
+    const testingModule = TestBed.configureTestingModule({
       imports: [StoreEntryComponent],
       providers: [
         provideRouter([]),
         { provide: SeoService, useValue: seo },
         { provide: AuthStore, useValue: authStoreStub },
       ],
-    }).compileComponents();
+    });
+    // El componente declara los providers reales del dominio; en el test se
+    // sustituyen por el doble para no tocar HTTP (R-CP-4).
+    testingModule.overrideComponent(StoreEntryComponent, {
+      set: {
+        providers: [{ provide: MediaBackgroundStore, useValue: mediaBackgroundStoreStub }],
+      },
+    });
+    await testingModule.compileComponents();
     const fixture = TestBed.createComponent(StoreEntryComponent);
     fixture.detectChanges();
     return fixture;
@@ -33,6 +51,8 @@ describe('StoreEntryComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     currentUser.set(null);
+    platformBackground.set(null);
+    companyBackground.set(null);
     TestBed.resetTestingModule();
   });
 
@@ -129,5 +149,63 @@ describe('StoreEntryComponent', () => {
     ).click();
 
     expect(navigate).toHaveBeenCalledWith(['/empresa/inicio']);
+  });
+
+  it('carga el fondo de plataforma al entrar', async () => {
+    await setup();
+
+    expect(mediaBackgroundStoreStub.loadPlatform).toHaveBeenCalledOnce();
+    expect(mediaBackgroundStoreStub.loadCompany).not.toHaveBeenCalled();
+  });
+
+  it('carga el fondo de la empresa activa y lo prefiere sobre el de plataforma', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const companyConfig: MediaBackgroundConfig = {
+      objectId: 'o-company',
+      mediaType: 'imagen',
+      url: 'https://cdn.test/company.jpg',
+      posterObjectId: null,
+      posterUrl: null,
+      alt: 'Empresa',
+      overlay: 35,
+      position: 'center',
+      active: true,
+    };
+    companyBackground.set(companyConfig);
+    const fixture = await setup();
+
+    expect(mediaBackgroundStoreStub.loadCompany).toHaveBeenCalledWith('empresa-1');
+    expect(fixture.componentInstance.background()).toBe(companyConfig);
+  });
+
+  it('usa el fondo de plataforma cuando la empresa no tiene uno visible', async () => {
+    currentUser.set({
+      id: 'u-1',
+      name: 'Eva',
+      email: 'eva@empresa.test',
+      role: 'empresario',
+      tenantId: 'empresa-1',
+    });
+    const platformConfig: MediaBackgroundConfig = {
+      objectId: 'o-platform',
+      mediaType: 'video',
+      url: 'https://cdn.test/platform.mp4',
+      posterObjectId: null,
+      posterUrl: null,
+      alt: 'Plataforma',
+      overlay: 40,
+      position: 'center',
+      active: true,
+    };
+    platformBackground.set(platformConfig);
+    const fixture = await setup();
+
+    expect(fixture.componentInstance.background()).toBe(platformConfig);
   });
 });

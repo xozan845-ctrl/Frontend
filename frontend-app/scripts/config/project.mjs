@@ -322,6 +322,12 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   home: { kind: 'application', layers: ['pages'], publicApi: false, publicUi: false },
+  'media-background': {
+    kind: 'domain',
+    layers: ['adapters', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   logistica: {
     kind: 'application',
     layers: [
@@ -547,6 +553,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'payables',
   'home',
   'logistica',
+  'media-background',
   'plans',
   'products',
   'pwa',

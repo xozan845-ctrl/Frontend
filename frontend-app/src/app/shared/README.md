@@ -4,11 +4,11 @@ Componentes, directivas y pipes **presentacionales** reutilizables. No contiene
 estado de dominio ni reglas de negocio (`R-SH-1`); puede consumir `core/`, pero
 nunca `features/`.
 
-| Carpeta       | Contenido                                                                 |
-| ------------- | ------------------------------------------------------------------------- |
-| `ui/`         | Componentes visuales: spinner, empty-state, skeleton, lightbox, cart-fly… |
-| `directives/` | Directivas de comportamiento: scroll-reveal, focus-trap.                  |
-| `pipes/`      | Pipes de presentación, como el formateo de moneda.                        |
+| Carpeta       | Contenido                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| `ui/`         | Componentes visuales: spinner, empty-state, skeleton, lightbox, cart-fly, media-background… |
+| `directives/` | Directivas de comportamiento: scroll-reveal, focus-trap.                                    |
+| `pipes/`      | Pipes de presentación, como el formateo de moneda.                                          |
 
 ## Reglas
 

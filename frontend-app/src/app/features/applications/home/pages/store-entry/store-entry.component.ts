@@ -1,7 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
+import { hasVisibleMediaBackground } from '../../../../../core/models/media-background.model';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { MediaBackgroundComponent } from '../../../../../shared/ui/media-background/media-background.component';
+import {
+  MEDIA_BACKGROUND_PROVIDERS,
+  MediaBackgroundStore,
+} from '../../../../domains/media-background/public-api';
 
 /** Un `storeId` válido: alfanumérico con guiones (UUID/slug), 1–100 caracteres. */
 const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
@@ -15,12 +21,15 @@ const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
 @Component({
   selector: 'app-store-entry',
   standalone: true,
+  imports: [MediaBackgroundComponent],
+  providers: [...MEDIA_BACKGROUND_PROVIDERS],
   templateUrl: './store-entry.component.html',
 })
 export default class StoreEntryComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly authStore = inject(AuthStore);
+  private readonly mediaBackgroundStore = inject(MediaBackgroundStore);
   private readonly seoService = injectSeoPage(
     'Tu tienda',
     'Plataforma multi-tienda: encuentra tu tienda o crea la tuya en minutos.',
@@ -29,6 +38,23 @@ export default class StoreEntryComponent {
   readonly storeId = signal('');
   readonly hasActiveCompany = this.authStore.hasActiveCompany;
 
+  /**
+   * Fondo de la entrada: el de la empresa activa si lo tiene; si no, el de la
+   * plataforma. Ambos vienen del backend y se normalizan en el store.
+   */
+  readonly background = computed(() => {
+    const company = this.mediaBackgroundStore.company();
+    if (hasVisibleMediaBackground(company)) return company;
+    return this.mediaBackgroundStore.platform();
+  });
+
+  private readonly syncCompanyBackground = effect(() => {
+    const user = this.authStore.user();
+    if (!this.authStore.hasActiveCompany() || !user?.tenantId) return;
+    this.mediaBackgroundStore.loadCompany(user.tenantId);
+  });
+
+  private readonly loadPlatformBackground = this.mediaBackgroundStore.loadPlatform();
   private readonly init = this.openFromQuery();
 
   onInput(event: Event): void {

@@ -1,0 +1,50 @@
+<div class="media-background__layer" [attr.data-testid]="testId()">
+  @if (isActive()) {
+    @if (showVideo()) {
+      <video
+        class="media-background__media"
+        [attr.data-testid]="testId() + '-video'"
+        [poster]="config()?.posterUrl ?? ''"
+        [style.object-position]="objectPosition()"
+        [autoplay]="true"
+        [muted]="true"
+        [loop]="true"
+        [playsInline]="true"
+        preload="metadata"
+        tabindex="-1"
+        aria-hidden="true"
+        (error)="onVideoError()"
+      >
+        <source [src]="config()?.url ?? ''" [type]="videoMimeType()" />
+      </video>
+    }
+
+    @if (showImage()) {
+      <img
+        class="media-background__media"
+        [attr.data-testid]="testId() + '-image'"
+        [src]="imageUrl() ?? ''"
+        [alt]="alt()"
+        [style.object-position]="objectPosition()"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        (error)="onImageError()"
+      />
+    }
+
+    @if (showFallback()) {
+      <div
+        class="media-background__fallback"
+        [attr.data-testid]="testId() + '-fallback'"
+        aria-hidden="true"
+      ></div>
+    }
+
+    <div
+      class="media-background__overlay"
+      [style.background-color]="overlayColor()"
+      aria-hidden="true"
+    ></div>
+  }
+</div>

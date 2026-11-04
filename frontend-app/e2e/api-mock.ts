@@ -830,6 +830,23 @@ export async function mockApi(page: Page): Promise<void> {
       const path = url.pathname.replace('/api/v1', '');
       const method = request.method();
 
+      if (method === 'GET' && path === '/configuracion/sitio') {
+        await route.fulfill({
+          json: {
+            background_objeto_id: null,
+            background_media_type: null,
+            background_url: null,
+            background_poster_objeto_id: null,
+            background_poster_url: null,
+            background_alt: '',
+            background_overlay: 35,
+            background_position: 'center',
+            background_activo: false,
+          },
+        });
+        return;
+      }
+
       if (method === 'GET' && /^\/tiendas\/[^/]+$/.test(path)) {
         await route.fulfill({ json: storefrontDe(path.split('/')[2]) });
         return;
