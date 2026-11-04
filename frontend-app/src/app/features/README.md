@@ -36,37 +36,38 @@ verifica `R-AR-16`. `applications/` y `domains/` no son capas técnicas: son
 grupos físicos que hacen visible la diferencia entre una experiencia completa,
 un dominio reutilizable y un módulo de composición.
 
-| Feature                   | Propósito                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------- |
-| `applications/account`    | Perfil, cambio de contraseña e historial de pedidos.                               |
-| `applications/admin`      | Inventario de bodega y pantallas de administración.                                |
-| `applications/ai-scraper` | Jobs y chat de scraping con IA (ADR-18).                                           |
-| `applications/auth`       | Login, registro, autorización por workspace y guards de sesión.                    |
-| `applications/billing`    | Facturación: nueva factura, listado y detalle (ADR-23).                            |
-| `applications/cart`       | Carrito, checkout y confirmación de pedido.                                        |
-| `domains/clients`         | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
-| `modules/clients`         | Composición de la página/modal de Clientes (ADR-59).                               |
-| `modules/sales`           | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
-| `modules/catalog`         | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
-| `domains/orders`          | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
-| `domains/finance`         | Dominio de compras y legado de caja con persistencia local (ADR-66/73).            |
-| `domains/expenses`        | Dominio de gastos con tipos, estados, beneficiarios y reportes (ADR-72).           |
-| `modules/expenses`        | Composición de la pantalla de Gastos y sus modales (ADR-72).                       |
-| `domains/cash`            | Dominio de caja, bancos, cierres y caja chica (ADR-73).                            |
-| `modules/cash`            | Composición de la pantalla de Caja y sus modales (ADR-73).                         |
-| `domains/payables`        | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
-| `domains/banks`           | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
-| `domains/barcodes`        | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
-| `domains/credits`         | Ventas a crédito compartidas por empresa y tienda (ADR-70).                        |
-| `domains/reports`         | Reportes de ventas compartidos por empresa y tienda (ADR-71).                      |
-| `applications/empresas`   | Empresa, modalidad logística y vendedores (ADR-27).                                |
-| `applications/home`       | Inicio, entrada multi-tienda y 404.                                                |
-| `applications/logistica`  | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
-| `applications/plans`      | Planes y suscripciones.                                                            |
-| `applications/products`   | Catálogo, detalle, búsqueda y reseñas.                                             |
-| `applications/stores`     | Asistente de creación de tienda.                                                   |
-| `applications/vendor`     | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
-| `applications/wishlist`   | Lista de deseos persistida localmente.                                             |
+| Feature                    | Propósito                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------- |
+| `applications/account`     | Perfil, cambio de contraseña e historial de pedidos.                               |
+| `applications/admin`       | Inventario de bodega y pantallas de administración.                                |
+| `applications/ai-scraper`  | Jobs y chat de scraping con IA (ADR-18).                                           |
+| `applications/auth`        | Login, registro, autorización por workspace y guards de sesión.                    |
+| `applications/billing`     | Facturación: nueva factura, listado y detalle (ADR-23).                            |
+| `applications/cart`        | Carrito, checkout y confirmación de pedido.                                        |
+| `domains/clients`          | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
+| `domains/media-background` | Fondos multimedia de plataforma, empresa y tienda: adapter, puerto, HTTP y store.  |
+| `modules/clients`          | Composición de la página/modal de Clientes (ADR-59).                               |
+| `modules/sales`            | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
+| `modules/catalog`          | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
+| `domains/orders`           | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
+| `domains/finance`          | Dominio de compras y legado de caja con persistencia local (ADR-66/73).            |
+| `domains/expenses`         | Dominio de gastos con tipos, estados, beneficiarios y reportes (ADR-72).           |
+| `modules/expenses`         | Composición de la pantalla de Gastos y sus modales (ADR-72).                       |
+| `domains/cash`             | Dominio de caja, bancos, cierres y caja chica (ADR-73).                            |
+| `modules/cash`             | Composición de la pantalla de Caja y sus modales (ADR-73).                         |
+| `domains/payables`         | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
+| `domains/banks`            | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
+| `domains/barcodes`         | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
+| `domains/credits`          | Ventas a crédito compartidas por empresa y tienda (ADR-70).                        |
+| `domains/reports`          | Reportes de ventas compartidos por empresa y tienda (ADR-71).                      |
+| `applications/empresas`    | Empresa, modalidad logística y vendedores (ADR-27).                                |
+| `applications/home`        | Inicio, entrada multi-tienda y 404.                                                |
+| `applications/logistica`   | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
+| `applications/plans`       | Planes y suscripciones.                                                            |
+| `applications/products`    | Catálogo, detalle, búsqueda y reseñas.                                             |
+| `applications/stores`      | Asistente de creación de tienda.                                                   |
+| `applications/vendor`      | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
+| `applications/wishlist`    | Lista de deseos persistida localmente.                                             |
 
 ## Contratos de capas
 

@@ -71,6 +71,9 @@ que son verificables por máquina.
 > exportación y asistente de nueva compra (ADR-66).
 > El feature `logistica` declara además `guards/` porque sus rutas deben
 > validar el ownership de empresa/tienda y rechazar logística de plataforma.
+> El dominio `media-background` (`kind: 'domain'`) expone adapter, puerto,
+> servicio HTTP y store para los fondos `background_*` de plataforma, empresa y
+> tienda; su componente presentacional vive en `shared/ui/media-background`.
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz
 > cuando necesiten aislar providers de una pantalla del bundle inicial; esos
 > archivos deben añadirse explícitamente a `FEATURE_ALLOWED_ROOT_FILES`.

@@ -24,6 +24,8 @@ export interface ApiEndpointsConfig {
   storage: string;
   companyStores: string;
   companySales: string;
+  /** Configuración pública del sitio (branding y fondo de plataforma). */
+  siteConfig: string;
 }
 
 export interface ApiConfiguration {
