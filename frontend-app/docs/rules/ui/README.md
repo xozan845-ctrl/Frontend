@@ -31,7 +31,7 @@ Reglas de la capa de presentación: **accesibilidad** y **experiencia (UX/UI)**
 | ID       | Exigencia                                                                                                |
 | -------- | -------------------------------------------------------------------------------------------------------- |
 | `R-UX-5` | Tokens de diseño en `tailwind.config.js` → naming de configuración `R-NC-6`                              |
-| `R-UX-7` | Sistema Glass centralizado → suite `visual-guards` (cobertura mínima 80% de requisitos)                  |
+| `R-UX-7` | Sistema Glass centralizado → suite `visual-guards` (cobertura 100% de requisitos)                        |
 | `R-UX-1` | Estados de carga/error/vacío → cubiertos por tests `R-CP-6` (`../test/02-reglas-componentes.md`)         |
 | `R-AC-*` | Los selectores de prueba de `R-CP-2` (`../test/02-reglas-componentes.md`) no dependen de clases visuales |
 | `R-PF-*` | Rendimiento → [`../frontend/07-rendimiento.md`](../frontend/07-rendimiento.md)                           |

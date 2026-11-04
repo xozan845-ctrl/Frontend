@@ -6,8 +6,9 @@
  * plantillas no reimplementen cristal a mano; y que exista paridad de tokens
  * claro/oscuro y fallback sin `backdrop-filter`.
  */
+import { existsSync } from 'node:fs';
 import { relative, sep } from 'node:path';
-import { appRoot, resolveInApp } from '../../engine/lib/paths.mjs';
+import { appRoot, resolveInApp, resolveInRepo } from '../../engine/lib/paths.mjs';
 import { readText, walkFiles } from '../../engine/lib/fs.mjs';
 import { lineAt } from '../../engine/lib/source.mjs';
 
@@ -104,13 +105,13 @@ export const GLASS_REQUIREMENTS = [
   { id: 'allowlist', implemented: true, description: 'allowlist documentada de excepciones' },
   {
     id: 'visual-regression',
-    implemented: false,
-    description: 'regresión visual con Playwright (pendiente)',
+    implemented: true,
+    description: 'regresión visual con Playwright (claro/oscuro/fallback)',
   },
   {
     id: 'stylelint',
-    implemented: false,
-    description: 'regla stylelint para propiedades de cristal (pendiente)',
+    implemented: true,
+    description: 'regla stylelint para propiedades de cristal',
   },
 ];
 
@@ -515,11 +516,88 @@ export function findGlassTemplateViolations() {
   return findings;
 }
 
+/** Verifica que stylelint y la regresión visual estén cableados en CI. */
+export function findGlassToolingViolations() {
+  const findings = [];
+  const packageJson = JSON.parse(readText(resolveInApp('package.json')));
+  const ci = readText(resolveInRepo('.github/workflows/ci.yml'));
+
+  if (!String(packageJson.scripts?.['lint:css'] ?? '').includes('stylelint')) {
+    findings.push(
+      finding(
+        'package.json',
+        0,
+        'falta el script lint:css con stylelint',
+        'tooling:stylelint-script',
+      ),
+    );
+  }
+
+  const stylelintConfig = resolveInApp('stylelint.config.mjs');
+  if (!existsSync(stylelintConfig) || !readText(stylelintConfig).includes('glass/no-raw-glass')) {
+    findings.push(
+      finding(
+        'stylelint.config.mjs',
+        0,
+        'falta la regla glass/no-raw-glass',
+        'tooling:stylelint-config',
+      ),
+    );
+  }
+
+  if (!ci.includes('npm run lint:css')) {
+    findings.push(
+      finding(
+        '.github/workflows/ci.yml',
+        0,
+        'CI no ejecuta npm run lint:css',
+        'tooling:stylelint-ci',
+      ),
+    );
+  }
+
+  const visualSpec = resolveInApp('e2e/glass.visual.spec.ts');
+  if (!existsSync(visualSpec) || !readText(visualSpec).includes('toHaveScreenshot')) {
+    findings.push(
+      finding(
+        'e2e/glass.visual.spec.ts',
+        0,
+        'falta la regresión visual con toHaveScreenshot',
+        'tooling:visual-spec',
+      ),
+    );
+  }
+
+  const snapshotsDir = resolveInApp('e2e/glass.visual.spec.ts-snapshots');
+  const snapshots = existsSync(snapshotsDir)
+    ? walkFiles(snapshotsDir, (name) => name.endsWith('.png')).length
+    : 0;
+  if (snapshots < 3) {
+    findings.push(
+      finding(
+        'e2e/glass.visual.spec.ts-snapshots',
+        0,
+        `faltan snapshots visuales (${snapshots})`,
+        'tooling:visual-snapshots',
+      ),
+    );
+  }
+
+  if (!ci.includes('npm run e2e')) {
+    findings.push(
+      finding('.github/workflows/ci.yml', 0, 'CI no ejecuta npm run e2e', 'tooling:visual-ci'),
+    );
+  }
+
+  return findings;
+}
+
 /** Todos los hallazgos de R-UX-7. */
 export function findGlassSystemViolations() {
   return [
     ...findGlassDefinitionViolations(),
     ...findGlassReimplementationViolations(),
     ...findGlassTemplateViolations(),
+    ...findGlassToolingViolations(),
   ];
 }

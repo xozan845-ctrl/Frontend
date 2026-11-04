@@ -49,5 +49,6 @@ estilos de componentes.
   están permitidos (allowlist de `R-UX-7`).
 - Los shells de página usan `app-page-bg`/`app-shell-bg`; no reintroduzcas
   fondos planos.
-- La suite falla si la cobertura de requisitos Glass baja del 80% o si aparece
-  una reimplementación nueva.
+- La suite falla si aparece una reimplementación nueva; `stylelint`
+  (`glass/no-raw-glass`) y la regresión visual de Playwright cubren el mismo
+  sistema en editor y CI.
