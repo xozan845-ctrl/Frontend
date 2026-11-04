@@ -32,10 +32,11 @@ La suite `visual-guards` (`scripts/rules/ui/visual.test.mjs`) verifica:
 4. Ausencia de reimplementaciones en CSS, `@apply`, `style` inline,
    SCSS/SASS/LESS y plantillas.
 5. Shells de página con fondo ambiental.
+6. Stylelint (`glass/no-raw-glass`) cableado en CI.
+7. Regresión visual Playwright en claro, oscuro y fallback sin `backdrop-filter`.
 
-**Cobertura mínima:** `GLASS_MIN_COVERAGE = 80` en
-`scripts/config/project.mjs`. Hoy se verifican **13/15 requisitos (86.7%)**; los
-pendientes son regresión visual (Playwright) y stylelint.
+**Cobertura:** `GLASS_MIN_COVERAGE = 80` en `scripts/config/project.mjs`. Hoy se
+verifican **15/15 requisitos (100%)**.
 
 **Excepciones permitidas (allowlist):**
 
