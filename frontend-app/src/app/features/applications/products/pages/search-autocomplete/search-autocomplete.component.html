@@ -13,7 +13,7 @@
       (input)="onInput($event)"
       (focus)="onFocus()"
       (keydown)="onKeydown($event)"
-      class="w-full bg-white dark:bg-surface-800 border-2 border-slate-200 dark:border-surface-700 text-slate-900 dark:text-white text-sm rounded-2xl pl-11 pr-12 py-3.5 focus:outline-hidden focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-surface-500 shadow-sm"
+      class="glass-subtle w-full text-slate-900 dark:text-white text-sm rounded-2xl pl-11 pr-12 py-3.5 focus:outline-hidden focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-surface-500 shadow-sm"
       placeholder="Buscar productos, categorías..."
       autocomplete="off"
       role="combobox"
@@ -42,7 +42,7 @@
     <div
       id="search-dropdown"
       role="listbox"
-      class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto"
+      class="glass-card absolute top-full left-0 right-0 mt-2 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto"
       style="animation: dropdownIn 0.15s ease both"
     >
       @if (matchedCategories().length > 0) {
@@ -57,7 +57,7 @@
             @for (cat of matchedCategories(); track cat) {
               <button
                 (click)="selectCategory(cat)"
-                class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-surface-700 border border-slate-200 dark:border-surface-600 text-slate-600 dark:text-slate-300 hover:bg-accent-600 hover:text-white hover:border-accent-600 transition-all"
+                class="glass-subtle text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-accent-600 hover:text-white hover:border-accent-600 transition-all"
                 role="option"
                 aria-selected="false"
                 data-testid="search-category"
@@ -91,7 +91,7 @@
                 class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors group cursor-pointer"
               >
                 <div
-                  class="w-10 h-10 bg-slate-100 dark:bg-surface-900 rounded-lg overflow-hidden shrink-0 flex items-center justify-center relative"
+                  class="glass-subtle w-10 h-10 rounded-lg overflow-hidden shrink-0 flex items-center justify-center relative"
                 >
                   <img
                     [ngSrc]="item.product.imageUrl"
@@ -101,7 +101,7 @@
                     (error)="$any($event.target).classList.add('img-error')"
                   />
                   <div
-                    class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-900"
+                    class="glass-subtle img-fallback absolute inset-0 flex items-center justify-center"
                     style="display: none"
                   >
                     <i

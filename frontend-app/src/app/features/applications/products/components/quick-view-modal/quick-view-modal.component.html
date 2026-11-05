@@ -7,7 +7,7 @@
   >
     <!-- Modal Panel -->
     <div
-      class="relative w-full max-w-3xl bg-white dark:bg-surface-900 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-surface-700 overflow-hidden"
+      class="glass-card relative w-full max-w-3xl rounded-[2rem] shadow-2xl overflow-hidden"
       style="animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both"
       role="dialog"
       aria-modal="true"
@@ -18,7 +18,7 @@
       <!-- Close Button -->
       <button
         (click)="closeModal.emit()"
-        class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white dark:bg-surface-800 shadow-md border border-slate-100 dark:border-surface-700 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:scale-110 transition-all flex items-center justify-center"
+        class="glass-subtle absolute top-5 right-5 z-10 w-10 h-10 rounded-full shadow-md text-slate-500 hover:text-slate-900 dark:hover:text-white hover:scale-110 transition-all flex items-center justify-center"
         aria-label="Cerrar vista rápida"
       >
         <i class="fa-solid fa-xmark text-lg"></i>
@@ -27,7 +27,7 @@
       <div class="flex flex-col md:flex-row">
         <!-- Image -->
         <div
-          class="w-full md:w-2/5 bg-slate-50 dark:bg-surface-800 relative aspect-square flex items-center justify-center p-8"
+          class="glass-subtle w-full md:w-2/5 relative aspect-square flex items-center justify-center p-8"
         >
           <img
             [ngSrc]="product()!.imageUrl"
@@ -38,7 +38,7 @@
             (error)="$any($event.target).classList.add('img-error')"
           />
           <div
-            class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
+            class="glass-subtle img-fallback absolute inset-0 flex items-center justify-center rounded-xl"
             style="display: none"
           >
             <i class="fa-solid fa-image text-slate-400 dark:text-surface-600 text-3xl"></i>
@@ -85,7 +85,7 @@
               </span>
             } @else {
               <span
-                class="text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-full border border-red-100 dark:border-red-800"
+                class="badge badge-danger text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
               >
                 Agotado
               </span>
@@ -109,7 +109,7 @@
               </button>
             } @else {
               <div
-                class="flex-1 py-4 text-center text-xs font-bold uppercase tracking-widest text-slate-400 border border-slate-200 dark:border-surface-600 rounded-xl cursor-not-allowed bg-slate-50 dark:bg-surface-800"
+                class="glass-subtle flex-1 py-4 text-center text-xs font-bold uppercase tracking-widest text-slate-400 rounded-xl cursor-not-allowed"
               >
                 No Disponible
               </div>

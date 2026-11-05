@@ -6,7 +6,7 @@
     >
       <div>
         <div
-          class="inline-block bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 shadow-sm border border-accent-100 dark:border-accent-800"
+          class="badge badge-primary inline-block text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 shadow-sm"
         >
           Temporada 2026
         </div>
@@ -79,7 +79,7 @@
           data-testid="sort-select"
           [value]="sortOption()"
           (change)="onSortChange($event)"
-          class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-4 py-2.5 pr-8 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all cursor-pointer appearance-none"
+          class="glass-subtle text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-4 py-2.5 pr-8 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all cursor-pointer appearance-none"
           style="
             background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%2394a3b8%22><path fill-rule=%22evenodd%22 d=%22M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z%22 clip-rule=%22evenodd%22/></svg>');
             background-position: right 0.5rem center;
@@ -106,7 +106,7 @@
           (input)="onPriceInput('min', $event)"
           min="0"
           step="1"
-          class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          class="glass-subtle w-20 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           aria-label="Precio mínimo"
           data-testid="price-min"
         />
@@ -118,7 +118,7 @@
           (input)="onPriceInput('max', $event)"
           min="0"
           step="1"
-          class="w-20 bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          class="glass-subtle w-20 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-accent-600 focus:ring-2 focus:ring-accent-600/10 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           aria-label="Precio máximo"
           data-testid="price-max"
         />
@@ -197,7 +197,7 @@
           <button
             (click)="goToPage(currentPage() - 1)"
             [disabled]="currentPage() === 1"
-            class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            class="glass-subtle w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
             aria-label="Página anterior"
             data-testid="page-prev"
           >
@@ -241,7 +241,7 @@
           <button
             (click)="goToPage(currentPage() + 1)"
             [disabled]="currentPage() === totalPages()"
-            class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-800 text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            class="glass-subtle w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-accent-600 dark:hover:text-accent-400 hover:border-accent-600 dark:hover:border-accent-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-slate-200 dark:disabled:hover:border-surface-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
             aria-label="Página siguiente"
             data-testid="page-next"
           >
