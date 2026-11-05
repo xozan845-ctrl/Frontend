@@ -29,7 +29,7 @@
   @if (actionLabel() && actionRoute()) {
     <a
       [routerLink]="actionRoute()"
-      class="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+      class="btn btn-lg inline-flex items-center gap-2"
       [class]="actionButtonClasses()"
     >
       {{ actionLabel() }}
@@ -39,7 +39,7 @@
   @if (actionLabel() && !actionRoute() && actionClick()) {
     <button
       (click)="actionClick()!()"
-      class="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+      class="btn btn-lg inline-flex items-center gap-2"
       [class]="actionButtonClasses()"
     >
       {{ actionLabel() }}

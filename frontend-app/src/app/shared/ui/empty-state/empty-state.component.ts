@@ -96,13 +96,11 @@ export class EmptyStateComponent {
   actionButtonClasses = computed(() => {
     switch (this.variant()) {
       case 'error':
-        return 'bg-red-600 hover:bg-red-700 shadow-red-600/25';
+        return 'btn-danger';
       case 'empty':
-        return 'bg-accent-600 hover:bg-accent-700 shadow-accent-600/25';
       case 'no-results':
-        return 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/25';
       default:
-        return 'bg-accent-600 hover:bg-accent-700 shadow-accent-600/25';
+        return 'btn-primary';
     }
   });
 }
