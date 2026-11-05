@@ -492,6 +492,22 @@ export const COVERAGE_MIN_VERIFIED = 50;
 export const GLASS_MIN_COVERAGE = 100;
 
 /**
+ * Raíces de `src/app` ya adoptadas por R-UX-8. El ratchet falla si una de
+ * ellas vuelve a usar superficies crudas. Al migrar un área, añádela aquí y
+ * baja `GLASS_ADOPTION_PENDING_MAX` al nuevo backlog.
+ */
+export const GLASS_ADOPTION_ADOPTED = [
+  'features/applications/home/pages/store-entry',
+  'features/applications/empresas/pages/company-shell',
+  'features/applications/billing/pages/billing-shell',
+  'features/applications/logistica/pages/logistica-shell',
+  'features/applications/vendor/pages/vendor-shell',
+];
+
+/** Techo del backlog de superficies pendientes (solo puede bajar). */
+export const GLASS_ADOPTION_PENDING_MAX = 503;
+
+/**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).
  * Rutas relativas a `frontend-app/`. Las áreas de `docs/rules` se validan
  * aparte por su convención `README.md` + `NN-tema.md` (R-DO-6).
