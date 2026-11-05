@@ -9,7 +9,7 @@
 
 <!-- Sidebar Premium Editorial -->
 <div
-  class="glass-bar fixed inset-y-0 right-0 z-50 w-full border-l border-slate-200 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:w-[480px] dark:border-surface-700 flex flex-col"
+  class="glass-drawer fixed inset-y-0 right-0 z-50 w-full rounded-l-[2rem]! transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:w-[480px] flex flex-col"
   [style.transform]="cartUiStore.isSidebarOpen() ? 'translateX(0)' : 'translateX(100%)'"
   role="dialog"
   aria-modal="true"
@@ -20,12 +20,12 @@
   (escape)="cartUiStore.toggleSidebar(false)"
 >
   <!-- Header -->
-  <div class="glass-bar p-8 flex justify-between items-center">
+  <div class="flex justify-between items-center border-b border-white/40 p-8 dark:border-white/10">
     <h2
       class="text-2xl font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-3"
     >
       <div
-        class="w-8 h-8 bg-accent-100 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400 rounded-lg flex items-center justify-center text-sm shadow-sm"
+        class="glass-subtle w-8 h-8 text-accent-600 dark:text-accent-400 rounded-lg flex items-center justify-center text-sm shadow-sm"
       >
         <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
       </div>
@@ -33,7 +33,7 @@
     </h2>
     <button
       (click)="cartUiStore.toggleSidebar(false)"
-      class="w-10 h-10 rounded-full hover:bg-white dark:hover:bg-surface-700 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center shadow-sm hover:shadow-md"
+      class="glass-subtle w-10 h-10 rounded-full text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center justify-center shadow-sm hover:shadow-md"
       aria-label="Cerrar"
       data-testid="drawer-close"
     >
@@ -62,9 +62,7 @@
         />
       </div>
     } @else if (cartStore.items().length === 0) {
-      <div
-        class="h-full flex items-center justify-center -mt-8 bg-gradient-to-b from-transparent to-slate-50 dark:to-surface-800"
-      >
+      <div class="h-full flex items-center justify-center -mt-8">
         <app-empty-state
           icon="fa-solid fa-bag-shopping"
           title="Carrito vacío"
@@ -116,7 +114,7 @@
                 <div class="glass-subtle flex items-center overflow-hidden rounded-lg">
                   <button
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
-                    class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-surface-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+                    class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-white/40 dark:hover:bg-white/10 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
                     aria-label="Disminuir cantidad"
                     data-testid="drawer-decrease"
                   >
@@ -128,7 +126,7 @@
                   >
                   <button
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity + 1)"
-                    class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-surface-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-white/40 dark:hover:bg-white/10 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 disabled:cursor-not-allowed disabled:opacity-40"
                     [disabled]="item.product.stock > 0 && item.quantity >= item.product.stock"
                     aria-label="Aumentar cantidad"
                     data-testid="drawer-increase"
@@ -143,7 +141,7 @@
                   </span>
                   <button
                     (click)="cartStore.removeItem(item.product.id)"
-                    class="text-slate-300 dark:text-surface-500 hover:text-red-500 dark:hover:text-red-400 transition-all p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 ml-2 shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
+                    class="text-slate-300 dark:text-surface-500 hover:text-red-500 dark:hover:text-red-400 transition-all p-3 rounded-lg hover:bg-red-500/10 ml-2 shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500"
                     aria-label="Eliminar producto"
                     data-testid="drawer-remove"
                   >

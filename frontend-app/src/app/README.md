@@ -30,7 +30,8 @@ su API pública (`public-api.ts` / `public-ui.ts`). Ver
 - Tokens `--glass-*` para superficies, bordes, blur, radios y sombras en claro
   y oscuro.
 - Utilidades `.glass`, `.glass-strong`, `.glass-subtle`, `.glass-hover`,
-  `.glass-card`, `.glass-bar`, `.glass-footer` y `.glass-dashed`.
+  `.glass-card`, `.glass-bar`, `.glass-footer`, `.glass-drawer` y
+  `.glass-dashed`.
 - Primitivos globales `.card`, `.btn-*`, `.input`, `.badge`, `.alert-*` e
   `.icon-btn` heredan el estilo de cristal, por lo que las pantallas existentes
   lo adoptan sin duplicar clases.
