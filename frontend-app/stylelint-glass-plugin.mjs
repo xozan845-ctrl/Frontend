@@ -22,7 +22,7 @@ const isStylesFile = (file) => /(^|\/)src\/styles\.css$/.test(file.replace(/\\/g
 const isGlassUtility = (selector) => /\.glass(?:-[a-z0-9-]+)?(?=$|[:.\s>+~,])/.test(selector);
 
 const isGlassPrimitive = (selector) =>
-  /\.(?:card|btn|input|badge|icon-btn)(?:-[a-z0-9-]+)?(?=$|[:.\s>+~,])/.test(selector);
+  /\.(?:card|btn|input|badge|icon-btn|alert)(?:-[a-z0-9-]+)?(?=$|[:.\s>+~,])/.test(selector);
 
 const rule = (enabled) => (root, result) => {
   const validOptions = stylelint.utils.validateOptions(result, ruleName, {
