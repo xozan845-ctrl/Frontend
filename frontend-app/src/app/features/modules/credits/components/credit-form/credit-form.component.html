@@ -5,10 +5,7 @@
   </p>
 
   @if (error()) {
-    <p
-      class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300"
-      role="alert"
-    >
+    <p class="alert alert-danger px-3 py-2 text-xs font-bold" role="alert">
       {{ error() }}
     </p>
   }
