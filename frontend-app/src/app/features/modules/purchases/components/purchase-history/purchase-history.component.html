@@ -2,7 +2,7 @@
   <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div class="flex items-center gap-3">
       <span
-        class="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-9 w-9 items-center justify-center rounded-lg text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-clipboard-list"></i>
@@ -32,7 +32,7 @@
 
   <div class="flex flex-col gap-3 2xl:flex-row 2xl:items-center 2xl:justify-between">
     <div
-      class="flex flex-wrap items-center gap-1 self-start rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+      class="glass-subtle flex flex-wrap items-center gap-1 self-start rounded-2xl p-1"
       role="group"
       aria-label="Periodo de compras"
     >
@@ -125,11 +125,11 @@
 
   @if (filteredCount() === 0) {
     <div
-      class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 px-6 py-10 text-center dark:border-surface-600"
+      class="glass-dashed flex flex-col items-center gap-3 px-6 py-10 text-center"
       data-testid="purchase-history-empty"
     >
       <span
-        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-300"
+        class="glass-subtle flex h-12 w-12 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-300"
         aria-hidden="true"
       >
         <i class="fa-regular fa-calendar-xmark text-xl"></i>

@@ -2,7 +2,7 @@
   <header class="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
     <div class="flex items-center gap-3">
       <span
-        class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-10 w-10 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-file-lines"></i>
@@ -50,12 +50,10 @@
     aumenta el inventario, igual que una Compra normal.
   </p>
 
-  <div class="overflow-x-auto rounded-2xl border border-slate-100 dark:border-surface-700">
+  <div class="glass-subtle overflow-x-auto rounded-2xl">
     <table class="w-full min-w-[820px] text-left text-sm" data-testid="purchase-orders-table">
       <thead>
-        <tr
-          class="bg-slate-50 text-[10px] tracking-widest text-slate-400 uppercase dark:bg-surface-800"
-        >
+        <tr class="glass-bar text-[10px] tracking-widest text-slate-400 uppercase">
           <th scope="col" class="px-4 py-3 font-bold">N° orden</th>
           <th scope="col" class="px-4 py-3 font-bold">Fecha</th>
           <th scope="col" class="px-4 py-3 font-bold">Proveedor</th>

@@ -2,7 +2,7 @@
   <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div class="flex items-center gap-3">
       <span
-        class="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-9 w-9 items-center justify-center rounded-lg text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-user-group"></i>
@@ -32,11 +32,11 @@
 
   @if (rows().length === 0) {
     <div
-      class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 px-6 py-10 text-center dark:border-surface-600"
+      class="glass-dashed flex flex-col items-center gap-3 px-6 py-10 text-center"
       data-testid="purchase-suppliers-empty"
     >
       <span
-        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-300"
+        class="glass-subtle flex h-12 w-12 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-300"
         aria-hidden="true"
       >
         <i class="fa-solid fa-address-book text-xl"></i>
@@ -75,7 +75,7 @@
               <td class="py-3 pr-3">
                 <span class="flex items-center gap-2">
                   <span
-                    class="flex h-8 w-8 items-center justify-center rounded-full bg-accent-50 text-[10px] font-black text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+                    class="glass-subtle flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-black text-accent-600 dark:text-accent-400"
                     aria-hidden="true"
                   >
                     {{ row.name.slice(0, 2).toUpperCase() }}
