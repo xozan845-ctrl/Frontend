@@ -79,6 +79,9 @@ un ratchet:
 El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `GLASS_ADOPTION_ADOPTED` y `GLASS_ADOPTION_PENDING_MAX`.
 
+**Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
+`modules/barcodes`, `modules/credits` y `modules/reports`; backlog 466.
+
 ## Notas
 
 - `R-UX-1` está implementado en `products` (`skeleton-loader`, `empty-state`) y

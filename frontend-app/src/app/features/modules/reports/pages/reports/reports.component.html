@@ -69,7 +69,7 @@
         <ul class="flex flex-col gap-2">
           @for (status of reports.snapshot().statuses; track status.status) {
             <li
-              class="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2 text-xs dark:bg-surface-800"
+              class="glass-subtle flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-xs"
               data-testid="reports-status-row"
             >
               <span class="font-bold uppercase">{{ status.status }}</span>
