@@ -11,10 +11,7 @@
   @if (jobsStore.detailLoading() && !jobsStore.selected()) {
     <p class="text-sm text-slate-400" data-testid="ai-detail-loading">Cargando job…</p>
   } @else if (jobsStore.detailError() && !jobsStore.selected()) {
-    <div
-      class="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-900/10"
-      data-testid="ai-detail-error"
-    >
+    <div class="alert alert-danger p-4" data-testid="ai-detail-error">
       <p class="text-sm text-red-700 dark:text-red-400">{{ jobsStore.detailError() }}</p>
     </div>
   } @else if (jobsStore.selected(); as job) {
@@ -137,9 +134,7 @@
               @if (execution.errors.length > 0) {
                 <ul class="space-y-2">
                   @for (error of execution.errors; track $index) {
-                    <li
-                      class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/10 dark:text-red-400"
-                    >
+                    <li class="alert alert-danger flex items-start gap-2 p-3 text-sm">
                       <i class="fa-solid fa-triangle-exclamation mt-0.5" aria-hidden="true"></i>
                       {{ error.message }}
                     </li>
