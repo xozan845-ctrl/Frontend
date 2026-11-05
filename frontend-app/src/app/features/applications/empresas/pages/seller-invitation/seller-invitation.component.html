@@ -29,7 +29,7 @@
 
       @if (invitation()) {
         <span
-          class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[10px] font-black tracking-widest text-emerald-700 uppercase dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300"
+          class="badge badge-success inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black tracking-widest uppercase"
         >
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
           Invitación verificada
@@ -46,13 +46,23 @@
         >
           <span class="sr-only">Validando invitación…</span>
           <div class="flex flex-col gap-5">
-            <div class="h-4 w-36 animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
-            <div class="h-14 w-4/5 animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
-            <div class="h-4 w-full animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
-            <div class="h-4 w-2/3 animate-pulse rounded bg-slate-200 dark:bg-surface-700"></div>
+            <div
+              class="h-4 w-36 animate-pulse rounded bg-current text-slate-300 opacity-40 dark:text-surface-600"
+            ></div>
+            <div
+              class="h-14 w-4/5 animate-pulse rounded bg-current text-slate-300 opacity-40 dark:text-surface-600"
+            ></div>
+            <div
+              class="h-4 w-full animate-pulse rounded bg-current text-slate-300 opacity-40 dark:text-surface-600"
+            ></div>
+            <div
+              class="h-4 w-2/3 animate-pulse rounded bg-current text-slate-300 opacity-40 dark:text-surface-600"
+            ></div>
             <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               @for (item of [1, 2, 3, 4]; track item) {
-                <div class="h-24 animate-pulse rounded-2xl bg-slate-200 dark:bg-surface-700"></div>
+                <div
+                  class="h-24 animate-pulse rounded-2xl bg-current text-slate-300 opacity-40 dark:text-surface-600"
+                ></div>
               }
             </div>
           </div>
@@ -138,7 +148,7 @@
             <ol class="flex flex-col gap-4">
               <li class="flex gap-3">
                 <span
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                  class="glass-subtle flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs text-emerald-700 dark:text-emerald-300"
                 >
                   <i class="fa-solid fa-check" aria-hidden="true"></i>
                 </span>
@@ -168,7 +178,7 @@
               </li>
               <li class="flex gap-3">
                 <span
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs text-slate-600 dark:bg-surface-700 dark:text-slate-300"
+                  class="glass-subtle flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs text-slate-600 dark:text-slate-300"
                 >
                   3
                 </span>
@@ -232,11 +242,11 @@
             </div>
 
             <div
-              class="mt-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-900/20"
+              class="alert alert-success mt-6 flex items-center gap-3 rounded-xl p-3"
               data-testid="seller-email"
             >
               <span
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                class="glass-subtle flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-700 dark:text-emerald-300"
               >
                 <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
               </span>
@@ -257,7 +267,7 @@
 
             @if (error()) {
               <div
-                class="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="alert alert-danger mt-4 rounded-xl p-3 text-sm"
                 role="alert"
                 data-testid="seller-invitation-error"
               >
@@ -454,7 +464,7 @@
           data-testid="invalid-invitation"
         >
           <div
-            class="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 text-2xl text-amber-600 dark:bg-amber-900/20 dark:text-amber-300"
+            class="glass-subtle flex h-16 w-16 items-center justify-center rounded-2xl text-2xl text-amber-600 dark:text-amber-300"
             aria-hidden="true"
           >
             <i class="fa-solid fa-link-slash"></i>
