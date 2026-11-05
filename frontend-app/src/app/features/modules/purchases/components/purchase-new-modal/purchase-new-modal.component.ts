@@ -314,9 +314,8 @@ export class PurchaseNewModalComponent {
     const base =
       'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-black';
     if (value === this.step()) return `${base} bg-white/20 text-white`;
-    if (value < this.step())
-      return `${base} bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300`;
-    return `${base} bg-slate-100 text-slate-400 dark:bg-surface-700`;
+    if (value < this.step()) return `${base} glass-subtle text-accent-700 dark:text-accent-300`;
+    return `${base} glass-subtle text-slate-400`;
   }
 
   submitWizard(): void {
