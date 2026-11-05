@@ -80,7 +80,8 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `GLASS_ADOPTION_ADOPTED` y `GLASS_ADOPTION_PENDING_MAX`.
 
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
-`modules/barcodes`, `modules/credits` y `modules/reports`; backlog 466.
+`modules/barcodes`, `modules/credits`, `modules/reports`, `admin` y `storage`;
+backlog 450.
 
 ## Notas
 

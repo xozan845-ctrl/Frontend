@@ -507,10 +507,12 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/modules/barcodes',
   'features/modules/credits',
   'features/modules/reports',
+  'features/applications/admin',
+  'features/applications/storage',
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */
-export const GLASS_ADOPTION_PENDING_MAX = 466;
+export const GLASS_ADOPTION_PENDING_MAX = 450;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).

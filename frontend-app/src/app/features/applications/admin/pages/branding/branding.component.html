@@ -38,10 +38,7 @@
   </div>
 
   @if (store.error(); as error) {
-    <p
-      role="alert"
-      class="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
-    >
+    <p role="alert" class="alert alert-danger mt-4 px-3 py-2 text-xs font-bold">
       {{ error }}
     </p>
   }
