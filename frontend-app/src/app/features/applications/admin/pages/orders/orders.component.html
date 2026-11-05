@@ -40,7 +40,7 @@
 
   @if (orders.error(); as message) {
     <div
-      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      class="alert alert-danger flex flex-col gap-2 p-4"
       role="alert"
       data-testid="admin-orders-error"
     >
@@ -117,7 +117,7 @@
                   </td>
                   <td class="py-3 pr-3">
                     <span
-                      class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-widest text-slate-600 uppercase dark:bg-surface-700 dark:text-slate-300"
+                      class="badge badge-neutral rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
                     >
                       {{ statusLabel(order.status) }}
                     </span>
@@ -165,9 +165,7 @@
           <app-skeleton-loader height="120px" customClass="rounded-xl" />
         </div>
       } @else if (orders.selectedError(); as message) {
-        <p
-          class="rounded-xl bg-red-50 p-3 text-xs font-bold text-red-600 dark:bg-red-900/10 dark:text-red-400"
-        >
+        <p class="alert alert-danger p-3 text-xs font-bold">
           {{ message }}
         </p>
       } @else if (orders.selectedOrder(); as order) {
