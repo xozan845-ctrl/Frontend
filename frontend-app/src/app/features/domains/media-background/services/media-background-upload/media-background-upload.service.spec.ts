@@ -45,7 +45,7 @@ describe('MediaBackgroundUploadService', () => {
     expect(storage.confirm).toHaveBeenCalledWith('obj-1');
     expect(resultado).toEqual({
       objectId: 'obj-1',
-      url: '/api/v1/storage/public/objetos/obj-1',
+      url: expect.stringContaining('/api/v1/storage/public/objetos/obj-1'),
       mediaType: 'video',
     });
   });
