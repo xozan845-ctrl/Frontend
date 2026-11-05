@@ -1,6 +1,9 @@
 import { environment } from '../../../../../../environments/environment';
 import { EMPTY_MEDIA_BACKGROUND } from '../../../../../core/models/media-background.model';
-import { adaptMediaBackgroundFromBackend } from './media-background.adapter';
+import {
+  adaptMediaBackgroundFromBackend,
+  adaptPanelAiMediaBackgroundFromBackend,
+} from './media-background.adapter';
 
 const ASSET = `${new URL(environment.apiUrl).origin}/api/v1/storage/public/objetos`;
 
@@ -97,5 +100,32 @@ describe('adaptMediaBackgroundFromBackend', () => {
     expect(config.mediaType).toBe('imagen');
     expect(config.overlay).toBe(55);
     expect(config.active).toBe(false);
+  });
+
+  it('normaliza el bloque panel_ai_background_* del panel de IA (ADR-40)', () => {
+    const config = adaptPanelAiMediaBackgroundFromBackend({
+      background_objeto_id: 'otro-fondo',
+      panel_ai_background_objeto_id: 'ai-video',
+      panel_ai_background_media_type: 'video',
+      panel_ai_background_url: '/api/v1/storage/public/objetos/ai-video',
+      panel_ai_background_poster_objeto_id: 'ai-poster',
+      panel_ai_background_poster_url: '/api/v1/storage/public/objetos/ai-poster',
+      panel_ai_background_alt: 'Panel IA',
+      panel_ai_background_overlay: 60,
+      panel_ai_background_position: 'bottom',
+      panel_ai_background_activo: true,
+    });
+
+    expect(config).toEqual({
+      objectId: 'ai-video',
+      mediaType: 'video',
+      url: `${ASSET}/ai-video`,
+      posterObjectId: 'ai-poster',
+      posterUrl: `${ASSET}/ai-poster`,
+      alt: 'Panel IA',
+      overlay: 60,
+      position: 'bottom',
+      active: true,
+    });
   });
 });

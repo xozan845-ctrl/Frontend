@@ -8,6 +8,8 @@ import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-stat
 import { AiChatMessageComponent } from '../../components/ai-chat-message/ai-chat-message.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
 import { AI_SCRAPER_PRACTICE_SITES } from '../../constants/ai-scraper.constants';
+import { MediaBackgroundComponent } from '../../../../../shared/ui/media-background/media-background.component';
+import { MediaBackgroundStore } from '../../../../domains/media-background/public-api';
 import type { ChatSuggestion, SessionGroup } from './ai-chat.types';
 
 /** Parsea headers opcionales (JSON `{ "Authorization": "Bearer x" }`). */
@@ -62,11 +64,13 @@ const SUGGESTIONS: readonly ChatSuggestion[] = [
     AiStatusBadgeComponent,
     AiChatMessageComponent,
     AiResultsTableComponent,
+    MediaBackgroundComponent,
   ],
   templateUrl: './ai-chat.component.html',
 })
 export default class AiChatComponent {
   readonly store = inject(AiSessionStore);
+  readonly mediaBackground = inject(MediaBackgroundStore);
   private readonly fb = inject(FormBuilder);
   private readonly seo = injectSeoPage(
     'Chat de scraping',
@@ -74,6 +78,7 @@ export default class AiChatComponent {
   );
 
   private readonly loadSessions = this.store.loadSessions();
+  private readonly loadPanelAi = this.mediaBackground.loadPanelAi();
   private readonly cleanup = inject(DestroyRef).onDestroy(() => this.store.clearCurrent());
 
   readonly suggestions = SUGGESTIONS;

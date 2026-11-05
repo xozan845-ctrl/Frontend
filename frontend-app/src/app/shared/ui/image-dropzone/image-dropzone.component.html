@@ -27,12 +27,26 @@
     />
 
     @if (previewUrl(); as preview) {
-      <img
-        [src]="preview"
-        [alt]="alt()"
-        class="h-full w-full object-contain p-3"
-        data-testid="image-dropzone-preview"
-      />
+      @if (previewType() === 'video') {
+        <video
+          [src]="preview"
+          [poster]="posterUrl() ?? ''"
+          class="h-full w-full object-contain p-3"
+          controls
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          data-testid="image-dropzone-preview"
+        ></video>
+      } @else {
+        <img
+          [src]="preview"
+          [alt]="alt()"
+          class="h-full w-full object-contain p-3"
+          data-testid="image-dropzone-preview"
+        />
+      }
 
       @if (!disabled() && !uploading()) {
         <div
@@ -71,7 +85,7 @@
         <i class="fa-solid fa-cloud-arrow-up text-2xl text-accent-500" aria-hidden="true"></i>
         @if (!isAvatar()) {
           <span class="text-sm font-bold text-slate-700 dark:text-slate-200">
-            Arrastra una imagen o haz clic para seleccionarla
+            {{ pickLabel() || 'Arrastra una imagen o haz clic para seleccionarla' }}
           </span>
           <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
             {{ maxSizeLabel() }} máx.

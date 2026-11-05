@@ -6,6 +6,8 @@ import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from '../../state/store-logo/store-logo.store';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { Store } from '../../../products/public-api';
+import { STORAGE_REPOSITORY } from '../../../storage/public-api';
+import { MediaBackgroundWriteService } from '../../../../domains/media-background/public-api';
 
 const store: Store = {
   id: 't-1',
@@ -34,6 +36,12 @@ describe('VendorStoreComponent', () => {
     reset: vi.fn(),
   };
   const seo = { setPage: vi.fn(), updateTitle: vi.fn(), reset: vi.fn() };
+  const storage = {
+    requestUpload: vi.fn(),
+    uploadToUrl: vi.fn(),
+    confirm: vi.fn(),
+  };
+  const mediaWriter = { updateStore: vi.fn() };
   const storeLogo = {
     uploading: signal(false).asReadonly(),
     upload: vi.fn(),
@@ -50,6 +58,8 @@ describe('VendorStoreComponent', () => {
         { provide: VendorStoreStore, useValue: vendorStore },
         { provide: StoreLogoStore, useValue: storeLogo },
         { provide: SeoService, useValue: seo },
+        { provide: STORAGE_REPOSITORY, useValue: storage },
+        { provide: MediaBackgroundWriteService, useValue: mediaWriter },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(VendorStoreComponent);

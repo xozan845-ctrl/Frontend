@@ -5,6 +5,7 @@ import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
 } from '../../../../../core/models/api-response.dto';
+import { adaptMediaBackgroundFromBackend } from '../../../../domains/media-background/public-api';
 
 /**
  * Tienda del vendedor (`POST /vendedores/tienda`, `GET /vendedores/me/tienda`).
@@ -17,12 +18,15 @@ export function adaptStoreFromBackend(raw: unknown): Store | null {
   const id = tienda.id;
   if (id === null || id === undefined || id === '') return null;
 
+  const background = adaptMediaBackgroundFromBackend(tienda);
+
   return {
     id: String(id),
     ...(typeof tienda.slug === 'string' && tienda.slug ? { slug: tienda.slug } : {}),
     vendorId: String(tienda.vendedor_id ?? tienda.vendorId ?? ''),
     name: typeof tienda.nombre === 'string' ? tienda.nombre : 'Tienda',
     description: typeof tienda.descripcion === 'string' ? tienda.descripcion : '',
+    ...(background.objectId ? { background } : {}),
     ...(tienda.empresa_id !== null && tienda.empresa_id !== undefined && tienda.empresa_id !== ''
       ? { companyId: String(tienda.empresa_id) }
       : {}),

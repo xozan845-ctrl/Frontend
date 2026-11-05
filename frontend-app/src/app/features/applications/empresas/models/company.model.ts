@@ -1,3 +1,5 @@
+import type { MediaBackgroundConfig } from '../../../../core/models/media-background.model';
+
 /** Modalidad logística de una empresa (`modalidad_logistica` en Core Engine). */
 export type LogisticsMode = 'plataforma' | 'propia' | 'hibrida';
 
@@ -49,6 +51,8 @@ export interface Company extends CompanyProfileData {
   createdAt: string;
   /** URL pública derivada del logo por el backend (`logo_url`). */
   logoUrl?: string | null;
+  /** Fondo multimedia de la empresa (ADR-38), normalizado por el adapter. */
+  background?: MediaBackgroundConfig;
   updatedAt?: string;
 }
 

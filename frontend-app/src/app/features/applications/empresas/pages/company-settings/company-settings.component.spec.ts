@@ -7,6 +7,8 @@ import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { Company, LogisticsMode } from '../../models/company.model';
+import { STORAGE_REPOSITORY } from '../../../storage/public-api';
+import { MediaBackgroundWriteService } from '../../../../domains/media-background/public-api';
 
 const company: Company = {
   id: 'c-1',
@@ -60,6 +62,12 @@ describe('CompanySettingsComponent', () => {
 
   const authStore = { user: user.asReadonly() };
   const seo = { setPage: vi.fn(), updateTitle: vi.fn(), reset: vi.fn() };
+  const storage = {
+    requestUpload: vi.fn(),
+    uploadToUrl: vi.fn(),
+    confirm: vi.fn(),
+  };
+  const mediaWriter = { updateCompany: vi.fn() };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
@@ -69,6 +77,8 @@ describe('CompanySettingsComponent', () => {
         { provide: CompanyStore, useValue: companyStore },
         { provide: AuthStore, useValue: authStore },
         { provide: SeoService, useValue: seo },
+        { provide: STORAGE_REPOSITORY, useValue: storage },
+        { provide: MediaBackgroundWriteService, useValue: mediaWriter },
       ],
     })
       .overrideComponent(CompanySettingsComponent, {

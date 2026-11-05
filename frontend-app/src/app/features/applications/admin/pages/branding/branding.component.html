@@ -1,0 +1,50 @@
+<section class="mx-auto w-full max-w-6xl px-4 py-6">
+  <header class="mb-6">
+    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Administración</p>
+    <h1 class="font-heading text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+      Personalización
+    </h1>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      Fondos globales de la plataforma y del panel de IA. Se aplican a todos los usuarios.
+    </p>
+  </header>
+
+  <div class="space-y-6">
+    @if (store.loadingPlatform()) {
+      <app-skeleton-loader height="180px" customClass="rounded-2xl" />
+    } @else {
+      <app-media-background-editor
+        title="Fondo de plataforma"
+        hint="Imagen o video de fondo del sitio público y del acceso."
+        folder="plataforma"
+        description="Fondo de plataforma"
+        [config]="store.platform()"
+        [save]="guardarPlataforma"
+        (saved)="onGuardado('Fondo de plataforma actualizado.')"
+      />
+    }
+
+    @if (store.loadingPanelAi()) {
+      <app-skeleton-loader height="180px" customClass="rounded-2xl" />
+    } @else {
+      <app-media-background-editor
+        title="Fondo del panel de IA"
+        hint="Video o imagen de fondo del chat de IA global (ADR-40)."
+        folder="plataforma"
+        description="Fondo del panel de IA"
+        [config]="store.panelAi()"
+        [save]="guardarPanelAi"
+        (saved)="onGuardado('Fondo del panel de IA actualizado.')"
+      />
+    }
+  </div>
+
+  @if (store.error(); as error) {
+    <p
+      role="alert"
+      class="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+    >
+      {{ error }}
+    </p>
+  }
+</section>

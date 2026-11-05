@@ -98,6 +98,48 @@ describe('ImageDropzoneComponent', () => {
     expect(removed).toHaveBeenCalled();
   });
 
+  it('debe aceptar video cuando el accept lo permite', async () => {
+    await setup();
+    fixture.componentRef.setInput('accept', 'video/*');
+    fixture.detectChanges();
+    const selected = vi.fn();
+    component.fileSelected.subscribe(selected);
+    const file = new File(['video'], 'fondo.mp4', { type: 'video/mp4' });
+
+    component.onInputChange({
+      target: { files: [file], value: '' },
+    } as unknown as Event);
+
+    expect(selected).toHaveBeenCalledWith(file);
+    expect(component.error()).toBeNull();
+  });
+
+  it('debe rechazar video cuando el accept es solo imagen', async () => {
+    await setup();
+    const selected = vi.fn();
+    component.fileSelected.subscribe(selected);
+    const file = new File(['video'], 'fondo.mp4', { type: 'video/mp4' });
+
+    component.onInputChange({
+      target: { files: [file], value: '' },
+    } as unknown as Event);
+
+    expect(selected).not.toHaveBeenCalled();
+    expect(component.error()).toBe('El archivo debe ser una imagen.');
+  });
+
+  it('debe renderizar la vista previa de video con poster', async () => {
+    await setup();
+    fixture.componentRef.setInput('previewUrl', '/media/fondo.mp4');
+    fixture.componentRef.setInput('previewType', 'video');
+    fixture.componentRef.setInput('posterUrl', '/media/poster.png');
+    fixture.detectChanges();
+
+    const video = (fixture.nativeElement as HTMLElement).querySelector('video');
+    expect(video).not.toBeNull();
+    expect(video?.getAttribute('poster')).toBe('/media/poster.png');
+  });
+
   it('no debe seleccionar archivos mientras sube o está deshabilitado', async () => {
     await setup();
     const selected = vi.fn();

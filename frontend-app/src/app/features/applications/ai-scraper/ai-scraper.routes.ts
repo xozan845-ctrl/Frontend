@@ -5,6 +5,7 @@ import { AI_JOB_REPOSITORY } from './repositories/ai-job.repository';
 import { AI_SESSION_REPOSITORY } from './repositories/ai-session.repository';
 import { AiJobService } from './services/ai-job/ai-job.service';
 import { AiSessionService } from './services/ai-session/ai-session.service';
+import { MEDIA_BACKGROUND_PROVIDERS } from '../../domains/media-background/public-api';
 
 /**
  * Rutas del feature `ai-scraper` (`R-AR-12`, `R-LZ-1`). El feature se carga con
@@ -20,6 +21,7 @@ export const AI_SCRAPER_ROUTES: Routes = [
       AiSessionStore,
       { provide: AI_JOB_REPOSITORY, useExisting: AiJobService },
       { provide: AI_SESSION_REPOSITORY, useExisting: AiSessionService },
+      ...MEDIA_BACKGROUND_PROVIDERS,
     ],
     children: [
       {

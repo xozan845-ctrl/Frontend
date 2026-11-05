@@ -2,6 +2,8 @@ import { Component, DestroyRef, computed, effect, inject, signal } from '@angula
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { throwError } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
@@ -12,6 +14,11 @@ import {
   resolveStorageAssetUrl,
   storagePublicObjectUrl,
 } from '../../../storage/public-api';
+import {
+  MediaBackgroundDraft,
+  MediaBackgroundEditorComponent,
+  MediaBackgroundWriteService,
+} from '../../../../domains/media-background/public-api';
 import {
   COMPANY_TYPE_OPTIONS,
   CURRENCY_OPTIONS,
@@ -56,6 +63,7 @@ const MAX_LENGTH = {
     DatePipe,
     SkeletonLoaderComponent,
     ImageDropzoneComponent,
+    MediaBackgroundEditorComponent,
   ],
   providers: [CompanyLogoStore, { provide: STORAGE_REPOSITORY, useClass: StorageService }],
   templateUrl: './company-settings.component.html',
@@ -64,6 +72,7 @@ export default class CompanySettingsComponent {
   readonly companyStore = inject(CompanyStore);
   readonly logoStore = inject(CompanyLogoStore);
   readonly authStore = inject(AuthStore);
+  private readonly mediaWriter = inject(MediaBackgroundWriteService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cleanup = this.destroyRef.onDestroy(() => this.clearCreateLogoPreview());
@@ -103,6 +112,15 @@ export default class CompanySettingsComponent {
 
     return storagePublicObjectUrl(company.logoObjectId);
   });
+
+  /** Guarda el fondo de la empresa; solo se renderiza para el empresario. */
+  readonly guardarFondoEmpresa = (draft: MediaBackgroundDraft) => {
+    const company = this.company();
+    if (!company) return throwError(() => new Error('Empresa no disponible.'));
+    return this.mediaWriter
+      .updateCompany(company.id, draft)
+      .pipe(tap((background) => this.companyStore.applyCompanyUpdate({ ...company, background })));
+  };
 
   readonly createCompanyForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(160)]],

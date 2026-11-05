@@ -9,6 +9,8 @@ import { MediaBackgroundConfig } from '../../../../core/models/media-background.
 export interface MediaBackgroundRepository {
   /** Fondo público de plataforma (`GET /configuracion/sitio`). */
   platform(): Observable<MediaBackgroundConfig>;
+  /** Fondo del panel de IA (`panel_ai_background_*`, ADR-40). */
+  panelAi(): Observable<MediaBackgroundConfig>;
   /** Fondo de una empresa (`GET /empresas/:id`). */
   company(companyId: string): Observable<MediaBackgroundConfig>;
   /** Fondo público de una tienda (`GET /tiendas/:id`). */

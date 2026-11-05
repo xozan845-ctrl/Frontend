@@ -43,6 +43,27 @@ describe('MediaBackgroundService', () => {
     });
   });
 
+  it('debe pedir el bloque panel_ai de la configuración del sitio', () => {
+    let result: unknown;
+    service.panelAi().subscribe((config) => (result = config));
+
+    const request = httpMock.expectOne(`${environment.apiUrl}/configuracion/sitio`);
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      background_objeto_id: 'bg-site',
+      panel_ai_background_objeto_id: 'ai-1',
+      panel_ai_background_media_type: 'video',
+      panel_ai_background_url: '/api/v1/storage/public/objetos/ai-1',
+      panel_ai_background_activo: true,
+    });
+
+    expect(result).toMatchObject({
+      objectId: 'ai-1',
+      mediaType: 'video',
+      active: true,
+    });
+  });
+
   it('debe pedir el fondo de una empresa', () => {
     let result: unknown;
     service.company('empresa 1').subscribe((config) => (result = config));
