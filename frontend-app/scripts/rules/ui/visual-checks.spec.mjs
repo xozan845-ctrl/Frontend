@@ -3,6 +3,8 @@ import test from 'node:test';
 import {
   GLASS_REQUIREMENTS,
   TEMPLATE_ALLOWLIST,
+  findBlocks,
+  findFallbackBlock,
   findGlassAllowlistViolations,
   findGlassDefinitionViolations,
   getGlassCoverage,
@@ -91,4 +93,38 @@ test('el primitivo alert existe y hereda tokens Glass', () => {
     finding.key.includes('primitive:.alert'),
   );
   assert.deepEqual(findings, []);
+});
+
+test('findBlocks distingue reglas condicionales de las globales', () => {
+  const css = [
+    ':root { --glass-bg: #fff; }',
+    '@media (min-width: 1px) { .card { background: var(--glass-bg); } }',
+    '.dark { --glass-bg: #000; }',
+  ].join('\n');
+
+  const blocks = findBlocks(css);
+  const root = blocks.find((block) => block.selector === ':root');
+  const card = blocks.find((block) => block.selector === '.card');
+  const dark = blocks.find((block) => block.selector === '.dark');
+
+  assert.equal(root?.conditional, false);
+  assert.equal(dark?.conditional, false);
+  assert.equal(card?.conditional, true);
+  assert.deepEqual(card?.atRules, ['@media (min-width: 1px)']);
+  assert.ok((card?.index ?? 0) > 0);
+});
+
+test('findFallbackBlock localiza el @supports de backdrop-filter', () => {
+  const css = [
+    '.card { color: red; }',
+    '@supports not (backdrop-filter: blur(1px)) {',
+    '  .card { background: #fff; }',
+    '}',
+  ].join('\n');
+
+  const fallback = findFallbackBlock(css);
+  assert.ok(fallback);
+  assert.ok(fallback.text.includes('@supports not (backdrop-filter'));
+  assert.ok(fallback.text.includes('.card'));
+  assert.equal(findFallbackBlock('.card { color: red; }'), null);
 });
