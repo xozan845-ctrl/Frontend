@@ -13,7 +13,7 @@
   } @else if (productStore.selectedProduct(); as product) {
     <!-- Breadcrumb -->
     <div
-      class="flex items-center gap-3 mb-16 text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50 dark:bg-surface-800 px-4 py-2 inline-flex rounded-full shadow-sm border border-slate-100 dark:border-surface-700"
+      class="glass-subtle flex items-center gap-3 mb-16 text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 py-2 inline-flex rounded-full shadow-sm"
     >
       <a
         [routerLink]="['/tienda', storeId(), 'shop']"
@@ -32,7 +32,7 @@
       <!-- Image Section with Lightbox -->
       <div class="w-full lg:w-1/2 sticky top-24">
         <div
-          class="aspect-[4/5] bg-slate-50 dark:bg-surface-800 relative w-full flex items-center justify-center overflow-hidden rounded-[3rem] shadow-xl border border-slate-100 dark:border-surface-700 group cursor-zoom-in"
+          class="glass-subtle aspect-[4/5] relative w-full flex items-center justify-center overflow-hidden rounded-[3rem] shadow-xl group cursor-zoom-in"
           (click)="lightbox.open()"
           (keydown.enter)="lightbox.open()"
           role="button"
@@ -49,7 +49,7 @@
             (error)="$any($event.target).classList.add('img-error')"
           />
           <div
-            class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-[3rem]"
+            class="glass-subtle img-fallback absolute inset-0 flex items-center justify-center rounded-[3rem]"
             style="display: none"
           >
             <i
@@ -84,7 +84,7 @@
             @for (img of product.images; track img; let i = $index) {
               <button
                 (click)="activeImageIndex.set(i)"
-                class="w-16 h-16 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 bg-slate-50 dark:bg-surface-800"
+                class="glass-subtle w-16 h-16 rounded-xl overflow-hidden border-2 transition-all hover:scale-105"
                 [class.border-accent-600]="activeImageIndex() === i"
                 [class.dark:border-accent-500]="activeImageIndex() === i"
                 [class.shadow-md]="activeImageIndex() === i"
@@ -135,28 +135,27 @@
               <span class="text-xl text-slate-400 line-through font-bold">{{
                 product.originalPrice | appCurrency
               }}</span>
-              <span
-                class="text-sm font-black text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-md"
+              <span class="badge badge-danger text-sm font-black px-2 py-0.5 rounded-md"
                 >-{{ discountPercent() }}%</span
               >
             }
           </div>
           @if (product.stock > 10) {
             <span
-              class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-800 mb-2 shadow-sm flex items-center gap-1"
+              class="badge badge-success text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 shadow-sm flex items-center gap-1"
             >
               <i class="fa-solid fa-circle-check text-[8px]" aria-hidden="true"></i> En stock
             </span>
           } @else if (product.stock > 0) {
             <span
-              class="text-[10px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full border border-amber-100 dark:border-amber-800 mb-2 shadow-sm flex items-center gap-1"
+              class="badge badge-warning text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 shadow-sm flex items-center gap-1"
             >
               <i class="fa-solid fa-exclamation-triangle text-[8px]" aria-hidden="true"></i> Pocas
               unidades
             </span>
           } @else {
             <span
-              class="text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-full border border-red-100 dark:border-red-800 mb-2 shadow-sm flex items-center gap-1"
+              class="badge badge-danger text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 shadow-sm flex items-center gap-1"
             >
               <i class="fa-solid fa-xmark text-[8px]" aria-hidden="true"></i> Agotado
             </span>
@@ -275,7 +274,7 @@
             </button>
           } @else {
             <button
-              class="flex-1 bg-slate-100 dark:bg-surface-800 text-slate-400 dark:text-surface-500 font-bold uppercase tracking-widest py-4 px-8 rounded-2xl cursor-not-allowed text-xs border border-slate-200 dark:border-surface-700"
+              class="glass-subtle flex-1 text-slate-400 dark:text-surface-500 font-bold uppercase tracking-widest py-4 px-8 rounded-2xl cursor-not-allowed text-xs"
             >
               No Disponible
             </button>
@@ -320,7 +319,7 @@
           @for (feature of features; track feature.icon) {
             <div class="flex flex-col gap-3 group">
               <div
-                class="w-12 h-12 bg-slate-50 dark:bg-surface-800 rounded-xl flex items-center justify-center text-accent-600 dark:text-accent-400 transition-colors group-hover:bg-accent-600 group-hover:text-white shadow-sm border border-slate-100 dark:border-surface-700"
+                class="glass-subtle w-12 h-12 rounded-xl flex items-center justify-center text-accent-600 dark:text-accent-400 transition-colors group-hover:bg-accent-600 group-hover:text-white shadow-sm"
               >
                 <i [class]="feature.icon + ' text-lg'"></i>
               </div>
@@ -366,7 +365,7 @@
       <!-- Review Form -->
       @if (showReviewForm()) {
         <div
-          class="bg-slate-50 dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-3xl p-8 mb-12 shadow-sm"
+          class="glass-subtle rounded-3xl p-8 mb-12 shadow-sm"
           style="animation: fadeIn 0.3s ease both"
         >
           <h3
@@ -401,7 +400,7 @@
                 id="review-author"
                 type="text"
                 formControlName="authorName"
-                class="w-full border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-900 rounded-xl py-3.5 px-4 text-slate-900 dark:text-white focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 outline-hidden transition-all"
+                class="glass-subtle w-full rounded-xl py-3.5 px-4 text-slate-900 dark:text-white focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 outline-hidden transition-all"
                 placeholder="Ej. María García"
               />
               @if (reviewForm.get('authorName')?.invalid && reviewSubmitted()) {
@@ -419,7 +418,7 @@
                 id="review-comment"
                 formControlName="comment"
                 rows="4"
-                class="w-full border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-900 rounded-xl py-3.5 px-4 text-slate-900 dark:text-white focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 outline-hidden transition-all resize-none"
+                class="glass-subtle w-full rounded-xl py-3.5 px-4 text-slate-900 dark:text-white focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 outline-hidden transition-all resize-none"
                 placeholder="¿Qué te pareció el producto?"
               ></textarea>
               @if (reviewForm.get('comment')?.invalid && reviewSubmitted()) {
@@ -451,9 +450,7 @@
       } @else {
         <div class="grid md:grid-cols-2 gap-6">
           @for (review of productReviews(); track review.id) {
-            <div
-              class="bg-white dark:bg-surface-800 border border-slate-100 dark:border-surface-700 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
-            >
+            <div class="card rounded-2xl p-6 hover:shadow-md transition-shadow">
               <div class="flex items-start justify-between mb-4">
                 <div class="flex items-center gap-3">
                   <div
