@@ -18,9 +18,7 @@
       [actionRoute]="shopRoute()"
     />
   } @else {
-    <div
-      class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-3xl shadow-xl overflow-hidden"
-    >
+    <div class="card overflow-hidden rounded-3xl shadow-xl">
       <div class="divide-y divide-slate-100 dark:divide-surface-700">
         @for (item of cartStore.items(); track item.product.id) {
           <div class="flex items-center gap-4 p-5">
@@ -47,9 +45,7 @@
         }
       </div>
 
-      <div
-        class="flex justify-between items-end p-6 bg-slate-50 dark:bg-surface-900 border-t border-slate-200 dark:border-surface-700"
-      >
+      <div class="glass-footer flex justify-between items-end p-6">
         <span class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400"
           >Total</span
         >
