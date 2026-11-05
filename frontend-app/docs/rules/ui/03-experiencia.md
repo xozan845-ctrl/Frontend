@@ -82,7 +82,7 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
 `modules/barcodes`, `modules/credits`, `modules/reports`, `admin`, `storage`,
-`shared/orders`, `auth`, `plans`, `stores` y `home`; backlog 403.
+`shared/orders`, `auth`, `plans`, `stores`, `home` y `ai-scraper`; backlog 395.
 
 ## Notas
 
