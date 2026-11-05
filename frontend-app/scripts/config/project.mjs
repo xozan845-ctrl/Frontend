@@ -497,6 +497,8 @@ export const GLASS_MIN_COVERAGE = 100;
  * baja `GLASS_ADOPTION_PENDING_MAX` al nuevo backlog.
  */
 export const GLASS_ADOPTION_ADOPTED = [
+  'layout/header',
+  'layout/footer',
   'features/applications/home/pages/store-entry',
   'features/applications/empresas/pages/company-shell',
   'features/applications/billing/pages/billing-shell',
@@ -505,7 +507,7 @@ export const GLASS_ADOPTION_ADOPTED = [
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */
-export const GLASS_ADOPTION_PENDING_MAX = 477;
+export const GLASS_ADOPTION_PENDING_MAX = 469;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).
