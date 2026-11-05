@@ -516,6 +516,7 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/applications/home/pages/home',
   'features/applications/ai-scraper',
   'features/applications/wishlist',
+  'shared/pipes',
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */
