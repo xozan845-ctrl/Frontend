@@ -12,8 +12,7 @@ import {
   adaptMediaBackgroundFromBackend,
   adaptPanelAiMediaBackgroundFromBackend,
 } from '../../adapters/media-background/media-background.adapter';
-
-export type MediaBackgroundSiteScope = 'platform' | 'panel-ai';
+import type { MediaBackgroundSiteScope } from './media-background-write.types';
 
 /**
  * Escritura de fondos multimedia. Mantiene el mismo contrato para los cuatro
@@ -43,10 +42,7 @@ export class MediaBackgroundWriteService {
     );
   }
 
-  updateCompany(
-    companyId: string,
-    draft: MediaBackgroundDraft,
-  ): Observable<MediaBackgroundConfig> {
+  updateCompany(companyId: string, draft: MediaBackgroundDraft): Observable<MediaBackgroundConfig> {
     return this.patch(
       `${this.endpoints.companies}/${encodeURIComponent(companyId)}/perfil`,
       this.payload(draft),
@@ -62,10 +58,7 @@ export class MediaBackgroundWriteService {
     );
   }
 
-  private payload(
-    draft: MediaBackgroundDraft,
-    prefijo = 'background',
-  ): Record<string, unknown> {
+  private payload(draft: MediaBackgroundDraft, prefijo = 'background'): Record<string, unknown> {
     return {
       [`${prefijo}_objeto_id`]: draft.objectId,
       [`${prefijo}_poster_objeto_id`]: draft.posterObjectId,

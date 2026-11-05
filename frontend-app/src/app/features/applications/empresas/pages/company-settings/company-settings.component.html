@@ -851,10 +851,9 @@
           <app-media-background-editor
             title="Fondo de empresa"
             hint="Imagen o video de fondo para la portada de la empresa."
-            folder="empresas"
-            description="Fondo de empresa"
             [config]="empresa.background ?? null"
             [save]="guardarFondoEmpresa"
+            [upload]="subirFondoEmpresa"
           />
         </section>
       }

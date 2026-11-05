@@ -14,11 +14,9 @@ export {
   type MediaBackgroundRepository,
 } from './repositories/media-background.repository';
 export { MediaBackgroundService } from './services/media-background/media-background.service';
-export {
-  MediaBackgroundWriteService,
-  type MediaBackgroundSiteScope,
-} from './services/media-background-write/media-background-write.service';
-export { MediaBackgroundEditorComponent } from './components/media-background-editor/media-background-editor.component';
+export { MediaBackgroundWriteService } from './services/media-background-write/media-background-write.service';
+export type { MediaBackgroundSiteScope } from './services/media-background-write/media-background-write.types';
+export { MediaBackgroundUploadService } from './services/media-background-upload/media-background-upload.service';
 export {
   adaptMediaBackgroundFromBackend,
   adaptPanelAiMediaBackgroundFromBackend,

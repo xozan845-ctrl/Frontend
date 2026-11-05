@@ -3,8 +3,8 @@ import { of } from 'rxjs';
 import {
   MediaBackgroundConfig,
   MediaBackgroundDraft,
-} from '../../../../../core/models/media-background.model';
-import { STORAGE_REPOSITORY } from '../../../../applications/storage/public-api';
+  MediaBackgroundUploadResult,
+} from '../../../core/models/media-background.model';
 import { MediaBackgroundEditorComponent } from './media-background-editor.component';
 
 const CONFIG: MediaBackgroundConfig = {
@@ -22,21 +22,18 @@ const CONFIG: MediaBackgroundConfig = {
 describe('MediaBackgroundEditorComponent', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<MediaBackgroundEditorComponent>>;
   let component: MediaBackgroundEditorComponent;
-  let storage: {
-    requestUpload: ReturnType<typeof vi.fn>;
-    uploadToUrl: ReturnType<typeof vi.fn>;
-    confirm: ReturnType<typeof vi.fn>;
-  };
+  let upload: ReturnType<typeof vi.fn>;
   let save: ReturnType<typeof vi.fn>;
 
   const setup = async (canEdit = true): Promise<void> => {
-    storage = {
-      requestUpload: vi.fn(() =>
-        of({ objectId: 'obj-1', uploadUrl: 'https://minio.test/upload', headers: {}, maxBytes: 0 }),
-      ),
-      uploadToUrl: vi.fn(() => of(undefined)),
-      confirm: vi.fn(() => of({ id: 'obj-1' })),
-    };
+    upload = vi.fn((file: File) => {
+      const mediaType = file.type.startsWith('video/') ? 'video' : 'imagen';
+      return of<MediaBackgroundUploadResult>({
+        objectId: 'obj-1',
+        url: '/api/v1/storage/public/objetos/obj-1',
+        mediaType,
+      });
+    });
     save = vi.fn((draft: MediaBackgroundDraft) =>
       of({
         ...CONFIG,
@@ -52,12 +49,12 @@ describe('MediaBackgroundEditorComponent', () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       imports: [MediaBackgroundEditorComponent],
-      providers: [{ provide: STORAGE_REPOSITORY, useValue: storage }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MediaBackgroundEditorComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('save', save);
+    fixture.componentRef.setInput('upload', upload);
     fixture.componentRef.setInput('canEdit', canEdit);
     fixture.detectChanges();
   };
@@ -87,25 +84,31 @@ describe('MediaBackgroundEditorComponent', () => {
     });
   });
 
-  it('sube el fondo a storage, lo confirma y actualiza la vista previa', async () => {
+  it('sube el fondo con el callback del consumidor y actualiza la vista previa', async () => {
     await setup();
     fixture.componentRef.setInput('config', null);
     fixture.detectChanges();
 
-    component.onBackgroundSelected(new File(['video'], 'fondo.mp4', { type: 'video/mp4' }));
+    const file = new File(['video'], 'fondo.mp4', { type: 'video/mp4' });
+    component.onBackgroundSelected(file);
 
-    expect(storage.requestUpload).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'fondo.mp4',
-        contentType: 'video/mp4',
-        isPublic: true,
-      }),
-    );
-    expect(storage.uploadToUrl).toHaveBeenCalled();
-    expect(storage.confirm).toHaveBeenCalledWith('obj-1');
+    expect(upload).toHaveBeenCalledWith(file);
     expect(component.objectId()).toBe('obj-1');
     expect(component.previewType()).toBe('video');
     expect(component.active()).toBe(true);
+  });
+
+  it('sube el poster sin tocar el fondo', async () => {
+    await setup();
+    fixture.componentRef.setInput('config', CONFIG);
+    fixture.detectChanges();
+
+    const file = new File(['image'], 'poster.png', { type: 'image/png' });
+    component.onPosterSelected(file);
+
+    expect(upload).toHaveBeenCalledWith(file);
+    expect(component.posterObjectId()).toBe('obj-1');
+    expect(component.objectId()).toBe('bg-1');
   });
 
   it('oculta los controles de edición cuando canEdit es false', async () => {
