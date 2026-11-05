@@ -38,12 +38,8 @@
   </header>
 
   @if (envios.error(); as message) {
-    <div
-      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
-      role="alert"
-      data-testid="envios-error"
-    >
-      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+    <div class="alert alert-danger flex flex-col gap-2 p-4" role="alert" data-testid="envios-error">
+      <p class="text-sm font-bold">{{ message }}</p>
       <button type="button" class="btn btn-secondary btn-sm self-start" (click)="envios.load()">
         Reintentar
       </button>
@@ -125,7 +121,7 @@
                 </td>
                 <td class="py-3 pr-3">
                   <span
-                    class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-widest text-slate-600 uppercase dark:bg-surface-700 dark:text-slate-300"
+                    class="badge badge-neutral rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
                   >
                     {{ shipment.logisticsMode }}
                   </span>
@@ -138,7 +134,7 @@
                 </td>
                 <td class="py-3 pr-3">
                   <span
-                    class="rounded-full bg-accent-50 px-2.5 py-1 text-[10px] font-black tracking-widest text-accent-700 uppercase dark:bg-accent-900/20 dark:text-accent-300"
+                    class="badge badge-primary rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
                     [attr.data-testid]="'envio-status-' + shipment.id"
                   >
                     {{ statusLabel(shipment.status) }}

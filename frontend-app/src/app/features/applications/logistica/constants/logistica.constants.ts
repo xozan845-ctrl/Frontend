@@ -64,10 +64,10 @@ export const ROUTE_TONE_CLASSES: Record<
 
 /** Chip por estado de entrega. */
 export const DELIVERY_STATUS_CLASSES: Record<DeliveryStatus, string> = {
-  entregado: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-  en_ruta: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  pendiente: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-  incidencia: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+  entregado: 'badge-success',
+  en_ruta: 'badge-info',
+  pendiente: 'badge-warning',
+  incidencia: 'badge-danger',
 };
 
 /** Etiqueta legible de cada estado de entrega. */
@@ -85,17 +85,17 @@ export const COURIER_STATUS_META: Record<
 > = {
   en_ruta: {
     label: 'En ruta',
-    chip: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    chip: 'badge-info',
     bar: 'bg-accent-600',
   },
   retraso: {
     label: 'Retraso',
-    chip: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+    chip: 'badge-danger',
     bar: 'bg-amber-500',
   },
   disponible: {
     label: 'Disponible',
-    chip: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    chip: 'badge-success',
     bar: 'bg-emerald-500',
   },
 };
@@ -103,23 +103,23 @@ export const COURIER_STATUS_META: Record<
 /** Fondo, icono, borde y flecha por tono de tarjeta KPI. */
 export const KPI_TONE_CLASSES: Record<KpiTone, { card: string; icon: string; chevron: string }> = {
   blue: {
-    card: 'border-blue-100 bg-blue-50/50 dark:border-surface-700 dark:bg-surface-800',
-    icon: 'bg-blue-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400',
-    chevron: 'bg-blue-100 text-blue-500 dark:bg-accent-900/30 dark:text-accent-400',
+    card: 'glass-subtle',
+    icon: 'glass-subtle text-accent-600 dark:text-accent-400',
+    chevron: 'glass-subtle text-accent-500 dark:text-accent-400',
   },
   green: {
-    card: 'border-emerald-100 bg-emerald-50/40 dark:border-surface-700 dark:bg-surface-800',
-    icon: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
-    chevron: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+    card: 'glass-subtle',
+    icon: 'glass-subtle text-emerald-600 dark:text-emerald-400',
+    chevron: 'glass-subtle text-emerald-600 dark:text-emerald-400',
   },
   amber: {
-    card: 'border-amber-100 bg-amber-50/40 dark:border-surface-700 dark:bg-surface-800',
-    icon: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
-    chevron: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+    card: 'glass-subtle',
+    icon: 'glass-subtle text-amber-600 dark:text-amber-400',
+    chevron: 'glass-subtle text-amber-600 dark:text-amber-400',
   },
   emerald: {
-    card: 'border-emerald-100 bg-emerald-50/40 dark:border-surface-700 dark:bg-surface-800',
-    icon: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
-    chevron: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+    card: 'glass-subtle',
+    icon: 'glass-subtle text-emerald-600 dark:text-emerald-400',
+    chevron: 'glass-subtle text-emerald-600 dark:text-emerald-400',
   },
 };
