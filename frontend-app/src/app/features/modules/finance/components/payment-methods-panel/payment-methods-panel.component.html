@@ -2,7 +2,7 @@
   <header class="flex flex-wrap items-center justify-between gap-3">
     <div class="flex items-center gap-2">
       <span
-        class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-9 w-9 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-credit-card text-sm"></i>
@@ -33,13 +33,13 @@
     <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       @for (summary of summaries(); track summary.method.id) {
         <article
-          class="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-colors dark:border-surface-700 dark:bg-surface-900"
+          class="glass-subtle rounded-2xl p-4 transition-colors"
           [class.opacity-60]="!summary.method.active"
         >
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
               <span
-                class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-accent-600 shadow-sm dark:bg-surface-800 dark:text-accent-400"
+                class="glass-subtle flex h-10 w-10 items-center justify-center rounded-xl text-accent-600 shadow-sm dark:text-accent-400"
                 aria-hidden="true"
               >
                 <i [class]="summary.method.icon"></i>

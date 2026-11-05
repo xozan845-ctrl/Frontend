@@ -18,7 +18,7 @@
     <header class="flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <span
-          class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          class="glass-subtle flex h-9 w-9 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
           aria-hidden="true"
         >
           <i class="fa-solid fa-building-columns text-sm"></i>
@@ -44,7 +44,7 @@
     @if (accounts().length === 0) {
       <div class="flex flex-col items-center gap-2 py-10 text-center">
         <span
-          class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+          class="glass-subtle flex h-12 w-12 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-500"
           aria-hidden="true"
         >
           <i class="fa-solid fa-building-columns text-lg"></i>
@@ -57,10 +57,7 @@
     } @else {
       <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         @for (view of accountViews(); track view.account.id) {
-          <article
-            class="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-surface-700 dark:bg-surface-900"
-            data-testid="bank-card"
-          >
+          <article class="glass-subtle rounded-2xl p-4" data-testid="bank-card">
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
                 <p class="truncate text-sm font-black">{{ view.account.bank }}</p>

@@ -21,7 +21,7 @@ export class CashKpiGridComponent {
         value: kpis.available,
         hint: 'Saldo actual',
         icon: 'fa-solid fa-dollar-sign',
-        iconClass: 'bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400',
+        iconClass: 'glass-subtle text-accent-600 dark:text-accent-400',
         money: true,
         valueClass: kpis.available < 0 ? 'text-red-600 dark:text-red-400' : '',
       },
@@ -33,7 +33,7 @@ export class CashKpiGridComponent {
             ? `${kpis.monthIncomeCount} ${kpis.monthIncomeCount === 1 ? 'entrada' : 'entradas'}`
             : 'Sin entradas este mes',
         icon: 'fa-solid fa-chart-line',
-        iconClass: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400',
+        iconClass: 'glass-subtle text-emerald-600 dark:text-emerald-400',
         money: true,
         valueClass: 'text-emerald-600 dark:text-emerald-400',
       },
@@ -45,7 +45,7 @@ export class CashKpiGridComponent {
             ? `${kpis.monthExpenseCount} ${kpis.monthExpenseCount === 1 ? 'salida' : 'salidas'}`
             : 'Sin egresos este mes',
         icon: 'fa-solid fa-arrow-trend-down',
-        iconClass: 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400',
+        iconClass: 'glass-subtle text-red-600 dark:text-red-400',
         money: true,
         valueClass: kpis.monthExpense > 0 ? 'text-red-600 dark:text-red-400' : '',
       },
@@ -54,7 +54,7 @@ export class CashKpiGridComponent {
         value: kpis.monthMovements,
         hint: 'este mes',
         icon: 'fa-solid fa-list-ul',
-        iconClass: 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400',
+        iconClass: 'glass-subtle text-amber-600 dark:text-amber-400',
         money: false,
       },
       {
@@ -62,7 +62,7 @@ export class CashKpiGridComponent {
         value: kpis.otherIncome,
         hint: kpis.otherIncome > 0 ? 'movimientos manuales' : 'Sin otros ingresos',
         icon: 'fa-solid fa-arrow-up',
-        iconClass: 'bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400',
+        iconClass: 'glass-subtle text-teal-600 dark:text-teal-400',
         money: true,
       },
       {
@@ -70,7 +70,7 @@ export class CashKpiGridComponent {
         value: kpis.otherExpense,
         hint: kpis.otherExpense > 0 ? 'movimientos manuales' : 'Sin otros egresos',
         icon: 'fa-solid fa-arrow-down',
-        iconClass: 'bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-400',
+        iconClass: 'glass-subtle text-violet-600 dark:text-violet-400',
         money: true,
       },
     ];
