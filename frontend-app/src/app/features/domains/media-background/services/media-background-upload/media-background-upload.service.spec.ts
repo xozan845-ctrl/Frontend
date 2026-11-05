@@ -15,7 +15,7 @@ describe('MediaBackgroundUploadService', () => {
   const setup = () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [{ provide: STORAGE_REPOSITORY, useValue: storage }],
+      providers: [MediaBackgroundUploadService, { provide: STORAGE_REPOSITORY, useValue: storage }],
     });
     return TestBed.inject(MediaBackgroundUploadService);
   };
