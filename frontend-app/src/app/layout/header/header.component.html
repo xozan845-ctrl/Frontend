@@ -117,7 +117,7 @@
               aria-label="Mi cuenta"
             >
               <div
-                class="w-8 h-8 bg-slate-100 dark:bg-surface-800 text-accent-600 dark:text-accent-400 flex items-center justify-center font-black text-sm rounded-full"
+                class="glass-subtle w-8 h-8 text-accent-600 dark:text-accent-400 flex items-center justify-center font-black text-sm rounded-full"
               >
                 {{ authStore.user()?.name?.charAt(0) | uppercase }}
               </div>
@@ -213,7 +213,7 @@
 
   <!-- Mobile Menu -->
   <div
-    class="md:hidden bg-white dark:bg-surface-900 absolute w-full shadow-2xl border-t border-slate-100 dark:border-surface-700 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-40"
+    class="glass-strong md:hidden absolute w-full rounded-none shadow-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-40"
     [class.translate-y-0]="isMobileMenuOpen()"
     [class.opacity-100]="isMobileMenuOpen()"
     [class.-translate-y-full]="!isMobileMenuOpen()"
@@ -249,7 +249,7 @@
       </nav>
       <div class="border-t border-slate-100 dark:border-surface-700 pt-6">
         @if (authStore.isAuthenticated()) {
-          <div class="flex items-center gap-3 mb-4 p-4 bg-slate-50 dark:bg-surface-800 rounded-2xl">
+          <div class="glass-subtle flex items-center gap-3 mb-4 p-4 rounded-2xl">
             <div
               class="w-10 h-10 bg-accent-600 text-white flex items-center justify-center font-black text-lg rounded-full"
             >

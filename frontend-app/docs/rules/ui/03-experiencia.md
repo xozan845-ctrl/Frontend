@@ -76,6 +76,9 @@ un ratchet:
 3. Al terminar la migración, `GLASS_ADOPTION_ADOPTED` cubre todo `src/app` y el
    techo es 0.
 
+El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
+`GLASS_ADOPTION_ADOPTED` y `GLASS_ADOPTION_PENDING_MAX`.
+
 ## Notas
 
 - `R-UX-1` está implementado en `products` (`skeleton-loader`, `empty-state`) y
