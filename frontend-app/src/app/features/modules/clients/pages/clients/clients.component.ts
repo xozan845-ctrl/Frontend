@@ -25,11 +25,11 @@ const STATUS_LABELS: Readonly<Record<ClientStatus, string>> = {
 };
 
 const STATUS_CLASSES: Readonly<Record<ClientStatus, string>> = {
-  activo: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
-  nuevo: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300',
-  frecuente: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-  inactivo: 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300',
-  sin_compras: 'bg-slate-100 text-slate-500 dark:bg-surface-700 dark:text-slate-400',
+  activo: 'badge-success',
+  nuevo: 'badge-primary',
+  frecuente: 'badge-warning',
+  inactivo: 'badge-neutral',
+  sin_compras: 'badge-neutral',
 };
 
 const TAB_CLASSES = {
@@ -39,7 +39,7 @@ const TAB_CLASSES = {
 
 const CHIP_CLASSES = {
   active: 'border-accent-600 bg-accent-600 text-white',
-  idle: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white',
+  idle: 'glass-subtle text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white',
 } as const;
 
 /**
@@ -157,7 +157,7 @@ export default class ClientsPageComponent {
   readonly statusLabels = STATUS_LABELS;
 
   statusClass(status: ClientStatus): string {
-    return `inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase ${STATUS_CLASSES[status]}`;
+    return `badge inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase ${STATUS_CLASSES[status]}`;
   }
 
   tabClass(tab: ClientsTab): string {
