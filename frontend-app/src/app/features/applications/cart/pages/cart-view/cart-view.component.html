@@ -40,7 +40,7 @@
           >
             <!-- Image -->
             <div
-              class="w-full sm:w-32 aspect-square bg-slate-50 dark:bg-surface-800 relative rounded-2xl border border-slate-100 dark:border-surface-700 overflow-hidden shadow-sm"
+              class="glass-subtle relative aspect-square w-full overflow-hidden rounded-2xl shadow-sm sm:w-32"
             >
               <img
                 [ngSrc]="item.product.imageUrl"
@@ -68,9 +68,7 @@
 
               <div class="flex items-center gap-8 mt-6 sm:mt-0">
                 <!-- Qty Control -->
-                <div
-                  class="flex items-center border border-slate-200 dark:border-surface-600 rounded-lg overflow-hidden bg-white dark:bg-surface-800 shadow-sm"
-                >
+                <div class="glass-subtle flex items-center overflow-hidden rounded-lg shadow-sm">
                   <button
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
                     class="w-11 h-11 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
@@ -119,9 +117,7 @@
       </div>
 
       <!-- Summary Sidebar -->
-      <div
-        class="w-full lg:w-[400px] shrink-0 bg-white dark:bg-surface-800 p-10 border border-slate-200 dark:border-surface-700 rounded-3xl shadow-xl"
-      >
+      <div class="card w-full shrink-0 rounded-3xl p-10 shadow-xl lg:w-[400px]">
         <h3
           class="text-xl font-black uppercase tracking-tighter border-b border-slate-200 dark:border-surface-700 pb-6 mb-8 text-slate-900 dark:text-white font-heading"
         >
@@ -130,7 +126,7 @@
 
         @if (cartStore.expiresAt(); as expiresAt) {
           <p
-            class="mb-6 rounded-xl bg-amber-50 p-3 text-xs font-bold text-amber-700 dark:bg-amber-900/10 dark:text-amber-300"
+            class="alert alert-warning mb-6 rounded-xl p-3 text-xs font-bold"
             data-testid="cart-expires"
           >
             Tu carrito está reservado hasta {{ expiresAt | date: 'shortTime' }}.
@@ -155,9 +151,7 @@
         </div>
 
         @if (!authStore.isAuthenticated()) {
-          <div
-            class="mb-8 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-2xl p-4"
-          >
+          <div class="alert alert-primary mb-8 rounded-2xl p-4">
             <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mb-3 leading-relaxed">
               Inicia sesión o regístrate para guardar tu carrito y completar la compra.
             </p>
@@ -193,7 +187,7 @@
           </button>
           <button
             (click)="showClearConfirm.set(true)"
-            class="w-full border border-slate-200 dark:border-surface-600 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+            class="glass-subtle w-full rounded-xl py-4 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest text-xs hover:shadow-md transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
             data-testid="cart-clear"
           >
             Vaciar carrito
@@ -220,10 +214,10 @@
       tabindex="-1"
       [appFocusTrap]="true"
       (escape)="showClearConfirm.set(false)"
-      class="bg-white dark:bg-surface-800 rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-surface-700 text-center"
+      class="card w-full max-w-sm rounded-3xl p-8 text-center shadow-2xl"
     >
       <div
-        class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-4 text-xl"
+        class="glass-subtle w-12 h-12 rounded-full text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-4 text-xl"
       >
         <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
       </div>
@@ -239,7 +233,7 @@
       <div class="flex gap-3">
         <button
           (click)="showClearConfirm.set(false)"
-          class="flex-1 py-3 rounded-xl border border-slate-200 dark:border-surface-600 text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors"
+          class="glass-subtle flex-1 rounded-xl py-3 text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:shadow-md"
           data-testid="cart-cancel-clear"
         >
           Cancelar

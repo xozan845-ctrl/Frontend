@@ -9,7 +9,7 @@
 
 <!-- Sidebar Premium Editorial -->
 <div
-  class="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white dark:bg-surface-900 border-l border-slate-200 dark:border-surface-700 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col"
+  class="glass-bar fixed inset-y-0 right-0 z-50 w-full border-l border-slate-200 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:w-[480px] dark:border-surface-700 flex flex-col"
   [style.transform]="cartUiStore.isSidebarOpen() ? 'translateX(0)' : 'translateX(100%)'"
   role="dialog"
   aria-modal="true"
@@ -20,9 +20,7 @@
   (escape)="cartUiStore.toggleSidebar(false)"
 >
   <!-- Header -->
-  <div
-    class="p-8 border-b border-slate-200 dark:border-surface-700 flex justify-between items-center bg-slate-50 dark:bg-surface-800"
-  >
+  <div class="glass-bar p-8 flex justify-between items-center">
     <h2
       class="text-2xl font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-3"
     >
@@ -78,11 +76,9 @@
     } @else {
       <div class="flex flex-col gap-6">
         @for (item of cartStore.items(); track item.product.id) {
-          <div
-            class="flex gap-5 border border-slate-200 dark:border-surface-700 p-4 bg-white dark:bg-surface-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
-          >
+          <div class="card flex gap-5 rounded-2xl p-4 transition-shadow hover:shadow-md">
             <div
-              class="w-24 h-24 bg-slate-50 dark:bg-surface-900 rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center"
+              class="glass-subtle h-24 w-24 shrink-0 overflow-hidden rounded-xl relative flex items-center justify-center"
             >
               <img
                 [ngSrc]="item.product.imageUrl"
@@ -92,7 +88,7 @@
                 (error)="$any($event.target).classList.add('img-error')"
               />
               <div
-                class="img-fallback absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-surface-800 rounded-xl"
+                class="img-fallback glass-subtle absolute inset-0 flex items-center justify-center rounded-xl"
                 style="display: none"
               >
                 <i
@@ -117,9 +113,7 @@
 
               <div class="flex justify-between items-end mt-2 flex-nowrap">
                 <!-- Premium Qty Control -->
-                <div
-                  class="flex items-center bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-lg overflow-hidden"
-                >
+                <div class="glass-subtle flex items-center overflow-hidden rounded-lg">
                   <button
                     (click)="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
                     class="w-11 h-11 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-surface-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
@@ -166,13 +160,9 @@
 
   <!-- Footer -->
   @if (cartStore.items().length > 0) {
-    <div
-      class="p-8 bg-slate-50 dark:bg-surface-800 border-t border-slate-200 dark:border-surface-700"
-    >
+    <div class="glass-footer p-8">
       @if (!authStore.isAuthenticated()) {
-        <div
-          class="mb-8 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-2xl p-4"
-        >
+        <div class="alert alert-primary mb-8 rounded-2xl p-4">
           <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mb-3 leading-relaxed">
             Inicia sesión o regístrate para guardar tu carrito y completar la compra.
           </p>
@@ -208,7 +198,7 @@
         </button>
         <button
           (click)="goToCart()"
-          class="w-full border border-slate-200 dark:border-surface-600 bg-white dark:bg-surface-900 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-sm hover:shadow-md transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+          class="glass-subtle w-full py-4 rounded-xl text-slate-700 dark:text-slate-300 font-bold uppercase tracking-widest text-xs shadow-sm hover:shadow-md transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
           data-testid="drawer-view-cart"
         >
           Ver carrito
