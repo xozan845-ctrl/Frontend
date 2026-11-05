@@ -1,6 +1,7 @@
 import type { Provider } from '@angular/core';
 import { MEDIA_BACKGROUND_REPOSITORY } from './repositories/media-background.repository';
 import { MediaBackgroundService } from './services/media-background/media-background.service';
+import { MediaBackgroundUploadService } from './services/media-background-upload/media-background-upload.service';
 import { MediaBackgroundStore } from './state/media-background/media-background.store';
 
 /** API de aplicación pública de `media-background` para dominios consumidores. */
@@ -29,5 +30,6 @@ export {
  */
 export const MEDIA_BACKGROUND_PROVIDERS: Provider[] = [
   MediaBackgroundStore,
+  MediaBackgroundUploadService,
   { provide: MEDIA_BACKGROUND_REPOSITORY, useClass: MediaBackgroundService },
 ];

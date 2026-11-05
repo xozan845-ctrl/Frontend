@@ -16,7 +16,7 @@ import type { MediaBackgroundUploadOptions } from './media-background-upload.typ
  * prefirmada → PUT → confirmar → objeto público. El componente presentacional
  * recibe esta función como input; el puerto no se inyecta en la UI (`R-SO-8`).
  */
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class MediaBackgroundUploadService {
   private readonly storage = inject(STORAGE_REPOSITORY);
 

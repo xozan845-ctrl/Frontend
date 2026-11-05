@@ -43,6 +43,7 @@ import { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
 import { VendorStoreStore } from './state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from './state/store-logo/store-logo.store';
 import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';
+import { MediaBackgroundUploadService } from '../../domains/media-background/public-api';
 
 /**
  * Sección aún sin fase: página "En construcción" real (`R-UX-1`) con SEO
@@ -146,7 +147,11 @@ export const VENDOR_ROUTES: Routes = [
         path: 'tienda',
         canActivate: [moduleGuard('store.my-store')],
         loadComponent: () => import('./pages/store/store.component'),
-        providers: [StoreLogoStore, { provide: STORAGE_REPOSITORY, useClass: StorageService }],
+        providers: [
+          StoreLogoStore,
+          MediaBackgroundUploadService,
+          { provide: STORAGE_REPOSITORY, useClass: StorageService },
+        ],
       },
       // Compatibilidad con enlaces antiguos: la administración vive en su
       // workspace propio, fuera del panel operativo.
