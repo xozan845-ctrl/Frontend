@@ -55,3 +55,6 @@ estilos de componentes.
 - La suite falla si aparece una reimplementación nueva; `stylelint`
   (`glass/no-raw-glass`) y la regresión visual de Playwright cubren el mismo
   sistema en editor y CI.
+- `R-UX-8` exige que toda superficie principal use Glass o un primitivo. Las
+  áreas ya adoptadas (`GLASS_ADOPTION_ADOPTED`) no pueden volver a fondos
+  crudos y el backlog pendiente (`GLASS_ADOPTION_PENDING_MAX`) solo puede bajar.

@@ -74,8 +74,8 @@ const FALLBACK_ALLOWLIST = new Set(['.btn']);
  * Excepciones legítimas en plantillas. No son superficies de cristal:
  * scrims de modales, controles de baja opacidad y etiquetas sobre imagen.
  */
-const classTokens = (classes) => classes.split(/\s+/).filter(Boolean);
-const baseTokens = (classes) => classTokens(classes).filter((token) => !token.includes(':'));
+export const classTokens = (classes) => classes.split(/\s+/).filter(Boolean);
+export const baseTokens = (classes) => classTokens(classes).filter((token) => !token.includes(':'));
 const hasBaseToken = (classes, pattern) => baseTokens(classes).some((token) => pattern.test(token));
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -539,10 +539,11 @@ const attributeValue = (tag, name) => {
 
 const STRING_LITERAL = /(['"`])((?:\\.|(?!\1)[\s\S])*?)\1/g;
 
-const stringLiterals = (source) => [...source.matchAll(STRING_LITERAL)].map((match) => match[2]);
+export const stringLiterals = (source) =>
+  [...source.matchAll(STRING_LITERAL)].map((match) => match[2]);
 
 /** Clases estáticas + cada variante dinámica de `[class]`/`[ngClass]`. */
-const classVariants = (tag) => {
+export const classVariants = (tag) => {
   const staticClasses = attributeValue(tag, 'class');
   const dynamic = [
     ...stringLiterals(attributeValue(tag, '[class]')),
