@@ -6,7 +6,7 @@
     (keydown.escape)="closed.emit()"
   >
     <div
-      class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-surface-700 dark:bg-surface-800"
+      class="card max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl shadow-2xl"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cash-report-title"
@@ -130,9 +130,7 @@
           />
         </div>
 
-        <div
-          class="grid gap-3 rounded-2xl bg-slate-50 px-4 py-3 sm:grid-cols-2 dark:bg-surface-900/60"
-        >
+        <div class="glass-subtle grid gap-3 rounded-2xl px-4 py-3 sm:grid-cols-2">
           <div>
             <p class="text-sm font-bold">{{ filtered().length }} movimientos</p>
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Entradas</p>
