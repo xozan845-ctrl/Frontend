@@ -19,10 +19,10 @@ describe('InvoiceStatusBadgeComponent', () => {
     const fixture = await setup('borrador');
     const host = fixture.nativeElement as HTMLElement;
     const cases: Array<[InvoiceStatus, string, string]> = [
-      ['borrador', 'Borrador', 'text-amber-800'],
-      ['emitida', 'Emitida', 'text-blue-800'],
-      ['pagada', 'Pagada', 'text-emerald-800'],
-      ['anulada', 'Anulada', 'text-red-700'],
+      ['borrador', 'Borrador', 'badge-warning'],
+      ['emitida', 'Emitida', 'badge-info'],
+      ['pagada', 'Pagada', 'badge-success'],
+      ['anulada', 'Anulada', 'badge-danger'],
     ];
 
     for (const [status, label, colorClass] of cases) {

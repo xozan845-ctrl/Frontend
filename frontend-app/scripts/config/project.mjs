@@ -522,10 +522,11 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/applications/vendor',
   'features/modules/cash',
   'features/modules/clients',
+  'features/applications/billing',
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */
-export const GLASS_ADOPTION_PENDING_MAX = 318;
+export const GLASS_ADOPTION_PENDING_MAX = 300;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).

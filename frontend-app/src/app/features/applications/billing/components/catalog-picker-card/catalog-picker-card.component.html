@@ -107,16 +107,14 @@
             class="card group flex flex-col overflow-hidden"
             [attr.data-testid]="'billing-product-card-' + product.id"
           >
-            <div
-              class="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-surface-800"
-            >
+            <div class="glass-subtle relative aspect-square w-full overflow-hidden">
               <div class="flex h-full w-full items-center justify-center" aria-hidden="true">
                 <i
                   class="fa-solid fa-bottle-droplet text-4xl text-slate-300 dark:text-surface-600"
                 ></i>
               </div>
               <span
-                class="absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase"
+                class="badge absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase"
                 [class]="stockClasses(product.inStock)"
                 data-testid="billing-stock-chip"
               >

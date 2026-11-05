@@ -227,14 +227,14 @@ export default class NewInvoiceComponent {
 
   protected noticeClasses(tone: BillingNotice['tone']): string {
     const base =
-      'flex items-start justify-between gap-3 rounded-2xl border px-4 py-3 text-sm font-bold';
+      'alert flex items-start justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-bold';
     switch (tone) {
       case 'success':
-        return `${base} border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300`;
+        return `${base} alert-success`;
       case 'warning':
-        return `${base} border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300`;
+        return `${base} alert-warning`;
       default:
-        return `${base} border-accent-200 bg-accent-50 text-accent-800 dark:border-accent-800 dark:bg-accent-900/20 dark:text-accent-300`;
+        return `${base} alert-primary`;
     }
   }
 }
