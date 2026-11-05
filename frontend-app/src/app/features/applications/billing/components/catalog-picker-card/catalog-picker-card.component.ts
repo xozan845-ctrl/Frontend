@@ -43,8 +43,6 @@ export class CatalogPickerCardComponent {
   }
 
   stockClasses(inStock: boolean): string {
-    return inStock
-      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
-      : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300';
+    return inStock ? 'badge-success' : 'badge-danger';
   }
 }
