@@ -36,7 +36,7 @@
 
   @if (validationError(); as message) {
     <div
-      class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-700 dark:border-amber-800 dark:bg-amber-900/10 dark:text-amber-300"
+      class="alert alert-warning p-3 text-xs font-bold"
       role="alert"
       data-testid="offer-validation-error"
     >
@@ -53,11 +53,11 @@
     </section>
   } @else if (offers.error(); as message) {
     <section
-      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      class="alert alert-danger flex flex-col gap-2 p-4"
       role="alert"
       data-testid="offers-error"
     >
-      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <p class="text-sm font-bold">{{ message }}</p>
       <button
         type="button"
         class="btn btn-secondary btn-sm self-start"
@@ -152,12 +152,8 @@
                 </td>
                 <td class="px-5 py-3">
                   <span
-                    class="rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
-                    [class]="
-                      offer.status === 'activa'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                        : 'bg-slate-100 text-slate-600 dark:bg-surface-700 dark:text-slate-300'
-                    "
+                    class="badge rounded-full px-2.5 py-1 text-[10px] font-black tracking-widest uppercase"
+                    [class]="offer.status === 'activa' ? 'badge-success' : 'badge-neutral'"
                   >
                     {{ offer.status }}
                   </span>
