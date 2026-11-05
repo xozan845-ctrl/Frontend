@@ -85,7 +85,7 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `shared/orders`, `auth`, `plans`, `stores`, `home`, `ai-scraper`, `wishlist`,
 `shared/pipes`, `shared/ui`, `modules/expenses`, `vendor`, `modules/cash`,
 `modules/clients`, `billing`, `cart`, `empresas`, `logistica`, `finance`,
-`sales` y `purchases`; backlog 110.
+`sales`, `purchases` y `catalog`; backlog 43.
 
 ## Notas
 

@@ -9,7 +9,7 @@
       (click)="close()"
     ></div>
     <div
-      class="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl dark:bg-surface-800"
+      class="card relative w-full max-w-lg rounded-3xl p-6 shadow-2xl"
       role="dialog"
       aria-modal="true"
       aria-labelledby="inventory-settings-title"
@@ -27,10 +27,7 @@
       </p>
 
       @if (error(); as message) {
-        <div
-          class="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600"
-          role="alert"
-        >
+        <div class="alert alert-danger mt-4 rounded-xl p-3 text-xs font-bold" role="alert">
           {{ message }}
         </div>
       }
