@@ -35,14 +35,16 @@ La suite `visual-guards` (`scripts/rules/ui/visual.test.mjs`) verifica:
 6. Stylelint (`glass/no-raw-glass`) cableado en CI.
 7. Regresión visual Playwright en claro, oscuro y fallback sin `backdrop-filter`.
 
-**Cobertura:** `GLASS_MIN_COVERAGE = 80` en `scripts/config/project.mjs`. Hoy se
-verifican **15/15 requisitos (100%)**.
+**Cobertura:** `GLASS_MIN_COVERAGE = 100` en `scripts/config/project.mjs`. La
+cobertura se calcula sobre hallazgos reales: cada requisito debe estar cubierto
+por un check y sin incumplimientos.
 
 **Excepciones permitidas (allowlist):**
 
-- Scrims de modales: `fixed|absolute inset-0` sin fondo claro.
-- Controles de baja opacidad: `bg-white/5`, `bg-white/10`, `bg-white/20`.
-- Etiquetas sobre imagen: `bg-black/*` + `text-white`.
+- `overlay-scrim` — scrims de modales: `fixed|absolute inset-0` sin fondo claro.
+- `low-opacity` — controles de baja opacidad: `bg-white/5`, `bg-white/10`,
+  `bg-white/20`.
+- `dark-label` — etiquetas sobre imagen: `bg-black/*` + `text-white`.
 - Controles con estado dinámico que alternan el fondo por binding
   (`[class.bg-*]`); si añaden un fondo claro estático, deben usar el sistema.
 

@@ -13,19 +13,19 @@ export default defineSuite({
   mode: 'repo',
   run: ({ test, assert }) => {
     test('R-UX-7: cobertura de requisitos Glass >= mínimo configurado', () => {
-      const coverage = getGlassCoverage();
+      const coverage = getGlassCoverage(findGlassSystemViolations());
 
       console.log(
-        `  ℹ Cobertura de requisitos Glass: ${coverage.implemented}/${coverage.total} ` +
+        `  ℹ Cobertura real de requisitos Glass: ${coverage.implemented}/${coverage.total} ` +
           `(${coverage.percent.toFixed(1)}%), mínimo ${GLASS_MIN_COVERAGE}%.`,
       );
       if (coverage.pending.length > 0) {
-        console.log(`  ℹ Pendientes: ${coverage.pending.join(', ')}.`);
+        console.log(`  ℹ Requisitos incumplidos: ${coverage.pending.join(', ')}.`);
       }
 
       assert.ok(
         coverage.percent >= GLASS_MIN_COVERAGE,
-        `Cobertura de requisitos Glass ${coverage.percent.toFixed(1)}% por debajo del mínimo ` +
+        `Cobertura real de requisitos Glass ${coverage.percent.toFixed(1)}% por debajo del mínimo ` +
           `${GLASS_MIN_COVERAGE}% (${coverage.implemented}/${coverage.total}).`,
       );
     });

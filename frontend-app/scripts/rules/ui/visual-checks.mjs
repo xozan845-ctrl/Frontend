@@ -57,6 +57,8 @@ const REQUIRED_UTILITIES = [
   '.glass-card',
   '.glass-bar',
   '.glass-footer',
+  '.app-page-bg',
+  '.app-shell-bg',
 ];
 
 const REQUIRED_PRIMITIVES = ['.card', '.btn', '.input', '.badge', '.icon-btn'];
@@ -76,56 +78,101 @@ const classTokens = (classes) => classes.split(/\s+/).filter(Boolean);
 const baseTokens = (classes) => classTokens(classes).filter((token) => !token.includes(':'));
 const hasBaseToken = (classes, pattern) => baseTokens(classes).some((token) => pattern.test(token));
 
-/** Requisitos del sistema Glass y si tienen verificación automática. */
-export const GLASS_REQUIREMENTS = [
-  { id: 'tokens-light', implemented: true, description: 'tokens --glass-* en :root' },
-  { id: 'tokens-dark', implemented: true, description: 'paridad de tokens en .dark' },
-  { id: 'utilities', implemented: true, description: 'utilidades .glass*' },
-  { id: 'primitives', implemented: true, description: 'primitivos con tokens Glass' },
-  { id: 'ambient', implemented: true, description: 'fondos ambientales con gradientes' },
-  { id: 'fallback', implemented: true, description: 'fallback sin backdrop-filter' },
-  { id: 'no-css-reimplementation', implemented: true, description: 'sin cristal a mano en CSS' },
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Clase de utilidad Glass real; `fa-magnifying-glass` no debe colar. */
+const GLASS_UTILITY_CLASS = /^glass(?:-[a-z0-9-]+)?$/;
+export const isGlassUtilityClass = (classes) =>
+  classTokens(classes).some((token) => GLASS_UTILITY_CLASS.test(token.replace(/^.*:/, '')));
+
+/**
+ * Requisitos del sistema Glass y prefijos de hallazgo que los incumplen.
+ * La cobertura se calcula sobre hallazgos reales, no sobre flags manuales.
+ */
+const GLASS_REQUIREMENT_PREFIXES = [
+  { id: 'tokens-light', description: 'tokens --glass-* en :root', prefixes: ['token:'] },
+  { id: 'tokens-dark', description: 'paridad de tokens en .dark', prefixes: ['dark-token:'] },
+  {
+    id: 'utilities',
+    description: 'utilidades .glass* y fondos ambientales',
+    prefixes: ['utility:'],
+  },
+  {
+    id: 'primitives',
+    description: 'primitivos con tokens Glass',
+    prefixes: ['primitive:', 'primitive-token:'],
+  },
+  { id: 'ambient', description: 'fondos ambientales con gradientes', prefixes: ['ambient:'] },
+  { id: 'fallback', description: 'fallback sin backdrop-filter', prefixes: ['fallback:'] },
+  {
+    id: 'no-css-reimplementation',
+    description: 'sin cristal a mano en CSS',
+    prefixes: ['glass-token:', 'glass-utility:', 'backdrop:', 'redefined-primitive:'],
+  },
   {
     id: 'no-template-reimplementation',
-    implemented: true,
     description: 'sin cristal a mano en plantillas',
+    prefixes: ['template-glass:'],
   },
   {
     id: 'no-apply-reimplementation',
-    implemented: true,
     description: 'sin cristal a mano vía @apply',
+    prefixes: ['apply:'],
   },
-  { id: 'page-shells', implemented: true, description: 'shells de página con fondo ambiental' },
-  { id: 'dark-parity-derived', implemented: true, description: 'paridad de tokens derivada' },
+  {
+    id: 'page-shells',
+    description: 'shells de página con fondo ambiental',
+    prefixes: ['page-shell:'],
+  },
+  {
+    id: 'dark-parity-derived',
+    description: 'paridad de tokens derivada',
+    prefixes: ['dark-token:'],
+  },
   {
     id: 'fallback-derived',
-    implemented: true,
     description: 'fallback derivado de backdrop-filter',
+    prefixes: ['fallback:'],
   },
-  { id: 'allowlist', implemented: true, description: 'allowlist documentada de excepciones' },
+  {
+    id: 'allowlist',
+    description: 'allowlist documentada de excepciones',
+    prefixes: ['allowlist:'],
+  },
   {
     id: 'visual-regression',
-    implemented: true,
     description: 'regresión visual con Playwright (claro/oscuro/fallback)',
+    prefixes: ['tooling:visual-'],
   },
   {
     id: 'stylelint',
-    implemented: true,
     description: 'regla stylelint para propiedades de cristal',
+    prefixes: ['tooling:stylelint'],
   },
 ];
 
-/** Cobertura de requisitos Glass (implementados / total). */
-export function getGlassCoverage() {
-  const implemented = GLASS_REQUIREMENTS.filter((requirement) => requirement.implemented).length;
-  const total = GLASS_REQUIREMENTS.length;
+/** Requisitos públicos (solo identidad y descripción). */
+export const GLASS_REQUIREMENTS = GLASS_REQUIREMENT_PREFIXES.map(({ id, description }) => ({
+  id,
+  description,
+}));
+
+const coversRequirement = (findings, prefixes) =>
+  !prefixes.some((prefix) => findings.some((item) => item.key.includes(`|R-UX-7|${prefix}`)));
+
+/** Cobertura real de requisitos Glass (verificados / total). */
+export function getGlassCoverage(findings = findGlassSystemViolations()) {
+  const results = GLASS_REQUIREMENT_PREFIXES.map((requirement) => ({
+    ...requirement,
+    implemented: coversRequirement(findings, requirement.prefixes),
+  }));
+  const implemented = results.filter((requirement) => requirement.implemented).length;
+  const total = results.length;
   return {
     implemented,
     total,
     percent: total === 0 ? 0 : (implemented / total) * 100,
-    pending: GLASS_REQUIREMENTS.filter((requirement) => !requirement.implemented).map(
-      (requirement) => requirement.id,
-    ),
+    pending: results.filter((requirement) => !requirement.implemented).map(({ id }) => id),
   };
 }
 
@@ -161,22 +208,27 @@ const selectorsOf = (selector) =>
     .map((part) => part.trim())
     .filter(Boolean);
 
-const matchesClass = (selector, className) =>
-  selector === className ||
-  selector.startsWith(`${className}:`) ||
-  selector.startsWith(`${className}.`) ||
-  selector.startsWith(`${className} `);
+/**
+ * ¿El selector contiene la clase exacta? Acepta compuestos como
+ * `.wrapper .card`, `.foo.card` o `.card:hover`; no confunde `.card-title`.
+ * Con `variants` también acepta sufijos de primitivo (`.btn-primary`).
+ */
+export const matchesClass = (selector, className, { variants = false } = {}) => {
+  const name = className.startsWith('.') ? className.slice(1) : className;
+  const suffix = variants ? '(?:-[a-z0-9-]+)?' : '';
+  return new RegExp(`\\.${escapeRegExp(name)}${suffix}(?![\\w-])`).test(selector);
+};
 
-const findBlock = (blocks, className) =>
-  blocks.find((block) => selectorsOf(block.selector).some((sel) => matchesClass(sel, className)));
+const findBlock = (blocks, className, options) =>
+  blocks.find((block) =>
+    selectorsOf(block.selector).some((sel) => matchesClass(sel, className, options)),
+  );
 
 /** Última definición por cascada (la que gana dentro del mismo archivo). */
 const findLastBlock = (blocks, className) =>
   blocks.findLast((block) =>
     selectorsOf(block.selector).some((sel) => matchesClass(sel, className)),
   );
-
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** ¿El texto contiene el selector exacto seguido de coma o llave? */
 const containsSelector = (text, selector) =>
@@ -328,23 +380,24 @@ export function findGlassDefinitionViolations() {
   return findings;
 }
 
-const isAllowlistedTemplate = (classes) =>
+export const isAllowlistedTemplate = (classes) =>
   TEMPLATE_ALLOWLIST.some((exception) => exception.test(classes));
 
-const hasLightSurface = (classes) =>
-  hasBaseToken(classes, /^bg-white(?:\/(?:[5-9]\d|100))?$/) ||
-  hasBaseToken(classes, /^bg-slate-50$/) ||
-  hasBaseToken(classes, /^bg-surface-/);
+const LIGHT_SURFACE =
+  /^(?:bg-white|bg-slate-(?:50|100|200)|bg-gray-(?:50|100)|bg-surface-(?:50|100|200|300)|bg-accent-50)(?:\/(?:\d{1,3}|\[[^\]]+\]))?$/;
+export const hasLightSurface = (classes) => hasBaseToken(classes, LIGHT_SURFACE);
 
-const hasPageHeight = (classes) =>
-  hasBaseToken(classes, /^min-h-screen$/) || hasBaseToken(classes, /^min-h-\[(?:70|80)vh\]$/);
-const hasFlatPageBackground = (classes) =>
-  hasBaseToken(classes, /^bg-slate-50$/) ||
+export const hasPageHeight = (classes) =>
+  hasBaseToken(classes, /^(?:min-)?h-(?:screen|full|svh|lvh|dvh|\[[^\]]+\])$/);
+export const hasFlatPageBackground = (classes) =>
+  hasBaseToken(classes, /^bg-slate-(?:50|100)$/) ||
+  hasBaseToken(classes, /^bg-gray-(?:50|100)$/) ||
   hasBaseToken(classes, /^bg-gradient-to-b$/) ||
-  hasBaseToken(classes, /^bg-white$/);
+  hasBaseToken(classes, /^bg-white$/) ||
+  hasBaseToken(classes, /^bg-surface-(?:50|100)$/);
 const hasAmbientBackground = (classes) => hasBaseToken(classes, /^app-(?:page|shell)-bg$/);
 
-const TEMPLATE_ALLOWLIST = [
+export const TEMPLATE_ALLOWLIST = [
   {
     id: 'overlay-scrim',
     test: (classes) =>
@@ -362,6 +415,16 @@ const TEMPLATE_ALLOWLIST = [
       hasBaseToken(classes, /^bg-black\//) && hasBaseToken(classes, /^text-white$/),
   },
 ];
+
+const ALLOWLIST_DOCS = 'docs/rules/ui/03-experiencia.md';
+
+/** Cada excepción de la allowlist debe estar documentada en la regla. */
+export function findGlassAllowlistViolations() {
+  const docs = readText(resolveInApp(ALLOWLIST_DOCS));
+  return TEMPLATE_ALLOWLIST.filter(({ id }) => !docs.includes(id)).map(({ id }) =>
+    finding(ALLOWLIST_DOCS, 0, `la excepción ${id} no está documentada`, `allowlist:${id}`),
+  );
+}
 
 /** Reimplementaciones en CSS de componentes, `@apply` y estilos inline. */
 export function findGlassReimplementationViolations() {
@@ -422,14 +485,14 @@ export function findGlassReimplementationViolations() {
 
     const componentBlocks = findBlocks(source);
     for (const primitive of REQUIRED_PRIMITIVES) {
-      const block = findBlock(componentBlocks, primitive);
+      const block = findBlock(componentBlocks, primitive, { variants: true });
       if (block) {
         findings.push(
           finding(
             rel,
             lineAt(source, block.index),
             `redefine el primitivo ${primitive} fuera de styles.css`,
-            `primitive:${primitive}`,
+            `redefined-primitive:${primitive}`,
           ),
         );
       }
@@ -469,48 +532,105 @@ export function findGlassReimplementationViolations() {
   return findings;
 }
 
-/** Reimplementaciones en plantillas y shells de página sin fondo ambiental. */
+const attributeValue = (tag, name) => {
+  const match = tag.match(new RegExp(`\\s${escapeRegExp(name)}\\s*=\\s*"([^"]*)"`, 'i'));
+  return match ? match[1] : '';
+};
+
+const STRING_LITERAL = /(['"`])((?:\\.|(?!\1)[\s\S])*?)\1/g;
+
+const stringLiterals = (source) => [...source.matchAll(STRING_LITERAL)].map((match) => match[2]);
+
+/** Clases estáticas + cada variante dinámica de `[class]`/`[ngClass]`. */
+const classVariants = (tag) => {
+  const staticClasses = attributeValue(tag, 'class');
+  const dynamic = [
+    ...stringLiterals(attributeValue(tag, '[class]')),
+    ...stringLiterals(attributeValue(tag, '[ngClass]')),
+  ];
+  return [staticClasses, ...dynamic.map((value) => `${staticClasses} ${value}`)];
+};
+
+const templateGlassFinding = (rel, source, index, classes) => {
+  if (!/\bbackdrop-blur(?:-|\b)/.test(classes)) return null;
+  if (isGlassUtilityClass(classes)) return null;
+  if (isAllowlistedTemplate(classes)) return null;
+  if (!hasLightSurface(classes)) return null;
+
+  return finding(
+    rel,
+    lineAt(source, index),
+    'reimplementa una superficie de cristal con backdrop-blur + fondo',
+    `template-glass:${classes.trim().slice(0, 80)}`,
+  );
+};
+
+const addFinding = (findings, seen, candidate) => {
+  if (!candidate || seen.has(candidate.key)) return;
+  seen.add(candidate.key);
+  findings.push(candidate);
+};
+
+/** Reimplementaciones en plantillas, bindings y clases inline. */
 export function findGlassTemplateViolations() {
   const findings = [];
 
   for (const file of walkFiles(appRootDir, (name) => name.endsWith('.html'))) {
     const rel = toRel(file);
     const source = readText(file);
+    const seen = new Set();
 
-    for (const match of source.matchAll(/<[a-z][^>]*class="([^"]*)"[^>]*>/gi)) {
-      const classes = match[1];
-      if (!/\bbackdrop-blur(?:-|\b)/.test(classes)) continue;
-      if (/\bglass(?:-[a-z0-9-]+)?\b/.test(classes)) continue;
-      if (isAllowlistedTemplate(classes)) continue;
-      if (!hasLightSurface(classes)) continue;
-
-      findings.push(
-        finding(
-          rel,
-          lineAt(source, match.index),
-          'reimplementa una superficie de cristal con backdrop-blur + fondo',
-          `template-glass:${classes.trim().slice(0, 80)}`,
-        ),
-      );
+    for (const tag of source.matchAll(/<[a-z][^>]*>/gi)) {
+      for (const classes of classVariants(tag[0])) {
+        addFinding(findings, seen, templateGlassFinding(rel, source, tag.index, classes));
+      }
     }
 
     if (!rel.includes('/pages/')) continue;
 
-    const firstClass = source.match(/class="([^"]*)"/);
-    if (!firstClass) continue;
+    const rootClass =
+      source.match(/<(?:section|div|main|article)\b[^>]*\sclass="([^"]*)"/i) ??
+      source.match(/\sclass="([^"]*)"/);
+    if (!rootClass) continue;
 
-    const classes = firstClass[1];
+    const classes = rootClass[1];
     if (hasAmbientBackground(classes)) continue;
     if (!hasPageHeight(classes) || !hasFlatPageBackground(classes)) continue;
 
     findings.push(
       finding(
         rel,
-        lineAt(source, firstClass.index),
+        lineAt(source, rootClass.index),
         'el shell de página usa fondo plano; usa app-page-bg/app-shell-bg',
         'page-shell',
       ),
     );
+  }
+
+  for (const file of walkFiles(
+    appRootDir,
+    (name) => name.endsWith('.ts') && !name.endsWith('.spec.ts'),
+  )) {
+    const rel = toRel(file);
+    const source = readText(file);
+    const seen = new Set();
+
+    for (const literal of source.matchAll(STRING_LITERAL)) {
+      const value = literal[2];
+      if (!value.includes('backdrop-blur')) continue;
+
+      const tags = [...value.matchAll(/<[a-z][^>]*>/gi)];
+      if (tags.length === 0) {
+        addFinding(findings, seen, templateGlassFinding(rel, source, literal.index, value));
+        continue;
+      }
+
+      for (const tag of tags) {
+        for (const classes of classVariants(tag[0])) {
+          addFinding(findings, seen, templateGlassFinding(rel, source, literal.index, classes));
+        }
+      }
+    }
   }
 
   return findings;
@@ -598,6 +718,7 @@ export function findGlassSystemViolations() {
     ...findGlassDefinitionViolations(),
     ...findGlassReimplementationViolations(),
     ...findGlassTemplateViolations(),
+    ...findGlassAllowlistViolations(),
     ...findGlassToolingViolations(),
   ];
 }

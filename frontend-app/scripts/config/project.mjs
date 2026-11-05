@@ -486,10 +486,10 @@ export const COVERAGE_MIN_VERIFIED = 50;
 
 /**
  * Cobertura mínima de los requisitos del sistema visual Glass (R-UX-7).
- * Es un porcentaje de requisitos con verificación automática, no del motor
- * global de reglas. Súbelo al implementar nuevos requisitos; nunca lo bajes.
+ * Se calcula sobre hallazgos reales: cada requisito debe estar cubierto y sin
+ * incumplimientos. No es un porcentaje del motor global de reglas.
  */
-export const GLASS_MIN_COVERAGE = 80;
+export const GLASS_MIN_COVERAGE = 100;
 
 /**
  * README.md obligatorios en los directorios con contrato propio (R-DO-7).
