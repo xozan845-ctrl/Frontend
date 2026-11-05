@@ -11,15 +11,15 @@ describe('InvitationStatusPipe', () => {
   });
 
   it('devuelve las clases del chip para cada estado', () => {
-    expect(pipe.transform('pendiente', 'class')).toContain('bg-amber-100');
-    expect(pipe.transform('aceptada', 'class')).toContain('bg-emerald-100');
-    expect(pipe.transform('expirada', 'class')).toContain('bg-slate-200');
-    expect(pipe.transform('revocada', 'class')).toContain('bg-red-100');
+    expect(pipe.transform('pendiente', 'class')).toContain('badge-warning');
+    expect(pipe.transform('aceptada', 'class')).toContain('badge-success');
+    expect(pipe.transform('expirada', 'class')).toContain('badge-neutral');
+    expect(pipe.transform('revocada', 'class')).toContain('badge-danger');
   });
 
   it('mantiene un estado desconocido y usa el chip neutro', () => {
     expect(pipe.transform('otro')).toBe('otro');
     expect(pipe.transform('', 'label')).toBe('Sin estado');
-    expect(pipe.transform('otro', 'class')).toContain('bg-slate-100');
+    expect(pipe.transform('otro', 'class')).toContain('badge-neutral');
   });
 });
