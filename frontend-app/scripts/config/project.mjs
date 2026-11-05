@@ -531,6 +531,9 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/modules/purchases',
   'features/modules/catalog',
   'features/applications/products',
+  'features/applications/account',
+  'features/modules/banks',
+  'features/modules/payables',
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */

@@ -4,9 +4,9 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-10-29 — **13ª de frontend-ecomerce**: cierre de
-  las deudas pendientes de contratos, componentes, fronteras, refresh en 401 y
-  operación de Firebase Hosting.
+- **Última auditoría:** 2026-11-05 — **cierre de la migración Glass**
+  (`R-UX-7`/`R-UX-8`) sobre el snapshot vigente de hosting en Firebase. Backlog
+  de adopción en **0** y **37 raíces** de presentación adoptadas.
 - **Estado global:** 🟢 **CUMPLE** — `npm test -- --watch=false --coverage=false`
   con **327 archivos / 1.785 tests**, typecheck, lint, formato, gobernanza
   **40/40 pruebas de suite** y build de producción verdes. El motor verifica **49/255**
@@ -83,6 +83,14 @@
 | R-AC-3 modales   | ✅     | `focus-trap.directive` (foco atrapado y devuelto) + `role="dialog"`/`aria-modal`, Escape y botones (alta de clientes, confirmación de estado)                   |
 | R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío con esqueletos en todas las páginas del vendedor; responsive, dark mode, textos en español                                         |
 | R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir, incl. vendor) + manifest + SW + `theme-color`                                                        |
+| R-UX-7 Glass     | ✅     | `visual-guards`: tokens, utilidades y primitivos centralizados en `src/styles.css`; cobertura medida 100% de requisitos                                         |
+| R-UX-8 adopción  | ✅     | `visual-adoption-guards`: **37 raíces** adoptadas y **backlog 0**; migración por áreas de 503 a 0 superficies crudas                                            |
+
+**Migración Glass (2026-11-05):** todas las superficies de `src/app` usan
+`.glass*` o un primitivo global (`.card`, `.btn-*`, `.input`, `.badge*`,
+`.alert-*`, `.icon-btn`). El ratchet queda cerrado con
+`GLASS_ADOPTION_PENDING_MAX = 0`; una superficie nueva que reintroduzca fondos
+crudos hace fallar `visual-adoption-guards`.
 
 ### Seguridad (`R-SE`)
 

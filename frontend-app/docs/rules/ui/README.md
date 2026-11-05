@@ -13,7 +13,7 @@ Reglas de la capa de presentación: **accesibilidad** y **experiencia (UX/UI)**
 | Archivo               | Contenido                                                                    | Sufijo       |
 | --------------------- | ---------------------------------------------------------------------------- | ------------ |
 | `01-accesibilidad.md` | Nombre accesible, teclado, foco, imágenes, diálogos, contraste, movimiento   | `R-AC` (1–7) |
-| `03-experiencia.md`   | Estados de carga/error/vacío, responsive, dark mode, tokens, SEO/PWA y Glass | `R-UX` (1–7) |
+| `03-experiencia.md`   | Estados de carga/error/vacío, responsive, dark mode, tokens, SEO/PWA y Glass | `R-UX` (1–8) |
 
 > Los derivados (AUDIT, CHECKLIST, historiales) viven en
 > [`../_meta/`](../_meta/README.md).
@@ -32,7 +32,7 @@ Reglas de la capa de presentación: **accesibilidad** y **experiencia (UX/UI)**
 | -------- | -------------------------------------------------------------------------------------------------------- |
 | `R-UX-5` | Tokens de diseño en `tailwind.config.js` → naming de configuración `R-NC-6`                              |
 | `R-UX-7` | Sistema Glass centralizado → suite `visual-guards` (cobertura medida 100% de requisitos)                 |
-| `R-UX-8` | Adopción del Glass → suite `visual-adoption-guards` (ratchet por áreas y backlog decreciente)            |
+| `R-UX-8` | Adopción del Glass → suite `visual-adoption-guards` (ratchet por áreas; 37 raíces adoptadas y backlog 0) |
 | `R-UX-1` | Estados de carga/error/vacío → cubiertos por tests `R-CP-6` (`../test/02-reglas-componentes.md`)         |
 | `R-AC-*` | Los selectores de prueba de `R-CP-2` (`../test/02-reglas-componentes.md`) no dependen de clases visuales |
 | `R-PF-*` | Rendimiento → [`../frontend/07-rendimiento.md`](../frontend/07-rendimiento.md)                           |
