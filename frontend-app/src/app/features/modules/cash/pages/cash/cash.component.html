@@ -34,7 +34,7 @@
   <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-available">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400"
       >
         <i class="fa-solid fa-cash-register" aria-hidden="true"></i>
       </span>
@@ -52,7 +52,7 @@
     </article>
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-income">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400"
       >
         <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
       </span>
@@ -67,7 +67,7 @@
     </article>
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-expense">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-red-600 dark:text-red-400"
       >
         <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
       </span>
@@ -82,7 +82,7 @@
     </article>
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-movements">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-cyan-600 dark:text-cyan-400"
       >
         <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
       </span>
@@ -95,7 +95,7 @@
     </article>
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-petty">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-amber-600 dark:text-amber-400"
       >
         <i class="fa-solid fa-wallet" aria-hidden="true"></i>
       </span>
@@ -106,7 +106,7 @@
     </article>
     <article class="card flex items-center gap-4 p-4" data-testid="cash-kpi-banks">
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400"
+        class="glass-subtle flex h-11 w-11 items-center justify-center rounded-xl text-violet-600 dark:text-violet-400"
       >
         <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
       </span>
@@ -120,7 +120,7 @@
   </div>
 
   <div
-    class="flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1 dark:border-surface-700 dark:bg-surface-800"
+    class="glass-subtle flex gap-1 overflow-x-auto rounded-2xl p-1"
     role="tablist"
     aria-label="Secciones de caja"
   >
@@ -278,19 +278,19 @@
 
     @if (store.tab() === 'petty-cash') {
       <div class="grid gap-3 sm:grid-cols-3">
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+        <article class="glass-subtle rounded-2xl px-4 py-3">
           <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
             Fondo asignado
           </p>
           <p class="mt-1 text-lg font-black tabular-nums">{{ pettyCashFund | appCurrency }}</p>
         </article>
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+        <article class="glass-subtle rounded-2xl px-4 py-3">
           <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Disponible</p>
           <p class="mt-1 text-lg font-black tabular-nums">
             {{ store.summary().pettyCash | appCurrency }}
           </p>
         </article>
-        <article class="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-surface-900/60">
+        <article class="glass-subtle rounded-2xl px-4 py-3">
           <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Movimientos</p>
           <p class="mt-1 text-lg font-black tabular-nums">{{ store.filteredCount() }}</p>
         </article>
