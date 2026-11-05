@@ -11,6 +11,10 @@ import { InventoryStore } from './state/inventory/inventory.store';
 import { AdminOrdersStore } from './state/orders/admin-orders.store';
 import { StorageStore } from './state/storage/storage.store';
 import { MEDIA_BACKGROUND_PROVIDERS } from '../../domains/media-background/public-api';
+import {
+  STORAGE_REPOSITORY as MEDIA_STORAGE_REPOSITORY,
+  StorageService as MediaStorageService,
+} from '../storage/public-api';
 
 /**
  * Área de administración (`/admin/**`, ADR-33). Se carga con `loadChildren`
@@ -40,6 +44,9 @@ export const ADMIN_ROUTES: Routes = [
     path: 'personalizacion',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/branding/branding.component'),
-    providers: [...MEDIA_BACKGROUND_PROVIDERS],
+    providers: [
+      ...MEDIA_BACKGROUND_PROVIDERS,
+      { provide: MEDIA_STORAGE_REPOSITORY, useClass: MediaStorageService },
+    ],
   },
 ];

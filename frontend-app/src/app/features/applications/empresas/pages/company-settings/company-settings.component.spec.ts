@@ -8,7 +8,10 @@ import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { Company, LogisticsMode } from '../../models/company.model';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
-import { MediaBackgroundWriteService } from '../../../../domains/media-background/public-api';
+import {
+  MediaBackgroundUploadService,
+  MediaBackgroundWriteService,
+} from '../../../../domains/media-background/public-api';
 
 const company: Company = {
   id: 'c-1',
@@ -68,6 +71,7 @@ describe('CompanySettingsComponent', () => {
     confirm: vi.fn(),
   };
   const mediaWriter = { updateCompany: vi.fn() };
+  const mediaUploads = { upload: vi.fn() };
 
   const setup = async () => {
     await TestBed.configureTestingModule({
@@ -82,7 +86,12 @@ describe('CompanySettingsComponent', () => {
       ],
     })
       .overrideComponent(CompanySettingsComponent, {
-        set: { providers: [{ provide: CompanyLogoStore, useValue: logoStore }] },
+        set: {
+          providers: [
+            { provide: CompanyLogoStore, useValue: logoStore },
+            { provide: MediaBackgroundUploadService, useValue: mediaUploads },
+          ],
+        },
       })
       .compileComponents();
     const fixture = TestBed.createComponent(CompanySettingsComponent);

@@ -66,7 +66,11 @@ const MAX_LENGTH = {
     ImageDropzoneComponent,
     MediaBackgroundEditorComponent,
   ],
-  providers: [CompanyLogoStore, { provide: STORAGE_REPOSITORY, useClass: StorageService }],
+  providers: [
+    CompanyLogoStore,
+    MediaBackgroundUploadService,
+    { provide: STORAGE_REPOSITORY, useClass: StorageService },
+  ],
   templateUrl: './company-settings.component.html',
 })
 export default class CompanySettingsComponent {
