@@ -16,10 +16,9 @@
       <app-media-background-editor
         title="Fondo de plataforma"
         hint="Imagen o video de fondo del sitio público y del acceso."
-        folder="plataforma"
-        description="Fondo de plataforma"
         [config]="store.platform()"
         [save]="guardarPlataforma"
+        [upload]="subirFondoPlataforma"
         (saved)="onGuardado('Fondo de plataforma actualizado.')"
       />
     }
@@ -29,11 +28,10 @@
     } @else {
       <app-media-background-editor
         title="Fondo del panel de IA"
-        hint="Video o imagen de fondo del chat de IA global (ADR-40)."
-        folder="plataforma"
-        description="Fondo del panel de IA"
+        hint="Video o imagen de fondo del chat de IA global (ADR-43)."
         [config]="store.panelAi()"
         [save]="guardarPanelAi"
+        [upload]="subirFondoPanelAi"
         (saved)="onGuardado('Fondo del panel de IA actualizado.')"
       />
     }

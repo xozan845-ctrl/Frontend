@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
+import { MediaBackgroundEditorComponent } from '../../../../../shared/ui/media-background-editor/media-background-editor.component';
 import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import {
   STORAGE_REPOSITORY,
@@ -16,7 +17,7 @@ import {
 } from '../../../storage/public-api';
 import {
   MediaBackgroundDraft,
-  MediaBackgroundEditorComponent,
+  MediaBackgroundUploadService,
   MediaBackgroundWriteService,
 } from '../../../../domains/media-background/public-api';
 import {
@@ -73,6 +74,7 @@ export default class CompanySettingsComponent {
   readonly logoStore = inject(CompanyLogoStore);
   readonly authStore = inject(AuthStore);
   private readonly mediaWriter = inject(MediaBackgroundWriteService);
+  private readonly mediaUploads = inject(MediaBackgroundUploadService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cleanup = this.destroyRef.onDestroy(() => this.clearCreateLogoPreview());
@@ -112,6 +114,9 @@ export default class CompanySettingsComponent {
 
     return storagePublicObjectUrl(company.logoObjectId);
   });
+
+  readonly subirFondoEmpresa = (file: File) =>
+    this.mediaUploads.upload(file, { folder: 'empresas', description: 'Fondo de empresa' });
 
   /** Guarda el fondo de la empresa; solo se renderiza para el empresario. */
   readonly guardarFondoEmpresa = (draft: MediaBackgroundDraft) => {

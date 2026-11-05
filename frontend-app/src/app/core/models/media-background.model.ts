@@ -41,6 +41,13 @@ export const EMPTY_MEDIA_BACKGROUND: Readonly<MediaBackgroundConfig> = Object.fr
   active: false,
 });
 
+/** Resultado de subir y confirmar un binario de fondo en storage. */
+export interface MediaBackgroundUploadResult {
+  objectId: string;
+  url: string;
+  mediaType: MediaBackgroundMediaType;
+}
+
 /** `true` solo cuando el backend marcó un fondo con URL y tipo válidos. */
 export function hasVisibleMediaBackground(
   config: MediaBackgroundConfig | null | undefined,

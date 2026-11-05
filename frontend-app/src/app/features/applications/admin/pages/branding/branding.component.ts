@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { MediaBackgroundEditorComponent } from '../../../../../shared/ui/media-background-editor/media-background-editor.component';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import {
   MEDIA_BACKGROUND_PROVIDERS,
   MediaBackgroundDraft,
-  MediaBackgroundEditorComponent,
   MediaBackgroundStore,
+  MediaBackgroundUploadService,
   MediaBackgroundWriteService,
 } from '../../../../domains/media-background/public-api';
 
@@ -25,6 +26,7 @@ import {
 export default class AdminBrandingComponent {
   readonly store = inject(MediaBackgroundStore);
   private readonly writer = inject(MediaBackgroundWriteService);
+  private readonly uploads = inject(MediaBackgroundUploadService);
   private readonly notifications = inject(NotificationService);
 
   private readonly seo = injectSeoPage(
@@ -36,18 +38,16 @@ export default class AdminBrandingComponent {
   private readonly loadPanelAi = this.store.loadPanelAi();
 
   readonly guardarPlataforma = (draft: MediaBackgroundDraft) =>
-    this.writer
-      .updateSite('platform', draft)
-      .pipe(tap((config) => this.store.setPlatform(config)));
+    this.writer.updateSite('platform', draft).pipe(tap((config) => this.store.setPlatform(config)));
 
   readonly guardarPanelAi = (draft: MediaBackgroundDraft) =>
-    this.writer
-      .updateSite('panel-ai', draft)
-      .pipe(tap((config) => this.store.setPanelAi(config)));
+    this.writer.updateSite('panel-ai', draft).pipe(tap((config) => this.store.setPanelAi(config)));
 
-  constructor() {
-    this.seo.updateTitle('Personalización — Administración');
-  }
+  readonly subirFondoPlataforma = (file: File) =>
+    this.uploads.upload(file, { folder: 'plataforma', description: 'Fondo de plataforma' });
+
+  readonly subirFondoPanelAi = (file: File) =>
+    this.uploads.upload(file, { folder: 'plataforma', description: 'Fondo del panel de IA' });
 
   onGuardado(mensaje: string): void {
     this.notifications.showSuccess(mensaje);

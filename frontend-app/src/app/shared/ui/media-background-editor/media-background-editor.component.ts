@@ -1,34 +1,25 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import {
   MediaBackgroundConfig,
   MediaBackgroundDraft,
   MediaBackgroundPosition,
+  MediaBackgroundUploadResult,
   clampMediaBackgroundOverlay,
   mediaBackgroundDraftFromConfig,
-} from '../../../../../core/models/media-background.model';
-import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
-import {
-  STORAGE_REPOSITORY,
-  storagePublicObjectUrl,
-} from '../../../../applications/storage/public-api';
+} from '../../../core/models/media-background.model';
+import { ImageDropzoneComponent } from '../image-dropzone/image-dropzone.component';
 
-const POSICIONES: readonly MediaBackgroundPosition[] = [
-  'center',
-  'top',
-  'bottom',
-  'left',
-  'right',
-];
+const POSICIONES: readonly MediaBackgroundPosition[] = ['center', 'top', 'bottom', 'left', 'right'];
 
 /**
- * Editor reutilizable de un fondo multimedia (imagen o video) con poster
- * opcional. No conoce el endpoint final: el consumidor entrega `save`, que
- * recibe el borrador y devuelve la configuración normalizada por el backend.
- *
- * El binario se sube con el mismo flujo de storage que usan los logos:
- * solicitud prefirmada → PUT → confirmar → asociar por id.
+ * Editor presentacional de un fondo multimedia (imagen o video) con poster
+ * opcional. No conoce ni el endpoint final ni storage: el consumidor entrega
+ * `save` (borrador → configuración normalizada) y `upload` (archivo → objeto
+ * confirmado). Así la página orquesta el dominio y el componente solo pinta
+ * (`R-SO-8`).
  */
 @Component({
   selector: 'app-media-background-editor',
@@ -41,16 +32,14 @@ export class MediaBackgroundEditorComponent {
   readonly title = input('Fondo');
   readonly hint = input('Arrastra una imagen o un video, o haz clic para seleccionarlo.');
   readonly canEdit = input(true);
-  readonly folder = input('fondos');
-  readonly description = input('Fondo multimedia');
   readonly maxBytes = input(100 * 1024 * 1024);
   readonly posterMaxBytes = input(5 * 1024 * 1024);
-  readonly save = input.required<
-    (draft: MediaBackgroundDraft) => Observable<MediaBackgroundConfig>
-  >();
+  readonly save =
+    input.required<(draft: MediaBackgroundDraft) => Observable<MediaBackgroundConfig>>();
+  readonly upload = input.required<(file: File) => Observable<MediaBackgroundUploadResult>>();
   readonly saved = output<MediaBackgroundConfig>();
 
-  private readonly storage = inject(STORAGE_REPOSITORY);
+  private readonly destroyRef = inject(DestroyRef);
   readonly posiciones = POSICIONES;
   private lastConfig: MediaBackgroundConfig | null = null;
 
@@ -141,6 +130,7 @@ export class MediaBackgroundEditorComponent {
           this.saving.set(false);
           return EMPTY;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -150,32 +140,17 @@ export class MediaBackgroundEditorComponent {
     this.uploading.set(true);
     this.error.set(null);
 
-    this.storage
-      .requestUpload({
-        name: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-        folder: this.folder(),
-        description: this.description(),
-        isPublic: true,
-      })
+    this.upload()(file)
       .pipe(
-        switchMap((upload) =>
-          this.storage
-            .uploadToUrl(upload.uploadUrl, upload.headers, file)
-            .pipe(map(() => upload.objectId)),
-        ),
-        switchMap((objectId) => this.storage.confirm(objectId)),
-        tap((object) => {
-          const url = storagePublicObjectUrl(object.id);
+        tap((uploaded) => {
           if (tipo === 'fondo') {
-            this.objectId.set(object.id);
-            this.previewUrl.set(url);
-            this.previewType.set(file.type.startsWith('video/') ? 'video' : 'imagen');
-            if (file.type.startsWith('video/')) this.active.set(true);
+            this.objectId.set(uploaded.objectId);
+            this.previewUrl.set(uploaded.url);
+            this.previewType.set(uploaded.mediaType);
+            if (uploaded.mediaType === 'video') this.active.set(true);
           } else {
-            this.posterObjectId.set(object.id);
-            this.posterUrl.set(url);
+            this.posterObjectId.set(uploaded.objectId);
+            this.posterUrl.set(uploaded.url);
           }
           this.uploading.set(false);
         }),
@@ -184,6 +159,7 @@ export class MediaBackgroundEditorComponent {
           this.uploading.set(false);
           return EMPTY;
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
