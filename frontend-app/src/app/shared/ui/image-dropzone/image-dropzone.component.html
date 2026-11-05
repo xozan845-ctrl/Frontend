@@ -6,10 +6,10 @@
   }
 
   <div
-    class="group relative overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition-colors dark:border-surface-600 dark:bg-surface-900"
+    class="glass-dashed group relative overflow-hidden rounded-2xl transition-colors"
     [class]="frameClass()"
-    [class.border-accent-500]="isDragging()"
-    [class.bg-accent-50]="isDragging()"
+    [class.ring-4]="isDragging()"
+    [class.ring-accent-500/20]="isDragging()"
     [class.opacity-70]="disabled()"
     (dragover)="onDragOver($event)"
     (dragleave)="onDragLeave($event)"
@@ -113,7 +113,7 @@
 
   @if (error(); as message) {
     <p
-      class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+      class="alert alert-danger rounded-lg px-3 py-2 text-xs font-bold"
       role="alert"
       data-testid="image-dropzone-error"
     >

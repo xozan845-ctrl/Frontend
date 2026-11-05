@@ -20,7 +20,7 @@ y metadatos.
 
 - Tokens `--glass-*` en `:root` y `.dark` (paridad derivada).
 - Utilidades `.glass`, `.glass-strong`, `.glass-subtle`, `.glass-hover`,
-  `.glass-card`, `.glass-bar` y `.glass-footer`.
+  `.glass-card`, `.glass-bar`, `.glass-footer` y `.glass-dashed`.
 - Primitivos `.card`, `.btn`, `.input`, `.badge`, `.alert` e `.icon-btn`.
 - Fondos ambientales `app-page-bg`/`app-shell-bg` y fallback
   `@supports not (backdrop-filter: ...)`.
@@ -82,8 +82,8 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
 `modules/barcodes`, `modules/credits`, `modules/reports`, `admin`, `storage`,
-`shared/orders`, `auth`, `plans`, `stores`, `home`, `ai-scraper`, `wishlist` y
-`shared/pipes`; backlog 388.
+`shared/orders`, `auth`, `plans`, `stores`, `home`, `ai-scraper`, `wishlist`,
+`shared/pipes` y `shared/ui`; backlog 372.
 
 ## Notas
 

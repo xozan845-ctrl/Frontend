@@ -63,7 +63,7 @@ export class EmptyStateComponent {
       case 'no-results':
         return 'bg-blue-300 dark:bg-blue-700';
       default:
-        return 'bg-slate-200 dark:bg-surface-600';
+        return 'bg-current text-slate-300 opacity-40';
     }
   });
 
