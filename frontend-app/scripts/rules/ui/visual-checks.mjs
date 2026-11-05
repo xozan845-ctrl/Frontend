@@ -58,6 +58,7 @@ const REQUIRED_UTILITIES = [
   '.glass-card',
   '.glass-bar',
   '.glass-footer',
+  '.glass-drawer',
   '.app-page-bg',
   '.app-shell-bg',
 ];

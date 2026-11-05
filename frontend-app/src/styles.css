@@ -594,6 +594,23 @@ body {
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 
+/*
+ * Panel lateral: a diferencia de una tarjeta, cubre contenido durante toda la
+ * altura. Necesita más opacidad para que el texto de fondo no se lea a través.
+ */
+.glass-drawer {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--glass-radius-xl);
+  box-shadow: var(--glass-shadow-lg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.dark .glass-drawer {
+  background: rgba(10, 10, 12, 0.9);
+}
+
 .glass-footer {
   background: var(--glass-bg-subtle);
   border-top: 1px solid var(--glass-border);
@@ -797,6 +814,7 @@ body {
   .glass-card,
   .glass-bar,
   .glass-footer,
+  .glass-drawer,
   .card,
   .card-hover,
   .card-elevated,
@@ -813,6 +831,7 @@ body {
   .dark .glass-card,
   .dark .glass-bar,
   .dark .glass-footer,
+  .dark .glass-drawer,
   .dark .card,
   .dark .card-hover,
   .dark .card-elevated,
