@@ -1,0 +1,48 @@
+<div class="app-shell-bg flex min-h-screen flex-col">
+  <header
+    class="glass-bar sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8"
+  >
+    <a
+      routerLink="/ia"
+      class="flex items-center gap-3"
+      aria-label="Ir al panel de Scraper AI"
+      data-testid="ai-scraper-home"
+    >
+      <span
+        class="grid h-9 w-9 place-items-center rounded-xl bg-black text-sm text-white dark:bg-white dark:text-black"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-spider"></i>
+      </span>
+      <span
+        class="font-heading text-sm font-black tracking-widest text-slate-900 uppercase dark:text-white"
+      >
+        Scraper AI
+      </span>
+    </a>
+
+    <nav class="flex flex-wrap items-center gap-2" aria-label="Secciones de Scraper AI">
+      <a
+        routerLink="/ia"
+        routerLinkActive="text-accent-600 dark:text-accent-400"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="rounded-full px-4 py-2 text-xs font-bold tracking-widest text-slate-600 uppercase transition-colors hover:text-accent-600 dark:text-slate-300 dark:hover:text-accent-400"
+        data-testid="ai-scraper-nav-panel"
+      >
+        Panel
+      </a>
+      <a
+        routerLink="/ia/chat"
+        routerLinkActive="text-accent-600 dark:text-accent-400"
+        class="rounded-full px-4 py-2 text-xs font-bold tracking-widest text-slate-600 uppercase transition-colors hover:text-accent-600 dark:text-slate-300 dark:hover:text-accent-400"
+        data-testid="ai-scraper-nav-chat"
+      >
+        Chat
+      </a>
+    </nav>
+  </header>
+
+  <main class="min-w-0 flex-1">
+    <router-outlet />
+  </main>
+</div>

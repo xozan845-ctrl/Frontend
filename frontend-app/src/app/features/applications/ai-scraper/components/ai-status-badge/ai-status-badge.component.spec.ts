@@ -16,7 +16,7 @@ describe('AiStatusBadgeComponent', () => {
       '[data-testid="ai-status-badge"]',
     ) as HTMLElement;
     expect(el.textContent).toContain('COMPLETED');
-    expect(el.className).toContain('emerald');
+    expect(el.className).toContain('badge-success');
   });
 
   it('debe usar el tono por defecto cuando el estado es desconocido', () => {
@@ -24,6 +24,6 @@ describe('AiStatusBadgeComponent', () => {
     const el = fixture.nativeElement.querySelector(
       '[data-testid="ai-status-badge"]',
     ) as HTMLElement;
-    expect(el.className).toContain('blue');
+    expect(el.className).toContain('badge-primary');
   });
 });
