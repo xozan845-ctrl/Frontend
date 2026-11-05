@@ -558,6 +558,12 @@ body {
   box-shadow: var(--glass-shadow-sm);
 }
 
+.glass-dashed {
+  background: var(--glass-bg-subtle);
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--glass-radius-xl);
+}
+
 .glass-hover {
   transition:
     background var(--glass-t-base),

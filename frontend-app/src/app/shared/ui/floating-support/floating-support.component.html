@@ -3,7 +3,7 @@
   <!-- Popover Box -->
   @if (isOpen()) {
     <div
-      class="mb-4 w-80 bg-white dark:bg-surface-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-surface-700 overflow-hidden"
+      class="card mb-4 w-80 overflow-hidden rounded-3xl shadow-2xl"
       style="animation: supportPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) both"
     >
       <!-- Card Header -->
@@ -37,7 +37,7 @@
         <!-- WhatsApp -->
         <button
           (click)="openWhatsApp()"
-          class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all text-left group"
+          class="alert alert-success w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
         >
           <div
             class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
@@ -56,7 +56,7 @@
         <!-- Email -->
         <a
           [href]="'mailto:' + companyInfo.email + '?subject=Consulta%20' + companyInfo.name"
-          class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-surface-700/60 border border-slate-200 dark:border-surface-600 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-700 transition-all text-left group"
+          class="glass-subtle w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
         >
           <div
             class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
@@ -73,7 +73,7 @@
 
       <!-- Footer note -->
       <div
-        class="px-5 py-3 bg-slate-50 dark:bg-surface-900 border-t border-slate-100 dark:border-surface-700 text-center"
+        class="glass-subtle px-5 py-3 border-t border-slate-100 dark:border-surface-700 text-center"
       >
         <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
           Garantía y devoluciones 30 días garantizados
