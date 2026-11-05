@@ -79,6 +79,8 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-AC-4/5/6** — Imágenes con `alt`, contraste AA y `prefers-reduced-motion`; axe en E2E (`R-E-25`).
 - [ ] **R-UX-1** — Estados de carga/error/vacío definidos.
 - [ ] **R-UX-3/5/6** — Dark mode, tokens de `tailwind.config.js` y `SeoService`.
+- [ ] **R-UX-7** — Glass centralizado: sin redefinir tokens, utilidades ni primitivos.
+- [ ] **R-UX-8** — Adopción: superficies principales con Glass/primitivo y backlog sin crecer.
 
 ## 7. Seguridad ([`security/01-seguridad.md`](../security/01-seguridad.md))
 

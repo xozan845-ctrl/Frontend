@@ -31,5 +31,6 @@ export const requiredSuites = [
   { id: 'store-guards', file: 'rules/frontend/stores.test.mjs' },
   { id: 'presentation-guards', file: 'rules/frontend/presentation.test.mjs' },
   { id: 'visual-guards', file: 'rules/ui/visual.test.mjs' },
+  { id: 'visual-adoption-guards', file: 'rules/ui/adoption.test.mjs' },
   { id: 'coverage-guards', file: 'rules/test/coverage.test.mjs' },
 ];
