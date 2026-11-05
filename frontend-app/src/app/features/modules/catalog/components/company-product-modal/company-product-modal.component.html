@@ -10,7 +10,7 @@
     ></div>
 
     <div
-      class="relative my-4 flex h-[calc(100dvh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-surface-800"
+      class="card relative my-4 flex h-[calc(100dvh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-2xl"
       role="dialog"
       aria-modal="true"
       aria-labelledby="company-product-modal-title"
@@ -48,7 +48,7 @@
         <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7">
           @if (error(); as message) {
             <div
-              class="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+              class="alert alert-danger mb-4 rounded-xl p-3 text-xs font-bold"
               role="alert"
               data-testid="product-modal-error"
             >
@@ -69,7 +69,7 @@
                 [class]="
                   type() === 'producto'
                     ? 'bg-emerald-400 text-white'
-                    : 'bg-white text-slate-600 hover:bg-slate-50 dark:bg-surface-800 dark:text-slate-300'
+                    : 'glass-subtle text-slate-600 dark:text-slate-300'
                 "
                 [disabled]="isEdit()"
                 [attr.aria-pressed]="type() === 'producto'"
@@ -85,7 +85,7 @@
                 [class]="
                   type() === 'servicio'
                     ? 'bg-emerald-400 text-white'
-                    : 'bg-white text-slate-600 hover:bg-slate-50 dark:bg-surface-800 dark:text-slate-300'
+                    : 'glass-subtle text-slate-600 dark:text-slate-300'
                 "
                 [disabled]="isEdit()"
                 [attr.aria-pressed]="type() === 'servicio'"
@@ -324,9 +324,7 @@
             </div>
 
             @if (!isService()) {
-              <div
-                class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-surface-600 dark:bg-surface-700/40"
-              >
+              <div class="glass-subtle mt-4 rounded-2xl p-4">
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Se vende por</p>
                 <select
                   id="product-unit"
@@ -423,7 +421,7 @@
                       [class]="
                         form.controls.priceType.value === 'fijo'
                           ? 'bg-emerald-400 text-white'
-                          : 'bg-white text-slate-600 dark:bg-surface-800 dark:text-slate-300'
+                          : 'glass-subtle text-slate-600 dark:text-slate-300'
                       "
                       [attr.aria-pressed]="form.controls.priceType.value === 'fijo'"
                       (click)="setPriceType('fijo')"
@@ -436,7 +434,7 @@
                       [class]="
                         form.controls.priceType.value === 'escala'
                           ? 'bg-emerald-400 text-white'
-                          : 'bg-white text-slate-600 dark:bg-surface-800 dark:text-slate-300'
+                          : 'glass-subtle text-slate-600 dark:text-slate-300'
                       "
                       [attr.aria-pressed]="form.controls.priceType.value === 'escala'"
                       (click)="setPriceType('escala')"
@@ -459,7 +457,7 @@
                       [class]="
                         form.controls.costType.value === 'fijo'
                           ? 'bg-emerald-400 text-white'
-                          : 'bg-white text-slate-600 dark:bg-surface-800 dark:text-slate-300'
+                          : 'glass-subtle text-slate-600 dark:text-slate-300'
                       "
                       [attr.aria-pressed]="form.controls.costType.value === 'fijo'"
                       (click)="setCostType('fijo')"
@@ -472,7 +470,7 @@
                       [class]="
                         form.controls.costType.value === 'escala'
                           ? 'bg-emerald-400 text-white'
-                          : 'bg-white text-slate-600 dark:bg-surface-800 dark:text-slate-300'
+                          : 'glass-subtle text-slate-600 dark:text-slate-300'
                       "
                       [attr.aria-pressed]="form.controls.costType.value === 'escala'"
                       (click)="setCostType('escala')"
@@ -704,7 +702,7 @@
         </div>
 
         <footer
-          class="flex flex-none items-center justify-end gap-3 border-t border-slate-100 bg-white px-5 py-4 sm:px-7 dark:border-surface-700 dark:bg-surface-800"
+          class="glass-footer flex flex-none items-center justify-end gap-3 px-5 py-4 sm:px-7"
         >
           <button
             type="button"
