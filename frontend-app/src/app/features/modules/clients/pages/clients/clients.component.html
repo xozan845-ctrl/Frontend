@@ -15,7 +15,7 @@
       </nav>
       <div class="flex items-center gap-3">
         <span
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+          class="glass-subtle flex h-10 w-10 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
           aria-hidden="true"
         >
           <i class="fa-solid fa-user-group"></i>
@@ -87,7 +87,7 @@
 
   @if (clients.error(); as message) {
     <div
-      class="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10"
+      class="alert alert-danger flex flex-col gap-2 p-4"
       role="alert"
       data-testid="clients-error"
     >
@@ -105,7 +105,7 @@
 
   @if (importError(); as message) {
     <div
-      class="flex items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+      class="alert alert-warning flex items-start justify-between gap-3 p-4 text-sm"
       role="alert"
       data-testid="clients-import-error"
     >
@@ -126,7 +126,7 @@
   >
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-user-group"></i>
@@ -145,7 +145,7 @@
 
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-circle-check"></i>
@@ -164,7 +164,7 @@
 
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-900/20 dark:text-accent-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-accent-600 dark:text-accent-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-clock"></i>
@@ -182,7 +182,7 @@
 
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-amber-600 dark:text-amber-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-star"></i>
@@ -202,7 +202,7 @@
 
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-dollar-sign"></i>
@@ -221,7 +221,7 @@
 
     <article class="card flex items-start gap-3 p-4">
       <span
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+        class="glass-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-amber-600 dark:text-amber-400"
         aria-hidden="true"
       >
         <i class="fa-solid fa-chart-line"></i>
@@ -242,7 +242,7 @@
   </section>
 
   <div
-    class="flex flex-wrap items-center gap-1 self-start rounded-2xl border border-slate-100 bg-slate-50 p-1 dark:border-surface-700 dark:bg-surface-900"
+    class="glass-subtle flex flex-wrap items-center gap-1 self-start rounded-2xl p-1"
     role="tablist"
     aria-label="Vistas de clientes"
   >
@@ -265,7 +265,7 @@
     <header class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
       <div class="flex items-center gap-3">
         <span
-          class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-surface-700 dark:text-slate-300"
+          class="glass-subtle flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 dark:text-slate-300"
           aria-hidden="true"
         >
           <i class="fa-solid fa-user"></i>
@@ -356,7 +356,7 @@
         data-testid="clients-empty"
       >
         <span
-          class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-surface-700 dark:text-slate-500"
+          class="glass-subtle flex h-14 w-14 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-500"
           aria-hidden="true"
         >
           <i class="fa-solid fa-user-group text-2xl"></i>
@@ -419,7 +419,7 @@
                 <td class="py-3 pr-3">
                   <div class="flex items-center gap-3">
                     <span
-                      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 font-heading text-xs font-black text-slate-600 dark:bg-surface-700 dark:text-slate-200"
+                      class="glass-subtle flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-heading text-xs font-black text-slate-600 dark:text-slate-200"
                       aria-hidden="true"
                     >
                       {{ client.name | initials }}
