@@ -36,8 +36,12 @@ describe('KpiCardComponent', () => {
   it('debe aplicar el tono visual recibido', async () => {
     const fixture = await setup({ tone: 'blue' });
     const host = fixture.nativeElement as HTMLElement;
+    const article = host.querySelector('article');
 
-    expect(host.querySelector('article')?.className).toContain('bg-blue-50/50');
+    expect(article?.className).toContain('glass-subtle');
+    expect(article?.querySelector('span[aria-hidden="true"]')?.className).toContain(
+      'text-accent-600',
+    );
   });
 
   it('debe omitir la pista cuando llega vacía', async () => {
