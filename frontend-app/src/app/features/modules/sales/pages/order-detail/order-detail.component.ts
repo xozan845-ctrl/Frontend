@@ -121,10 +121,10 @@ export default class OrderDetailComponent {
   protected stepDotClasses(current: OrderStatus, step: OrderStatus): string {
     const base = 'flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors';
     if (this.isStepDone(current, step)) {
-      return `${base} bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300`;
+      return `${base} glass-subtle text-emerald-700 dark:text-emerald-300`;
     }
     if (this.isStepCurrent(current, step)) return `${base} bg-accent-600 text-white`;
-    return `${base} bg-slate-200 text-slate-500 dark:bg-surface-600 dark:text-slate-400`;
+    return `${base} glass-subtle text-slate-500 dark:text-slate-400`;
   }
 
   protected stepLabelClasses(current: OrderStatus, step: OrderStatus): string {

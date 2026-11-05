@@ -19,8 +19,6 @@ export class ProductPickCardComponent {
   readonly add = output<VendorProduct>();
 
   protected readonly stockClasses = computed(() =>
-    this.product().inStock
-      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
-      : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+    this.product().inStock ? 'badge-success' : 'badge-danger',
   );
 }

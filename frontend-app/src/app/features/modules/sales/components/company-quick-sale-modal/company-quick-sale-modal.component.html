@@ -6,7 +6,7 @@
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
 
     <div
-      class="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl motion-safe:animate-scale-in dark:bg-surface-800"
+      class="card relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl shadow-2xl motion-safe:animate-scale-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="company-quick-sale-title"
@@ -51,7 +51,7 @@
       <div class="overflow-y-auto p-5">
         @if (error(); as message) {
           <div
-            class="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+            class="alert alert-danger mb-3 rounded-xl p-3 text-xs font-bold"
             role="alert"
             data-testid="company-quick-sale-error"
           >
@@ -89,7 +89,7 @@
 
         @if (scanError(); as message) {
           <div
-            class="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+            class="alert alert-warning mt-2 rounded-xl p-3 text-xs font-bold"
             role="alert"
             data-testid="quick-sale-scan-error"
           >
