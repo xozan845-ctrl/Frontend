@@ -405,3 +405,24 @@
   Dockploy.
 - **Estado global:** 🟢 **CUMPLE** para el destino actual de hosting.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 15 — Cierre de la migración Glass (2026-11-05)
+
+- **Contexto:** `R-UX-7` centralizó el sistema Glass y `R-UX-8` formalizó su
+  adopción obligatoria con un ratchet por áreas.
+- **Cambio:** se migraron todas las superficies pendientes por áreas atómicas:
+  layout, shared, admin, storage, auth, planes, tiendas, home, IA, wishlist,
+  vendor, caja, clientes, facturación, carrito, empresas, logística, finanzas,
+  ventas, compras, catálogo, productos, cuenta, bancos y CxP.
+- **Resultado:**
+  - ✅ `visual-adoption-guards` — **37 raíces adoptadas** y **backlog 0**
+    (`GLASS_ADOPTION_PENDING_MAX = 0`).
+  - ✅ `visual-guards` — cobertura medida 100% de requisitos de `R-UX-7`.
+  - ✅ `node scripts/cli.mjs rules --reporter dot` — 24 suites; 51/257 IDs con
+    check.
+  - ✅ `npm run lint`, `npm run lint:css` y `npm run build` en verde.
+- **Estado global:** 🟢 **CUMPLE**; cualquier superficie nueva debe nacer con
+  Glass o un primitivo global.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
