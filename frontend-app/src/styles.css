@@ -728,6 +728,12 @@ body {
   color: #f87171;
 }
 
+.badge-info {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--glass-accent-blue);
+}
+
 .icon-btn {
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
