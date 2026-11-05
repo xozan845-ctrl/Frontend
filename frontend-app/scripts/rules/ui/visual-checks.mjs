@@ -61,7 +61,7 @@ const REQUIRED_UTILITIES = [
   '.app-shell-bg',
 ];
 
-const REQUIRED_PRIMITIVES = ['.card', '.btn', '.input', '.badge', '.icon-btn'];
+const REQUIRED_PRIMITIVES = ['.card', '.btn', '.input', '.badge', '.icon-btn', '.alert'];
 
 /** Tokens que no cambian entre tema claro y oscuro. */
 const THEME_INDEPENDENT_TOKEN = /--glass-(?:blur|saturate|radius|t-)/;

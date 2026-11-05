@@ -4,6 +4,7 @@ import {
   GLASS_REQUIREMENTS,
   TEMPLATE_ALLOWLIST,
   findGlassAllowlistViolations,
+  findGlassDefinitionViolations,
   getGlassCoverage,
   hasFlatPageBackground,
   hasLightSurface,
@@ -83,4 +84,11 @@ test('la cobertura se calcula sobre hallazgos reales, no sobre flags', () => {
     { key: 'docs/rules/ui/03-experiencia.md|R-UX-7|allowlist:x' },
   ]);
   assert.ok(allowlist.pending.includes('allowlist'));
+});
+
+test('el primitivo alert existe y hereda tokens Glass', () => {
+  const findings = findGlassDefinitionViolations().filter((finding) =>
+    finding.key.includes('primitive:.alert'),
+  );
+  assert.deepEqual(findings, []);
 });
