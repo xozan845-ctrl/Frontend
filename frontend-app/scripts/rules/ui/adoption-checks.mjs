@@ -24,8 +24,10 @@ export const RAW_SURFACE =
 export const ADOPTED_SURFACE =
   /^(?:glass(?:-[a-z0-9-]+)?|card(?:-[a-z0-9-]+)?|btn(?:-[a-z0-9-]+)?|input|badge(?:-[a-z0-9-]+)?|icon-btn|alert(?:-[a-z0-9-]+)?)$/;
 
+const isDivider = (classes) => baseTokens(classes).some((token) => /^(?:h|w)-px$/.test(token));
+
 export const hasRawSurface = (classes) =>
-  baseTokens(classes).some((token) => RAW_SURFACE.test(token));
+  !isDivider(classes) && baseTokens(classes).some((token) => RAW_SURFACE.test(token));
 
 export const hasAdoptedSurface = (classes) =>
   isGlassUtilityClass(classes) || baseTokens(classes).some((token) => ADOPTED_SURFACE.test(token));

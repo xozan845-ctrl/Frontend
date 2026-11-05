@@ -1,5 +1,5 @@
 <div
-  class="bg-white dark:bg-surface-800 rounded-3xl p-8 shadow-sm border border-slate-200 dark:border-surface-700 relative overflow-hidden"
+  class="card rounded-3xl p-8 relative overflow-hidden"
   [class.border-2]="plan().popular"
   [class.border-accent-600]="plan().popular"
   [class.shadow-xl]="plan().popular"
@@ -66,7 +66,7 @@
   </ul>
   @if (plan().isCurrent) {
     <button
-      class="w-full py-4 rounded-xl bg-slate-100 dark:bg-surface-700 text-xs font-bold uppercase tracking-widest text-slate-500 cursor-default"
+      class="glass-subtle w-full cursor-default rounded-xl py-4 text-xs font-bold uppercase tracking-widest text-slate-500"
       data-testid="plans-contact-vendor"
     >
       {{ plan().buttonLabel }}

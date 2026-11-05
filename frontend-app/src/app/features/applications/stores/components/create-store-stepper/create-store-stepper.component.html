@@ -4,9 +4,7 @@
       <span
         class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-sm font-black transition-colors"
         [ngClass]="
-          step.id <= current()
-            ? 'bg-accent-600 text-white'
-            : 'bg-slate-100 dark:bg-surface-700 text-slate-400'
+          step.id <= current() ? 'bg-accent-600 text-white' : 'glass-subtle text-slate-400'
         "
         [attr.aria-current]="step.id === current() ? 'step' : null"
       >

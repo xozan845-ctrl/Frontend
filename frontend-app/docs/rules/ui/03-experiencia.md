@@ -64,6 +64,7 @@ No se consideran superficies principales:
 - Controles de baja opacidad: `bg-white/5`, `bg-white/10`, `bg-white/20`.
 - Etiquetas sobre imagen: `bg-black/*` + `text-white`.
 - Tracks de progreso y visualizaciones de datos: no son contenedores de contenido.
+- Separadores de 1px: `h-px` / `w-px`.
 - Estados semánticos que ya usan `.alert-*` o `.badge-*`.
 
 La suite `visual-adoption-guards` (`scripts/rules/ui/adoption.test.mjs`) aplica
@@ -81,7 +82,7 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
 `modules/barcodes`, `modules/credits`, `modules/reports`, `admin`, `storage`,
-`shared/orders` y `auth`; backlog 432.
+`shared/orders`, `auth`, `plans` y `stores`; backlog 408.
 
 ## Notas
 
