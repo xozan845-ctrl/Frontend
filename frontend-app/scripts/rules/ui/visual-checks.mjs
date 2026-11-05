@@ -8,6 +8,7 @@
  */
 import { existsSync } from 'node:fs';
 import { relative, sep } from 'node:path';
+import postcss from 'postcss';
 import { appRoot, resolveInApp, resolveInRepo } from '../../engine/lib/paths.mjs';
 import { readText, walkFiles } from '../../engine/lib/fs.mjs';
 import { lineAt } from '../../engine/lib/source.mjs';
@@ -187,17 +188,34 @@ const finding = (file, line, detail, suffix) => ({
 const stripCssComments = (css) =>
   css.replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\n]/g, ' '));
 
-/** Bloques `selector { declaraciones }` (incluye reglas dentro de at-rules). */
-function findBlocks(css) {
+/**
+ * Bloques `selector { declaraciones }` vía AST de PostCSS. Cada bloque sabe si
+ * vive dentro de un at-rule (`@media`, `@supports`, ...): una definición
+ * condicional no puede satisfacer un requisito global.
+ */
+export function findBlocks(css) {
+  const root = postcss.parse(css);
   const blocks = [];
-  const re = /([^{}]+)\{([^{}]*)\}/g;
-  let match;
 
-  while ((match = re.exec(css))) {
-    const selector = match[1].trim();
-    if (!selector || selector.startsWith('@')) continue;
-    blocks.push({ selector, body: match[2], index: match.index });
-  }
+  root.walkRules((rule) => {
+    const selector = rule.selector.trim();
+    if (!selector) return;
+
+    const atRules = [];
+    let parent = rule.parent;
+    while (parent && parent.type !== 'root') {
+      if (parent.type === 'atrule') atRules.push(`@${parent.name} ${parent.params}`.trim());
+      parent = parent.parent;
+    }
+
+    blocks.push({
+      selector,
+      body: (rule.nodes ?? []).map((node) => node.toString()).join('\n'),
+      index: rule.source?.start?.offset ?? 0,
+      conditional: atRules.length > 0,
+      atRules,
+    });
+  });
 
   return blocks;
 }
@@ -234,25 +252,21 @@ const findLastBlock = (blocks, className) =>
 const containsSelector = (text, selector) =>
   new RegExp(`${escapeRegExp(selector)}\\s*[,{]`).test(text);
 
-/** Extrae el bloque completo de un at-rule (con llaves anidadas). */
-function extractAtRuleBlock(css, pattern) {
-  const match = pattern.exec(css);
-  if (!match) return null;
+/** Localiza el bloque `@supports not (backdrop-filter: ...)` vía AST. */
+export function findFallbackBlock(css) {
+  const root = postcss.parse(css);
+  let fallback = null;
 
-  let depth = 0;
-  let started = false;
+  root.walkAtRules('supports', (atRule) => {
+    if (!/not\s*\(\s*backdrop-filter/.test(atRule.params)) return;
+    fallback = {
+      text: atRule.toString(),
+      index: atRule.source?.start?.offset ?? 0,
+    };
+    return false;
+  });
 
-  for (let index = match.index; index < css.length; index += 1) {
-    if (css[index] === '{') {
-      depth += 1;
-      started = true;
-    } else if (css[index] === '}') {
-      depth -= 1;
-      if (started && depth === 0) return css.slice(match.index, index + 1);
-    }
-  }
-
-  return null;
+  return fallback;
 }
 
 const tokensIn = (body) => [
@@ -264,17 +278,14 @@ export function findGlassDefinitionViolations() {
   const findings = [];
   const css = stripCssComments(readText(stylesPath));
   const blocks = findBlocks(css);
-  const fallbackHeader = /@supports\s+not\s*\(\s*backdrop-filter/;
-  const fallbackMatch = fallbackHeader.exec(css);
-  const cascadeBlocks = fallbackMatch
-    ? blocks.filter((block) => block.index < fallbackMatch.index)
-    : blocks;
+  const baseBlocks = blocks.filter((block) => !block.conditional);
+  const cascadeBlocks = baseBlocks;
 
-  const rootBody = blocks
+  const rootBody = baseBlocks
     .filter((block) => selectorsOf(block.selector).includes(':root'))
     .map((block) => block.body)
     .join('\n');
-  const darkBody = blocks
+  const darkBody = baseBlocks
     .filter((block) => selectorsOf(block.selector).includes('.dark'))
     .map((block) => block.body)
     .join('\n');
@@ -300,7 +311,7 @@ export function findGlassDefinitionViolations() {
   }
 
   for (const utility of REQUIRED_UTILITIES) {
-    if (!findBlock(blocks, utility)) {
+    if (!findBlock(baseBlocks, utility)) {
       findings.push(finding(stylesRel, 0, `falta la utilidad ${utility}`, `utility:${utility}`));
     }
   }
@@ -327,7 +338,7 @@ export function findGlassDefinitionViolations() {
     }
   }
 
-  const lightBody = blocks
+  const lightBody = baseBlocks
     .filter(
       (block) => selectorsOf(block.selector).includes('body') && !block.selector.includes('.dark'),
     )
@@ -339,7 +350,7 @@ export function findGlassDefinitionViolations() {
     );
   }
 
-  const darkAmbientBody = blocks
+  const darkAmbientBody = baseBlocks
     .filter((block) =>
       selectorsOf(block.selector).some((sel) => sel === '.dark body' || sel === 'body.dark'),
     )
@@ -351,7 +362,7 @@ export function findGlassDefinitionViolations() {
     );
   }
 
-  const fallback = extractAtRuleBlock(css, fallbackHeader);
+  const fallback = findFallbackBlock(css);
   if (!fallback) {
     findings.push(
       finding(
@@ -369,7 +380,7 @@ export function findGlassDefinitionViolations() {
       .filter((selector) => !FALLBACK_ALLOWLIST.has(selector));
 
     for (const selector of new Set(backdropSelectors)) {
-      if (!containsSelector(fallback, selector)) {
+      if (!containsSelector(fallback.text, selector)) {
         findings.push(
           finding(stylesRel, 0, `el fallback no cubre ${selector}`, `fallback:${selector}`),
         );
