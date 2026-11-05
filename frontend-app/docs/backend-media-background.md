@@ -488,3 +488,50 @@ interface MediaBackgroundConfig {
 - Fondo por sucursal o por categoría.
 - Conversión automática de video a H.264/WebM.
 - CDN dedicada; el endpoint público actual ya es cacheable e inmutable.
+
+---
+
+## 11. Panel de IA (ADR-40) y puntos de subida
+
+### 11.1 Contrato `panel_ai_background_*`
+
+El panel de IA es **global de plataforma**. Reutiliza el mismo `GET/PATCH
+/api/v1/configuracion/sitio` y el mismo contrato de §2, con prefijo:
+
+| Campo                                  | Tipo                    | Nulo |
+| -------------------------------------- | ----------------------- | ---- |
+| `panel_ai_background_objeto_id`        | `uuid`                  | Sí   |
+| `panel_ai_background_media_type`       | `"imagen"` \| `"video"` | Sí   |
+| `panel_ai_background_url`              | `string`                | Sí   |
+| `panel_ai_background_poster_objeto_id` | `uuid`                  | Sí   |
+| `panel_ai_background_poster_url`       | `string`                | Sí   |
+| `panel_ai_background_alt`              | `string`                | No   |
+| `panel_ai_background_overlay`          | `number` (0–100)        | No   |
+| `panel_ai_background_position`         | `center`/`top`/…        | No   |
+| `panel_ai_background_activo`           | `boolean`               | No   |
+
+Reglas idénticas a §2.2/§2.3: solo ids, validación contra storage, `media_type`
+derivado, poster solo imagen y `panel_ai_background_objeto_id: null` limpia el
+bloque.
+
+### 11.2 Dónde se sube cada fondo
+
+| Fondo          | Pantalla frontend                                | Permiso                 | Endpoint                                               |
+| -------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------ |
+| **Plataforma** | `/admin/personalizacion`                         | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`background_*`)          |
+| **Empresa**    | `/empresa/configuracion`                         | `empresario` (dueño)    | `PATCH /empresas/{id}/perfil` (`background_*`)         |
+| **Tienda**     | `/vendedor/tienda` → «Personalización de tienda» | `vendedor` (dueño)      | `PATCH /tiendas/{id}/background` (`background_*`)      |
+| **Panel IA**   | `/admin/personalizacion`                         | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`panel_ai_background_*`) |
+
+El chat `/ia/chat` **solo visualiza** el fondo del panel de IA; no lo edita.
+
+### 11.3 Componentes frontend
+
+- `ImageDropzoneComponent` ahora acepta `image/*,video/*`, valida contra
+  `accept`, renderiza `<video>` con poster y conserva el uso de logos.
+- `MediaBackgroundEditorComponent` reutiliza ese dropzone, sube el binario con
+  el flujo prefirmado de `storage-service` y guarda mediante
+  `MediaBackgroundWriteService` (plataforma, panel IA, empresa o tienda).
+- Los permisos se respetan en tres capas: `adminGuard` en la ruta admin,
+  `isEmpresario()` en la página de empresa y `vendorGuard` en la página de
+  tienda. El backend vuelve a validar rol y propiedad.

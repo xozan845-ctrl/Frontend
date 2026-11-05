@@ -141,6 +141,15 @@
         </a>
       </div>
     </section>
+
+    <app-media-background-editor
+      title="Personalización de tienda"
+      hint="Imagen o video de fondo de la tienda pública."
+      folder="tiendas"
+      description="Fondo de tienda"
+      [config]="store.background ?? null"
+      [save]="guardarFondoTienda"
+    />
   } @else {
     <section
       class="card flex flex-col items-center gap-3 p-10 text-center"

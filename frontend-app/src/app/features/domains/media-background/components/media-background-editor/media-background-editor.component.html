@@ -1,0 +1,145 @@
+<section class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-surface-700 dark:bg-surface-900">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h3 class="font-heading text-sm font-black uppercase tracking-widest text-slate-800 dark:text-slate-100">
+        {{ title() }}
+      </h3>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ hint() }}</p>
+    </div>
+    @if (canEdit()) {
+      <span
+        class="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
+        [class]="active()
+          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300'
+          : 'bg-slate-100 text-slate-500 dark:bg-surface-800 dark:text-slate-400'"
+      >
+        {{ active() ? 'Activo' : 'Inactivo' }}
+      </span>
+    }
+  </div>
+
+  <div class="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+    <div class="space-y-4">
+      <app-image-dropzone
+        label="Fondo (imagen o video)"
+        [showLabel]="false"
+        accept="image/*,video/*"
+        [maxBytes]="maxBytes()"
+        [previewUrl]="previewUrl()"
+        [previewType]="previewType()"
+        [posterUrl]="posterUrl()"
+        [uploading]="uploading()"
+        [disabled]="!canEdit() || saving()"
+        [removable]="canEdit()"
+        [hint]="''"
+        [showHint]="false"
+        (fileSelected)="onBackgroundSelected($event)"
+        (removed)="quitar()"
+      />
+
+      @if (previewType() === 'video') {
+        <app-image-dropzone
+          label="Poster del video (opcional)"
+          accept="image/*"
+          [maxBytes]="posterMaxBytes()"
+          [previewUrl]="posterUrl()"
+          previewType="imagen"
+          [uploading]="uploading()"
+          [disabled]="!canEdit() || saving()"
+          [removable]="canEdit()"
+          hint="Se muestra mientras carga el video."
+          (fileSelected)="onPosterSelected($event)"
+          (removed)="quitarPoster()"
+        />
+      }
+    </div>
+
+    @if (canEdit()) {
+      <div class="space-y-3">
+        <label class="block">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">
+            Texto alternativo
+          </span>
+          <input
+            type="text"
+            maxlength="160"
+            [value]="alt()"
+            (input)="onAltInput($event)"
+            placeholder="Describe el fondo (opcional)"
+            class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-950 dark:text-slate-100"
+          />
+        </label>
+
+        <label class="block">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">
+            Overlay: {{ overlay() }}%
+          </span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            [value]="overlay()"
+            (input)="onOverlayInput($event)"
+            class="mt-2 w-full accent-accent-500"
+          />
+        </label>
+
+        <label class="block">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">
+            Posición
+          </span>
+          <select
+            [value]="position()"
+            (change)="onPositionChange($event)"
+            class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-hidden focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-surface-700 dark:bg-surface-950 dark:text-slate-100"
+          >
+            @for (posicion of posiciones; track posicion) {
+              <option [value]="posicion">{{ posicion }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 dark:bg-surface-800">
+          <input
+            type="checkbox"
+            [checked]="active()"
+            (change)="onActiveChange($event)"
+            class="h-4 w-4 accent-accent-500"
+          />
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Mostrar fondo</span>
+        </label>
+
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [disabled]="saving() || uploading()"
+            (click)="guardar()"
+          >
+            {{ saving() ? 'Guardando…' : 'Guardar fondo' }}
+          </button>
+          @if (objectId()) {
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm"
+              [disabled]="saving() || uploading()"
+              (click)="quitar()"
+            >
+              Quitar
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (error(); as mensaje) {
+    <p
+      role="alert"
+      class="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400"
+    >
+      {{ mensaje }}
+    </p>
+  }
+</section>

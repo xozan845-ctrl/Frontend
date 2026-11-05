@@ -4,17 +4,21 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { toUserMessage } from '../../../../../core/models/api-error';
+import type { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
 import { MEDIA_BACKGROUND_REPOSITORY } from '../../repositories/media-background.repository';
 import type { MediaBackgroundState } from './media-background.state';
 
 const initialState: MediaBackgroundState = {
   platform: null,
+  panelAi: null,
   company: null,
   store: null,
   platformLoaded: false,
+  panelAiLoaded: false,
   companyLoadedId: null,
   storeLoadedId: null,
   loadingPlatform: false,
+  loadingPanelAi: false,
   loadingCompany: false,
   loadingStore: false,
   error: null,
@@ -57,6 +61,43 @@ export const MediaBackgroundStore = signalStore(
         ),
       ),
     ),
+
+    /** Carga el fondo del panel de IA (global, una vez). */
+    loadPanelAi: rxMethod<void>(
+      pipe(
+        filter(() => !store.panelAiLoaded()),
+        tap(() => patchState(store, { loadingPanelAi: true, error: null })),
+        switchMap(() =>
+          repo.panelAi().pipe(
+            tap((config) =>
+              patchState(store, {
+                panelAi: config,
+                panelAiLoaded: true,
+                loadingPanelAi: false,
+                error: null,
+              }),
+            ),
+            catchError((error: unknown) => {
+              patchState(store, {
+                loadingPanelAi: false,
+                error: toUserMessage(error, LOAD_ERROR),
+              });
+              return EMPTY;
+            }),
+          ),
+        ),
+      ),
+    ),
+
+    /** Aplica el fondo de plataforma devuelto por un PATCH. */
+    setPlatform(config: MediaBackgroundConfig): void {
+      patchState(store, { platform: config, platformLoaded: true, error: null });
+    },
+
+    /** Aplica el fondo del panel de IA devuelto por un PATCH. */
+    setPanelAi(config: MediaBackgroundConfig): void {
+      patchState(store, { panelAi: config, panelAiLoaded: true, error: null });
+    },
 
     /** Carga el fondo de una empresa; repite solo si cambia el id. */
     loadCompany: rxMethod<string>(

@@ -4,6 +4,7 @@ import type {
   CompanyType,
   LogisticsMode,
 } from '../../models/company.model';
+import { adaptMediaBackgroundFromBackend } from '../../../../domains/media-background/public-api';
 
 const LOGISTICS_MODES: readonly LogisticsMode[] = ['plataforma', 'propia', 'hibrida'];
 const COMPANY_TYPES: readonly CompanyType[] = ['comercial', 'logistica', 'plataforma'];
@@ -145,6 +146,9 @@ export function adaptCompanyFromBackend(raw: unknown): Company | null {
 
   const logoUrl = readNullableString(record, ['logo_url', 'logoUrl']);
   if (logoUrl !== undefined) company.logoUrl = logoUrl;
+
+  const background = adaptMediaBackgroundFromBackend(record);
+  if (background.objectId) company.background = background;
 
   return company;
 }

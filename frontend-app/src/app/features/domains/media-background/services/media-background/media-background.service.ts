@@ -5,7 +5,10 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
 import { MediaBackgroundRepository } from '../../repositories/media-background.repository';
-import { adaptMediaBackgroundFromBackend } from '../../adapters/media-background/media-background.adapter';
+import {
+  adaptMediaBackgroundFromBackend,
+  adaptPanelAiMediaBackgroundFromBackend,
+} from '../../adapters/media-background/media-background.adapter';
 
 /**
  * Lectura del fondo multimedia de plataforma, empresa y tienda. Es un read
@@ -25,6 +28,11 @@ export class MediaBackgroundService implements MediaBackgroundRepository {
     return this.get(this.endpoints.siteConfig);
   }
 
+  /** Mismo `GET /configuracion/sitio`, bloque `panel_ai_background_*` (ADR-40). */
+  panelAi(): Observable<MediaBackgroundConfig> {
+    return this.get(this.endpoints.siteConfig, adaptPanelAiMediaBackgroundFromBackend);
+  }
+
   /** `GET /empresas/:id` (la respuesta incluye `background_*`). */
   company(companyId: string): Observable<MediaBackgroundConfig> {
     return this.get(`${this.endpoints.companies}/${encodeURIComponent(companyId)}`);
@@ -35,7 +43,10 @@ export class MediaBackgroundService implements MediaBackgroundRepository {
     return this.get(`${this.endpoints.storefront}/${encodeURIComponent(storeId)}`);
   }
 
-  private get(path: string): Observable<MediaBackgroundConfig> {
+  private get(
+    path: string,
+    adapter: (raw: unknown) => MediaBackgroundConfig = adaptMediaBackgroundFromBackend,
+  ): Observable<MediaBackgroundConfig> {
     if (!this.apiUrl) {
       return throwError(
         () => new Error('apiUrl no configurado. Define environment.apiUrl para usar el backend.'),
@@ -43,6 +54,6 @@ export class MediaBackgroundService implements MediaBackgroundRepository {
     }
     return this.http
       .get<unknown>(`${this.apiUrl}${path}`)
-      .pipe(map((response) => adaptMediaBackgroundFromBackend(response)));
+      .pipe(map((response) => adapter(response)));
   }
 }

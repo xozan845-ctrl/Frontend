@@ -96,24 +96,33 @@ function toPosition(value: string | null): MediaBackgroundPosition {
  * Normaliza los campos `background_*` de plataforma, empresa o tienda. Es
  * tolerante a `snake_case`/`camelCase` y a los envelopes más comunes del API.
  * Si no hay `background_objeto_id`, devuelve la configuración vacía.
+ *
+ * `prefijo` permite reutilizar el mismo adapter para el bloque
+ * `panel_ai_background_*` de la configuración de plataforma (ADR-40).
  */
-export function adaptMediaBackgroundFromBackend(raw: unknown): MediaBackgroundConfig {
+export function adaptMediaBackgroundFromBackend(
+  raw: unknown,
+  prefijo = 'background',
+): MediaBackgroundConfig {
   const record = unwrap(raw);
   if (!record) return { ...EMPTY_MEDIA_BACKGROUND };
 
-  const objectId = readNullableString(record, ['background_objeto_id', 'backgroundObjectId']);
+  const claves = (campo: string, camel: string): string[] =>
+    prefijo === 'background' ? [`background_${campo}`, camel] : [`${prefijo}_${campo}`];
+
+  const objectId = readNullableString(record, claves('objeto_id', 'backgroundObjectId'));
   if (!objectId) return { ...EMPTY_MEDIA_BACKGROUND };
 
-  const url = resolveApiAssetUrl(readNullableString(record, ['background_url', 'backgroundUrl']));
-  const posterObjectId = readNullableString(record, [
-    'background_poster_objeto_id',
-    'backgroundPosterObjectId',
-  ]);
+  const url = resolveApiAssetUrl(readNullableString(record, claves('url', 'backgroundUrl')));
+  const posterObjectId = readNullableString(
+    record,
+    claves('poster_objeto_id', 'backgroundPosterObjectId'),
+  );
   const posterUrl = resolveApiAssetUrl(
-    readNullableString(record, ['background_poster_url', 'backgroundPosterUrl']),
+    readNullableString(record, claves('poster_url', 'backgroundPosterUrl')),
   );
   const mediaType = toMediaType(
-    readString(record, ['background_media_type', 'backgroundMediaType']),
+    readString(record, claves('media_type', 'backgroundMediaType')),
     url,
   );
 
@@ -123,12 +132,16 @@ export function adaptMediaBackgroundFromBackend(raw: unknown): MediaBackgroundCo
     url,
     posterObjectId,
     posterUrl,
-    alt: (readString(record, ['background_alt', 'backgroundAlt']) ?? '').slice(0, 160),
+    alt: (readString(record, claves('alt', 'backgroundAlt')) ?? '').slice(0, 160),
     overlay: clampMediaBackgroundOverlay(
-      readNumber(record, ['background_overlay', 'backgroundOverlay']) ??
-        EMPTY_MEDIA_BACKGROUND.overlay,
+      readNumber(record, claves('overlay', 'backgroundOverlay')) ?? EMPTY_MEDIA_BACKGROUND.overlay,
     ),
-    position: toPosition(readString(record, ['background_position', 'backgroundPosition'])),
-    active: readBoolean(record, ['background_activo', 'backgroundActivo'], false),
+    position: toPosition(readString(record, claves('position', 'backgroundPosition'))),
+    active: readBoolean(record, claves('activo', 'backgroundActivo'), false),
   };
+}
+
+/** Fondo del panel de IA (`panel_ai_background_*`, ADR-40). */
+export function adaptPanelAiMediaBackgroundFromBackend(raw: unknown): MediaBackgroundConfig {
+  return adaptMediaBackgroundFromBackend(raw, 'panel_ai_background');
 }

@@ -29,9 +29,12 @@ export class ImageDropzoneComponent {
   readonly showLabel = input(true);
   readonly showHint = input(true);
   readonly hint = input('Arrastra una imagen o haz clic para seleccionarla.');
+  readonly pickLabel = input<string | null>(null);
   readonly accept = input('image/*');
   readonly maxBytes = input(DEFAULT_MAX_BYTES);
   readonly previewUrl = input<string | null>(null);
+  readonly previewType = input<'imagen' | 'video' | null>(null);
+  readonly posterUrl = input<string | null>(null);
   readonly alt = input('Vista previa de la imagen');
   readonly uploading = input(false);
   readonly disabled = input(false);
@@ -89,16 +92,42 @@ export class ImageDropzoneComponent {
     const file = files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      this.error.set('El archivo debe ser una imagen.');
+    if (!this.aceptaArchivo(file, this.accept())) {
+      this.error.set(this.mensajeTipoInvalido());
       return;
     }
     if (this.maxBytes() > 0 && file.size > this.maxBytes()) {
-      this.error.set(`La imagen supera el límite de ${this.maxSizeLabel()}.`);
+      this.error.set(`El archivo supera el límite de ${this.maxSizeLabel()}.`);
       return;
     }
 
     this.error.set(null);
     this.fileSelected.emit(file);
+  }
+
+  /** Valida el archivo contra el input `accept` (MIME, comodines y extensiones). */
+  private aceptaArchivo(file: File, accept: string): boolean {
+    const tokens = accept
+      .split(',')
+      .map((token) => token.trim().toLowerCase())
+      .filter(Boolean);
+    if (tokens.length === 0 || tokens.includes('*/*')) return true;
+
+    const type = (file.type || '').toLowerCase();
+    const extension = `.${file.name.split('.').pop()?.toLowerCase() ?? ''}`;
+    return tokens.some((token) => {
+      if (token.startsWith('.')) return extension === token;
+      if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
+      return type === token;
+    });
+  }
+
+  private mensajeTipoInvalido(): string {
+    const accept = this.accept();
+    if (accept.includes('video') && accept.includes('image')) {
+      return 'El archivo debe ser una imagen o un video.';
+    }
+    if (accept.includes('video')) return 'El archivo debe ser un video.';
+    return 'El archivo debe ser una imagen.';
   }
 }

@@ -50,6 +50,30 @@ export function hasVisibleMediaBackground(
   );
 }
 
+/** Datos editables de un fondo; se envían al endpoint del ámbito correspondiente. */
+export interface MediaBackgroundDraft {
+  objectId: string | null;
+  posterObjectId: string | null;
+  alt: string;
+  overlay: number;
+  position: MediaBackgroundPosition;
+  active: boolean;
+}
+
+/** Convierte una configuración normalizada en un borrador editable. */
+export function mediaBackgroundDraftFromConfig(
+  config: MediaBackgroundConfig | null,
+): MediaBackgroundDraft {
+  return {
+    objectId: config?.objectId ?? null,
+    posterObjectId: config?.posterObjectId ?? null,
+    alt: config?.alt ?? '',
+    overlay: clampMediaBackgroundOverlay(config?.overlay ?? EMPTY_MEDIA_BACKGROUND.overlay),
+    position: config?.position ?? EMPTY_MEDIA_BACKGROUND.position,
+    active: config?.active ?? false,
+  };
+}
+
 /** Limita el overlay al rango contractual 0–100. */
 export function clampMediaBackgroundOverlay(value: number): number {
   if (!Number.isFinite(value)) return EMPTY_MEDIA_BACKGROUND.overlay;

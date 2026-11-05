@@ -4,13 +4,25 @@ import { MediaBackgroundService } from './services/media-background/media-backgr
 import { MediaBackgroundStore } from './state/media-background/media-background.store';
 
 /** API de aplicación pública de `media-background` para dominios consumidores. */
-export type { MediaBackgroundConfig } from '../../../core/models/media-background.model';
+export type {
+  MediaBackgroundConfig,
+  MediaBackgroundDraft,
+} from '../../../core/models/media-background.model';
 export { MediaBackgroundStore } from './state/media-background/media-background.store';
 export {
   MEDIA_BACKGROUND_REPOSITORY,
   type MediaBackgroundRepository,
 } from './repositories/media-background.repository';
 export { MediaBackgroundService } from './services/media-background/media-background.service';
+export {
+  MediaBackgroundWriteService,
+  type MediaBackgroundSiteScope,
+} from './services/media-background-write/media-background-write.service';
+export { MediaBackgroundEditorComponent } from './components/media-background-editor/media-background-editor.component';
+export {
+  adaptMediaBackgroundFromBackend,
+  adaptPanelAiMediaBackgroundFromBackend,
+} from './adapters/media-background/media-background.adapter';
 
 /**
  * Providers del dominio. Se declaran en el componente/ruta que consume el

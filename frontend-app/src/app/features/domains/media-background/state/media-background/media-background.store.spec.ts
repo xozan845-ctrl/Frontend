@@ -19,6 +19,7 @@ const config = (id: string, mediaType: 'imagen' | 'video' = 'imagen'): MediaBack
 describe('MediaBackgroundStore', () => {
   let repo: {
     platform: ReturnType<typeof vi.fn>;
+    panelAi: ReturnType<typeof vi.fn>;
     company: ReturnType<typeof vi.fn>;
     store: ReturnType<typeof vi.fn>;
   };
@@ -26,6 +27,7 @@ describe('MediaBackgroundStore', () => {
   const setup = () => {
     repo = {
       platform: vi.fn((): Observable<MediaBackgroundConfig> => of(config('platform', 'video'))),
+      panelAi: vi.fn((): Observable<MediaBackgroundConfig> => of(config('panel-ai', 'video'))),
       company: vi.fn((): Observable<MediaBackgroundConfig> => of(config('company'))),
       store: vi.fn((): Observable<MediaBackgroundConfig> => of(config('store'))),
     };
@@ -48,6 +50,18 @@ describe('MediaBackgroundStore', () => {
     expect(store.platform()).toMatchObject({ objectId: 'platform', mediaType: 'video' });
     expect(store.loadingPlatform()).toBe(false);
     expect(store.error()).toBeNull();
+  });
+
+  it('debe cargar el fondo del panel de IA una sola vez', async () => {
+    const store = setup();
+
+    store.loadPanelAi();
+    await vi.waitFor(() => expect(store.panelAiLoaded()).toBe(true));
+    store.loadPanelAi();
+
+    expect(repo.panelAi).toHaveBeenCalledOnce();
+    expect(store.panelAi()).toMatchObject({ objectId: 'panel-ai', mediaType: 'video' });
+    expect(store.loadingPanelAi()).toBe(false);
   });
 
   it('debe cargar fondos de empresa y tienda por id, sin repetir el mismo id', async () => {
