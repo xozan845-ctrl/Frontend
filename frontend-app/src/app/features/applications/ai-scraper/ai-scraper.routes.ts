@@ -26,15 +26,21 @@ export const AI_SCRAPER_ROUTES: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./pages/ai-dashboard/ai-dashboard.component'),
-      },
-      {
-        path: 'jobs/:id',
-        loadComponent: () => import('./pages/ai-job-detail/ai-job-detail.component'),
-      },
-      {
-        path: 'chat',
-        loadComponent: () => import('./pages/ai-chat/ai-chat.component'),
+        loadComponent: () => import('./pages/ai-scraper-shell/ai-scraper-shell.component'),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./pages/ai-dashboard/ai-dashboard.component'),
+          },
+          {
+            path: 'jobs/:id',
+            loadComponent: () => import('./pages/ai-job-detail/ai-job-detail.component'),
+          },
+          {
+            path: 'chat',
+            loadComponent: () => import('./pages/ai-chat/ai-chat.component'),
+          },
+        ],
       },
     ],
   },

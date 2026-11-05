@@ -49,6 +49,9 @@ estilos de componentes.
   están permitidos (allowlist de `R-UX-7`).
 - Los shells de página usan `app-page-bg`/`app-shell-bg`; no reintroduzcas
   fondos planos.
+- Los workspaces de backoffice (`/empresa`, `/vendedor`, `/facturacion`,
+  `/logistica`, `/ia`) se envuelven en un shell con `app-shell-bg` +
+  `glass-bar`; el feature de IA lo hace con `ai-scraper-shell`.
 - La suite falla si aparece una reimplementación nueva; `stylelint`
   (`glass/no-raw-glass`) y la regresión visual de Playwright cubren el mismo
   sistema en editor y CI.

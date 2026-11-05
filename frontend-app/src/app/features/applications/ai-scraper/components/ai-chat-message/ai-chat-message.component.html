@@ -1,7 +1,7 @@
 @if (isUser()) {
   <div class="flex justify-end" data-testid="ai-chat-message">
     <p
-      class="max-w-[80%] whitespace-pre-line rounded-2xl rounded-br-sm bg-slate-200 px-4 py-3 text-sm leading-6 text-slate-800 dark:bg-surface-700 dark:text-slate-100"
+      class="glass-strong max-w-[80%] whitespace-pre-line rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-100"
     >
       {{ message().content }}
     </p>
@@ -15,7 +15,7 @@
       <i class="fa-solid fa-spider"></i>
     </span>
     <p
-      class="max-w-[80%] whitespace-pre-line rounded-2xl rounded-bl-sm border border-slate-100 bg-white px-4 py-3 text-sm leading-6 text-slate-700 dark:border-surface-700 dark:bg-surface-800 dark:text-slate-200"
+      class="glass-subtle max-w-[80%] whitespace-pre-line rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-6 text-slate-700 dark:text-slate-200"
     >
       {{ message().content }}
     </p>

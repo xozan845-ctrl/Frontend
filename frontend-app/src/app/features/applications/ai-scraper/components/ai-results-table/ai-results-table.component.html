@@ -1,8 +1,5 @@
 @if (items().length > 0) {
-  <div
-    class="overflow-hidden rounded-2xl border border-slate-100 bg-white dark:border-surface-700 dark:bg-surface-900"
-    data-testid="ai-results-table"
-  >
+  <div class="card overflow-hidden" data-testid="ai-results-table">
     <div
       class="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-surface-700"
     >
@@ -19,9 +16,7 @@
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
-          <tr
-            class="bg-slate-50 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:bg-surface-800"
-          >
+          <tr class="glass-subtle text-left text-[10px] uppercase tracking-widest text-slate-400">
             @for (column of columns(); track column) {
               <th class="px-4 py-2 font-bold">{{ column }}</th>
             }
@@ -63,7 +58,7 @@
   </div>
 } @else {
   <div
-    class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400 dark:border-surface-700"
+    class="card border-dashed px-4 py-6 text-center text-sm text-slate-400"
     data-testid="ai-results-empty"
   >
     Este job todavía no tiene resultados.
