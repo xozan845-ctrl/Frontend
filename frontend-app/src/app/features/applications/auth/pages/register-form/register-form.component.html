@@ -1,9 +1,7 @@
 <div
   class="app-page-bg flex justify-center items-center min-h-[70vh] p-16 transition-colors duration-300"
 >
-  <div
-    class="w-full max-w-md bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 rounded-[2rem] p-10 shadow-xl transition-colors duration-300"
-  >
+  <div class="card w-full max-w-md rounded-[2rem] p-10 transition-colors duration-300">
     <h2
       class="text-4xl font-black uppercase tracking-tighter text-slate-900 dark:text-white font-heading mb-1 leading-none"
     >
@@ -16,7 +14,7 @@
     @if (isBillerIntent) {
       <div
         data-testid="billing-intent-notice"
-        class="bg-accent-600/10 border border-accent-600/30 dark:border-accent-500/40 rounded-xl p-4 mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
+        class="alert alert-primary p-4 mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300"
       >
         <p>Crea tu cuenta de facturador para emitir facturas desde tu tienda.</p>
       </div>
@@ -24,7 +22,7 @@
 
     @if (authStore.error()) {
       <div
-        class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 p-4 mb-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest"
+        class="alert alert-danger p-4 mb-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest"
       >
         <p>{{ authStore.error() }}</p>
         <button
@@ -46,8 +44,8 @@
           type="text"
           formControlName="name"
           placeholder="Juan Pérez"
-          class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all"
-          [class.border-red-400]="isFieldInvalid('name')"
+          class="input w-full rounded-xl py-3.5 px-4 text-sm font-medium"
+          [class.input-error]="isFieldInvalid('name')"
         />
         @if (isFieldInvalid('name')) {
           <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
@@ -65,8 +63,8 @@
           type="email"
           formControlName="email"
           placeholder="correo@ejemplo.com"
-          class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all"
-          [class.border-red-400]="isFieldInvalid('email')"
+          class="input w-full rounded-xl py-3.5 px-4 text-sm font-medium"
+          [class.input-error]="isFieldInvalid('email')"
         />
         @if (isFieldInvalid('email')) {
           <span class="text-[10px] font-bold uppercase tracking-widest text-red-500"
@@ -85,8 +83,8 @@
             [type]="showPassword() ? 'text' : 'password'"
             formControlName="password"
             placeholder="••••••••"
-            class="w-full border border-slate-200 dark:border-surface-600 bg-slate-50 dark:bg-surface-900 rounded-xl py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:border-accent-600 dark:focus:border-accent-500 focus:ring-4 focus:ring-accent-600/10 dark:focus:ring-accent-500/10 outline-hidden transition-all pr-12"
-            [class.border-red-400]="isFieldInvalid('password')"
+            class="input w-full rounded-xl py-3.5 px-4 pr-12 text-sm font-medium"
+            [class.input-error]="isFieldInvalid('password')"
           />
           <button
             type="button"
@@ -111,7 +109,7 @@
       <button
         type="submit"
         [disabled]="registerForm.invalid || authStore.loading()"
-        class="w-full bg-accent-600 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg shadow-accent-600/30 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg mt-2"
+        class="btn btn-primary mt-2 w-full rounded-xl py-4 text-xs font-bold uppercase tracking-widest transition-all hover:-translate-y-0.5 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
       >
         @if (authStore.loading()) {
           Registrando usuario...
