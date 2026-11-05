@@ -117,11 +117,11 @@
 
           @if (order.status === 'cancelado') {
             <div
-              class="mt-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-800 dark:bg-red-900/10"
+              class="alert alert-danger mt-4 flex items-center gap-3 rounded-2xl px-4 py-3"
               data-testid="detail-cancelled"
             >
-              <i class="fa-solid fa-ban text-red-600 dark:text-red-400" aria-hidden="true"></i>
-              <span class="text-sm font-bold text-red-700 dark:text-red-300">Pedido cancelado</span>
+              <i class="fa-solid fa-ban" aria-hidden="true"></i>
+              <span class="text-sm font-bold">Pedido cancelado</span>
             </div>
           } @else {
             <ol
@@ -199,7 +199,7 @@
           </dl>
 
           @if (order.notes) {
-            <div class="rounded-xl bg-slate-50 p-3 dark:bg-surface-800">
+            <div class="glass-subtle rounded-xl p-3">
               <p class="text-[10px] font-bold tracking-widest text-slate-500 uppercase">
                 Observaciones
               </p>

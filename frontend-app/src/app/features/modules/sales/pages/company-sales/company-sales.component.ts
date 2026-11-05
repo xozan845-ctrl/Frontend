@@ -26,7 +26,7 @@ const TAB_CLASSES = {
 
 const CHIP_CLASSES = {
   active: 'border-accent-600 bg-accent-600 text-white',
-  idle: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-surface-600 dark:bg-surface-800 dark:text-slate-300 dark:hover:text-white',
+  idle: 'glass-subtle text-slate-600 hover:border-accent-400 dark:text-slate-300',
 } as const;
 
 /**
