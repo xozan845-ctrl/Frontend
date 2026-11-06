@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree } from '@angular/router';
-import { AuthStore } from '../../auth/public-api';
+import { AuthStore } from '../../../auth/public-api';
 import { workspaceLandingGuard } from './workspace-landing.guard';
 
 describe('workspaceLandingGuard', () => {
