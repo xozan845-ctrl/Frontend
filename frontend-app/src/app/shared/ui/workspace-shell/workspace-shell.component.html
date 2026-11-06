@@ -1,0 +1,40 @@
+<div class="app-shell-bg min-h-screen">
+  <div class="glass-bar sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:hidden">
+    <button
+      type="button"
+      class="rounded-xl p-2.5 text-slate-600 transition-colors hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-hidden dark:text-slate-300 dark:hover:bg-surface-800"
+      [attr.data-testid]="toggleTestId()"
+      [attr.aria-label]="sidebarLabel()"
+      [attr.aria-controls]="sidebarId()"
+      [attr.aria-expanded]="open()"
+      (click)="openChange.emit(true)"
+    >
+      <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+    </button>
+    @if (contextLabel() || title() || eyebrow()) {
+      <span
+        class="font-heading text-sm font-black tracking-widest text-slate-900 uppercase dark:text-white"
+      >
+        {{ contextLabel() || title() || eyebrow() }}
+      </span>
+    }
+  </div>
+
+  <div class="lg:flex">
+    <app-workspace-sidebar
+      [id]="sidebarId()"
+      [open]="open()"
+      [groups]="groups()"
+      [sidebarLabel]="sidebarLabel()"
+      [eyebrow]="eyebrow()"
+      [title]="title()"
+      [wide]="wide()"
+      [labelTopPadding]="labelTopPadding()"
+      (closed)="openChange.emit(false)"
+      (itemSelected)="onItemSelected()"
+    />
+    <main class="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <router-outlet />
+    </main>
+  </div>
+</div>

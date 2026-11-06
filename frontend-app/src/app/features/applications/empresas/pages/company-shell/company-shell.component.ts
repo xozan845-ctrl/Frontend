@@ -1,5 +1,4 @@
-import { Component, DestroyRef, HostListener, effect, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import {
   AuthStore,
   canEnterWorkspace,
@@ -9,15 +8,15 @@ import {
 } from '../../../auth/public-api';
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
 import { BrandingService } from '../../../../../core/services/branding/branding.service';
-import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
+import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { COMPANY_WORKSPACE_PROVIDERS, CompanyStore } from '../../state/company/company.store';
 
-/** Shell aislado del workspace del propietario de empresa. */
+/** Shell del workspace del propietario de empresa. */
 @Component({
   selector: 'app-company-shell',
   standalone: true,
-  imports: [RouterOutlet, WorkspaceSidebarComponent],
+  imports: [WorkspaceShellComponent],
   providers: COMPANY_WORKSPACE_PROVIDERS,
   templateUrl: './company-shell.component.html',
 })
@@ -51,9 +50,4 @@ export default class CompanyShellComponent {
       (company?.logoObjectId ? storagePublicObjectUrl(company.logoObjectId) : null);
     this.branding.setLogo(logo);
   });
-
-  @HostListener('document:keydown.escape')
-  closeSidebar(): void {
-    this.isSidebarOpen.set(false);
-  }
 }
