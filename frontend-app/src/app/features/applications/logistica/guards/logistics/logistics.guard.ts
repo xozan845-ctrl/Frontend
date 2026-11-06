@@ -22,10 +22,10 @@ export const logisticsGuard: CanActivateFn = async (_route, state) => {
   }
 
   const user = authStore.user();
-  const isDedicatedLogisticsRoute = state.url.startsWith('/logistica');
-  const isCreationRoute = state.url.startsWith('/logistica/crear');
+  const isDedicatedLogisticsRoute = state.url.startsWith('/app/logistica');
+  const isCreationRoute = state.url.startsWith('/app/logistica/crear');
 
-  // `/logistica/**` representa un tenant logístico independiente. El dueño
+  // `/app/logistica/**` representa un tenant logístico independiente. El dueño
   // comercial y el vendedor solo llegan ahí después de crear/vincular ese
   // tenant; mientras tanto usan sus workspaces contextuales.
   if (
@@ -47,11 +47,11 @@ export const logisticsGuard: CanActivateFn = async (_route, state) => {
     return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 
-  // Las entradas comerciales antiguas se resuelven al contexto correcto;
-  // plataforma vuelve a admin y nunca obtiene una flota global.
+  // El contexto comercial se resuelve a su workspace; plataforma vuelve a admin
+  // y nunca obtiene una flota global.
   if (isAuthorizedCompanyOwnerRole(user.role)) {
-    return router.createUrlTree(['/empresa/logistica']);
+    return router.createUrlTree(['/app/empresa/logistica']);
   }
-  if (isStoreWorkspaceRole(user.role)) return router.createUrlTree(['/vendedor/logistica']);
+  if (isStoreWorkspaceRole(user.role)) return router.createUrlTree(['/app/tienda/logistica']);
   return router.createUrlTree([workspaceLanding(user)]);
 };

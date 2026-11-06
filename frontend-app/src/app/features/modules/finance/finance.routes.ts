@@ -18,7 +18,7 @@ import { FinanceStore, type FinanceTab } from '../../domains/finance/public-api'
 
 /**
  * La caja consume las ventas cobradas para construir el libro de movimientos.
- * Por eso la ruta provee el mismo store de ventas que `/empresa/ventas`, además
+ * Por eso la ruta provee el mismo store de ventas que `/app/empresa/ventas`, además
  * de `BanksStore` para la sección de bancos y transferencias.
  */
 function financeRoute(tab: FinanceTab): Route {

@@ -76,7 +76,9 @@ test('R-E-29: el admin avanza el estado de una orden', async ({ page }) => {
 // R-E-30: la plataforma no posee una flota global; un admin no puede entrar
 // al módulo de logística contextual de empresa/tienda.
 test('R-E-30: el admin no puede entrar a logística global', async ({ page }) => {
-  await page.goto('/login?returnUrl=%2Flogistica%2Fenvios', { waitUntil: 'domcontentloaded' });
+  await page.goto('/login?returnUrl=%2Fapp%2Flogistica%2Fenvios', {
+    waitUntil: 'domcontentloaded',
+  });
   await page.locator('#email').fill('admin@tienda.test');
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();

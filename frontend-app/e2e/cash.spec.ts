@@ -2,7 +2,7 @@ import { test as base, expect, type Page } from '@playwright/test';
 import { mockApi } from './api-mock';
 
 const login = async (page: Page) => {
-  await page.goto('/login?returnUrl=%2Fempresa%2Fcaja', { waitUntil: 'domcontentloaded' });
+  await page.goto('/login?returnUrl=%2Fapp%2Fempresa%2Fcaja', { waitUntil: 'domcontentloaded' });
   await page.locator('#email').fill('empresario@tienda.test');
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();

@@ -6,7 +6,7 @@ import { HOME_ROUTES, ROOT_ROUTES } from './features/applications/home/home.rout
 import { PLANS_ROUTES } from './features/applications/plans/plans.routes';
 import { PRODUCTS_ROUTES } from './features/applications/products/products.routes';
 import { WISHLIST_ROUTES } from './features/applications/wishlist/wishlist.routes';
-import { EMPRESAS_ROUTES } from './features/applications/empresas/empresas.routes';
+import { COMPANY_INVITATION_ROUTES } from './features/applications/empresas/empresas.routes';
 import { storefrontResolver } from './features/applications/products/resolvers/storefront/storefront.resolver';
 
 /**
@@ -18,18 +18,11 @@ import { storefrontResolver } from './features/applications/products/resolvers/s
  * `/tienda/:storeId`, y `storefrontResolver` carga la tienda de la URL antes de
  * activarlas. No hay tienda por defecto (Core Engine no expone un directorio).
  */
-const legacyWorkspaceRedirect = () =>
-  import('./features/applications/workspace/pages/legacy-workspace-redirect/legacy-workspace-redirect.component').then(
-    (module) => module.default,
-  );
-
 export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
   ...ACCOUNT_ROUTES,
-  // Las invitaciones públicas viven fuera del workspace; `empresa` se redirige
-  // al contexto canónico de `/app`.
-  ...EMPRESAS_ROUTES.filter((route) => route.path !== 'empresa'),
+  ...COMPANY_INVITATION_ROUTES,
   // La entrada raíz (`/`) debe ir **antes** que las rutas lazy con path vacío:
   // si no, `stores` captura la URL vacía con un match sin componente (el outlet
   // queda en blanco, sin error) y `ROOT_ROUTES` nunca se llega a evaluar.
@@ -57,17 +50,6 @@ export const routes: Routes = [
         (module) => module.WORKSPACE_ROUTES,
       ),
   },
-  // Compatibilidad: las URLs antiguas redirigen al contexto canónico `/app`.
-  { path: 'empresa', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
-  { path: 'empresa/**', loadComponent: legacyWorkspaceRedirect },
-  { path: 'vendedor', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
-  { path: 'vendedor/**', loadComponent: legacyWorkspaceRedirect },
-  { path: 'admin', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
-  { path: 'admin/**', loadComponent: legacyWorkspaceRedirect },
-  { path: 'logistica', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
-  { path: 'logistica/**', loadComponent: legacyWorkspaceRedirect },
-  { path: 'facturacion', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
-  { path: 'facturacion/**', loadComponent: legacyWorkspaceRedirect },
   {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },

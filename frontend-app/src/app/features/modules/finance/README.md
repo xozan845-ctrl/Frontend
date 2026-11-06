@@ -14,7 +14,7 @@ dominio y el store de `features/domains/finance`.
 - `components/cash-transfers-panel`: transferencias entre caja y bancos.
 - `components/*-modal`: alta de movimientos, métodos, cierres, caja chica,
   bancos, transferencias y reporte de caja.
-- `finance.routes.ts`: ruta lazy de `/empresa/caja` con `FinanceStore`,
+- `finance.routes.ts`: ruta lazy de `/app/empresa/caja` con `FinanceStore`,
   `BanksStore` y `CompanySalesStore`; las ventas cobradas alimentan el libro.
 
 Los registros manuales se persisten por tenant en `localStorage`; las ventas se

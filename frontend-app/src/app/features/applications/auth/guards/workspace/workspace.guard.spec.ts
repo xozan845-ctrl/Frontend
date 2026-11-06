@@ -4,7 +4,7 @@ import { AuthStore } from '../../state/auth/auth.store';
 import { workspaceGuard } from './workspace.guard';
 
 describe('workspaceGuard', () => {
-  const state = { url: '/logistica/dashboard' } as RouterStateSnapshot;
+  const state = { url: '/app/logistica/dashboard' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>, data: Record<string, unknown>) => {
     const tree = {} as UrlTree;
@@ -93,7 +93,7 @@ describe('workspaceGuard', () => {
 
     expect(await result).toBe(tree);
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/logistica/dashboard' },
+      queryParams: { returnUrl: '/app/logistica/dashboard' },
     });
   });
 });

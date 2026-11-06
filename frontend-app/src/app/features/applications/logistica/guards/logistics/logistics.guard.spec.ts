@@ -5,7 +5,7 @@ import { logisticsGuard } from './logistics.guard';
 
 describe('logisticsGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = { url: '/logistica/dashboard' } as RouterStateSnapshot;
+  const state = { url: '/app/logistica/dashboard' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>, url = state.url) => {
     const tree = {} as UrlTree;
@@ -38,7 +38,7 @@ describe('logisticsGuard', () => {
         refreshToken: () => null,
         refreshTokenOnce: vi.fn(),
       },
-      '/empresa/logistica/dashboard',
+      '/app/empresa/logistica/dashboard',
     );
 
     expect(await result).toBe(true);
@@ -67,7 +67,7 @@ describe('logisticsGuard', () => {
   });
 
   it('permite iniciar el alta logística sin tenant logístico activo', async () => {
-    const onboardingState = { url: '/logistica/crear' } as RouterStateSnapshot;
+    const onboardingState = { url: '/app/logistica/crear' } as RouterStateSnapshot;
     const tree = {} as UrlTree;
     const router = { createUrlTree: vi.fn(() => tree) };
     TestBed.configureTestingModule({
@@ -111,7 +111,7 @@ describe('logisticsGuard', () => {
 
     expect(await result).toBe(tree);
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/logistica/dashboard' },
+      queryParams: { returnUrl: '/app/logistica/dashboard' },
     });
   });
 });

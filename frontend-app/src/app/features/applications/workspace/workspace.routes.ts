@@ -4,8 +4,8 @@ import { workspaceLandingGuard } from './guards/workspace-landing/workspace-land
 /**
  * Entrada canónica del backoffice: `/app` resuelve el contexto por rol y
  * `/app/<contexto>` monta el árbol del workspace correspondiente con el shell
- * compartido. Las rutas antiguas (`/empresa`, `/vendedor`, etc.) se conservan
- * como compatibilidad.
+ * compartido. Solo existen rutas canónicas `/app/...`; no se conservan rutas
+ * antiguas.
  */
 export const WORKSPACE_ROUTES: Routes = [
   { path: '', pathMatch: 'full', canActivate: [workspaceLandingGuard], children: [] },
@@ -25,8 +25,6 @@ export const WORKSPACE_ROUTES: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('../empresas/empresas.routes').then((module) =>
-        module.EMPRESAS_ROUTES.filter((route) => route.path === 'empresa'),
-      ),
+      import('../empresas/empresas.routes').then((module) => [module.COMPANY_WORKSPACE_ROUTE]),
   },
 ];

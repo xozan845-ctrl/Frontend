@@ -62,7 +62,7 @@ Firebase Hosting con una sesión real de propietario de empresa.
 
 | Área repetida                  | Resultado          | Evidencia de esta ronda                                                                                                                      |
 | ------------------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Login, panel y ruta del módulo | OK                 | Entró al panel de empresa y a `/empresa/productos`, sin errores de consola ni peticiones fallidas.                                           |
+| Login, panel y ruta del módulo | OK                 | Entró al panel de empresa y a `/app/empresa/productos`, sin errores de consola ni peticiones fallidas.                                       |
 | Alta de producto               | OK                 | Se creó `QA Owner 1793378090874` con SKU `QA-OWNER-1793378090874`.                                                                           |
 | Edición de precio y stock      | OK en sesión       | La fila reflejó precio `C$1,600.00` y stock `5`.                                                                                             |
 | Persistencia del costo         | FALLO reproducido  | En una sesión nueva el mismo producto mostró costo `C$0.00`, inventario `C$0.00` y margen `100%`. Confirma `R-PS-01`.                        |
@@ -128,7 +128,7 @@ completo para este rol”.
 
 | Flujo                             | Resultado                 | Evidencia HTTP/UI                                                                                                     |
 | --------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Login y entrada al módulo         | OK                        | Acceso a `/empresa/productos`; sin errores de consola ni `requestfailed`.                                             |
+| Login y entrada al módulo         | OK                        | Acceso a `/app/empresa/productos`; sin errores de consola ni `requestfailed`.                                         |
 | Alta de producto                  | OK parcial                | `POST /catalog/productos` respondió `201`, pero la respuesta omitió costo y metadatos; la tabla mostró costo `—`.     |
 | Edición de precio y stock         | OK parcial                | `PATCH` actualizó precio y stock; costo continuó en `—`.                                                              |
 | Lectura de producto               | FALLO de contrato/backend | `GET /catalog/productos` respondió `200`, pero no devolvió costo, marca, barcode, stock mínimo ni `estado_operativo`. |
@@ -172,7 +172,7 @@ productos existentes. No se creó ningún servicio porque el backend rechazó el
 
 | Flujo                                                                | Resultado                             | Evidencia                                                                                           |
 | -------------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Login y entrada al panel                                             | OK                                    | Acceso a `/empresa/productos`.                                                                      |
+| Login y entrada al panel                                             | OK                                    | Acceso a `/app/empresa/productos`.                                                                  |
 | Carga del catálogo                                                   | OK                                    | Sin errores de aplicación ni fallos de API.                                                         |
 | Crear producto                                                       | OK inmediato                          | Fila, KPI y toast actualizados.                                                                     |
 | Editar precio y stock                                                | OK inmediato                          | La fila reflejó los cambios.                                                                        |

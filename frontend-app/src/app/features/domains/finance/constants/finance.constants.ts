@@ -34,9 +34,9 @@ export const CASH_USD_RATE = 36.6243;
 export const CASH_TRANSFER_CASH_ID = 'cash';
 
 export const FINANCE_TABS: readonly { value: FinanceTab; label: string; path: string }[] = [
-  { value: 'purchases', label: 'Compras', path: '/empresa/compras' },
-  { value: 'expenses', label: 'Gastos', path: '/empresa/gastos' },
-  { value: 'cash', label: 'Caja / Pagos', path: '/empresa/caja' },
+  { value: 'purchases', label: 'Compras', path: '/app/empresa/compras' },
+  { value: 'expenses', label: 'Gastos', path: '/app/empresa/gastos' },
+  { value: 'cash', label: 'Caja / Pagos', path: '/app/empresa/caja' },
 ];
 
 export const PURCHASE_STATUSES: readonly { value: PurchaseStatus; label: string }[] = [

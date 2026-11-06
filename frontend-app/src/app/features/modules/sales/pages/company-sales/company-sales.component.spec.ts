@@ -239,7 +239,7 @@ describe('CompanySalesComponent', () => {
     expect(query(fixture, 'company-recurring-empty')?.textContent).toContain(
       'Aún no tienes clientes marcados',
     );
-    expect(fixture.nativeElement.querySelector('a[href="/empresa/clientes"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('a[href="/app/empresa/clientes"]')).not.toBeNull();
   });
 
   it('debe renderizar la tabla de recurrentes cuando hay clientes', async () => {

@@ -34,8 +34,8 @@ sesión (`workspaceLanding`):
 - `/app/logistica` — logística (empresa, tienda o empresa logística).
 
 Facturación es un submódulo de tienda (`/app/tienda/facturacion`) y comparte el
-sidebar/guard del workspace; `/ia` es una herramienta independiente. Las rutas
-antiguas redirigen a `/app` mediante un componente de compatibilidad.
+sidebar/guard del workspace; `/ia` es una herramienta independiente. Solo
+existen las rutas canónicas `/app/...`.
 
 Todos comparten `WorkspaceShellComponent` y el registro `WORKSPACE_MODULES`;
 el sidebar y los guards filtran por `workspace` + `permission`, no por rutas
@@ -71,9 +71,10 @@ estilos de componentes.
   están permitidos (allowlist de `R-UX-7`).
 - Los shells de página usan `app-page-bg`/`app-shell-bg`; no reintroduzcas
   fondos planos.
-- Los workspaces de backoffice (`/empresa`, `/vendedor`, `/facturacion`,
-  `/logistica`, `/ia`) se envuelven en un shell con `app-shell-bg` +
-  `glass-bar`; el feature de IA lo hace con `ai-scraper-shell`.
+- Los workspaces de backoffice (`/app/empresa`, `/app/tienda`,
+  `/app/admin`, `/app/logistica`, `/ia`) se envuelven en un shell con
+  `app-shell-bg` + `glass-bar`; el feature de IA lo hace con
+  `ai-scraper-shell`.
 - La suite falla si aparece una reimplementación nueva; `stylelint`
   (`glass/no-raw-glass`) y la regresión visual de Playwright cubren el mismo
   sistema en editor y CI.

@@ -5,7 +5,7 @@ import { AuthStore } from '../../../auth/public-api';
 
 describe('vendorGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = { url: '/vendedor/pedidos' } as RouterStateSnapshot;
+  const state = { url: '/app/tienda/pedidos' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>) => {
     const tree = {} as UrlTree;
@@ -97,7 +97,7 @@ describe('vendorGuard', () => {
     expect(await result).toBe(tree);
     expect(refreshTokenOnce).not.toHaveBeenCalled();
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/vendedor/pedidos' },
+      queryParams: { returnUrl: '/app/tienda/pedidos' },
     });
   });
 });

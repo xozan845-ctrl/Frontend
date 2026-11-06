@@ -13,7 +13,7 @@ import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shel
 /**
  * Shell del módulo de logística (ADR-25). Comparte el chrome con el resto de
  * workspaces y resuelve la navegación del registro según el contexto de la URL
- * (`/logistica`, `/empresa/logistica` o `/vendedor/logistica`).
+ * (`/app/logistica`, `/app/empresa/logistica` o `/app/tienda/logistica`).
  */
 @Component({
   selector: 'app-logistica-shell',
@@ -30,9 +30,7 @@ export default class LogisticaShellComponent {
     if (url.startsWith('/app/empresa/logistica')) return '/app/empresa/logistica';
     if (url.startsWith('/app/tienda/logistica')) return '/app/tienda/logistica';
     if (url.startsWith('/app/logistica')) return '/app/logistica';
-    if (url.startsWith('/empresa/logistica')) return '/empresa/logistica';
-    if (url.startsWith('/vendedor/logistica')) return '/vendedor/logistica';
-    return '/logistica';
+    return '/app/logistica';
   });
   readonly contextLabel = computed(() => {
     if (this.basePath() === '/app/empresa/logistica') return 'Logística · Empresa';

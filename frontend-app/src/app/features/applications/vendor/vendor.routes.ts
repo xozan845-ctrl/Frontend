@@ -117,9 +117,8 @@ export const VENDOR_ROUTES: Routes = [
           { provide: STORAGE_REPOSITORY, useClass: StorageService },
         ],
       },
-      // Compatibilidad con enlaces antiguos: la administración vive en su
-      // workspace propio, fuera del panel operativo.
-      { path: 'empresa', pathMatch: 'full', redirectTo: '/empresa' },
+      // La administración de empresa no se expone dentro del panel operativo;
+      // vive en el workspace de empresa.
       {
         path: 'catalogo',
         canActivate: [moduleGuard('store.catalog')],

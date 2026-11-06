@@ -43,7 +43,7 @@ describe('OrderTableComponent', () => {
     fixture.componentRef.setInput('tableTestId', 'test-table');
     if (withLink) {
       fixture.componentRef.setInput('rows', [
-        { ...rows[0], numberHref: '/vendedor/pedidos/sale-1' },
+        { ...rows[0], numberHref: '/app/tienda/pedidos/sale-1' },
       ]);
     }
     fixture.detectChanges();
@@ -70,7 +70,7 @@ describe('OrderTableComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
     const link = host.querySelector('[data-testid="order-link-sale-1"]') as HTMLAnchorElement;
 
-    expect(link.getAttribute('href')).toBe('/vendedor/pedidos/sale-1');
+    expect(link.getAttribute('href')).toBe('/app/tienda/pedidos/sale-1');
     expect(link.textContent).toContain('V-001');
   });
 

@@ -61,9 +61,9 @@ sesión mediante `workspaceLanding`:
 | Facturación | `/app/tienda/facturacion` | tienda con `store:manage-billing`   |
 
 Facturación es un submódulo de tienda sin shell propio: comparte el sidebar del
-workspace y el guard `store:manage-billing`. Las rutas antiguas (`/empresa`,
-`/vendedor`, `/admin`, `/logistica`, `/facturacion`) redirigen a `/app` con un
-componente de compatibilidad; `/ia` sigue siendo una herramienta independiente.
+workspace y el guard `store:manage-billing`. `/ia` sigue siendo una herramienta
+independiente. Solo existen las rutas canónicas `/app/...`; no se conservan
+rutas antiguas.
 
 Todos los contextos comparten `WorkspaceShellComponent` y el registro
 `WORKSPACE_MODULES`; el sidebar y los guards filtran por workspace + permiso.
