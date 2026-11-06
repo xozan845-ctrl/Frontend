@@ -58,6 +58,13 @@ paneles, modales, drawers, tablas, sidebars, headers/footers, inputs, botones,
 badges y alertas. Debe declarar `.glass*` o un primitivo global (`.card`,
 `.btn-*`, `.input`, `.badge-*`, `.alert-*` o `.icon-btn`).
 
+Los **controles de acción** (`<button>` y `<a>` con texto) tampoco pueden usar
+rellenos primarios crudos (`bg-accent-500/600`, `bg-blue-500/600`,
+`bg-emerald-500/600`, `bg-red-500/600`): deben usar `.btn-*` o `.icon-btn`. Las
+acciones de componentes compartidos (`shared/ui`) se validan también en sus
+clases dinámicas, para que un `Comprar`/`Seguir comprando` no vuelva a un fondo
+azul a mano.
+
 No se consideran superficies principales:
 
 - Scrims y overlays: `fixed|absolute inset-0` con fondos oscuros.
@@ -66,6 +73,8 @@ No se consideran superficies principales:
 - Tracks de progreso y visualizaciones de datos: no son contenedores de contenido.
 - Separadores de 1px: `h-px` / `w-px`.
 - Estados semánticos que ya usan `.alert-*` o `.badge-*`.
+- Controles de estado (`role="tab|option|switch"`, `aria-pressed`) cuyo relleno
+  representa la selección, no una CTA primaria.
 
 La suite `visual-adoption-guards` (`scripts/rules/ui/adoption.test.mjs`) aplica
 un ratchet:

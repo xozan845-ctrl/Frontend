@@ -60,3 +60,6 @@ estilos de componentes.
   las raíces de presentación de `src/app` están en `GLASS_ADOPTION_ADOPTED`
   (**37 raíces**) y `GLASS_ADOPTION_PENDING_MAX` es **0**; cualquier superficie
   nueva debe nacer con Glass y no puede reabrir el backlog.
+- Los controles de acción usan `.btn-*` o `.icon-btn`; los rellenos crudos
+  (`bg-accent-600`, `bg-blue-600`, etc.) también hacen fallar `R-UX-8`. Los
+  tabs/chips con `role` o `aria-pressed` se validan como estado, no como CTA.

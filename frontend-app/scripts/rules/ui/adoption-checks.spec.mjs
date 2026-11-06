@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { hasAdoptedSurface, hasRawSurface } from './adoption-checks.mjs';
+import {
+  hasAdoptedControl,
+  hasAdoptedSurface,
+  hasRawControlFill,
+  hasRawSurface,
+} from './adoption-checks.mjs';
 
 test('hasRawSurface detecta fondos de superficie y excluye variantes/tintes', () => {
   assert.equal(hasRawSurface('bg-white'), true);
@@ -20,4 +25,21 @@ test('hasAdoptedSurface reconoce utilidades y primitivos globales', () => {
   assert.equal(hasAdoptedSurface('badge badge-success'), true);
   assert.equal(hasAdoptedSurface('alert alert-danger'), true);
   assert.equal(hasAdoptedSurface('bg-white'), false);
+});
+
+test('hasRawControlFill detecta rellenos primarios crudos', () => {
+  assert.equal(hasRawControlFill('bg-accent-600 text-white'), true);
+  assert.equal(hasRawControlFill('bg-blue-600'), true);
+  assert.equal(hasRawControlFill('bg-red-600'), true);
+  assert.equal(hasRawControlFill('bg-emerald-500'), true);
+  assert.equal(hasRawControlFill('hover:bg-accent-600'), false);
+  assert.equal(hasRawControlFill('bg-accent-50'), false);
+  assert.equal(hasRawControlFill('bg-accent-600/10'), false);
+});
+
+test('hasAdoptedControl exige .btn* o .icon-btn', () => {
+  assert.equal(hasAdoptedControl('btn btn-primary'), true);
+  assert.equal(hasAdoptedControl('btn-danger'), true);
+  assert.equal(hasAdoptedControl('icon-btn'), true);
+  assert.equal(hasAdoptedControl('bg-accent-600 text-white'), false);
 });

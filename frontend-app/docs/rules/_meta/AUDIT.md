@@ -84,13 +84,13 @@
 | R-UX-1/2/3/4/5   | ✅     | Estados de carga/error/vacío con esqueletos en todas las páginas del vendedor; responsive, dark mode, textos en español                                         |
 | R-UX-6 SEO/PWA   | ✅     | `SeoService` en todas las páginas (con `reset()` al salir, incl. vendor) + manifest + SW + `theme-color`                                                        |
 | R-UX-7 Glass     | ✅     | `visual-guards`: tokens, utilidades y primitivos centralizados en `src/styles.css`; cobertura medida 100% de requisitos                                         |
-| R-UX-8 adopción  | ✅     | `visual-adoption-guards`: **37 raíces** adoptadas y **backlog 0**; migración por áreas de 503 a 0 superficies crudas                                            |
+| R-UX-8 adopción  | ✅     | `visual-adoption-guards`: **37 raíces** adoptadas y **backlog 0**; migración por áreas de 503 a 0 usos crudos                                                   |
 
 **Migración Glass (2026-11-05):** todas las superficies de `src/app` usan
 `.glass*` o un primitivo global (`.card`, `.btn-*`, `.input`, `.badge*`,
-`.alert-*`, `.icon-btn`). El ratchet queda cerrado con
-`GLASS_ADOPTION_PENDING_MAX = 0`; una superficie nueva que reintroduzca fondos
-crudos hace fallar `visual-adoption-guards`.
+`.alert-*`, `.icon-btn`) y las CTAs usan `.btn-*` o `.icon-btn`. El ratchet queda
+cerrado con `GLASS_ADOPTION_PENDING_MAX = 0`; una superficie o un botón nuevo
+con relleno crudo hace fallar `visual-adoption-guards`.
 
 ### Seguridad (`R-SE`)
 

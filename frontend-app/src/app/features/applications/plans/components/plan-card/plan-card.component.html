@@ -72,10 +72,7 @@
       {{ plan().buttonLabel }}
     </button>
   } @else if (plan().popular) {
-    <button
-      (click)="planSelected.emit(plan().name)"
-      class="w-full py-4 rounded-xl bg-accent-600 text-white text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all"
-    >
+    <button (click)="planSelected.emit(plan().name)" class="btn btn-primary btn-lg w-full">
       {{ plan().buttonLabel }}
     </button>
   } @else {
