@@ -64,8 +64,8 @@ logística; el adapter tolera respuestas planas o con envelope `{ data }` y
 La página y los modales de **Ventas** se componen en
 `features/modules/sales` (ADR-63); el catálogo administrable de productos,
 servicios y materia prima se compone en `features/modules/catalog` (ADR-65),
-Compras en `features/modules/finance` (ADR-66), Gastos en
-`features/modules/expenses` (ADR-72) y Caja en `features/modules/cash`
+Compras en `features/modules/purchases` (ADR-66), Gastos en
+`features/modules/expenses` (ADR-72) y Caja en `features/modules/finance`
 (ADR-73). Cuentas por pagar
 en `features/modules/payables` (ADR-67), Bancos en `features/modules/banks`
 (ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69), Créditos

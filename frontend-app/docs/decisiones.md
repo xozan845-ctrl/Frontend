@@ -534,6 +534,10 @@ contexto y consecuencias.
   retirar la ruta `/facturacion`, el enlace del sidebar del vendedor y el
   feature.
 
+> **Nota (2026-11-06):** facturación dejó de ser un workspace independiente.
+> Vive como submódulo de tienda en `/app/tienda/facturacion`, comparte el shell
+> y el guard de tienda, y ya no existe `billing-shell`.
+
 ## ADR-24: Acceso a facturación desde el header y alta de cuenta de facturador
 
 - **Fecha**: 2026-10-19
@@ -1907,6 +1911,11 @@ contexto y consecuencias.
 - **Consecuencias**: Caja evoluciona sin tocar Compras, con una UI completa y
   datos migrados. El dominio puede integrarse con finanzas en una fase posterior
   si se unifican los ledgers.
+
+> **Nota (2026-11-06):** esta implementación quedó sustituida por
+> `features/modules/finance` + `features/domains/finance`. Los directorios
+> `domains/cash` y `modules/cash` se eliminaron por duplicidad y falta de uso;
+> `/app/empresa/caja` se compone desde `modules/finance`.
 
 ## ADR-74: Catálogo de productos y servicios con persistencia server-side
 

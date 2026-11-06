@@ -50,11 +50,11 @@ un dominio reutilizable y un módulo de composición.
 | `modules/sales`            | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
 | `modules/catalog`          | Composición del catálogo de productos, servicios y materia prima (ADR-65).         |
 | `domains/orders`           | Dominio compartido de pedidos para empresa y vendedor (ADR-60).                    |
-| `domains/finance`          | Dominio de compras y legado de caja con persistencia local (ADR-66/73).            |
+| `domains/finance`          | Dominio de caja, compras y gastos con persistencia local (ADR-66/73).              |
 | `domains/expenses`         | Dominio de gastos con tipos, estados, beneficiarios y reportes (ADR-72).           |
 | `modules/expenses`         | Composición de la pantalla de Gastos y sus modales (ADR-72).                       |
-| `domains/cash`             | Dominio de caja, bancos, cierres y caja chica (ADR-73).                            |
-| `modules/cash`             | Composición de la pantalla de Caja y sus modales (ADR-73).                         |
+| `domains/purchases`        | Dominio de compras, proveedores, órdenes e historial (ADR-66).                     |
+| `modules/purchases`        | Composición del centro de compras y sus modales (ADR-66).                          |
 | `domains/payables`         | Cuentas por pagar compartidas por empresa y tienda (ADR-67).                       |
 | `domains/banks`            | Cuentas bancarias compartidas por empresa y tienda (ADR-68).                       |
 | `domains/barcodes`         | Etiquetas de códigos de barras compartidas por empresa y tienda (ADR-69).          |
@@ -66,6 +66,7 @@ un dominio reutilizable y un módulo de composición.
 | `applications/plans`       | Planes y suscripciones.                                                            |
 | `applications/products`    | Catálogo, detalle, búsqueda y reseñas.                                             |
 | `applications/stores`      | Asistente de creación de tienda.                                                   |
+| `applications/storage`     | Almacenamiento de archivos por tenant y subida de medios.                          |
 | `applications/vendor`      | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
 | `applications/wishlist`    | Lista de deseos persistida localmente.                                             |
 
