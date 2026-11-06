@@ -49,6 +49,7 @@ un dominio reutilizable y un módulo de composición.
 | `domains/file-storage`     | Buckets, objetos, subidas y cuotas de almacenamiento por tenant.                   |
 | `domains/catalog`          | Catálogo maestro de productos: modelo, puerto y servicio.                          |
 | `domains/company-catalog`  | Catálogo administrable de empresa: productos, servicios y operaciones.             |
+| `domains/company-sales`    | Ventas, pedidos y portal de tiendas de empresa.                                    |
 | `domains/media-background` | Fondos multimedia de plataforma, empresa y tienda: adapter, puerto, HTTP y store.  |
 | `modules/clients`          | Composición de la página/modal de Clientes (ADR-59).                               |
 | `modules/sales`            | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |

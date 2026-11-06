@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import {
   COMPANY_REPORTS_SCOPE_CONFIG,
-  COMPANY_PORTAL_REPOSITORY,
-  CompanyPortalService,
   CompanyReportsSource,
 } from '../../applications/empresas/public-api';
+import {
+  COMPANY_PORTAL_REPOSITORY,
+  CompanyPortalService,
+} from '../../domains/company-sales/public-api';
 import { REPORTS_SCOPE_CONFIG } from '../../../shared/reports/constants/reports-config.tokens';
 import {
   VENDOR_REPORTS_SCOPE_CONFIG,

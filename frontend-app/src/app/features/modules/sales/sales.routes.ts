@@ -10,7 +10,7 @@ import {
   CompanySalesStore,
   createCompanyOrdersSource,
   type CompanyPortalRepository,
-} from '../../applications/empresas/public-api';
+} from '../../domains/company-sales/public-api';
 import {
   COMPANY_SERVICE_REPOSITORY,
   CompanyServiceApiService,

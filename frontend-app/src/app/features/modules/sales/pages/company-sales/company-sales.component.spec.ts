@@ -10,7 +10,7 @@ import {
   type CompanySalePeriod,
   type CompanySaleRow,
   type CreateCompanySalePayload,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-sales/public-api';
 import {
   CompanyServicesStore,
   type CompanyServiceModel,

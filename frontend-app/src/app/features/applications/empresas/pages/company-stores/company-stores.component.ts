@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { CompanyPortalStore } from '../../state/company-portal/company-portal.store';
+import { CompanyPortalStore } from '../../../../domains/company-sales/public-api';
 
 /** Tiendas consolidadas de la empresa (ADR-43). */
 @Component({

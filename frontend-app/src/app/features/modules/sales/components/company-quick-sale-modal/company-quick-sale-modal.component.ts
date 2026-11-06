@@ -9,7 +9,7 @@ import {
   type CompanySaleLine,
   type CompanySalePaymentMethod,
   type CreateCompanySalePayload,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-sales/public-api';
 
 function toMoney(value: number): number {
   return Math.round(value * 100) / 100;

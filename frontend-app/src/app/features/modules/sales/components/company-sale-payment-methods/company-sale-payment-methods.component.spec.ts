@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanySalePaymentMethodsComponent } from './company-sale-payment-methods.component';
-import type { CompanySalePaymentMethod } from '../../../../applications/empresas/public-api';
+import type { CompanySalePaymentMethod } from '../../../../domains/company-sales/public-api';
 
 describe('CompanySalePaymentMethodsComponent', () => {
   const setup = async (selected: CompanySalePaymentMethod = 'efectivo', disabled = false) => {

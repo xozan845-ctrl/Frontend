@@ -1,14 +1,14 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import type { OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
 import {
   CATALOG_PRODUCT_REPOSITORY,
   type CatalogProduct,
   type CatalogProductRepository,
-} from '../../../../domains/catalog/public-api';
+} from '../../../catalog/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import { CompanySalesStore } from './company-sales.store';
 import {
   COMPANY_ORDERS_SOURCE,
@@ -16,7 +16,7 @@ import {
   type CompanyPortalRepository,
 } from '../../repositories/company-portal.repository';
 import { createCompanyOrdersSource } from '../../services/company-orders-source/company-orders-source.service';
-import { clientsStorageKey } from '../../../../domains/clients/public-api';
+import { clientsStorageKey } from '../../../clients/public-api';
 import { companySalesStorageKey } from '../../constants/company-sales.constants';
 import type { CompanySaleRecord, CreateCompanySalePayload } from '../../models/company-sale.model';
 

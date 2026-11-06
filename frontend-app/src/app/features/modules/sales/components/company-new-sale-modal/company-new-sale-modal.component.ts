@@ -14,7 +14,7 @@ import {
   type CompanySaleLine,
   type CompanySalePaymentMethod,
   type CreateCompanySalePayload,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-sales/public-api';
 import type { CompanyServiceModel } from '../../../../domains/company-catalog/public-api';
 
 const STEPS = [

@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { CompanyNewSaleModalComponent } from './company-new-sale-modal.component';
 import type { Client } from '../../../../domains/clients/public-api';
 import type { CatalogProduct } from '../../../../domains/catalog/public-api';
-import type { CreateCompanySalePayload } from '../../../../applications/empresas/public-api';
+import type { CreateCompanySalePayload } from '../../../../domains/company-sales/public-api';
 import type { CompanyServiceModel } from '../../../../domains/company-catalog/public-api';
 
 const client: Client = {

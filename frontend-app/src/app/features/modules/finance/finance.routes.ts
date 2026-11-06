@@ -10,7 +10,7 @@ import {
   CompanySalesStore,
   createCompanyOrdersSource,
   type CompanyPortalRepository,
-} from '../../applications/empresas/public-api';
+} from '../../domains/company-sales/public-api';
 import { COMPANY_BANKS_SCOPE_CONFIG } from '../../applications/empresas/constants/company-banks.config';
 import { BANKS_SCOPE_CONFIG } from '../../../shared/banks/constants/banks-config.tokens';
 import { BanksStore } from '../../domains/banks/public-api';

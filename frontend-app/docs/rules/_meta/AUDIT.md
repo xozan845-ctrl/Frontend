@@ -37,6 +37,7 @@
   aplicación y `R-AR-21` protege el grafo de ciclos.
 - El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
   `domains/company-catalog`; `applications/empresas` ya no exporta catálogo.
+  Las ventas y el portal de tiendas viven en `domains/company-sales`.
 - Evidencia: **349 archivos / 1.930 tests**, 24 suites de reglas (53/259 IDs),
   typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
   `1.27.0`.

@@ -2,9 +2,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import CompanyStoresComponent from './company-stores.component';
-import { CompanyPortalStore } from '../../state/company-portal/company-portal.store';
+import { CompanyPortalStore } from '../../../../domains/company-sales/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import type { CompanyStore } from '../../models/company-store.model';
+import type { CompanyStore } from '../../../../domains/company-sales/public-api';
 
 const store: CompanyStore = {
   id: 'tienda-1',

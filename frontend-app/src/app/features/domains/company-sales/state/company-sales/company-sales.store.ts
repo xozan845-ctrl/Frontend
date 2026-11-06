@@ -12,9 +12,9 @@ import { EMPTY, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { withOrders } from '../../../../../shared/orders/state/with-orders/with-orders.state';
-import { AuthStore } from '../../../auth/public-api';
-import type { OrderResponse } from '../../../cart/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
+import { AuthStore } from '../../../session/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../catalog/public-api';
 import {
   buildCompanySaleRows,
   buildRecurringClients,
@@ -29,7 +29,7 @@ import {
   buildClients,
   clientsStorageKey,
   sanitizeClientRecords,
-} from '../../../../domains/clients/public-api';
+} from '../../../clients/public-api';
 import {
   COMPANY_SALE_DEFAULT_PROVIDER,
   COMPANY_SALE_MAX_RECORDS,

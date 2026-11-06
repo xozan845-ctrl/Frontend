@@ -96,6 +96,7 @@ export const FEATURE_ALLOWED_ROOT_FILES = new Set([
   'public-ui.ts',
   'README.md',
   'company-vendors.routes.ts',
+  'company-stores.routes.ts',
   'seller-invitation.routes.ts',
 ]);
 
@@ -166,6 +167,12 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   'company-catalog': {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  'company-sales': {
     kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
     publicApi: true,

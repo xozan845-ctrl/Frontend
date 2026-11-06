@@ -16,7 +16,7 @@ import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skele
 import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
-import { CompanyPortalStore } from '../../state/company-portal/company-portal.store';
+import { CompanyPortalStore } from '../../../../domains/company-sales/public-api';
 import { CompanyInvitationsStore } from '../../state/company-invitations/company-invitations.store';
 import { SellerAvatarStore } from '../../state/seller-avatar/seller-avatar.store';
 

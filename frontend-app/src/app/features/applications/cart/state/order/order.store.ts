@@ -2,7 +2,8 @@ import { effect, inject } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { CreateOrderPayload, OrderResponse } from '../../models/order.model';
+import type { CreateOrderPayload } from '../../models/order.model';
+import type { OrderResponse } from '../../../../domains/orders/public-api';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import type { OrderState } from '../cart/cart.state';
 

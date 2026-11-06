@@ -4,7 +4,7 @@ import { NotificationService } from '../../../../../core/services/notification/n
 import { StoreConfigService } from '../../../../../core/services/store-config/store-config.service';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { AuthStore } from '../../../../domains/session/public-api';
-import { CompanySalesStore } from '../../../../applications/empresas/public-api';
+import { CompanySalesStore } from '../../../../domains/company-sales/public-api';
 import {
   BanksStore,
   type BankAccount,
