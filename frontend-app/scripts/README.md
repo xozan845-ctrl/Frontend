@@ -270,11 +270,12 @@ exige documentación **del área** (rules de arquitectura/frontend/ui/security/t
 
 ## Utilidades de build (no son suites de gobernanza)
 
-| Script                                       | Uso                                                                                                                                                                                               |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commands/generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                              |
-| `commands/generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53). |
-| `commands/generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                              |
+| Script                                       | Uso                                                                                                                                                                                                       |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commands/generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                                      |
+| `commands/generate-version.mjs`              | `prebuild`/`prestart`: escribe `public/version.json` (ignorado por Git) con la versión de `package.json` y las novedades `feat/fix/perf/refactor` desde el último tag. El aviso PWA lo consume sin caché. |
+| `commands/generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53).         |
+| `commands/generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                                      |
 
 Estas utilidades no forman parte del motor de reglas; sus pruebas se ejecutan en
 `npm run test:engine` (por el patrón `scripts/commands/*.test.mjs`).

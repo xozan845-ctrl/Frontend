@@ -163,12 +163,19 @@ describe('PwaNoticeComponent', () => {
   });
 
   it('debe mostrar la versión, el aviso de datos y refrescar', async () => {
-    update.set({ version: '1.27.0', hash: 'hash-127' });
+    update.set({
+      version: '1.27.0',
+      hash: 'hash-127',
+      changes: ['Nuevo: aviso de actualización'],
+      totalChanges: 2,
+    });
     const fixture = await setup();
     fixture.detectChanges();
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.textContent).toContain('v1.27.0');
+    expect(host.textContent).toContain('Nuevo: aviso de actualización');
+    expect(host.textContent).toContain('y 1 cambios más');
     expect(host.textContent).toContain('Tus datos y tu sesión permanecen seguros.');
     expect(host.textContent).toContain('Refresca para aplicar los cambios visuales.');
 
@@ -178,7 +185,12 @@ describe('PwaNoticeComponent', () => {
   });
 
   it('debe permitir cerrar el aviso de actualización', async () => {
-    update.set({ version: '1.27.0', hash: 'hash-127' });
+    update.set({
+      version: '1.27.0',
+      hash: 'hash-127',
+      changes: [],
+      totalChanges: 0,
+    });
     const fixture = await setup();
     fixture.detectChanges();
     const host = fixture.nativeElement as HTMLElement;
