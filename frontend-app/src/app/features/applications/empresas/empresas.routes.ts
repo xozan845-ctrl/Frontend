@@ -1,25 +1,10 @@
 import { Route, Routes } from '@angular/router';
-import {
-  CLIENTS_PAGE_CONFIG,
-  CLIENTS_SCOPE_CONFIG,
-} from '../../../shared/clients/constants/clients-config.tokens';
 import { moduleGuard } from '../auth/public-api';
+import { commercialScopeRoutes } from '../workspace/constants/commercial.routes';
 import { companyGuard } from './guards/company/company.guard';
-import {
-  COMPANY_CLIENTS_PAGE_CONFIG,
-  COMPANY_CLIENTS_SCOPE_CONFIG,
-} from './constants/company-clients-page.config';
 import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
 import { CompanyPortalService } from './services/company-portal/company-portal.service';
 import { CompanyPortalStore } from './state/company-portal/company-portal.store';
-import { COMPANY_PAYABLES_SCOPE_CONFIG } from './constants/company-payables.config';
-import { COMPANY_BANKS_SCOPE_CONFIG } from './constants/company-banks.config';
-import { COMPANY_BARCODES_SCOPE_CONFIG } from './constants/company-barcodes.config';
-import { COMPANY_CREDITS_SCOPE_CONFIG } from './constants/company-credits.config';
-import { PAYABLES_SCOPE_CONFIG } from '../../../shared/payables/constants/payables-config.tokens';
-import { BANKS_SCOPE_CONFIG } from '../../../shared/banks/constants/banks-config.tokens';
-import { BARCODES_SCOPE_CONFIG } from '../../../shared/barcodes/constants/barcodes-config.tokens';
-import { CREDITS_SCOPE_CONFIG } from '../../../shared/credits/constants/credits-config.tokens';
 
 const companySoonRoute = (
   path: string,
@@ -65,16 +50,7 @@ export const EMPRESAS_ROUTES: Routes = [
         loadChildren: () =>
           import('../../modules/sales/sales.routes').then((module) => module.SALES_ROUTES),
       },
-      {
-        path: 'clientes',
-        canActivate: [moduleGuard('company.clients')],
-        loadChildren: () =>
-          import('../../modules/clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
-        providers: [
-          { provide: CLIENTS_PAGE_CONFIG, useValue: COMPANY_CLIENTS_PAGE_CONFIG },
-          { provide: CLIENTS_SCOPE_CONFIG, useValue: COMPANY_CLIENTS_SCOPE_CONFIG },
-        ],
-      },
+      ...commercialScopeRoutes('company'),
       {
         path: 'productos',
         canActivate: [moduleGuard('company.catalog')],
@@ -101,20 +77,6 @@ export const EMPRESAS_ROUTES: Routes = [
         loadChildren: () =>
           import('../../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
       },
-      {
-        path: 'bancos',
-        canActivate: [moduleGuard('company.banks')],
-        loadChildren: () =>
-          import('../../modules/banks/banks.routes').then((module) => module.BANKS_ROUTES),
-        providers: [{ provide: BANKS_SCOPE_CONFIG, useValue: COMPANY_BANKS_SCOPE_CONFIG }],
-      },
-      {
-        path: 'cuentas-por-pagar',
-        canActivate: [moduleGuard('company.payables')],
-        loadChildren: () =>
-          import('../../modules/payables/payables.routes').then((module) => module.PAYABLES_ROUTES),
-        providers: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: COMPANY_PAYABLES_SCOPE_CONFIG }],
-      },
       companySoonRoute(
         'salarios',
         'Salarios',
@@ -129,20 +91,6 @@ export const EMPRESAS_ROUTES: Routes = [
         'fa-solid fa-file-lines',
         'company.quotes',
       ),
-      {
-        path: 'codigos-de-barras',
-        canActivate: [moduleGuard('company.barcodes')],
-        loadChildren: () =>
-          import('../../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
-        providers: [{ provide: BARCODES_SCOPE_CONFIG, useValue: COMPANY_BARCODES_SCOPE_CONFIG }],
-      },
-      {
-        path: 'creditos',
-        canActivate: [moduleGuard('company.credit')],
-        loadChildren: () =>
-          import('../../modules/credits/credits.routes').then((module) => module.CREDITS_ROUTES),
-        providers: [{ provide: CREDITS_SCOPE_CONFIG, useValue: COMPANY_CREDITS_SCOPE_CONFIG }],
-      },
       companySoonRoute(
         'impuestos',
         'Impuestos',
@@ -150,14 +98,6 @@ export const EMPRESAS_ROUTES: Routes = [
         'fa-solid fa-file-invoice',
         'company.taxes',
       ),
-      {
-        path: 'reportes',
-        canActivate: [moduleGuard('company.reports')],
-        loadChildren: () =>
-          import('../../modules/reports/reports.routes').then(
-            (module) => module.COMPANY_REPORTS_ROUTES,
-          ),
-      },
       companySoonRoute(
         'estadisticas',
         'Estadísticas',

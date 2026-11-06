@@ -395,6 +395,12 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: true,
   },
+  workspace: {
+    kind: 'application',
+    layers: ['constants'],
+    publicApi: false,
+    publicUi: false,
+  },
   wishlist: { kind: 'application', layers: ['pages', 'state'], publicApi: true, publicUi: false },
 };
 
