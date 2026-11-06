@@ -1,4 +1,4 @@
-import type { Route, Routes } from '@angular/router';
+import type { Route } from '@angular/router';
 import type { CommercialModuleRoute, CommercialScope } from './commercial.types';
 import {
   CLIENTS_PAGE_CONFIG,
