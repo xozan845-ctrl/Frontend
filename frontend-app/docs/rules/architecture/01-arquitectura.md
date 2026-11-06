@@ -62,6 +62,8 @@ sesión mediante `workspaceLanding`:
 
 Todos los contextos comparten `WorkspaceShellComponent` y el registro
 `WORKSPACE_MODULES`; el sidebar y los guards filtran por workspace + permiso.
+La entrada `/app` restaura la sesión con el refresh token antes de resolver el
+contexto, igual que el resto de guards.
 Los módulos comerciales compartidos (clientes, bancos, cuentas por pagar,
 códigos de barras, créditos y reportes) se montan desde
 `features/applications/workspace/constants/commercial.routes.ts` con providers
