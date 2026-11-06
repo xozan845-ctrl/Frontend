@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import {
   CATALOG_PRODUCT_REPOSITORY,
   CatalogProductService,
-} from '../../applications/products/public-api';
+} from '../../domains/catalog/public-api';
 import {
   COMPANY_CATALOG_OPERATIONS_REPOSITORY,
   COMPANY_SERVICE_REPOSITORY,
@@ -11,12 +11,12 @@ import {
   CompanyProductsStore,
   CompanyServiceApiService,
   CompanyServicesStore,
-} from '../../applications/empresas/public-api';
+} from '../../domains/company-catalog/public-api';
 
 /**
  * Rutas del módulo compartido de catálogo. La composición vive aquí; el
- * dominio, los stores y los adaptadores siguen en `features/applications/empresas`
- * (ADR-65).
+ * dominio, los stores y los adaptadores viven en
+ * `features/domains/company-catalog` y `features/domains/catalog` (ADR-76).
  */
 export const CATALOG_ROUTES: Routes = [
   {

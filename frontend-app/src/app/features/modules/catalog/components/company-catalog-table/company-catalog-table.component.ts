@@ -5,7 +5,7 @@ import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skele
 import type {
   CompanyCatalogRow,
   CompanyCatalogTab,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /**
  * Tabla presentacional del catálogo. Muestra productos, servicios o materia

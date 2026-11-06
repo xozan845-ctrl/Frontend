@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyComboModalComponent } from './company-combo-modal.component';
-import type { CatalogProduct } from '../../../../applications/products/public-api';
+import type { CatalogProduct } from '../../../../domains/catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

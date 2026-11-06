@@ -1,12 +1,12 @@
 import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import type { CatalogProduct } from '../../../../applications/products/public-api';
+import type { CatalogProduct } from '../../../../domains/catalog/public-api';
 import type {
   CompanyInventoryMovementFormValue,
   CompanyInventoryMovementLine,
   CompanyInventoryMovementType,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /** Modal de registro de movimientos de inventario (R-PS-04). */
 @Component({

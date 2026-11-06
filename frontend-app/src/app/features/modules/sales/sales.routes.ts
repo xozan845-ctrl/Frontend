@@ -2,18 +2,20 @@ import { Routes } from '@angular/router';
 import {
   CATALOG_PRODUCT_REPOSITORY,
   CatalogProductService,
-} from '../../applications/products/public-api';
+} from '../../domains/catalog/public-api';
 import {
   COMPANY_ORDERS_SOURCE,
   COMPANY_PORTAL_REPOSITORY,
-  COMPANY_SERVICE_REPOSITORY,
   CompanyPortalService,
   CompanySalesStore,
-  CompanyServiceApiService,
-  CompanyServicesStore,
   createCompanyOrdersSource,
   type CompanyPortalRepository,
 } from '../../applications/empresas/public-api';
+import {
+  COMPANY_SERVICE_REPOSITORY,
+  CompanyServiceApiService,
+  CompanyServicesStore,
+} from '../../domains/company-catalog/public-api';
 
 /**
  * Rutas del módulo compartido de Ventas. La composición vive aquí; el dominio,

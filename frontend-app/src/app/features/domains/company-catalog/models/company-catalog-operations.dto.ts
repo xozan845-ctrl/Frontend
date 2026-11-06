@@ -1,4 +1,4 @@
-import type { BackendCatalogProductDTO } from '../../products/public-api';
+import type { BackendCatalogProductDTO } from '../../catalog/public-api';
 import type { BackendCompanyServiceDTO } from './company-service.dto';
 
 /** `ConfiguracionInventarioResponseDto`. */

@@ -8,7 +8,7 @@ import { CATALOG_REPOSITORY, CatalogRepository } from '../../repositories/catalo
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../../empresas/public-api';
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { AuthStore } from '../../../auth/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';

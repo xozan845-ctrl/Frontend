@@ -1,8 +1,8 @@
 import { of, throwError } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/repositories/catalog-product.repository';
-import type { CatalogProduct } from '../../../products/models/catalog-product.model';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../catalog/public-api';
+import type { CatalogProduct } from '../../../catalog/public-api';
 import type { CompanyCatalogFormValue } from '../../models/company-catalog.model';
 import { CompanyProductsStore } from './company-products.store';
 

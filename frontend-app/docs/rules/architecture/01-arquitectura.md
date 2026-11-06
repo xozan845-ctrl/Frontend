@@ -76,6 +76,9 @@ códigos de barras, créditos y reportes) se montan desde
 `features/applications/workspace/constants/commercial.routes.ts` con providers
 de scope company/store. El feature `workspace` declara el contrato
 `constants`/`guards` y las rutas canónicas; no conserva rutas antiguas.
+El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
+`domains/company-catalog`; los módulos de catálogo, compras y ventas los
+consumen por su API pública.
 
 ## Notas
 

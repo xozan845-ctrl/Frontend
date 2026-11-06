@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { CompanyStore } from '../../../../applications/empresas/public-api';
 import {
-  CompanyStore,
   CompanyProductsStore,
   type CompanyCatalogFormValue,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 import { AuthStore } from '../../../../domains/session/public-api';
 import {
   PurchasesStore,

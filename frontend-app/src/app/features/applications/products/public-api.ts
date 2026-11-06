@@ -7,15 +7,16 @@ export type { Store } from './models/store.model';
 export { ProductStore } from './state/product/product.store';
 export { ReviewsStore } from './state/reviews/reviews.store';
 export { CatalogProductsStore } from './state/catalog-product/catalog-product.store';
-export { CATALOG_PRODUCT_REPOSITORY } from './repositories/catalog-product.repository';
-export { CatalogProductService } from './services/catalog-product/catalog-product.service';
-export { adaptCatalogProductFromBackend } from './adapters/catalog-product/catalog-product.adapter';
-export type { BackendCatalogProductDTO } from './models/catalog-product.dto';
-export type {
-  CatalogProduct,
-  CatalogProductFilters,
-  CatalogProductPage,
-  CatalogProductStatus,
-  CreateCatalogProductData,
-  UpdateCatalogProductData,
-} from './models/catalog-product.model';
+export {
+  CATALOG_PRODUCT_REPOSITORY,
+  CatalogProductService,
+  adaptCatalogProductFromBackend,
+  type BackendCatalogProductDTO,
+  type CatalogProduct,
+  type CatalogProductFilters,
+  type CatalogProductPage,
+  type CatalogProductStatus,
+  type CatalogProductRepository,
+  type CreateCatalogProductData,
+  type UpdateCatalogProductData,
+} from '../../domains/catalog/public-api';

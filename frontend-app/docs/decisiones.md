@@ -1979,3 +1979,28 @@ contexto y consecuencias.
 - **Consecuencias**: los dominios dejan de depender de aplicaciones y el motor
   de reglas impide nuevas inversiones o ciclos. Las rutas de login/registro y
   la página de almacenamiento no cambian para el usuario.
+
+## ADR-76: Dominios de catálogo maestro y catálogo de empresa
+
+- **Fecha**: 2026-11-06
+- **Estado**: Aceptado
+- **Contexto**: `applications/empresas` concentraba el catálogo administrable y
+  `applications/products` el catálogo maestro, de modo que `modules/catalog` y
+  otros consumidores dependían de aplicaciones para acceder a modelos, puertos y
+  stores. Eso impedía cumplir `R-AR-20`.
+- **Decisión**:
+  - Se crea `features/domains/catalog` con el modelo `CatalogProduct`, DTO,
+    adaptador, puerto `CATALOG_PRODUCT_REPOSITORY` y `CatalogProductService`.
+    `applications/products` conserva la experiencia de storefront y reexporta
+    el dominio para sus consumidores.
+  - Se crea `features/domains/company-catalog` con productos, servicios, combos,
+    promociones, importación CSV y operaciones de inventario: modelos,
+    adaptadores, puertos, servicios, stores y constantes.
+  - `applications/empresas` conserva empresa, ventas, invitaciones, portal,
+    reportes y logística; ya no exporta el catálogo.
+  - `modules/catalog`, `modules/purchases` y las partes de `modules/sales` que
+    usan servicios del catálogo consumen `domains/company-catalog` y
+    `domains/catalog`.
+- **Consecuencias**: el catálogo deja de depender de aplicaciones y queda
+  reutilizable por empresa, tienda y storefront. Las rutas y la UI no cambian
+  para el usuario.

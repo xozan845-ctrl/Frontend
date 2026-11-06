@@ -9,8 +9,8 @@ import {
   CatalogProductStatus,
   CreateCatalogProductData,
   UpdateCatalogProductData,
-} from '../../models/catalog-product.model';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../repositories/catalog-product.repository';
+} from '../../../../domains/catalog/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
 import type { CatalogProductsState } from './catalog-product.state';
 
 const initialState: CatalogProductsState = {

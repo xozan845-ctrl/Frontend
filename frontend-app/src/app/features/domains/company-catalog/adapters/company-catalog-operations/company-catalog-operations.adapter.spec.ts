@@ -27,7 +27,7 @@ import type {
   CompanyPromotion,
   CompanyPromotionFormValue,
 } from '../../models/company-catalog-operations.model';
-import { CATALOG_PRODUCT_FIXTURE } from '../../../products/adapters/fixtures/catalog-product.fixture';
+import { CATALOG_PRODUCT_FIXTURE } from '../../../catalog/adapters/fixtures/catalog-product.fixture';
 import { SERVICE_FIXTURE } from './fixtures/company-service.fixture';
 
 const promoSample: CompanyPromotion = {

@@ -4,7 +4,7 @@ import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { AuthStore } from '../../../auth/public-api';
-import { CatalogProduct, CatalogProductStatus } from '../../models/catalog-product.model';
+import { CatalogProduct, CatalogProductStatus } from '../../../../domains/catalog/public-api';
 import { CatalogProductsStore } from '../../state/catalog-product/catalog-product.store';
 
 /**

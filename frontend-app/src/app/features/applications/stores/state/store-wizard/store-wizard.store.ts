@@ -5,7 +5,7 @@ import { EMPTY, forkJoin, from, of, pipe, Observable, throwError } from 'rxjs';
 import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/public-api';
 import { COMPANY_REPOSITORY } from '../../../empresas/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   CreateStoreProductDraft,

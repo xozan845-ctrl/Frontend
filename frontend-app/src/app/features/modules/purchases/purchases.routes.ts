@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import {
   CATALOG_PRODUCT_REPOSITORY,
   CatalogProductService,
-} from '../../applications/products/public-api';
-import { CompanyProductsStore } from '../../applications/empresas/public-api';
+} from '../../domains/catalog/public-api';
+import { CompanyProductsStore } from '../../domains/company-catalog/public-api';
 import { PurchasesStore } from '../../domains/purchases/public-api';
 
 /**

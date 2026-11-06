@@ -159,6 +159,18 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
+  catalog: {
+    kind: 'domain',
+    layers: ['adapters', 'models', 'repositories', 'services'],
+    publicApi: true,
+    publicUi: false,
+  },
+  'company-catalog': {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   billing: {
     kind: 'application',
     layers: ['components', 'constants', 'models', 'pages'],
