@@ -52,6 +52,17 @@ const GROUPS: WorkspaceModuleGroup[] = [
         permission: 'store:read',
         status: 'ready',
       },
+      {
+        id: 'store.inventory',
+        label: 'Inventario',
+        icon: 'fa-solid fa-warehouse',
+        link: '',
+        testId: 'vendor-nav-inventario',
+        workspace: 'store',
+        section: 'footer',
+        permission: 'store:manage-products',
+        status: 'soon',
+      },
     ],
   },
 ];
@@ -127,5 +138,14 @@ describe('WorkspaceSidebarComponent', () => {
     const fixture = await setup();
 
     expect(fixture.nativeElement.querySelector('aside')?.classList.contains('w-64')).toBe(true);
+  });
+
+  it('debe mostrar los módulos soon como no interactivos', async () => {
+    const fixture = await setup();
+    const soon = fixture.nativeElement.querySelector('[data-testid="vendor-nav-inventario"]');
+
+    expect(soon.tagName).toBe('SPAN');
+    expect(soon.getAttribute('aria-disabled')).toBe('true');
+    expect(soon.textContent).toContain('Pronto');
   });
 });

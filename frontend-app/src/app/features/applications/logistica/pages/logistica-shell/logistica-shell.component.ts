@@ -1,17 +1,24 @@
-import { Component, computed, HostListener, inject, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { AuthStore } from '../../../auth/public-api';
-import { LogisticaSidebarComponent } from '../../components/logistica-sidebar/logistica-sidebar.component';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  AuthStore,
+  canEnterWorkspace,
+  hasPermission,
+  type Permission,
+  type Workspace,
+} from '../../../auth/public-api';
+import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
+import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
 
 /**
- * Shell del módulo de logística (ADR-25): sidebar del diseño + `<router-outlet>`.
- * Mantiene el estado del drawer móvil (`R-UX-2`) y se cierra con Escape
- * (`R-AC-3`) además del backdrop y de elegir un ítem de navegación.
+ * Shell del módulo de logística (ADR-25). Comparte el chrome con el resto de
+ * workspaces y resuelve la navegación del registro según el contexto de la URL
+ * (`/logistica`, `/empresa/logistica` o `/vendedor/logistica`).
  */
 @Component({
   selector: 'app-logistica-shell',
   standalone: true,
-  imports: [RouterOutlet, LogisticaSidebarComponent],
+  imports: [WorkspaceShellComponent],
   templateUrl: './logistica-shell.component.html',
 })
 export default class LogisticaShellComponent {
@@ -31,8 +38,17 @@ export default class LogisticaShellComponent {
     return 'Logística';
   });
 
-  @HostListener('document:keydown.escape')
-  closeSidebar(): void {
-    this.isSidebarOpen.set(false);
-  }
+  readonly navGroups = workspaceModuleGroups('logistics', (module) => {
+    const user = this.authStore.user();
+    return (
+      canEnterWorkspace(user, module.workspace as Workspace) &&
+      (!module.permission || hasPermission(user, module.permission as Permission))
+    );
+  }).map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      ...item,
+      link: `${this.basePath()}/${item.path ?? ''}`.replace(/\/+$/, ''),
+    })),
+  }));
 }

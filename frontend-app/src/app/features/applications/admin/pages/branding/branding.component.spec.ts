@@ -124,7 +124,9 @@ describe('AdminBrandingComponent', () => {
   });
 
   it('protege la personalización global con adminGuard', () => {
-    const route = ADMIN_ROUTES.find((item) => item.path === 'personalizacion');
+    const route = ADMIN_ROUTES.flatMap((item) => item.children ?? []).find(
+      (item) => item.path === 'personalizacion',
+    );
 
     expect(route).toBeDefined();
     expect(route?.canActivate).toContain(adminGuard);

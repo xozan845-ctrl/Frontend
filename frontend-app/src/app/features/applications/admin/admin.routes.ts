@@ -23,30 +23,41 @@ import {
  */
 export const ADMIN_ROUTES: Routes = [
   {
-    path: 'inventario',
+    path: '',
     canActivate: [adminGuard],
-    loadComponent: () => import('./pages/inventory/inventory.component'),
-    providers: [InventoryStore, { provide: INVENTORY_REPOSITORY, useClass: InventoryService }],
-  },
-  {
-    path: 'pedidos',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/orders/orders.component'),
-    providers: [AdminOrdersStore, { provide: ADMIN_ORDER_REPOSITORY, useClass: AdminOrderService }],
-  },
-  {
-    path: 'almacenamiento',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/storage/storage.component'),
-    providers: [StorageStore, { provide: STORAGE_REPOSITORY, useClass: StorageService }],
-  },
-  {
-    path: 'personalizacion',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/branding/branding.component'),
-    providers: [
-      ...MEDIA_BACKGROUND_PROVIDERS,
-      { provide: MEDIA_STORAGE_REPOSITORY, useClass: MediaStorageService },
+    loadComponent: () => import('./pages/admin-shell/admin-shell.component'),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'inventario' },
+      {
+        path: 'inventario',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/inventory/inventory.component'),
+        providers: [InventoryStore, { provide: INVENTORY_REPOSITORY, useClass: InventoryService }],
+      },
+      {
+        path: 'pedidos',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/orders/orders.component'),
+        providers: [
+          AdminOrdersStore,
+          { provide: ADMIN_ORDER_REPOSITORY, useClass: AdminOrderService },
+        ],
+      },
+      {
+        path: 'almacenamiento',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/storage/storage.component'),
+        providers: [StorageStore, { provide: STORAGE_REPOSITORY, useClass: StorageService }],
+      },
+      {
+        path: 'personalizacion',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/branding/branding.component'),
+        providers: [
+          ...MEDIA_BACKGROUND_PROVIDERS,
+          { provide: MEDIA_STORAGE_REPOSITORY, useClass: MediaStorageService },
+        ],
+      },
     ],
   },
 ];
