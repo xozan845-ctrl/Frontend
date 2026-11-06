@@ -23,7 +23,6 @@ const SECTION_LABELS: Readonly<
   },
   store: {
     operacion: 'Tienda',
-    billing: 'Facturación',
     footer: '',
   },
   platform: {
@@ -390,7 +389,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     id: 'store.billing',
     label: 'Facturación',
     icon: 'fa-solid fa-file-invoice-dollar',
-    link: '/app/facturacion/nueva',
+    link: '/app/tienda/facturacion/nueva',
     testId: 'vendor-nav-facturacion',
     workspace: 'store',
     section: 'operacion',
@@ -665,75 +664,6 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     permission: 'logistics:read',
     status: 'ready',
   },
-
-  // ── Facturación (submódulo del workspace de tienda) ────────────────────
-  {
-    id: 'billing.new',
-    label: 'Nueva factura',
-    icon: 'fa-solid fa-file-invoice-dollar',
-    link: '/app/facturacion/nueva',
-    testId: 'billing-nav-nueva',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:manage-billing',
-    status: 'ready',
-    exact: true,
-  },
-  {
-    id: 'billing.invoices',
-    label: 'Facturas',
-    icon: 'fa-solid fa-file-invoice',
-    link: '/app/facturacion/facturas',
-    testId: 'billing-nav-facturas',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:manage-billing',
-    status: 'ready',
-  },
-  {
-    id: 'billing.quotes',
-    label: 'Cotizaciones',
-    icon: 'fa-solid fa-file-lines',
-    link: '',
-    testId: 'billing-nav-soon-cotizaciones',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:manage-billing',
-    status: 'soon',
-  },
-  {
-    id: 'billing.clients',
-    label: 'Clientes',
-    icon: 'fa-solid fa-user-group',
-    link: '',
-    testId: 'billing-nav-soon-clientes',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:manage-billing',
-    status: 'soon',
-  },
-  {
-    id: 'billing.reports',
-    label: 'Reportes',
-    icon: 'fa-solid fa-chart-line',
-    link: '',
-    testId: 'billing-nav-soon-reportes',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:manage-billing',
-    status: 'soon',
-  },
-  {
-    id: 'billing.back',
-    label: 'Panel del vendedor',
-    icon: 'fa-solid fa-store',
-    link: '/app/tienda/inicio',
-    testId: 'billing-nav-vendedor',
-    workspace: 'store',
-    section: 'billing',
-    permission: 'store:read',
-    status: 'ready',
-  },
 ];
 
 /** Busca un módulo por id. */
@@ -745,15 +675,12 @@ export function workspaceModuleById(id: string): WorkspaceModule | undefined {
 export function workspaceModuleGroups(
   workspace: WorkspaceScope,
   canView: (module: WorkspaceModule) => boolean,
-  sections: readonly WorkspaceModuleSection[] = SECTION_ORDER,
 ): WorkspaceModuleGroup[] {
-  return sections
-    .map((section) => ({
-      section,
-      label: SECTION_LABELS[workspace]?.[section] ?? '',
-      items: WORKSPACE_MODULES.filter(
-        (module) => module.workspace === workspace && module.section === section && canView(module),
-      ),
-    }))
-    .filter((group) => group.items.length > 0);
+  return SECTION_ORDER.map((section) => ({
+    section,
+    label: SECTION_LABELS[workspace]?.[section] ?? '',
+    items: WORKSPACE_MODULES.filter(
+      (module) => module.workspace === workspace && module.section === section && canView(module),
+    ),
+  })).filter((group) => group.items.length > 0);
 }

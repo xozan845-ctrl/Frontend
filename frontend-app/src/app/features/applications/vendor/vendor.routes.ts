@@ -102,6 +102,12 @@ export const VENDOR_ROUTES: Routes = [
       },
       ...commercialScopeRoutes('store'),
       {
+        path: 'facturacion',
+        canActivate: [moduleGuard('store.billing')],
+        loadChildren: () =>
+          import('../billing/billing.routes').then((module) => module.BILLING_PAGE_ROUTES),
+      },
+      {
         path: 'tienda',
         canActivate: [moduleGuard('store.my-store')],
         loadComponent: () => import('./pages/store/store.component'),

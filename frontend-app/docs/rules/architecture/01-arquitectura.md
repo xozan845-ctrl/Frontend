@@ -52,13 +52,18 @@ src/app/
 El backoffice tiene una entrada canónica `/app` que resuelve el contexto por la
 sesión mediante `workspaceLanding`:
 
-| Contexto    | Ruta               | Roles                               |
-| ----------- | ------------------ | ----------------------------------- |
-| Empresa     | `/app/empresa`     | `empresario`                        |
-| Tienda      | `/app/tienda`      | `vendedor`                          |
-| Plataforma  | `/app/admin`       | `admin`, `super_admin`              |
-| Logística   | `/app/logistica`   | empresa, tienda o empresa logística |
-| Facturación | `/app/facturacion` | tienda con `store:manage-billing`   |
+| Contexto    | Ruta                      | Roles                               |
+| ----------- | ------------------------- | ----------------------------------- |
+| Empresa     | `/app/empresa`            | `empresario`                        |
+| Tienda      | `/app/tienda`             | `vendedor`                          |
+| Plataforma  | `/app/admin`              | `admin`, `super_admin`              |
+| Logística   | `/app/logistica`          | empresa, tienda o empresa logística |
+| Facturación | `/app/tienda/facturacion` | tienda con `store:manage-billing`   |
+
+Facturación es un submódulo de tienda sin shell propio: comparte el sidebar del
+workspace y el guard `store:manage-billing`. Las rutas antiguas (`/empresa`,
+`/vendedor`, `/admin`, `/logistica`, `/facturacion`) redirigen a `/app` con un
+componente de compatibilidad; `/ia` sigue siendo una herramienta independiente.
 
 Todos los contextos comparten `WorkspaceShellComponent` y el registro
 `WORKSPACE_MODULES`; el sidebar y los guards filtran por workspace + permiso.

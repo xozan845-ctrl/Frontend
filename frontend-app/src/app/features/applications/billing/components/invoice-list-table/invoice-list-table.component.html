@@ -20,7 +20,7 @@
     </div>
     @if (showViewAll()) {
       <a
-        routerLink="/facturacion/facturas"
+        routerLink="/app/tienda/facturacion/facturas"
         class="text-xs font-black tracking-widest text-accent-600 uppercase transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
         data-testid="billing-view-all-invoices"
       >
@@ -86,7 +86,7 @@
             >
               <td class="py-3 pr-3 font-mono text-xs font-bold">
                 <a
-                  [routerLink]="['/facturacion/facturas', invoice.id]"
+                  [routerLink]="['/app/tienda/facturacion/facturas', invoice.id]"
                   class="text-slate-900 transition-colors hover:text-accent-600 dark:text-white dark:hover:text-accent-400"
                   [attr.data-testid]="'billing-invoice-link-' + invoice.id"
                 >

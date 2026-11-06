@@ -6,7 +6,7 @@ const login = async (page: Page) => {
   await page.locator('#email').fill('empresario@tienda.test');
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();
-  await page.waitForURL((url) => url.pathname === '/empresa/productos', { timeout: 30_000 });
+  await page.waitForURL((url) => url.pathname === '/app/empresa/productos', { timeout: 30_000 });
 };
 
 const test = base.extend<{ apiMock: void; consoleIssues: string[] }>({

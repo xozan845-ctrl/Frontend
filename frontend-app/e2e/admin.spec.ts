@@ -44,7 +44,7 @@ const test = base.extend<{ consoleIssues: string[]; apiMock: void }>({
 // R-E-27: el admin consulta el inventario de bodega (`GET /admin/inventario`,
 // ADR-33) y ve sus totales.
 test('R-E-27: el admin consulta el inventario de bodega', async ({ page }) => {
-  await login(page, '/admin/inventario');
+  await login(page, '/app/admin/inventario');
 
   await expect(page.getByTestId('admin-inventory-page')).toBeVisible();
   await expect(page.locator('[data-testid="inventory-row"]')).toHaveCount(2);
@@ -57,7 +57,7 @@ test('R-E-27: el admin consulta el inventario de bodega', async ({ page }) => {
 // R-E-29: el admin consulta las órdenes globales, su detalle y avanza el
 // estado logístico (`GET /orders/admin/todas`, `PATCH /orders/:id/estado`).
 test('R-E-29: el admin avanza el estado de una orden', async ({ page }) => {
-  await login(page, '/admin/pedidos');
+  await login(page, '/app/admin/pedidos');
 
   await expect(page.getByTestId('admin-orders-page')).toBeVisible();
   await expect(page.locator('[data-testid="admin-order-row"]')).toHaveCount(1);
@@ -80,13 +80,13 @@ test('R-E-30: el admin no puede entrar a logística global', async ({ page }) =>
   await page.locator('#email').fill('admin@tienda.test');
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();
-  await expect(page).toHaveURL(/\/admin\/inventario$/);
+  await expect(page).toHaveURL(/\/app\/admin\/inventario$/);
 });
 
 // R-E-32: el admin consulta el almacenamiento por empresa
 // (`GET /admin/storage/tenants`), ajusta la cuota (`PATCH`) y reactiva un tenant.
 test('R-E-32: el admin administra la cuota de almacenamiento', async ({ page }) => {
-  await login(page, '/admin/almacenamiento');
+  await login(page, '/app/admin/almacenamiento');
 
   await expect(page.getByTestId('admin-storage-page')).toBeVisible();
   await expect(page.locator('[data-testid="storage-row"]')).toHaveCount(2);

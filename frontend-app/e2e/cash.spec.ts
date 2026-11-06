@@ -6,7 +6,7 @@ const login = async (page: Page) => {
   await page.locator('#email').fill('empresario@tienda.test');
   await page.locator('#password').fill('secreto1');
   await page.getByRole('button', { name: 'Ingresar' }).click();
-  await page.waitForURL((url) => url.pathname === '/empresa/caja', { timeout: 30_000 });
+  await page.waitForURL((url) => url.pathname === '/app/empresa/caja', { timeout: 30_000 });
 };
 
 // R-E-9: la pantalla financiera no debe emitir errores ni warnings de consola.
