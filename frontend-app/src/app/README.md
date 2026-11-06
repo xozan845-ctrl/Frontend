@@ -23,6 +23,25 @@ standalone, lazy por feature y zoneless.
 su API pública (`public-api.ts` / `public-ui.ts`). Ver
 [`../docs/rules/architecture/01-arquitectura.md`](../../docs/rules/architecture/01-arquitectura.md).
 
+## Workspace unificado
+
+El backoffice tiene una entrada canónica `/app` que resuelve el contexto por la
+sesión (`workspaceLanding`):
+
+- `/app/empresa` — workspace de empresa (`empresario`).
+- `/app/tienda` — workspace de tienda (`vendedor`).
+- `/app/admin` — plataforma (`admin`/`super_admin`).
+- `/app/logistica` — logística (empresa, tienda o empresa logística).
+- `/app/facturacion` — submódulo de facturación de tienda.
+
+Todos comparten `WorkspaceShellComponent` y el registro `WORKSPACE_MODULES`;
+el sidebar y los guards filtran por `workspace` + `permission`, no por rutas
+duplicadas. Los módulos comerciales compartidos (clientes, bancos, cuentas por
+pagar, códigos de barras, créditos y reportes) se montan desde
+`features/applications/workspace/constants/commercial.routes.ts` con providers
+de scope company/store. Las rutas antiguas (`/empresa`, `/vendedor`, `/admin`,
+`/logistica`, `/facturacion`) se mantienen como compatibilidad.
+
 ## Sistema visual Glass
 
 `src/styles.css` centraliza el lenguaje visual global:
