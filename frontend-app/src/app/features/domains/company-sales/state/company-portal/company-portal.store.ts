@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import type { OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
 import type { CompanySalesSummary } from '../../models/company-sales.model';
 import { COMPANY_PORTAL_REPOSITORY } from '../../repositories/company-portal.repository';
 import type { CompanyPortalState } from './company-portal.state';

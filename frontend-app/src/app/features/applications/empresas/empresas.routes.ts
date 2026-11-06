@@ -2,9 +2,6 @@ import { Route, Routes } from '@angular/router';
 import { moduleGuard } from '../auth/public-api';
 import { commercialScopeRoutes } from '../workspace/constants/commercial.routes';
 import { companyGuard } from './guards/company/company.guard';
-import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
-import { CompanyPortalService } from './services/company-portal/company-portal.service';
-import { CompanyPortalStore } from './state/company-portal/company-portal.store';
 
 const companySoonRoute = (
   path: string,
@@ -117,11 +114,8 @@ export const COMPANY_WORKSPACE_ROUTE: Route = {
     {
       path: 'tiendas',
       canActivate: [moduleGuard('company.stores')],
-      loadComponent: () => import('./pages/company-stores/company-stores.component'),
-      providers: [
-        CompanyPortalStore,
-        { provide: COMPANY_PORTAL_REPOSITORY, useClass: CompanyPortalService },
-      ],
+      loadChildren: () =>
+        import('./company-stores.routes').then((module) => module.COMPANY_STORES_ROUTES),
     },
     {
       path: 'vendedores',

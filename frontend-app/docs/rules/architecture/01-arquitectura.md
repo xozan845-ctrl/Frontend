@@ -78,7 +78,8 @@ de scope company/store. El feature `workspace` declara el contrato
 `constants`/`guards` y las rutas canónicas; no conserva rutas antiguas.
 El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
 `domains/company-catalog`; los módulos de catálogo, compras y ventas los
-consumen por su API pública.
+consumen por su API pública. Las ventas y el portal de tiendas de empresa viven
+en `domains/company-sales`.
 
 ## Notas
 

@@ -5,7 +5,7 @@ import { NotificationService } from '../../../../../core/services/notification/n
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { BANKS_SCOPE_CONFIG } from '../../../../../shared/banks/constants/banks-config.tokens';
 import { AuthStore } from '../../../../domains/session/public-api';
-import { CompanySalesStore } from '../../../../applications/empresas/public-api';
+import { CompanySalesStore } from '../../../../domains/company-sales/public-api';
 import { BanksStore } from '../../../../domains/banks/public-api';
 import { FinanceStore, cashToday } from '../../../../domains/finance/public-api';
 import FinanceComponent from './finance.component';

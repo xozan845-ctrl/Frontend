@@ -520,3 +520,24 @@
   Actions y tag `v1.27.0`.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 20 — Dominio de ventas y portal de empresa (2026-11-06)
+
+- **Contexto:** `applications/empresas` proveía ventas y portal a
+  `modules/sales`, `modules/finance` y `modules/reports`, y dependía del
+  contrato de órdenes de `applications/cart`.
+- **Cambio:** el contrato de órdenes se movió a `domains/orders`; se creó
+  `domains/company-sales` con ventas, portal, pedidos, adaptadores, puertos,
+  servicios y stores. El portal se carga en una ruta lazy propia.
+- **Resultado:**
+  - ✅ `modules/sales`, `modules/finance` y `modules/reports` consumen el
+    dominio de ventas.
+  - ✅ El bundle inicial vuelve a quedar dentro del presupuesto de 560 kB.
+  - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
+    lint:css, build y 60/60 e2e en verde.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT`, runners de GitHub
+  Actions y tag `v1.27.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).

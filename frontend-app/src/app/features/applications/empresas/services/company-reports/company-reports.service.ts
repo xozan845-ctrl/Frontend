@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import type { ReportEntry, ReportsDataSource } from '../../../../domains/reports/public-api';
 import { buildReportSnapshot } from '../../../../domains/reports/public-api';
-import { COMPANY_PORTAL_REPOSITORY } from '../../repositories/company-portal.repository';
+import { COMPANY_PORTAL_REPOSITORY } from '../../../../domains/company-sales/public-api';
 
 /** Fuente de reportes de empresa sobre `GET /orders/empresa`. */
 @Injectable()

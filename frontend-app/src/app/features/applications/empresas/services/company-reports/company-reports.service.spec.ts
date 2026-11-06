@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CompanyReportsSource } from './company-reports.service';
-import { COMPANY_PORTAL_REPOSITORY } from '../../repositories/company-portal.repository';
+import { COMPANY_PORTAL_REPOSITORY } from '../../../../domains/company-sales/public-api';
 import type { OrderResponse } from '../../../cart/public-api';
 
 const ORDER: OrderResponse = {

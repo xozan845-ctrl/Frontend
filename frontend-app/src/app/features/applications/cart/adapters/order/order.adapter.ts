@@ -1,4 +1,8 @@
-import { OrderItem, OrderResponse, OrderTimelineEvent } from '../../models/order.model';
+import type {
+  OrderItem,
+  OrderResponse,
+  OrderTimelineEvent,
+} from '../../../../domains/orders/public-api';
 import {
   BackendOrderDTO,
   BackendOrderItemDTO,

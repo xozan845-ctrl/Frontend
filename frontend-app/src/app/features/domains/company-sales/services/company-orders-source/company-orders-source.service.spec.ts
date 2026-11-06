@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { createCompanyOrdersSource } from './company-orders-source.service';
 import type { CompanyPortalRepository } from '../../repositories/company-portal.repository';
-import type { OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
 
 const ORDER: OrderResponse = {
   id: 'o-1',

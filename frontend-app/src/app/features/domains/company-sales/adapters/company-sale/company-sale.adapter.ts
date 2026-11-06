@@ -1,4 +1,4 @@
-import type { OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
 import { orderStatusLabel } from '../../../../../shared/orders/constants/order-status.constants';
 import {
   COMPANY_SALE_DEFAULT_PROVIDER,
@@ -8,7 +8,7 @@ import {
   COMPANY_SALE_RECURRING_DAYS,
   COMPANY_SALE_RECURRING_ORDERS,
 } from '../../constants/company-sales.constants';
-import { clientFallbackName, type Client } from '../../../../domains/clients/public-api';
+import { clientFallbackName, type Client } from '../../../clients/public-api';
 import type { BuildCompanySaleRowsInput } from '../../models/company-sale.types';
 import type {
   CompanyRecurringClient,

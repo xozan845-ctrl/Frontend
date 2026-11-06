@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { COMPANY_INVITATION_REPOSITORY } from './repositories/company-invitation.repository';
-import { COMPANY_PORTAL_REPOSITORY } from './repositories/company-portal.repository';
+import { COMPANY_PORTAL_REPOSITORY } from '../../domains/company-sales/public-api';
 import { CompanyInvitationService } from './services/company-invitation/company-invitation.service';
-import { CompanyPortalService } from './services/company-portal/company-portal.service';
+import { CompanyPortalService } from '../../domains/company-sales/public-api';
 import { CompanyInvitationsStore } from './state/company-invitations/company-invitations.store';
-import { CompanyPortalStore } from './state/company-portal/company-portal.store';
+import { CompanyPortalStore } from '../../domains/company-sales/public-api';
 import { SellerAvatarStore } from './state/seller-avatar/seller-avatar.store';
 import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';
 

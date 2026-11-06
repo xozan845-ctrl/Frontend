@@ -4,7 +4,8 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { toUserMessage } from '../../../../../core/models/api-error';
-import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../../models/order.model';
+import type { CreateOrderPayload } from '../../models/order.model';
+import type { OrderResponse, OrderTimelineEvent } from '../../../../domains/orders/public-api';
 import { OrderRepository } from '../../repositories/order.repository';
 import {
   adaptOrderListFromBackend,

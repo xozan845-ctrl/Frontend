@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { OrderService } from './order.service';
-import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../../models/order.model';
+import type { CreateOrderPayload } from '../../models/order.model';
+import type { OrderResponse, OrderTimelineEvent } from '../../../../domains/orders/public-api';
 import { environment } from '../../../../../../environments/environment';
 
 const payload: CreateOrderPayload = {

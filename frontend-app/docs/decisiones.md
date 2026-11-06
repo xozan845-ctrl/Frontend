@@ -2004,3 +2004,28 @@ contexto y consecuencias.
 - **Consecuencias**: el catálogo deja de depender de aplicaciones y queda
   reutilizable por empresa, tienda y storefront. Las rutas y la UI no cambian
   para el usuario.
+
+## ADR-77: Dominio de ventas y portal de empresa
+
+- **Fecha**: 2026-11-06
+- **Estado**: Aceptado
+- **Contexto**: `applications/empresas` concentraba las ventas de empresa y el
+  portal de tiendas/pedidos, que consumían `modules/sales`, `modules/finance`,
+  `modules/reports` y las páginas de empresa. También dependía del contrato de
+  órdenes de `applications/cart`.
+- **Decisión**:
+  - El contrato de órdenes (`OrderResponse`, `OrderItem`, `OrderTimelineEvent`,
+    `orderStatusLabel`) se mueve a `features/domains/orders`; `cart` lo reexporta
+    para sus consumidores.
+  - Se crea `features/domains/company-sales` con modelos, adaptadores, puerto
+    `COMPANY_PORTAL_REPOSITORY`, servicio HTTP, fuente de pedidos y stores de
+    ventas (`CompanySalesStore`) y portal (`CompanyPortalStore`).
+  - `applications/empresas` conserva empresa, invitaciones, reportes, logística
+    y la composición visual del workspace.
+  - El portal de tiendas se carga con `company-stores.routes.ts` para que sus
+    providers no entren en el bundle inicial.
+  - `modules/sales`, `modules/finance` y `modules/reports` consumen el dominio
+    por su API pública.
+- **Consecuencias**: ventas y portal dejan de depender de la aplicación de
+  empresa; el contrato de órdenes queda compartido entre storefront y
+  backoffice. No cambian rutas ni comportamiento para el usuario.

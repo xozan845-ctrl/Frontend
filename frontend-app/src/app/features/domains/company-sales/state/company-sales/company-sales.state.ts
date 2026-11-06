@@ -1,10 +1,10 @@
-import type { CatalogProduct } from '../../../../domains/catalog/public-api';
+import type { CatalogProduct } from '../../../catalog/public-api';
 import type {
   CompanySalePaymentFilter,
   CompanySalePeriod,
   CompanySaleRecord,
 } from '../../models/company-sale.model';
-import type { ClientRecord } from '../../../../domains/clients/public-api';
+import type { ClientRecord } from '../../../clients/public-api';
 import type { CompanySalesAccount } from '../../models/company-sales.model';
 import type { CompanyStore } from '../../models/company-store.model';
 

@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateOrderPayload, OrderResponse, OrderTimelineEvent } from '../models/order.model';
+import type { CreateOrderPayload } from '../models/order.model';
+import type { OrderResponse, OrderTimelineEvent } from '../../../domains/orders/public-api';
 
 export interface OrderRepository {
   /** Crea una orden desde el carrito (`POST /orders`). */

@@ -6,7 +6,7 @@ import {
   CompanyPortalRepository,
 } from '../../repositories/company-portal.repository';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import type { OrderResponse } from '../../../cart/public-api';
+import type { OrderResponse } from '../../../orders/public-api';
 import type { CompanySalesAccount } from '../../models/company-sales.model';
 import type { CompanyStore } from '../../models/company-store.model';
 

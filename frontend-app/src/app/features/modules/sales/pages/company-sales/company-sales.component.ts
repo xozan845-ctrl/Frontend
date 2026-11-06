@@ -16,7 +16,7 @@ import {
   type CompanySalePaymentFilter,
   type CompanySalePeriod,
   type CreateCompanySalePayload,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-sales/public-api';
 import { CompanyServicesStore } from '../../../../domains/company-catalog/public-api';
 
 const TAB_CLASSES = {
