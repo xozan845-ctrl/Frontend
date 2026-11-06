@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { workspaceLandingGuard } from './guards/workspace-landing.guard';
+import { workspaceLandingGuard } from './guards/workspace-landing/workspace-landing.guard';
 
 /**
  * Entrada canónica del backoffice: `/app` resuelve el contexto por rol y
