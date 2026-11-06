@@ -4,17 +4,32 @@
 > estado **presente** de `frontend-ecomerce`. El histórico vive en
 > [`AUDIT-HISTORY.md`](./AUDIT-HISTORY.md).
 
-- **Última auditoría:** 2026-11-05 — **cierre de la migración Glass**
-  (`R-UX-7`/`R-UX-8`) sobre el snapshot vigente de hosting en Firebase. Backlog
-  de adopción en **0** y **37 raíces** de presentación adoptadas.
+- **Última auditoría:** 2026-11-06 — **cierre del workspace unificado**
+  (`R-AR-12`/`R-AR-16`): shell y registro compartidos, rutas comerciales
+  company/store y entrada canónica `/app` por rol.
+- **Versión de trabajo:** `1.27.0` (pendiente de tag/release cuando CI tenga
+  runners disponibles).
 - **Estado global:** 🟢 **CUMPLE** — `npm test -- --watch=false --coverage=false`
-  con **327 archivos / 1.785 tests**, typecheck, lint, formato, gobernanza
-  **40/40 pruebas de suite** y build de producción verdes. El motor verifica **49/255**
-  IDs de regla con check real; R-C-8, R-CP-1, R-CX-6 y R-CD-9 tienen evidencia
-  ejecutable en este snapshot. Firebase Hosting es el destino actual y su
+  con **357 archivos / 1.968 tests**, typecheck, lint, formato, build de
+  producción y E2E en verde. El motor verifica **51/257** IDs de regla con check
+  real en **24 suites**. Firebase Hosting es el destino actual y su
   configuración pública está versionada en `firebase.json` y `.firebaserc`.
 
 ## Evidencia ejecutada (2026-10-29)
+
+### Workspace unificado (2026-11-06)
+
+- `/app` resuelve el contexto por rol y monta empresa, tienda, plataforma,
+  logística y facturación con `WorkspaceShellComponent` y
+  `WORKSPACE_MODULES`.
+- Los módulos comerciales compartidos usan `commercialScopeRoutes(company|store)`
+  y los providers de scope; se eliminaron los sidebars de logística/facturación
+  y los árboles de rutas duplicados.
+- Rutas antiguas (`/empresa`, `/vendedor`, `/admin`, `/logistica`,
+  `/facturacion`) se conservan como compatibilidad.
+- Evidencia: **357 archivos / 1.968 tests**, 24 suites de reglas (51/257 IDs),
+  typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
+  `1.27.0`.
 
 | Verificación        | Comando                                      | Resultado                                                                            |
 | ------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------ |
