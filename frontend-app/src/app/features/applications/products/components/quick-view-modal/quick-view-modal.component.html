@@ -99,7 +99,7 @@
                 #addBtn
                 (click)="onAddToCart(addBtn)"
                 [disabled]="isAdding()"
-                class="flex-1 flex items-center justify-center gap-2 bg-accent-600 hover:bg-accent-700 disabled:bg-accent-400 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                class="btn btn-primary btn-lg flex-1 gap-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 @if (!isAdding()) {
                   <i class="fa-solid fa-cart-plus"></i> Añadir al Carrito

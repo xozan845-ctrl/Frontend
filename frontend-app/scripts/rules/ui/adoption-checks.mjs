@@ -24,6 +24,13 @@ export const RAW_SURFACE =
 export const ADOPTED_SURFACE =
   /^(?:glass(?:-[a-z0-9-]+)?|card(?:-[a-z0-9-]+)?|btn(?:-[a-z0-9-]+)?|input|badge(?:-[a-z0-9-]+)?|icon-btn|alert(?:-[a-z0-9-]+)?)$/;
 
+/** Rellenos de acción primaria; deben venir de un primitivo de control. */
+export const RAW_CONTROL_FILL =
+  /^(?:bg-accent-(?:500|600)|bg-blue-(?:500|600)|bg-emerald-(?:500|600)|bg-red-(?:500|600))$/;
+
+/** Primitivos que declaran un control adoptado. */
+export const ADOPTED_CONTROL = /^(?:btn(?:-[a-z0-9-]+)?|icon-btn)$/;
+
 const isDivider = (classes) => baseTokens(classes).some((token) => /^(?:h|w)-px$/.test(token));
 
 export const hasRawSurface = (classes) =>
@@ -31,6 +38,12 @@ export const hasRawSurface = (classes) =>
 
 export const hasAdoptedSurface = (classes) =>
   isGlassUtilityClass(classes) || baseTokens(classes).some((token) => ADOPTED_SURFACE.test(token));
+
+export const hasRawControlFill = (classes) =>
+  baseTokens(classes).some((token) => RAW_CONTROL_FILL.test(token));
+
+export const hasAdoptedControl = (classes) =>
+  baseTokens(classes).some((token) => ADOPTED_CONTROL.test(token));
 
 const isFileAdopted = (rel) =>
   GLASS_ADOPTION_ADOPTED.some((root) => rel === root || rel.startsWith(`${root}/`));
@@ -41,12 +54,15 @@ const areaOf = (rel) => {
   return parts.slice(0, 2).join('/');
 };
 
-const finding = (file, line, classes) => ({
+const finding = (file, line, classes, kind = 'surface') => ({
   rule: 'R-UX-8',
   file,
   line,
-  detail: `superficie cruda sin Glass/primitivo: ${classes.trim().slice(0, 100)}`,
-  key: `${file}|R-UX-8|surface:${classes.trim().slice(0, 100)}`,
+  detail:
+    kind === 'control'
+      ? `control primario crudo sin .btn/.icon-btn: ${classes.trim().slice(0, 100)}`
+      : `superficie cruda sin Glass/primitivo: ${classes.trim().slice(0, 100)}`,
+  key: `${file}|R-UX-8|${kind}:${classes.trim().slice(0, 100)}`,
 });
 
 const classListsFromMarkup = (source) => {
@@ -90,6 +106,51 @@ export const scanGlassSurfaceFile = (file) => {
   return { rel, violations };
 };
 
+/** Controles que declaran estado (tabs, chips, pasos) y no son CTAs. */
+const isStateControl = (tag) =>
+  /\brole="(?:tab|option|switch|radio|checkbox|menuitem)"/i.test(tag) ||
+  /\baria-(?:pressed|selected)=/i.test(tag);
+
+const classListsFromControlMarkup = (source) => {
+  const lists = [];
+  for (const tag of source.matchAll(/<(?:button|a)\b[^>]*>/gi)) {
+    if (isStateControl(tag[0])) continue;
+    for (const classes of classVariants(tag[0])) lists.push({ classes, index: tag.index });
+  }
+  return lists;
+};
+
+const classListsFromSharedControlTs = (source) => {
+  const lists = [];
+  for (const literal of source.matchAll(STRING_LITERAL)) {
+    const value = literal[2];
+    if (!hasRawControlFill(value)) continue;
+    // En componentes compartidos, una acción se reconoce por su hover/estado
+    // o por el texto blanco que acompaña al relleno.
+    if (!/\b(?:hover|focus|active):bg-/.test(value) && !/\btext-white\b/.test(value)) continue;
+    lists.push({ classes: value, index: literal.index });
+  }
+  return lists;
+};
+
+export const scanGlassControlFile = (file) => {
+  const rel = toRel(file);
+  const source = readText(file);
+  const lists = file.endsWith('.html')
+    ? classListsFromControlMarkup(source)
+    : rel.startsWith('shared/ui/')
+      ? classListsFromSharedControlTs(source)
+      : [];
+  const violations = [];
+
+  for (const { classes, index } of lists) {
+    if (!hasRawControlFill(classes) || hasAdoptedControl(classes)) continue;
+    violations.push({ rel, line: lineAt(source, index), classes });
+  }
+
+  return { rel, violations };
+};
+
 const isPresentationPath = (rel) =>
   rel.startsWith('layout/') || rel.startsWith('shared/ui/') || /\/(pages|components)\//.test(rel);
 
@@ -107,10 +168,18 @@ export function findGlassAdoptionViolations() {
 
   for (const file of sourceFiles()) {
     const { rel, violations } = scanGlassSurfaceFile(file);
+    const controls = scanGlassControlFile(file).violations;
     if (!isFileAdopted(rel)) continue;
 
     for (const violation of violations) {
-      const item = finding(violation.rel, violation.line, violation.classes);
+      const item = finding(violation.rel, violation.line, violation.classes, 'surface');
+      if (seen.has(item.key)) continue;
+      seen.add(item.key);
+      findings.push(item);
+    }
+
+    for (const violation of controls) {
+      const item = finding(violation.rel, violation.line, violation.classes, 'control');
       if (seen.has(item.key)) continue;
       seen.add(item.key);
       findings.push(item);
@@ -128,12 +197,14 @@ export function getGlassAdoptionBacklog() {
 
   for (const file of sourceFiles()) {
     const { rel, violations } = scanGlassSurfaceFile(file);
-    if (isFileAdopted(rel) || violations.length === 0) continue;
+    const controls = scanGlassControlFile(file).violations;
+    const all = [...violations, ...controls];
+    if (isFileAdopted(rel) || all.length === 0) continue;
 
     pendingFiles.add(rel);
-    pending += violations.length;
+    pending += all.length;
     const area = areaOf(rel);
-    byArea.set(area, (byArea.get(area) ?? 0) + violations.length);
+    byArea.set(area, (byArea.get(area) ?? 0) + all.length);
   }
 
   return {
