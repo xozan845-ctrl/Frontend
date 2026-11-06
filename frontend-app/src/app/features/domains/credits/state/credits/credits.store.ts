@@ -8,7 +8,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import { CREDITS_SCOPE_CONFIG } from '../../../../../shared/credits/constants/credits-config.tokens';
 import {
   computeCreditsSummary,

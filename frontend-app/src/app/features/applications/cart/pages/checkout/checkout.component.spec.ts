@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { AuthStore } from '../../../auth/state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { CartStore } from '../../state/cart/cart.store';
 import { ProductStore } from '../../../products/state/product/product.store';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';

@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthStore } from '../../state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 
 @Component({

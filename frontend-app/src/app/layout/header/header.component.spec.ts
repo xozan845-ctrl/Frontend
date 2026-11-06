@@ -5,10 +5,8 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { Header } from './header.component';
-import { AUTH_REPOSITORY } from '../../features/applications/auth/repositories/auth.repository';
+import { AUTH_REPOSITORY, AuthStore, type User } from '../../features/domains/session/public-api';
 import { PRODUCT_REPOSITORY } from '../../features/applications/products/repositories/product.repository';
-import { AuthStore } from '../../features/applications/auth/public-api';
-import type { User } from '../../features/applications/auth/public-api';
 import { CartStore, CartUiStore } from '../../features/applications/cart/public-api';
 
 const authRepoStub = {

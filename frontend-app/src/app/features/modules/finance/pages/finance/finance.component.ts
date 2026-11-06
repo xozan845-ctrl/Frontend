@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { StoreConfigService } from '../../../../../core/services/store-config/store-config.service';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { CompanySalesStore } from '../../../../applications/empresas/public-api';
 import {
   BanksStore,

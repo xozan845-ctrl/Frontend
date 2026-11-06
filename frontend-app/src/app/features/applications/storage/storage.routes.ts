@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
-import { STORAGE_REPOSITORY } from './repositories/storage.repository';
-import { StorageService } from './services/storage/storage.service';
-import { StorageStore } from './state/storage/storage.store';
+import {
+  STORAGE_REPOSITORY,
+  StorageService,
+  StorageStore,
+} from '../../domains/file-storage/public-api';
 
 /**
  * Almacenamiento del tenant (ADR-42). Se monta dentro del shell del vendedor,

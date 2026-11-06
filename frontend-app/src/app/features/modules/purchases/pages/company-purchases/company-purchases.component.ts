@@ -6,7 +6,7 @@ import {
   CompanyProductsStore,
   type CompanyCatalogFormValue,
 } from '../../../../applications/empresas/public-api';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 import {
   PurchasesStore,
   type CreateDirectPurchaseInput,

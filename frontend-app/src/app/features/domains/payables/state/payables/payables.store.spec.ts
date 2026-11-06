@@ -1,7 +1,7 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import { PAYABLES_SCOPE_CONFIG } from '../../../../../shared/payables/constants/payables-config.tokens';
 import type { PayablesScopeConfig } from '../../../../../shared/payables/models/payables-config.model';
 import { payablesStorageKey } from '../../public-api';

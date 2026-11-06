@@ -1952,3 +1952,30 @@ contexto y consecuencias.
   `environment.apiConfig.endpoints` (`companyServices`, `catalogCombos`,
   `catalogPromotions`, etc.) para ajustarlos sin tocar los stores. El backend
   debe mantener el aislamiento por empresa y la validación de códigos únicos.
+
+## ADR-75: Fronteras entre dominios y aplicaciones
+
+- **Fecha**: 2026-11-06
+- **Estado**: Aceptado
+- **Contexto**: la auditoría de `features/` detectó que los dominios compartidos
+  importaban `applications/auth` y `applications/storage`, y que el grafo de
+  features contenía ciclos. Las aplicaciones actuaban como proveedores de
+  dominio y la dirección `application → domain` se invertía.
+- **Decisión**:
+  - Se extrae la sesión y la autorización a `features/domains/session`:
+    modelos, `AUTH_REPOSITORY`, `AuthService`, adaptador y `AuthStore`.
+    `features/applications/auth` conserva páginas, guards, interceptores y
+    rutas.
+  - Se extrae el almacenamiento a `features/domains/file-storage`: modelos,
+    puerto, servicio, adaptador y `StorageStore`.
+    `features/applications/storage` conserva la página y la ruta.
+  - Los dominios consumen esas APIs públicas directamente; las aplicaciones
+    pueden seguir usando la fachada de su feature de aplicación.
+  - Se añaden `R-AR-20` (un dominio no importa una aplicación) y `R-AR-21`
+    (sin ciclos de runtime entre features, excluyendo `*.routes.ts`).
+  - El ciclo conocido del storefront (`cart` ↔ `products` ↔ `wishlist`) queda
+    registrado en el baseline y se resolverá al extraer el dominio de
+    storefront en la siguiente fase.
+- **Consecuencias**: los dominios dejan de depender de aplicaciones y el motor
+  de reglas impide nuevas inversiones o ciclos. Las rutas de login/registro y
+  la página de almacenamiento no cambian para el usuario.

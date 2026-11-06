@@ -8,7 +8,9 @@
  */
 export const baseline = {
   'architecture-types': [],
-  'architecture-layers': [],
+  // Deuda conocida: el storefront comparte stores de carrito, productos y
+  // wishlist. Se resolverá al extraer el dominio de storefront (fase 2).
+  'architecture-layers': ['cycle|applications/cart|applications/products|applications/wishlist'],
   'architecture-lifecycle': [],
   'architecture-config': [],
   'architecture-packaging': [],

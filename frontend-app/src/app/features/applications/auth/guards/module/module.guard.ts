@@ -5,8 +5,8 @@ import {
   hasPermission,
   workspaceLanding,
   type Permission,
-} from '../../models/authorization.model';
-import { AuthStore } from '../../state/auth/auth.store';
+} from '../../../../domains/session/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 
 /**
  * Guard de módulo: resuelve workspace y permiso desde el registro único.

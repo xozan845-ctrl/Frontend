@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { AuthStore } from '../../../auth/state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { CartStore } from '../../../cart/state/cart/cart.store';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';

@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
-import { AuthStore, isCompanyOwnerRole } from '../../features/applications/auth/public-api';
+import { AuthStore, isCompanyOwnerRole } from '../../features/domains/session/public-api';
 import { CartStore, CartUiStore } from '../../features/applications/cart/public-api';
 import { ProductStore } from '../../features/applications/products/public-api';
 import { WishlistStore } from '../../features/applications/wishlist/public-api';

@@ -5,11 +5,11 @@ import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import {
   StorageObject,
+  StorageStore,
   formatStorageBytes,
   storageBucketUsage,
   storageObjectStatusLabel,
-} from '../../models/storage.model';
-import { StorageStore } from '../../state/storage/storage.store';
+} from '../../../../domains/file-storage/public-api';
 
 /** Almacenamiento del tenant (ADR-42). */
 @Component({

@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 import {
   COMPANY_REPOSITORY,
   CompanyProductsStore,
