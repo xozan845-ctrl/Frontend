@@ -80,7 +80,8 @@ estilos de componentes.
   **el modal no se edita a mano**.
 - Para publicar una versión nueva: `npm run patch` (o `minor`/`major`) y
   desplegar. El prebuild actualiza versión y novedades automáticamente. En CI,
-  el workflow `deploy-firebase.yml` despliega solo cuando CI termina verde.
+  el workflow `deploy-firebase.yml` despliega en cada push a `main` después de
+  ejecutar los gates.
 - El hover/foco del aviso muestra las novedades y explica que los datos y la
   sesión siguen seguros y que hay que refrescar para aplicar los cambios
   visuales. El refresh activa la versión y recarga.

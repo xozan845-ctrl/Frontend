@@ -167,9 +167,10 @@ firebase hosting:channels:list
 
 ### 4.1 Despliegue automático (GitHub Actions)
 
-`.github/workflows/deploy-firebase.yml` despliega a producción cuando el
-workflow **CI** termina en verde sobre `main` (o manualmente desde **Actions →
-Deploy Firebase Hosting → Run workflow**).
+`.github/workflows/deploy-firebase.yml` despliega a producción en cada push a
+`main` (o manualmente desde **Actions → Deploy Firebase Hosting → Run
+workflow**). El propio workflow ejecuta typecheck, lint, reglas, tests y build
+antes de publicar, para no depender de la disponibilidad de otro workflow.
 
 Requisito único: configurar el secret `FIREBASE_SERVICE_ACCOUNT` con el JSON de
 una cuenta de servicio del proyecto `kb-coleccion-internacional-ni` que tenga
