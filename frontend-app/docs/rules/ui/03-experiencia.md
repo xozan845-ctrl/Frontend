@@ -104,6 +104,8 @@ Ratchet cerrado: **37 raíces adoptadas y backlog 0**.
 - La app incluye aviso PWA reutilizable (`app-pwa-notice`), manifiesto y
   service worker real, cumpliendo `R-UX-6`. El prompt de instalación se captura
   en `public/pwa-install-capture.js` antes de Angular y las actualizaciones se
-  anuncian con `SwUpdate` + `version.json`.
+  anuncian con `SwUpdate`. La versión y las novedades salen de
+  `public/version.json`, generado desde `package.json` y los commits; no se
+  edita el aviso a mano.
 - El sistema Glass se documenta también en
   [`src/app/README.md`](../../../src/app/README.md#sistema-visual-glass).

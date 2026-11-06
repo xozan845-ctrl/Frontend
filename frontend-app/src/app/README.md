@@ -73,8 +73,12 @@ estilos de componentes.
 - El descarte de instalación se guarda por versión
   (`ecom_pwa_dismissed_version`), no para siempre.
 - `AppUpdateService` escucha `SwUpdate.versionUpdates`; al recibir
-  `VERSION_READY` consulta `version.json` (generado desde `package.json` por
-  `scripts/commands/generate-version.mjs`) y muestra `v{version} · Refrescar`.
-- El hover/foco del aviso explica que los datos y la sesión siguen seguros y que
-  hay que refrescar para aplicar los cambios visuales. El refresh activa la
-  versión y recarga.
+  `VERSION_READY` consulta `version.json` y muestra `v{version} · Refrescar`.
+- `public/version.json` se genera en `prebuild`/`prestart` y está ignorado por
+  Git. Incluye la versión de `package.json` y los cambios `feat/fix/perf/refactor`
+  desde el último tag; **el modal no se edita a mano**.
+- Para publicar una versión nueva: `npm run patch` (o `minor`/`major`) y
+  desplegar. El prebuild actualiza versión y novedades automáticamente.
+- El hover/foco del aviso muestra las novedades y explica que los datos y la
+  sesión siguen seguros y que hay que refrescar para aplicar los cambios
+  visuales. El refresh activa la versión y recarga.

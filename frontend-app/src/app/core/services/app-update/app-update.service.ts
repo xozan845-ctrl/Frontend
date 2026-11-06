@@ -50,7 +50,7 @@ export class AppUpdateService {
     const version = await this.appVersion.load(true);
     if (this.readDismissed() === hash) return;
 
-    this.update.set({ version, hash });
+    this.update.set({ ...version, hash });
   }
 
   /** Comprueba si hay una versión nueva; silencioso si no hay red. */

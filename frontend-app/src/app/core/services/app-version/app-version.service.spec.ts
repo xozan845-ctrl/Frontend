@@ -16,16 +16,23 @@ describe('AppVersionService', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe cargar la versión desde version.json', async () => {
+  it('debe cargar la versión y las novedades desde version.json', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ version: '1.27.0' }),
+      json: () =>
+        Promise.resolve({
+          version: '1.27.0',
+          changes: ['Nuevo: aviso de actualización'],
+          totalChanges: 3,
+        }),
     }) as unknown as typeof fetch;
     const service = setup();
 
     await service.load(true);
 
     expect(service.version()).toBe('1.27.0');
+    expect(service.changes()).toEqual(['Nuevo: aviso de actualización']);
+    expect(service.totalChanges()).toBe(3);
   });
 
   it('debe conservar la versión compilada si version.json falla', async () => {

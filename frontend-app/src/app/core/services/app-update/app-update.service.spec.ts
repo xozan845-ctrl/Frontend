@@ -13,7 +13,11 @@ describe('AppUpdateService', () => {
     activateUpdate: vi.fn().mockResolvedValue(true),
   };
   const appVersion = {
-    load: vi.fn().mockResolvedValue('1.27.0'),
+    load: vi.fn().mockResolvedValue({
+      version: '1.27.0',
+      changes: ['Nuevo: aviso de actualización'],
+      totalChanges: 2,
+    }),
   };
 
   const setup = () => {
@@ -49,7 +53,12 @@ describe('AppUpdateService', () => {
     versions.next(ready('hash-127'));
 
     await vi.waitFor(() =>
-      expect(service.update()).toEqual({ version: '1.27.0', hash: 'hash-127' }),
+      expect(service.update()).toEqual({
+        version: '1.27.0',
+        hash: 'hash-127',
+        changes: ['Nuevo: aviso de actualización'],
+        totalChanges: 2,
+      }),
     );
   });
 
@@ -69,7 +78,12 @@ describe('AppUpdateService', () => {
 
     versions.next(ready('hash-128'));
     await vi.waitFor(() =>
-      expect(service.update()).toEqual({ version: '1.27.0', hash: 'hash-128' }),
+      expect(service.update()).toEqual({
+        version: '1.27.0',
+        hash: 'hash-128',
+        changes: ['Nuevo: aviso de actualización'],
+        totalChanges: 2,
+      }),
     );
   });
 
