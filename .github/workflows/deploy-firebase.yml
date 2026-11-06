@@ -1,0 +1,84 @@
+name: Deploy Firebase Hosting
+
+# Despliegue automático a producción cuando CI termina en verde sobre main.
+# También se puede lanzar manualmente desde Actions. El build incluye
+# `APP_VERSION=<package.version>+<run_number>` y las novedades de Git en
+# `version.json`; el aviso PWA las consume sin caché.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: firebase-hosting-production
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: frontend-app
+
+jobs:
+  deploy:
+    name: Deploy production
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout validated commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Compute build version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          echo "APP_VERSION=${BASE}+${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+
+      - name: Build production
+        run: npm run build
+
+      - name: Check Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "::error::Falta el secret FIREBASE_SERVICE_ACCOUNT (JSON de cuenta de servicio con permisos de Firebase Hosting)."
+            exit 1
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+
+      - name: Deploy Hosting
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+        run: >-
+          npx --yes firebase-tools@15.33.0 deploy
+          --only hosting
+          --project kb-coleccion-internacional-ni
+          --non-interactive
+
+      - name: Smoke Hosting
+        env:
+          FRONTEND_URL: https://kb-coleccion-internacional-ni.web.app
+        run: node scripts/commands/hosting-smoke.mjs

@@ -75,10 +75,12 @@ estilos de componentes.
 - `AppUpdateService` escucha `SwUpdate.versionUpdates`; al recibir
   `VERSION_READY` consulta `version.json` y muestra `v{version} · Refrescar`.
 - `public/version.json` se genera en `prebuild`/`prestart` y está ignorado por
-  Git. Incluye la versión de `package.json` y los cambios `feat/fix/perf/refactor`
-  desde el último tag; **el modal no se edita a mano**.
+  Git. Incluye la versión de `package.json` (o `APP_VERSION` en CI, p. ej.
+  `1.26.0+123`) y los cambios `feat/fix/perf/refactor` desde el último tag;
+  **el modal no se edita a mano**.
 - Para publicar una versión nueva: `npm run patch` (o `minor`/`major`) y
-  desplegar. El prebuild actualiza versión y novedades automáticamente.
+  desplegar. El prebuild actualiza versión y novedades automáticamente. En CI,
+  el workflow `deploy-firebase.yml` despliega solo cuando CI termina verde.
 - El hover/foco del aviso muestra las novedades y explica que los datos y la
   sesión siguen seguros y que hay que refrescar para aplicar los cambios
   visuales. El refresh activa la versión y recarga.

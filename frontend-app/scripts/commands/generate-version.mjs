@@ -20,7 +20,6 @@ const TYPE_LABELS = {
 };
 
 const readVersion = () => JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
-
 const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
 
 const lastTag = () => {
@@ -54,7 +53,8 @@ const formatChange = (subject) => {
 };
 
 const changes = recentSubjects().map(formatChange).filter(Boolean);
-const version = readVersion();
+const packageVersion = readVersion();
+const version = process.env.APP_VERSION?.trim() || packageVersion;
 const payload = {
   version,
   changes: changes.slice(0, MAX_CHANGES),
