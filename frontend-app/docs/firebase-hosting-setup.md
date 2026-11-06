@@ -179,6 +179,9 @@ el rol **Firebase Hosting Admin**:
 gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json
 ```
 
+Mientras el secret no exista, el workflow publica un aviso y omite el
+deploy/smoke sin marcar el job como fallido.
+
 El workflow:
 
 1. hace checkout del SHA que validó CI;
