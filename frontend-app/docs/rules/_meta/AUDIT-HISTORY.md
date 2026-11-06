@@ -449,3 +449,28 @@
   runners de GitHub Actions para el despliegue automático.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 17 — Rutas canónicas sin compatibilidad (2026-11-06)
+
+- **Contexto:** la auditoría 16 conservó redirects para las URLs antiguas del
+  backoffice. Se decidió eliminar toda compatibilidad y dejar un único árbol de
+  rutas.
+- **Cambio:** se eliminó `LegacyWorkspaceRedirectComponent` y los redirects de
+  `/empresa`, `/vendedor`, `/admin`, `/logistica` y `/facturacion`; facturación
+  quedó como submódulo de tienda en `/app/tienda/facturacion`. Se separaron
+  `COMPANY_INVITATION_ROUTES` y `COMPANY_WORKSPACE_ROUTE`, y `/app` monta solo
+  la ruta canónica de empresa.
+- **Resultado:**
+  - ✅ Solo existen rutas canónicas `/app/{empresa,tienda,admin,logistica}`.
+  - ✅ Las URLs antiguas responden 404; `/ia` sigue siendo una herramienta
+    independiente.
+  - ✅ Enlaces runtime, guards, specs, e2e y documentación usan `/app/...`.
+  - ✅ 356 archivos / 1.967 tests unitarios; 60/60 e2e; reglas, typecheck,
+    lint, lint:css y build en verde.
+  - ✅ Desplegado como `1.27.0+e6631b1` con smoke de Hosting en verde.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT`, runners de GitHub
+  Actions y tag `v1.27.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
