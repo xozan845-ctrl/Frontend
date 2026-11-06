@@ -84,7 +84,7 @@ export class PwaNoticeComponent {
   dismiss(): void {
     this.showBanner.set(false);
     try {
-      localStorage.setItem(DISMISSED_VERSION_KEY, this.version());
+      localStorage.setItem(DISMISSED_VERSION_KEY, this.baseVersion());
       // Limpia la clave antigua que ocultaba el banner para siempre.
       localStorage.removeItem('ecom_pwa_dismissed');
     } catch {
@@ -103,10 +103,15 @@ export class PwaNoticeComponent {
   private canShowInstall(): boolean {
     if (this.isStandalone()) return false;
     try {
-      return localStorage.getItem(DISMISSED_VERSION_KEY) !== this.version();
+      return localStorage.getItem(DISMISSED_VERSION_KEY) !== this.baseVersion();
     } catch {
       return true;
     }
+  }
+
+  /** La metadata de build (`+123`) no debe reactivar el banner de instalación. */
+  private baseVersion(): string {
+    return this.version().split('+')[0];
   }
 
   private isStandalone(): boolean {

@@ -165,6 +165,32 @@ firebase hosting:channels:list
 > Si el proyecto aún no tiene Hosting habilitado, entra una vez a **Firebase
 > Console → Hosting → Get started** (crea el sitio por defecto) y luego despliega.
 
+### 4.1 Despliegue automático (GitHub Actions)
+
+`.github/workflows/deploy-firebase.yml` despliega a producción cuando el
+workflow **CI** termina en verde sobre `main` (o manualmente desde **Actions →
+Deploy Firebase Hosting → Run workflow**).
+
+Requisito único: configurar el secret `FIREBASE_SERVICE_ACCOUNT` con el JSON de
+una cuenta de servicio del proyecto `kb-coleccion-internacional-ni` que tenga
+el rol **Firebase Hosting Admin**:
+
+```bash
+gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json
+```
+
+El workflow:
+
+1. hace checkout del SHA que validó CI;
+2. construye con `APP_VERSION=<package.version>+<run_number>` para que cada
+   deploy tenga una versión distinta;
+3. despliega `dist/frontend-app/browser` con Firebase CLI;
+4. ejecuta el smoke de Hosting.
+
+`version.json` se genera en el build con la versión y las novedades de Git; no
+hay que editar el aviso PWA ni ese archivo a mano. La versión semver se sube con
+`npm run patch|minor|major` cuando se prepara una release.
+
 ## 5. Límites del plan gratuito (Spark)
 
 | Recurso                     | Incluido                     |

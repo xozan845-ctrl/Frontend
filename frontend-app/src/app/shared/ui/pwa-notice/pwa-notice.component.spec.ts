@@ -142,7 +142,8 @@ describe('PwaNoticeComponent', () => {
     expect(fixture.componentInstance.showBanner()).toBe(false);
   });
 
-  it('debe ocultar y persistir el descarte manual por versión', async () => {
+  it('debe ocultar y persistir el descarte manual por versión base', async () => {
+    version.set('1.26.0+123');
     const fixture = await setup();
     window.dispatchEvent(makeInstallEvent());
 
@@ -151,6 +152,16 @@ describe('PwaNoticeComponent', () => {
     expect(fixture.componentInstance.showBanner()).toBe(false);
     expect(localStorage.getItem('ecom_pwa_dismissed_version')).toBe('1.26.0');
     expect(localStorage.getItem('ecom_pwa_dismissed')).toBeNull();
+  });
+
+  it('no debe reactivar la instalación por la metadata de build', async () => {
+    version.set('1.26.0+456');
+    localStorage.setItem('ecom_pwa_dismissed_version', '1.26.0');
+    const fixture = await setup();
+
+    window.dispatchEvent(makeInstallEvent());
+
+    expect(fixture.componentInstance.showBanner()).toBe(false);
   });
 
   it('debe ocultar el banner cuando la app ya está instalada', async () => {
