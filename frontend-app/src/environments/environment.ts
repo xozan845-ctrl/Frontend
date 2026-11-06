@@ -2,6 +2,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 
 export const environment = {
   production: false,
+  appVersion: '1.26.0',
   frontendUrl: 'http://localhost:4200',
   // Backend local (gateway de Core Engine) para desarrollo.
   apiUrl: 'http://localhost:8080/api/v1',

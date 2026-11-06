@@ -5,7 +5,7 @@ import { Header } from './layout/header/header.component';
 import { Footer } from './layout/footer/footer.component';
 import { CartDrawerComponent } from './features/applications/cart/pages/cart-drawer/cart-drawer.component';
 import { ToastComponent } from './shared/ui/notification/toast.component';
-import { PwaInstallBannerComponent } from './shared/ui/pwa-install/pwa-install-banner.component';
+import { PwaNoticeComponent } from './shared/ui/pwa-notice/pwa-notice.component';
 import { FloatingSupportComponent } from './shared/ui/floating-support/floating-support.component';
 
 @Component({
@@ -17,7 +17,7 @@ import { FloatingSupportComponent } from './shared/ui/floating-support/floating-
     Footer,
     CartDrawerComponent,
     ToastComponent,
-    PwaInstallBannerComponent,
+    PwaNoticeComponent,
     FloatingSupportComponent,
   ],
   templateUrl: './app.component.html',

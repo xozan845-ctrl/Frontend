@@ -11,6 +11,7 @@
           "/index.html",
           "/manifest.webmanifest",
           "/icon.svg",
+          "/pwa-install-capture.js",
           "/*.css",
           "/*.js"
         ]

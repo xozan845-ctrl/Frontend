@@ -63,3 +63,18 @@ estilos de componentes.
 - Los controles de acción usan `.btn-*` o `.icon-btn`; los rellenos crudos
   (`bg-accent-600`, `bg-blue-600`, etc.) también hacen fallar `R-UX-8`. Los
   tabs/chips con `role` o `aria-pressed` se validan como estado, no como CTA.
+
+## PWA y actualizaciones
+
+- `app/pwa-notice` es el aviso flotante reutilizable: instalación y
+  actualización comparten el mismo componente.
+- `public/pwa-install-capture.js` captura `beforeinstallprompt` antes de que
+  arranque Angular; evita perder el prompt si el navegador lo emite temprano.
+- El descarte de instalación se guarda por versión
+  (`ecom_pwa_dismissed_version`), no para siempre.
+- `AppUpdateService` escucha `SwUpdate.versionUpdates`; al recibir
+  `VERSION_READY` consulta `version.json` (generado desde `package.json` por
+  `scripts/commands/generate-version.mjs`) y muestra `v{version} · Refrescar`.
+- El hover/foco del aviso explica que los datos y la sesión siguen seguros y que
+  hay que refrescar para aplicar los cambios visuales. El refresh activa la
+  versión y recarga.
