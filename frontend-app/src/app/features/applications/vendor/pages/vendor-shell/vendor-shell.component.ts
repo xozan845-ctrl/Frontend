@@ -1,5 +1,4 @@
-import { Component, DestroyRef, HostListener, effect, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import {
   AuthStore,
   canEnterWorkspace,
@@ -9,19 +8,19 @@ import {
 } from '../../../auth/public-api';
 import { BrandingService } from '../../../../../core/services/branding/branding.service';
 import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
+import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 
 /**
- * Shell del panel del vendedor (ADR-20): sidebar del diseño + `<router-outlet>`.
- * Mantiene el estado del drawer móvil (`R-UX-2`) y se cierra con Escape
- * (`R-AC-3`) además del backdrop y de elegir un ítem de navegación.
+ * Shell del panel del vendedor (ADR-20): mantiene el estado del drawer móvil,
+ * branding de la tienda y la navegación filtrada por permisos. La estructura
+ * visual vive en `WorkspaceShellComponent`, compartida con el resto de workspaces.
  */
 @Component({
   selector: 'app-vendor-shell',
   standalone: true,
-  imports: [RouterOutlet, WorkspaceSidebarComponent],
+  imports: [WorkspaceShellComponent],
   templateUrl: './vendor-shell.component.html',
 })
 export default class VendorShellComponent {
@@ -50,9 +49,4 @@ export default class VendorShellComponent {
       (store?.logoObjectId ? storagePublicObjectUrl(store.logoObjectId) : null);
     this.branding.setLogo(logo);
   });
-
-  @HostListener('document:keydown.escape')
-  closeSidebar(): void {
-    this.isSidebarOpen.set(false);
-  }
 }
