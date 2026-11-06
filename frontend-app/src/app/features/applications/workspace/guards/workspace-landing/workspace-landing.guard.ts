@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthStore, workspaceLanding } from '../../auth/public-api';
+import { AuthStore, workspaceLanding } from '../../../auth/public-api';
 
 /** Redirige `/app` al contexto del usuario autenticado. */
 export const workspaceLandingGuard: CanActivateFn = async () => {
