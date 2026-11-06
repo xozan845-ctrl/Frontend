@@ -278,12 +278,12 @@ export function canManageStoreRoles(user: User | null | undefined): boolean {
 
 export function workspaceLanding(user: User | null | undefined): string {
   if (!user) return '/login';
-  if (isPlatformRole(user.role)) return '/admin/inventario';
-  if (isCompanyOwnerRole(user.role)) return '/empresa/inicio';
-  if (isStoreWorkspaceRole(user.role)) return '/vendedor/inicio';
+  if (isPlatformRole(user.role)) return '/app/admin/inventario';
+  if (isCompanyOwnerRole(user.role)) return '/app/empresa/inicio';
+  if (isStoreWorkspaceRole(user.role)) return '/app/tienda/inicio';
   if (isLogisticsCompanyMember(user) || user.role === 'empresa_logistica') {
-    return '/logistica/dashboard';
+    return '/app/logistica/dashboard';
   }
-  if (isLogisticsOperatorRole(user.role)) return '/logistica/dashboard';
+  if (isLogisticsOperatorRole(user.role)) return '/app/logistica/dashboard';
   return '/';
 }

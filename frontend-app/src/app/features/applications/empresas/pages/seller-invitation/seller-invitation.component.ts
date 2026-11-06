@@ -104,7 +104,7 @@ export default class SellerInvitationComponent {
     const session = this.invitationStore.session();
     if (!session) return;
     this.authStore.setSession(session);
-    void this.router.navigate(['/vendedor/inicio']);
+    void this.router.navigate(['/app/tienda/inicio']);
   });
 
   accept(): void {

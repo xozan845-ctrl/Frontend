@@ -98,7 +98,7 @@ describe('logisticsGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/admin/inventario']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/admin/inventario']);
   });
 
   it('conserva la URL para el login anónimo', async () => {

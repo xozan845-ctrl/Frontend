@@ -85,7 +85,7 @@ describe('RegisterFormComponent', () => {
 
   // ADR-22: el alta pedida desde el panel crea una cuenta de vendedor.
   it('debe registrar como vendedor cuando el alta llega del panel', async () => {
-    const fixture = await setup({ rol: 'seller', returnUrl: '/vendedor/inicio' });
+    const fixture = await setup({ rol: 'seller', returnUrl: '/app/tienda/inicio' });
     fixture.componentInstance.registerForm.setValue({
       name: 'Vera',
       email: 'vera@tienda.com',
@@ -105,7 +105,7 @@ describe('RegisterFormComponent', () => {
   });
 
   it('debe titular el alta de vendedor cuando el alta llega del panel', async () => {
-    const fixture = await setup({ rol: 'seller', returnUrl: '/vendedor/inicio' });
+    const fixture = await setup({ rol: 'seller', returnUrl: '/app/tienda/inicio' });
 
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Vendedor');
   });

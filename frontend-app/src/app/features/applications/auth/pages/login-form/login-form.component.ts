@@ -20,10 +20,10 @@ export class LoginFormComponent {
     'Accede a tu cuenta de Quantum Store.',
   );
 
-  /** Origen pedido por el guard (p. ej. `/vendedor/inicio`). */
+  /** Origen pedido por el guard (p. ej. `/app/tienda/inicio`). */
   private readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '';
   /** Intención de vendedor (ADR-22): la llegada viene del panel de vendedor. */
-  readonly isVendorIntent = /^\/vendedor(\/|$)/.test(this.returnUrl);
+  readonly isVendorIntent = /^(?:\/vendedor|\/app\/tienda)(\/|$)/.test(this.returnUrl);
   /** Parámetros del alta: conservan el origen y piden la cuenta de vendedor. */
   readonly registerQueryParams: Record<string, string> = this.isVendorIntent
     ? { returnUrl: this.returnUrl, rol: 'seller' }

@@ -106,6 +106,6 @@ describe('Header', () => {
     const link = fixture.debugElement.query(By.css('[data-testid="header-company-link"]'));
     expect(link).not.toBeNull();
     expect(link.nativeElement.textContent).toContain('Panel empresa');
-    expect(component.homeLink()).toEqual(['/empresa/inicio']);
+    expect(component.homeLink()).toEqual(['/app/empresa/inicio']);
   });
 });

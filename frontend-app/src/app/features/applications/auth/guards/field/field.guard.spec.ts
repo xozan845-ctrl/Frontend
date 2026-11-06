@@ -110,6 +110,6 @@ describe('fieldGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/admin/inventario']);
   });
 });

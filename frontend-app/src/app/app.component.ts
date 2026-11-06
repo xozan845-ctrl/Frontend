@@ -41,7 +41,7 @@ export class App {
   private isBackofficeUrl(url: string): boolean {
     // Los workspaces autenticados y las invitaciones públicas no llevan el
     // chrome del storefront (header, footer, carrito y soporte flotante).
-    return /^\/(empresa|vendedor|facturacion|logistica|admin|ia|i|registro\/vendedor)(\/|$|\?)/.test(
+    return /^\/(app|empresa|vendedor|facturacion|logistica|admin|ia|i|registro\/vendedor)(\/|$|\?)/.test(
       url,
     );
   }

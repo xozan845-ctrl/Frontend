@@ -8,7 +8,7 @@ export const COMPANY_CLIENTS_PAGE_CONFIG: ClientsPageConfig = {
   title: 'Clientes',
   subtitle: 'CRM de tu negocio. Centraliza, analiza y administra cada relación con tus clientes.',
   homeLabel: 'Inicio',
-  homeLink: '/empresa/inicio',
+  homeLink: '/app/empresa/inicio',
   importEnabled: true,
 };
 

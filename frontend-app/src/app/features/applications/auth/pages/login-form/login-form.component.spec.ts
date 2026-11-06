@@ -88,13 +88,13 @@ describe('LoginFormComponent', () => {
 
   // ADR-22: llegada desde el panel → aviso y alta con rol vendedor.
   it('debe ofrecer el alta de vendedor cuando llega del panel', async () => {
-    const fixture = await setup({ returnUrl: '/vendedor/inicio' });
+    const fixture = await setup({ returnUrl: '/app/tienda/inicio' });
 
     const notice = fixture.nativeElement.querySelector('[data-testid="vendor-intent-notice"]');
     expect(notice.textContent).toContain('cuenta de vendedor');
     expect(notice.querySelector('a').getAttribute('href')).toContain('rol=seller');
     expect(fixture.componentInstance.registerQueryParams).toEqual({
-      returnUrl: '/vendedor/inicio',
+      returnUrl: '/app/tienda/inicio',
       rol: 'seller',
     });
   });

@@ -14,7 +14,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         id: 'company.dashboard',
         label: 'Dashboard',
         icon: 'fa-solid fa-grid-2',
-        link: '/empresa/inicio',
+        link: '/app/empresa/inicio',
         testId: 'company-nav-inicio',
         workspace: 'company',
         section: 'operacion',

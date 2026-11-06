@@ -50,7 +50,7 @@ describe('vendorGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/empresa/inicio']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/empresa/inicio']);
   });
 
   it('debe restaurar la sesión con el refresh token antes de decidir', async () => {

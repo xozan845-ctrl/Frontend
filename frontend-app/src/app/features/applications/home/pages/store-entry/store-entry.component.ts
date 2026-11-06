@@ -80,6 +80,6 @@ export default class StoreEntryComponent {
 
   /** Abre el workspace del empresario que ya tiene una empresa activa. */
   goToCompanyWorkspace(): void {
-    this.router.navigate(['/empresa/inicio']);
+    this.router.navigate(['/app/empresa/inicio']);
   }
 }

@@ -119,7 +119,7 @@ export default class CreateStoreComponent {
     if (!completed || !this.isCompanyOwner() || this.redirectedToWorkspace) return;
 
     this.redirectedToWorkspace = true;
-    void this.router.navigateByUrl('/empresa/inicio');
+    void this.router.navigateByUrl('/app/empresa/inicio');
   });
 
   // ── Paso 1: cuenta ─────────────────────────────────────────────────────────
@@ -265,7 +265,7 @@ export default class CreateStoreComponent {
   }
 
   goToWorkspace(): void {
-    void this.router.navigateByUrl('/empresa/inicio');
+    void this.router.navigateByUrl('/app/empresa/inicio');
   }
 
   // ── Utilidades de plantilla ────────────────────────────────────────────────

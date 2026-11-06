@@ -73,6 +73,6 @@ describe('adminGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/tienda/inicio']);
   });
 });
