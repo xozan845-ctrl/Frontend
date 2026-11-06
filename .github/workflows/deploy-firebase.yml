@@ -60,16 +60,25 @@ jobs:
         run: npm run build
 
       - name: Check Firebase credentials
+        id: firebase
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
           if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
-            echo "::error::Falta el secret FIREBASE_SERVICE_ACCOUNT (JSON de cuenta de servicio con permisos de Firebase Hosting)."
-            exit 1
+            echo "::warning::FIREBASE_SERVICE_ACCOUNT no configurado; deploy omitido."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Firebase Hosting"
+              echo "Deploy omitido: falta el secret \`FIREBASE_SERVICE_ACCOUNT\`."
+              echo "Configúralo con: \`gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
           fi
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
 
       - name: Deploy Hosting
+        if: steps.firebase.outputs.enabled == 'true'
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: >-
@@ -79,6 +88,7 @@ jobs:
           --non-interactive
 
       - name: Smoke Hosting
+        if: steps.firebase.outputs.enabled == 'true'
         env:
           FRONTEND_URL: https://kb-coleccion-internacional-ni.web.app
         run: node scripts/commands/hosting-smoke.mjs
