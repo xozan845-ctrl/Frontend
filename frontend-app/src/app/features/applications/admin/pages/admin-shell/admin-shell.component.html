@@ -1,0 +1,12 @@
+<app-workspace-shell
+  [groups]="navGroups"
+  sidebarLabel="Navegación de administración"
+  eyebrow="Plataforma"
+  title="Administración"
+  contextLabel="Administración"
+  [wide]="true"
+  sidebarId="admin-sidebar"
+  toggleTestId="admin-sidebar-toggle"
+  [open]="isSidebarOpen()"
+  (openChange)="isSidebarOpen.set($event)"
+/>

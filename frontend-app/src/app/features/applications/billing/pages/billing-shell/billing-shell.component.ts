@@ -1,23 +1,38 @@
-import { Component, HostListener, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { BillingSidebarComponent } from '../../components/billing-sidebar/billing-sidebar.component';
+import { Component, inject, signal } from '@angular/core';
+import {
+  AuthStore,
+  canEnterWorkspace,
+  hasPermission,
+  type Permission,
+  type Workspace,
+} from '../../../auth/public-api';
+import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
+import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
 
 /**
- * Shell del módulo de facturación (ADR-23): sidebar del diseño + router-outlet.
- * Mantiene el estado del drawer móvil (`R-UX-2`) y se cierra con Escape
- * (`R-AC-3`). En impresión oculta el chrome para dejar solo el comprobante.
+ * Shell del módulo de facturación (ADR-23). Es un submódulo del workspace de
+ * tienda: comparte chrome y navegación del registro, limitada a la sección
+ * `billing`. En impresión se oculta el chrome.
  */
 @Component({
   selector: 'app-billing-shell',
   standalone: true,
-  imports: [RouterOutlet, BillingSidebarComponent],
+  imports: [WorkspaceShellComponent],
   templateUrl: './billing-shell.component.html',
 })
 export default class BillingShellComponent {
   readonly isSidebarOpen = signal(false);
+  private readonly auth = inject(AuthStore);
 
-  @HostListener('document:keydown.escape')
-  closeSidebar(): void {
-    this.isSidebarOpen.set(false);
-  }
+  readonly navGroups = workspaceModuleGroups(
+    'store',
+    (module) => {
+      const user = this.auth.user();
+      return (
+        canEnterWorkspace(user, module.workspace as Workspace) &&
+        (!module.permission || hasPermission(user, module.permission as Permission))
+      );
+    },
+    ['billing'],
+  );
 }
