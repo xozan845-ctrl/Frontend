@@ -13,7 +13,7 @@ import {
   MOVEMENT_FIXTURE,
   PROMOTION_FIXTURE,
 } from './fixtures/company-catalog-operations.fixture';
-import { CATALOG_PRODUCT_FIXTURE } from '../../../products/adapters/fixtures/catalog-product.fixture';
+import { CATALOG_PRODUCT_FIXTURE } from '../../../catalog/adapters/fixtures/catalog-product.fixture';
 
 // R-C-8: contrato contra fixtures versionados del backend, no contra el servicio en vivo.
 describe('company-catalog-operations.contract', () => {

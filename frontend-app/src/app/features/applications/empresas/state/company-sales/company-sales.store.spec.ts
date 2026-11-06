@@ -2,9 +2,11 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import type { OrderResponse } from '../../../cart/public-api';
-import type { CatalogProduct } from '../../../products/public-api';
-import { CatalogProductRepository } from '../../../products/repositories/catalog-product.repository';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import {
+  CATALOG_PRODUCT_REPOSITORY,
+  type CatalogProduct,
+  type CatalogProductRepository,
+} from '../../../../domains/catalog/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanySalesStore } from './company-sales.store';

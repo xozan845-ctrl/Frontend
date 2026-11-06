@@ -2,7 +2,7 @@ import {
   unwrapApiListResponse,
   unwrapApiSingleResponse,
 } from '../../../../../core/models/api-response.dto';
-import { adaptCatalogProductFromBackend } from '../../../products/public-api';
+import { adaptCatalogProductFromBackend } from '../../../catalog/public-api';
 import type {
   BackendComboComponentDTO,
   BackendComboDTO,

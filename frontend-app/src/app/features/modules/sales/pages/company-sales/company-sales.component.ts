@@ -13,11 +13,11 @@ import {
   COMPANY_SALE_PAYMENT_FILTERS,
   COMPANY_SALE_PERIODS,
   CompanySalesStore,
-  CompanyServicesStore,
   type CompanySalePaymentFilter,
   type CompanySalePeriod,
   type CreateCompanySalePayload,
 } from '../../../../applications/empresas/public-api';
+import { CompanyServicesStore } from '../../../../domains/company-catalog/public-api';
 
 const TAB_CLASSES = {
   active: 'bg-accent-600 text-white shadow-sm',

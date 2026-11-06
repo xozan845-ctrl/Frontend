@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyQuickSaleModalComponent } from './company-quick-sale-modal.component';
-import type { CatalogProduct } from '../../../../applications/products/public-api';
+import type { CatalogProduct } from '../../../../domains/catalog/public-api';
 import type { CreateCompanySalePayload } from '../../../../applications/empresas/public-api';
 
 const product: CatalogProduct = {

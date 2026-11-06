@@ -5,7 +5,7 @@ import CatalogComponent from './catalog.component';
 import { CatalogProductsStore } from '../../state/catalog-product/catalog-product.store';
 import { AuthStore } from '../../../auth/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { CatalogProduct } from '../../models/catalog-product.model';
+import { CatalogProduct } from '../../../../domains/catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

@@ -5,7 +5,7 @@ import type {
   CompanyInventoryCostMethod,
   CompanyInventorySettings,
   CompanyInventorySettingsFormValue,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /** Modal presentacional de configuración de inventario (R-PS-04). */
 @Component({

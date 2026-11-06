@@ -14,7 +14,7 @@ import { NotificationService } from '../../../../../core/services/notification/n
 import { withOrders } from '../../../../../shared/orders/state/with-orders/with-orders.state';
 import { AuthStore } from '../../../auth/public-api';
 import type { OrderResponse } from '../../../cart/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../products/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
 import {
   buildCompanySaleRows,
   buildRecurringClients,

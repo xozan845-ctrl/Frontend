@@ -4,9 +4,9 @@ import { CatalogProductsStore } from './catalog-product.store';
 import {
   CATALOG_PRODUCT_REPOSITORY,
   CatalogProductRepository,
-} from '../../repositories/catalog-product.repository';
+} from '../../../../domains/catalog/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { CatalogProduct } from '../../models/catalog-product.model';
+import { CatalogProduct } from '../../../../domains/catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

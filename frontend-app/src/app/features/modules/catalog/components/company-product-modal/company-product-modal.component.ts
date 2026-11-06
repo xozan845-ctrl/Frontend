@@ -12,7 +12,7 @@ import {
   type CompanyCatalogRow,
   type CompanyCatalogStatus,
   COMPANY_SERVICE_MAX_DURATION_MINUTES,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /**
  * Modal de alta/edición de productos y servicios (ADR-55). Componente

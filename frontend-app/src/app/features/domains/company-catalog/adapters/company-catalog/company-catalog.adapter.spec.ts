@@ -18,7 +18,7 @@ import type {
   CompanyCatalogRow,
 } from '../../models/company-catalog.model';
 import type { CompanyService } from '../../models/company-service.model';
-import type { CatalogProduct } from '../../../products/models/catalog-product.model';
+import type { CatalogProduct } from '../../../catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

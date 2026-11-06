@@ -70,9 +70,12 @@ Compras en `features/modules/purchases` (ADR-66), Gastos en
 en `features/modules/payables` (ADR-67), Bancos en `features/modules/banks`
 (ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69), Créditos
 en `features/modules/credits` (ADR-70) y Reportes en
-`features/modules/reports` (ADR-71). Este feature conserva sus stores, dominio,
-adaptadores y constantes. `public-api.ts` expone esos artefactos y ya no
-exporta `EMPRESAS_ROUTES`, para que el módulo pueda consumirlos sin ciclos.
+`features/modules/reports` (ADR-71). El catálogo administrable vive en
+`features/domains/company-catalog` y el catálogo maestro en
+`features/domains/catalog` (ADR-76). Este feature conserva empresa, ventas,
+invitaciones, portal, reportes y logística. `public-api.ts` expone esos
+artefactos y ya no exporta `EMPRESAS_ROUTES`, para que el módulo pueda
+consumirlos sin ciclos.
 
 La empresa es la unidad que agrupa tiendas, vendedores y logística de empresa.
 Crear la empresa cambia el `tenant_id`/rol del usuario en el backend, así que el

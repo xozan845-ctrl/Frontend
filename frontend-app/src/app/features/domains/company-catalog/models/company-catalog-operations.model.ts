@@ -1,4 +1,4 @@
-import type { CatalogProduct } from '../../products/public-api';
+import type { CatalogProduct } from '../../catalog/public-api';
 import type { CompanyCatalogStatus } from './company-catalog.model';
 import type { CompanyService } from './company-service.model';
 

@@ -2,7 +2,7 @@ import type {
   CatalogProduct,
   CreateCatalogProductData,
   UpdateCatalogProductData,
-} from '../../../products/public-api';
+} from '../../../catalog/public-api';
 import { COMPANY_PRODUCT_TEMPLATE_HEADERS } from '../../constants/company-products.constants';
 import type {
   CompanyCatalogFilters,

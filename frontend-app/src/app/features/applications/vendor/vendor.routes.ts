@@ -2,8 +2,10 @@ import { Route, Routes } from '@angular/router';
 import { STORAGE_ROUTES } from '../storage/public-api';
 import { moduleGuard } from '../auth/public-api';
 import { commercialScopeRoutes } from '../workspace/constants/commercial.routes';
-import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
-import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
+import {
+  CATALOG_PRODUCT_REPOSITORY,
+  CatalogProductService,
+} from '../../domains/catalog/public-api';
 import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
 import { vendorGuard } from './guards/vendor/vendor.guard';

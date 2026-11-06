@@ -3,12 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { AuthStore } from '../../../../domains/session/public-api';
-import {
-  COMPANY_REPOSITORY,
-  CompanyProductsStore,
-  CompanyStore,
-} from '../../../../applications/empresas/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../../applications/products/public-api';
+import { COMPANY_REPOSITORY, CompanyStore } from '../../../../applications/empresas/public-api';
+import { CompanyProductsStore } from '../../../../domains/company-catalog/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
 import { PurchasesStore } from '../../../../domains/purchases/public-api';
 import CompanyPurchasesComponent from './company-purchases.component';
 

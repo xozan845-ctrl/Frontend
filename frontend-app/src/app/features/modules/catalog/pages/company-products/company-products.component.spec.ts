@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import type { CatalogProduct } from '../../../../applications/products/public-api';
+import type { CatalogProduct } from '../../../../domains/catalog/public-api';
 import {
   CompanyCatalogOperationsStore,
   CompanyProductsStore,
@@ -11,7 +11,7 @@ import {
   type CompanyCatalogRow,
   type CompanyCatalogSort,
   type CompanyCatalogStatusFilter,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 import CompanyProductsComponent from './company-products.component';
 
 function makeRow(overrides: Partial<CompanyCatalogRow> = {}): CompanyCatalogRow {
@@ -66,7 +66,7 @@ describe('CompanyProductsComponent', () => {
   const servicesLoading = signal(false);
   const servicesError = signal<string | null>(null);
   const servicesLastSaved = signal<
-    import('../../../../applications/empresas/public-api').CompanyServiceModel | null
+    import('../../../../domains/company-catalog/public-api').CompanyServiceModel | null
   >(null);
   const servicesLastRemoved = signal<string | null>(null);
 

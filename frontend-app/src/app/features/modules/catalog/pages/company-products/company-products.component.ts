@@ -33,7 +33,7 @@ import {
   type CompanyPromotion,
   type CompanyPromotionFormValue,
   type CompanyScanResult,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /**
  * Catálogo administrable de la empresa (ADR-55): KPIs, pestañas de productos,

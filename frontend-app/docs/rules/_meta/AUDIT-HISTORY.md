@@ -497,3 +497,26 @@
   Actions y tag `v1.27.0`.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 19 — Dominios de catálogo (2026-11-06)
+
+- **Contexto:** `applications/empresas` y `applications/products` proveían el
+  catálogo a `modules/catalog`, `modules/purchases` y `modules/sales`, lo que
+  mantenía acoplamiento módulo → aplicación.
+- **Cambio:** se creó `domains/catalog` con el catálogo maestro (`CatalogProduct`,
+  puerto y servicio) y `domains/company-catalog` con productos, servicios,
+  combos, promociones, importación CSV y operaciones de inventario.
+  `applications/empresas` ya no exporta catálogo; `applications/products`
+  conserva el storefront y reexporta el dominio.
+- **Resultado:**
+  - ✅ `modules/catalog` y las partes de `modules/purchases`/`modules/sales`
+    consumen dominios, no aplicaciones.
+  - ✅ `R-AR-20` sigue en verde y no se añadieron ciclos nuevos.
+  - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
+    lint:css, build y 60/60 e2e en verde.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT`, runners de GitHub
+  Actions y tag `v1.27.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).

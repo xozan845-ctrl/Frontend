@@ -35,6 +35,8 @@
   `domains/file-storage`; las aplicaciones `auth` y `storage` conservan solo
   páginas, guards y rutas. `R-AR-20` impide que un dominio importe una
   aplicación y `R-AR-21` protege el grafo de ciclos.
+- El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
+  `domains/company-catalog`; `applications/empresas` ya no exporta catálogo.
 - Evidencia: **349 archivos / 1.930 tests**, 24 suites de reglas (53/259 IDs),
   typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
   `1.27.0`.

@@ -5,7 +5,10 @@ import { STORE_REPOSITORY } from './repositories/store.repository';
 import { CATALOG_REPOSITORY } from './repositories/catalog.repository';
 import { StoreService } from './services/store/store.service';
 import { CatalogService } from './services/catalog/catalog.service';
-import { CATALOG_PRODUCT_REPOSITORY, CatalogProductService } from '../products/public-api';
+import {
+  CATALOG_PRODUCT_REPOSITORY,
+  CatalogProductService,
+} from '../../domains/catalog/public-api';
 import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';
 import { companyOwnerRedirectGuard } from '../auth/public-api';
 

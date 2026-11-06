@@ -1,13 +1,13 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import type { CatalogProduct } from '../../../../applications/products/public-api';
+import type { CatalogProduct } from '../../../../domains/catalog/public-api';
 import type {
   CompanyCatalogStatus,
   CompanyCombo,
   CompanyComboComponentFormValue,
   CompanyComboFormValue,
-} from '../../../../applications/empresas/public-api';
+} from '../../../../domains/company-catalog/public-api';
 
 /** Modal de alta/edición de combos (R-PS-04). */
 @Component({
