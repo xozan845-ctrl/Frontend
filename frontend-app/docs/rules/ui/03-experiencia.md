@@ -92,10 +92,10 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
 `modules/barcodes`, `modules/credits`, `modules/reports`, `admin`, `storage`,
 `shared/orders`, `auth`, `plans`, `stores`, `home`, `ai-scraper`, `wishlist`,
-`shared/pipes`, `shared/ui`, `modules/expenses`, `vendor`, `modules/cash`,
-`modules/clients`, `billing`, `cart`, `empresas`, `logistica`, `finance`,
+`shared/pipes`, `shared/ui`, `modules/expenses`, `vendor`, `modules/clients`,
+`billing`, `cart`, `empresas`, `logistica`, `finance`,
 `sales`, `purchases`, `catalog`, `products`, `account`, `banks` y `payables`.
-Ratchet cerrado: **37 raíces adoptadas y backlog 0**.
+Ratchet cerrado: **36 raíces adoptadas y backlog 0**.
 
 ## Notas
 

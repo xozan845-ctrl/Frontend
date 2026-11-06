@@ -67,7 +67,7 @@ que son verificables por máquina.
 > administrable de empresa (ADR-65), Cuentas por
 > pagar, Bancos, Códigos de barras, Créditos y Reportes con scope
 > empresa/tienda (ADR-67/68/69/70/71). `modules/expenses` compone la pantalla de
-> Gastos, su ledger y sus reportes (ADR-72); `modules/cash` compone Caja,
+> Gastos, su ledger y sus reportes (ADR-72); `modules/finance` compone Caja,
 > cierres, caja chica, bancos y transferencias (ADR-73); `modules/purchases`
 > compone el centro de compras, historial, proveedores, órdenes, compra directa,
 > exportación y asistente de nueva compra (ADR-66).

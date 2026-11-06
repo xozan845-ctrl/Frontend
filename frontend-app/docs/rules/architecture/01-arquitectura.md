@@ -73,8 +73,7 @@ Los módulos comerciales compartidos (clientes, bancos, cuentas por pagar,
 códigos de barras, créditos y reportes) se montan desde
 `features/applications/workspace/constants/commercial.routes.ts` con providers
 de scope company/store. El feature `workspace` declara el contrato
-`constants`/`guards` y las rutas canónicas; las rutas antiguas se conservan como
-compatibilidad.
+`constants`/`guards` y las rutas canónicas; no conserva rutas antiguas.
 
 ## Notas
 

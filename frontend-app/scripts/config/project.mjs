@@ -198,12 +198,6 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
-  'modules/cash': {
-    kind: 'module',
-    layers: ['components', 'pages'],
-    publicApi: false,
-    publicUi: false,
-  },
   'modules/purchases': {
     kind: 'module',
     layers: ['components', 'pages'],
@@ -271,12 +265,6 @@ export const FEATURE_CONTRACTS = {
     publicUi: false,
   },
   expenses: {
-    kind: 'domain',
-    layers: ['adapters', 'constants', 'models', 'state'],
-    publicApi: true,
-    publicUi: false,
-  },
-  cash: {
     kind: 'domain',
     layers: ['adapters', 'constants', 'models', 'state'],
     publicApi: true,
@@ -507,7 +495,6 @@ export const GLASS_ADOPTION_ADOPTED = [
   'layout/footer',
   'features/applications/home/pages/store-entry',
   'features/applications/empresas/pages/company-shell',
-  'features/applications/billing/pages/billing-shell',
   'features/applications/logistica/pages/logistica-shell',
   'features/applications/vendor/pages/vendor-shell',
   'features/modules/barcodes',
@@ -526,7 +513,6 @@ export const GLASS_ADOPTION_ADOPTED = [
   'shared/ui',
   'features/modules/expenses',
   'features/applications/vendor',
-  'features/modules/cash',
   'features/modules/clients',
   'features/applications/billing',
   'features/applications/cart',
