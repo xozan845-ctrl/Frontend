@@ -47,6 +47,28 @@ src/app/
 | `layout/`   | `header/`, `footer/`, drawers/chrome visual                                                                                                     | Reglas de negocio; inyectar stores directamente si puede resolverse con inputs |
 | `features/` | Todo el dominio de negocio y sus capas internas                                                                                                 | Importar rutas internas de otro feature                                        |
 
+## Workspace unificado
+
+El backoffice tiene una entrada canónica `/app` que resuelve el contexto por la
+sesión mediante `workspaceLanding`:
+
+| Contexto    | Ruta               | Roles                               |
+| ----------- | ------------------ | ----------------------------------- |
+| Empresa     | `/app/empresa`     | `empresario`                        |
+| Tienda      | `/app/tienda`      | `vendedor`                          |
+| Plataforma  | `/app/admin`       | `admin`, `super_admin`              |
+| Logística   | `/app/logistica`   | empresa, tienda o empresa logística |
+| Facturación | `/app/facturacion` | tienda con `store:manage-billing`   |
+
+Todos los contextos comparten `WorkspaceShellComponent` y el registro
+`WORKSPACE_MODULES`; el sidebar y los guards filtran por workspace + permiso.
+Los módulos comerciales compartidos (clientes, bancos, cuentas por pagar,
+códigos de barras, créditos y reportes) se montan desde
+`features/applications/workspace/constants/commercial.routes.ts` con providers
+de scope company/store. El feature `workspace` declara el contrato
+`constants`/`guards` y las rutas canónicas; las rutas antiguas se conservan como
+compatibilidad.
+
 ## Notas
 
 - La regla de precio/dinero del backend (centavos) **no aplica** aquí: el
