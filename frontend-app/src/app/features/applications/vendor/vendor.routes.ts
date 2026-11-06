@@ -1,27 +1,12 @@
 import { Route, Routes } from '@angular/router';
 import { STORAGE_ROUTES } from '../storage/public-api';
 import { moduleGuard } from '../auth/public-api';
-import {
-  CLIENTS_PAGE_CONFIG,
-  CLIENTS_SCOPE_CONFIG,
-} from '../../../shared/clients/constants/clients-config.tokens';
+import { commercialScopeRoutes } from '../workspace/constants/commercial.routes';
 import { CATALOG_PRODUCT_REPOSITORY } from '../products/repositories/catalog-product.repository';
 import { CatalogProductService } from '../products/services/catalog-product/catalog-product.service';
 import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
-import {
-  VENDOR_CLIENTS_PAGE_CONFIG,
-  VENDOR_CLIENTS_SCOPE_CONFIG,
-} from './constants/vendor-clients-page.config';
 import { vendorGuard } from './guards/vendor/vendor.guard';
-import { VENDOR_PAYABLES_SCOPE_CONFIG } from './constants/vendor-payables.config';
-import { VENDOR_BANKS_SCOPE_CONFIG } from './constants/vendor-banks.config';
-import { VENDOR_BARCODES_SCOPE_CONFIG } from './constants/vendor-barcodes.config';
-import { VENDOR_CREDITS_SCOPE_CONFIG } from './constants/vendor-credits.config';
-import { PAYABLES_SCOPE_CONFIG } from '../../../shared/payables/constants/payables-config.tokens';
-import { BANKS_SCOPE_CONFIG } from '../../../shared/banks/constants/banks-config.tokens';
-import { BARCODES_SCOPE_CONFIG } from '../../../shared/barcodes/constants/barcodes-config.tokens';
-import { CREDITS_SCOPE_CONFIG } from '../../../shared/credits/constants/credits-config.tokens';
 import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
 import { CLIENT_REPOSITORY } from './repositories/client.repository';
 import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
@@ -115,34 +100,7 @@ export const VENDOR_ROUTES: Routes = [
         loadComponent: () =>
           import('../../modules/sales/pages/order-detail/order-detail.component'),
       },
-      {
-        path: 'creditos',
-        canActivate: [moduleGuard('store.credit')],
-        loadChildren: () =>
-          import('../../modules/credits/credits.routes').then((module) => module.CREDITS_ROUTES),
-        providers: [{ provide: CREDITS_SCOPE_CONFIG, useValue: VENDOR_CREDITS_SCOPE_CONFIG }],
-      },
-      {
-        path: 'codigos-de-barras',
-        canActivate: [moduleGuard('store.barcodes')],
-        loadChildren: () =>
-          import('../../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
-        providers: [{ provide: BARCODES_SCOPE_CONFIG, useValue: VENDOR_BARCODES_SCOPE_CONFIG }],
-      },
-      {
-        path: 'bancos',
-        canActivate: [moduleGuard('store.banks')],
-        loadChildren: () =>
-          import('../../modules/banks/banks.routes').then((module) => module.BANKS_ROUTES),
-        providers: [{ provide: BANKS_SCOPE_CONFIG, useValue: VENDOR_BANKS_SCOPE_CONFIG }],
-      },
-      {
-        path: 'cuentas-por-pagar',
-        canActivate: [moduleGuard('store.payables')],
-        loadChildren: () =>
-          import('../../modules/payables/payables.routes').then((module) => module.PAYABLES_ROUTES),
-        providers: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: VENDOR_PAYABLES_SCOPE_CONFIG }],
-      },
+      ...commercialScopeRoutes('store'),
       {
         path: 'tienda',
         canActivate: [moduleGuard('store.my-store')],
@@ -156,16 +114,6 @@ export const VENDOR_ROUTES: Routes = [
       // Compatibilidad con enlaces antiguos: la administración vive en su
       // workspace propio, fuera del panel operativo.
       { path: 'empresa', pathMatch: 'full', redirectTo: '/empresa' },
-      {
-        path: 'clientes',
-        canActivate: [moduleGuard('store.clients')],
-        loadChildren: () =>
-          import('../../modules/clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
-        providers: [
-          { provide: CLIENTS_PAGE_CONFIG, useValue: VENDOR_CLIENTS_PAGE_CONFIG },
-          { provide: CLIENTS_SCOPE_CONFIG, useValue: VENDOR_CLIENTS_SCOPE_CONFIG },
-        ],
-      },
       {
         path: 'catalogo',
         canActivate: [moduleGuard('store.catalog')],
@@ -194,14 +142,6 @@ export const VENDOR_ROUTES: Routes = [
         ),
       },
       ...STORAGE_ROUTES,
-      {
-        path: 'reportes',
-        canActivate: [moduleGuard('store.reports')],
-        loadChildren: () =>
-          import('../../modules/reports/reports.routes').then(
-            (module) => module.VENDOR_REPORTS_ROUTES,
-          ),
-      },
       {
         path: 'ajustes',
         ...comingSoonRoute(
