@@ -62,7 +62,7 @@ const stabilizePage = async (page: Page) => {
         animation: none !important;
         transition: none !important;
       }
-      app-pwa-install-banner, app-toast, app-floating-support { display: none !important; }
+      app-pwa-notice, app-toast, app-floating-support { display: none !important; }
       header.glass-bar { position: static !important; }
     `,
   });

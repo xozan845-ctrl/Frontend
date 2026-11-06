@@ -2,6 +2,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 
 export const environment = {
   production: true,
+  appVersion: '1.26.0',
   frontendUrl: 'https://kb-coleccion-internacional-ni.web.app',
   // Proxy server-side del gateway (ADR-29): añade el Basic del gate de staging
   // sin exponerlo en el bundle. Ver docs/api-proxy.md.

@@ -3,7 +3,9 @@
   "version": "1.26.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/commands/generate-version.mjs",
     "start": "ng serve",
+    "prebuild": "node scripts/commands/generate-version.mjs",
     "build": "ng build",
     "postbuild": "node scripts/commands/generate-invitation-html.mjs",
     "deploy": "npm run build && firebase deploy --only hosting",
