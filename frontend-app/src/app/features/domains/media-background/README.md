@@ -30,12 +30,12 @@ configuración normalizada) y `upload` (archivo → objeto confirmado).
 
 ## Escritura y roles
 
-| Ámbito      | Servicio                                             | Pantalla                 | Rol                      |
-| ----------- | ---------------------------------------------------- | ------------------------ | ------------------------ |
-| Plataforma  | `MediaBackgroundWriteService.updateSite('platform')` | `/admin/personalizacion` | `admin` / `super_admin`  |
-| Panel de IA | `MediaBackgroundWriteService.updateSite('panel-ai')` | `/admin/personalizacion` | `admin` / `super_admin`  |
-| Empresa     | `updateCompany(id)`                                  | `/empresa/configuracion` | `empresario` propietario |
-| Tienda      | `updateStore(id)`                                    | `/vendedor/tienda`       | `vendedor` propietario   |
+| Ámbito      | Servicio                                             | Pantalla                     | Rol                      |
+| ----------- | ---------------------------------------------------- | ---------------------------- | ------------------------ |
+| Plataforma  | `MediaBackgroundWriteService.updateSite('platform')` | `/app/admin/personalizacion` | `admin` / `super_admin`  |
+| Panel de IA | `MediaBackgroundWriteService.updateSite('panel-ai')` | `/app/admin/personalizacion` | `admin` / `super_admin`  |
+| Empresa     | `updateCompany(id)`                                  | `/app/empresa/configuracion` | `empresario` propietario |
+| Tienda      | `updateStore(id)`                                    | `/app/tienda/tienda`         | `vendedor` propietario   |
 
 El backend vuelve a validar rol y propiedad en cada `PATCH`; la UI solo evita
 mostrar controles fuera de rol. El chat `/ia/chat` visualiza el fondo del panel

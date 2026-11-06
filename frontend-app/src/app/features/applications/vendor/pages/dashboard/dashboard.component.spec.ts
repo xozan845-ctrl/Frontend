@@ -91,17 +91,17 @@ describe('DashboardComponent (inicio)', () => {
       (host.querySelector('[data-testid="quick-new-order"]') as HTMLAnchorElement).getAttribute(
         'href',
       ),
-    ).toBe('/vendedor/ventas/nuevo');
+    ).toBe('/app/tienda/ventas/nuevo');
     expect(
       (host.querySelector('[data-testid="quick-orders"]') as HTMLAnchorElement).getAttribute(
         'href',
       ),
-    ).toBe('/vendedor/pedidos');
+    ).toBe('/app/tienda/pedidos');
     expect(
       (host.querySelector('[data-testid="quick-clients"]') as HTMLAnchorElement).getAttribute(
         'href',
       ),
-    ).toBe('/vendedor/clientes');
+    ).toBe('/app/tienda/clientes');
   });
 
   it('debe mostrar esqueletos y bloquear la actualización mientras carga', async () => {

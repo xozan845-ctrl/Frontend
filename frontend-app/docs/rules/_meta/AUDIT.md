@@ -23,11 +23,15 @@
   logística y facturación con `WorkspaceShellComponent` y
   `WORKSPACE_MODULES`.
 - Los módulos comerciales compartidos usan `commercialScopeRoutes(company|store)`
-  y los providers de scope; se eliminaron los sidebars de logística/facturación
-  y los árboles de rutas duplicados.
-- Rutas antiguas (`/empresa`, `/vendedor`, `/admin`, `/logistica`,
-  `/facturacion`) se conservan como compatibilidad.
-- Evidencia: **357 archivos / 1.968 tests**, 24 suites de reglas (51/257 IDs),
+  y los providers de scope; se eliminaron los sidebars propios de logística y
+  facturación y los árboles de rutas duplicados.
+- Facturación es un submódulo de tienda (`/app/tienda/facturacion`) sin shell
+  propio; comparte el sidebar y el guard `store:manage-billing`.
+- Solo existen rutas canónicas `/app/{empresa,tienda,admin,logistica}`; las
+  rutas antiguas (`/empresa`, `/vendedor`, `/admin`, `/logistica`,
+  `/facturacion`) se eliminaron y responden 404. `/ia` sigue siendo una
+  herramienta independiente.
+- Evidencia: **356 archivos / 1.967 tests**, 24 suites de reglas (51/257 IDs),
   typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
   `1.27.0`.
 

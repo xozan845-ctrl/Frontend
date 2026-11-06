@@ -17,7 +17,7 @@ import {
 } from '../storage/public-api';
 
 /**
- * Área de administración (`/admin/**`, ADR-33). Se carga con `loadChildren`
+ * Área de administración (`/app/admin/**`, ADR-33). Se carga con `loadChildren`
  * desde `app.routes.ts`; el guard exige rol admin/super_admin y el store/puerto
  * se proveen en la ruta lazy (`R-AR-3`, `R-LZ-1`, `R-SE-6`).
  */

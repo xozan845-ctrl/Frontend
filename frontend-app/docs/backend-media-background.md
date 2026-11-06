@@ -516,12 +516,12 @@ bloque.
 
 ### 11.2 Dónde se sube cada fondo
 
-| Fondo          | Pantalla frontend                                | Permiso                 | Endpoint                                               |
-| -------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------ |
-| **Plataforma** | `/admin/personalizacion`                         | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`background_*`)          |
-| **Empresa**    | `/empresa/configuracion`                         | `empresario` (dueño)    | `PATCH /empresas/{id}/perfil` (`background_*`)         |
-| **Tienda**     | `/vendedor/tienda` → «Personalización de tienda» | `vendedor` (dueño)      | `PATCH /tiendas/{id}/background` (`background_*`)      |
-| **Panel IA**   | `/admin/personalizacion`                         | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`panel_ai_background_*`) |
+| Fondo          | Pantalla frontend                                  | Permiso                 | Endpoint                                               |
+| -------------- | -------------------------------------------------- | ----------------------- | ------------------------------------------------------ |
+| **Plataforma** | `/app/admin/personalizacion`                       | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`background_*`)          |
+| **Empresa**    | `/app/empresa/configuracion`                       | `empresario` (dueño)    | `PATCH /empresas/{id}/perfil` (`background_*`)         |
+| **Tienda**     | `/app/tienda/tienda` → «Personalización de tienda» | `vendedor` (dueño)      | `PATCH /tiendas/{id}/background` (`background_*`)      |
+| **Panel IA**   | `/app/admin/personalizacion`                       | `admin` / `super_admin` | `PATCH /configuracion/sitio` (`panel_ai_background_*`) |
 
 El chat `/ia/chat` **solo visualiza** el fondo del panel de IA; no lo edita.
 

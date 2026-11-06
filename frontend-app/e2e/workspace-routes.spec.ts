@@ -52,9 +52,9 @@ test('R-AR-12: facturación vive dentro de tienda', async ({ page }) => {
   await expect(page.getByTestId('billing-new-invoice-page')).toBeVisible();
 });
 
-test('R-AR-12: las rutas antiguas redirigen a /app', async ({ page }) => {
+test('R-AR-12: las rutas antiguas ya no existen', async ({ page }) => {
   await page.goto('/vendedor/pedidos', { waitUntil: 'domcontentloaded' });
-  await page.waitForURL(/\/login\?.*returnUrl=.*app%2Ftienda%2Fpedidos/, {
+  await expect(page.getByText('404 - Página no encontrada')).toBeVisible({
     timeout: 30_000,
   });
 });

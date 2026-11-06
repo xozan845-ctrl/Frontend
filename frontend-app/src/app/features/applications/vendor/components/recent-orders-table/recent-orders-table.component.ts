@@ -67,7 +67,7 @@ export class RecentOrdersTableComponent {
     this.orders().map((order) => ({
       id: order.id,
       number: order.id,
-      numberHref: `/vendedor/pedidos/${order.id}`,
+      numberHref: `/app/tienda/pedidos/${order.id}`,
       date: order.createdAt,
       clientName: order.clientName,
       total: order.total,

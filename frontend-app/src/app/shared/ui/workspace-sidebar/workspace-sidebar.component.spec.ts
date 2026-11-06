@@ -28,7 +28,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         id: 'store.orders',
         label: 'Pedidos',
         icon: 'fa-solid fa-receipt',
-        link: '/vendedor/pedidos',
+        link: '/app/tienda/pedidos',
         testId: 'vendor-nav-pedidos',
         workspace: 'store',
         section: 'operacion',
@@ -45,7 +45,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         id: 'store.help',
         label: 'Ayuda',
         icon: 'fa-solid fa-circle-question',
-        link: '/vendedor/ayuda',
+        link: '/app/tienda/ayuda',
         testId: 'vendor-nav-ayuda',
         workspace: 'store',
         section: 'footer',
@@ -101,7 +101,7 @@ describe('WorkspaceSidebarComponent', () => {
     const fixture = await setup();
     const router = TestBed.inject(Router);
 
-    await router.navigateByUrl('/vendedor/pedidos');
+    await router.navigateByUrl('/app/tienda/pedidos');
     fixture.detectChanges();
 
     const active = fixture.debugElement.query(By.css('[data-testid="vendor-nav-pedidos"]'));

@@ -52,7 +52,7 @@ describe('RecentOrdersTableComponent', () => {
     expect(rows[0].textContent).toContain('oct');
     expect(host.querySelector('[data-testid="order-date"]')?.textContent?.trim()).not.toBe('—');
     expect(host.querySelector('[data-testid="view-all-orders"]')?.getAttribute('href')).toBe(
-      '/vendedor/pedidos',
+      '/app/tienda/pedidos',
     );
   });
 
@@ -61,7 +61,7 @@ describe('RecentOrdersTableComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.querySelector('[data-testid="order-link-PED-000125"]')?.getAttribute('href')).toBe(
-      '/vendedor/pedidos/PED-000125',
+      '/app/tienda/pedidos/PED-000125',
     );
   });
 

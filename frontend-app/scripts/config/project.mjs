@@ -397,7 +397,7 @@ export const FEATURE_CONTRACTS = {
   },
   workspace: {
     kind: 'application',
-    layers: ['constants', 'guards', 'pages'],
+    layers: ['constants', 'guards'],
     publicApi: false,
     publicUi: false,
   },

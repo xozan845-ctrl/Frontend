@@ -5,7 +5,7 @@ import { AuthStore } from '../../state/auth/auth.store';
 
 describe('fieldGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = { url: '/logistica/rutas' } as RouterStateSnapshot;
+  const state = { url: '/app/logistica/rutas' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>) => {
     const tree = {} as UrlTree;
@@ -85,7 +85,7 @@ describe('fieldGuard', () => {
 
     expect(await result).toBe(tree);
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/logistica/rutas' },
+      queryParams: { returnUrl: '/app/logistica/rutas' },
     });
   });
 

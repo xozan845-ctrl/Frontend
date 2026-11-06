@@ -34,19 +34,20 @@ real debe ejecutarse en la API y en la base de datos.
 
 ## Mapa de superficies
 
-| Superficie          | Ruta principal                                     | Actor                                     | Alcance                                        | Puede administrar logística |
-| ------------------- | -------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- | --------------------------- |
-| Plataforma          | `/admin/**`                                        | `super_admin`, `admin` delegado           | infraestructura, tenants, usuarios, auditoría  | No                          |
-| Empresa             | `/empresa/**`                                      | `empresario`                              | un `tenant_id`, todas sus tiendas y vendedores | Flota `company`             |
-| Tienda              | `/vendedor/**`                                     | `vendedor`                                | un `store_id` dentro de su empresa             | Flota `store`               |
-| Logística comercial | `/empresa/logistica/**` o `/vendedor/logistica/**` | empresario/vendedor/personal asignado     | empresa o tienda comercial                     | Según propietario           |
-| Empresa logística   | `/logistica/**`                                    | empresario/vendedor propietario, personal | tenant `logistics_company_id` independiente    | Flota propia                |
-| Storefront          | `/tienda/:slug/**`                                 | público/comprador                         | lectura pública de una tienda                  | No                          |
+| Superficie          | Ruta principal                                           | Actor                                     | Alcance                                        | Puede administrar logística |
+| ------------------- | -------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- | --------------------------- |
+| Plataforma          | `/app/admin/**`                                          | `super_admin`, `admin` delegado           | infraestructura, tenants, usuarios, auditoría  | No                          |
+| Empresa             | `/app/empresa/**`                                        | `empresario`                              | un `tenant_id`, todas sus tiendas y vendedores | Flota `company`             |
+| Tienda              | `/app/tienda/**`                                         | `vendedor`                                | un `store_id` dentro de su empresa             | Flota `store`               |
+| Facturación         | `/app/tienda/facturacion/**`                             | `vendedor` con `store:manage-billing`     | un `store_id` dentro de su empresa             | No                          |
+| Logística comercial | `/app/empresa/logistica/**` o `/app/tienda/logistica/**` | empresario/vendedor/personal asignado     | empresa o tienda comercial                     | Según propietario           |
+| Empresa logística   | `/app/logistica/**`                                      | empresario/vendedor propietario, personal | tenant `logistics_company_id` independiente    | Flota propia                |
+| Storefront          | `/tienda/:slug/**`                                       | público/comprador                         | lectura pública de una tienda                  | No                          |
 
-`/logistica/**` es el workspace de un tenant logístico independiente. La ruta
-`/logistica/crear` permite iniciar ese tenant a un empresario o vendedor; una
-entrada comercial sin `logistics_company_id` se redirige a su workspace
-contextual. La plataforma nunca obtiene una flota global.
+`/app/logistica/**` es el workspace de un tenant logístico independiente. La
+ruta `/app/logistica/crear` permite iniciar ese tenant a un empresario o
+vendedor; una entrada comercial sin `logistics_company_id` se redirige a su
+workspace contextual. La plataforma nunca obtiene una flota global.
 
 ## Permisos
 
@@ -149,7 +150,7 @@ navegación y UX; nunca sustituyen las políticas RLS del backend.
 2. Crear tablas de membresía/roles de tienda y políticas RLS de empresa,
    tienda, producto, pedido y logística.
 3. Separar endpoints de plataforma, empresa comercial, tienda y tenant
-   logístico; `/logistica` debe resolver siempre por `logistics_company_id`.
+   logístico; `/app/logistica` debe resolver siempre por `logistics_company_id`.
 4. Añadir pruebas negativas de integración: cross-tenant, cross-store,
    vendedor modificando producto de empresa y superadmin intentando mutar una
    flota.

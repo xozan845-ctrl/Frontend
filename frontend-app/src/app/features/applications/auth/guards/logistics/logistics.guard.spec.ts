@@ -5,7 +5,7 @@ import { AuthStore } from '../../state/auth/auth.store';
 
 describe('logisticsGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = { url: '/logistica/envios' } as RouterStateSnapshot;
+  const state = { url: '/app/logistica/envios' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>) => {
     const tree = {} as UrlTree;
@@ -60,7 +60,7 @@ describe('logisticsGuard', () => {
 
     expect(await result).toBe(tree);
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/logistica/envios' },
+      queryParams: { returnUrl: '/app/logistica/envios' },
     });
   });
 
