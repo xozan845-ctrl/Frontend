@@ -426,3 +426,26 @@
 - **Estado global:** 🟢 **CUMPLE**; cualquier superficie nueva debe nacer con
   Glass o un primitivo global.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 16 — Workspace unificado (2026-11-06)
+
+- **Contexto:** el backoffice tenía shells, sidebars y árboles de rutas
+  duplicados por rol; el modelo de autorización ya estaba unificado.
+- **Cambio:** shell compartido (`WorkspaceShellComponent`), registro único
+  (`WORKSPACE_MODULES`) para empresa, tienda, plataforma, logística y
+  facturación, fábrica de rutas comerciales company/store y entrada canónica
+  `/app` con resolución por rol.
+- **Resultado:**
+  - ✅ Rutas canónicas `/app/{empresa,tienda,admin,logistica,facturacion}` y
+    compatibilidad con las antiguas.
+  - ✅ `company-shell`/`vendor-shell` y shells de admin/logística/facturación
+    sobre el mismo chrome; sidebars propios eliminados.
+  - ✅ 357 archivos / 1.968 tests; 24 suites de reglas (51/257 IDs); E2E y smoke
+    de Hosting en verde.
+  - ✅ Versión de trabajo `1.27.0`.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT` y disponibilidad de
+  runners de GitHub Actions para el despliegue automático.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).
