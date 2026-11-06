@@ -474,3 +474,26 @@
   Actions y tag `v1.27.0`.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 18 — Fronteras dominio/aplicación (2026-11-06)
+
+- **Contexto:** la auditoría de `features/` detectó que los dominios
+  compartidos importaban `applications/auth` y `applications/storage`, y que el
+  grafo tenía ciclos entre features.
+- **Cambio:** la sesión y autorización se movieron a `domains/session`; el
+  almacenamiento a `domains/file-storage`. Las aplicaciones `auth` y `storage`
+  conservan solo páginas, guards, interceptores y rutas. Se añadieron `R-AR-20`
+  (un dominio no importa una aplicación) y `R-AR-21` (sin ciclos de runtime
+  entre features, excluyendo composición de rutas).
+- **Resultado:**
+  - ✅ `domains/*` ya no importa `applications/*`.
+  - ✅ El único ciclo restante (`cart` ↔ `products` ↔ `wishlist`) queda en el
+    baseline y se resolverá al extraer el dominio de storefront.
+  - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
+    lint:css, build y 60/60 e2e en verde.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT`, runners de GitHub
+  Actions y tag `v1.27.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).

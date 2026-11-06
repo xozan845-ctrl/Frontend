@@ -31,7 +31,11 @@
   rutas antiguas (`/empresa`, `/vendedor`, `/admin`, `/logistica`,
   `/facturacion`) se eliminaron y responden 404. `/ia` sigue siendo una
   herramienta independiente.
-- Evidencia: **356 archivos / 1.967 tests**, 24 suites de reglas (51/257 IDs),
+- La sesión y el almacenamiento viven en `domains/session` y
+  `domains/file-storage`; las aplicaciones `auth` y `storage` conservan solo
+  páginas, guards y rutas. `R-AR-20` impide que un dominio importe una
+  aplicación y `R-AR-21` protege el grafo de ciclos.
+- Evidencia: **349 archivos / 1.930 tests**, 24 suites de reglas (53/259 IDs),
   typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
   `1.27.0`.
 

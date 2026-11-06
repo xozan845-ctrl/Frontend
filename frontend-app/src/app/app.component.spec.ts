@@ -4,7 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { App } from './app.component';
-import { AUTH_REPOSITORY } from './features/applications/auth/repositories/auth.repository';
+import { AUTH_REPOSITORY } from './features/domains/session/public-api';
 import { PRODUCT_REPOSITORY } from './features/applications/products/repositories/product.repository';
 import { CartStore, CartUiStore } from './features/applications/cart/public-api';
 

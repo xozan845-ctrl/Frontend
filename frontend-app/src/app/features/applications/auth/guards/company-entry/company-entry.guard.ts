@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { isCompanyOwnerRole } from '../../models/auth.model';
-import { AuthStore } from '../../state/auth/auth.store';
+import { isCompanyOwnerRole } from '../../../../domains/session/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 
 /**
  * Evita que el propietario de una empresa activa vuelva a la entrada pública.

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { workspaceLanding } from '../../models/authorization.model';
-import { AuthStore } from '../../state/auth/auth.store';
+import { workspaceLanding } from '../../../../domains/session/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 
 /** Roles que pueden consultar envíos (admin global o empresario de la empresa). */
 export function canViewShipments(role?: string): boolean {

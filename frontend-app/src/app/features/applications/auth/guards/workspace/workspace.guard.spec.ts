@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { AuthStore } from '../../state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { workspaceGuard } from './workspace.guard';
 
 describe('workspaceGuard', () => {

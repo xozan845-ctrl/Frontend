@@ -10,7 +10,7 @@ import { adaptClientOrdersFromBackend } from '../../adapters/clients/client.adap
 import { clientsStorageKey } from '../../constants/clients.constants';
 import type { ClientOrder } from '../../models/client.model';
 import type { ClientsDataSource } from '../../repositories/clients-data-source.repository';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 
 /**
  * Fuente de datos HTTP de la cartera compartida. El workspace configura el

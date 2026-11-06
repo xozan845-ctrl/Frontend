@@ -109,6 +109,12 @@ export function findTypeDeclarations() {
   return findings;
 }
 
+/** Grupo físico de un archivo de `features/` (`applications`, `domains` o `modules`). */
+function featureGroup(rel) {
+  const parts = rel.split('/');
+  return parts[0] === 'src' && parts[1] === 'app' && parts[2] === 'features' ? parts[3] : undefined;
+}
+
 /** Hallazgos de dirección de dependencias (R-AR-2/3/8, R-CX-1/4/6, R-SO-8). */
 export function findLayerViolations() {
   const findings = [];
@@ -200,6 +206,18 @@ export function findLayerViolations() {
         (target.kind === 'feature' || target.kind === 'feature-root') &&
         target.feature !== source.feature
       ) {
+        const sourceGroup = featureGroup(rel);
+        const targetGroup = featureGroup(targetRel);
+        if (sourceGroup === 'domains' && targetGroup === 'applications') {
+          add(
+            'R-AR-20',
+            rel,
+            line,
+            `el dominio '${source.feature}' importa la aplicación '${target.feature}' ${detail}`,
+            `${rel}|R-AR-20|${targetRel}`,
+          );
+        }
+
         const isPublicApi = target.kind === 'feature-root' && FEATURE_ROOT_FILES.has(target.file);
         if (!isPublicApi) {
           add('R-CX-6', rel, line, `importa capa interna de '${target.feature}' ${detail}`, key);
@@ -250,6 +268,97 @@ export function findLayerViolations() {
   }
 
   return findings;
+}
+
+/** Identificador lógico de un feature a partir de su ruta. */
+function featureIdFor(rel) {
+  const parts = rel.split('/');
+  if (parts[0] !== 'src' || parts[1] !== 'app' || parts[2] !== 'features') return null;
+  if (parts[3] === 'modules' && parts[4]) return `modules/${parts[4]}`;
+  if ((parts[3] === 'applications' || parts[3] === 'domains') && parts[4]) {
+    return `${parts[3]}/${parts[4]}`;
+  }
+  return null;
+}
+
+/**
+ * Ciclos de dependencia entre features (R-AR-21). Los archivos de rutas se
+ * excluyen: montar un módulo con `loadChildren` es composición de la app, no
+ * una dependencia de runtime entre dominios.
+ */
+export function findFeatureCycles() {
+  const adjacency = new Map();
+
+  for (const file of listTs()) {
+    const rel = toRel(file);
+    if (isSpec(rel) || ROUTES_FILE.test(rel)) continue;
+
+    const source = featureIdFor(rel);
+    if (!source) continue;
+
+    const src = readText(file);
+    for (const { specifier } of extractImports(src)) {
+      const targetFile = resolveImport(file, specifier);
+      if (!targetFile) continue;
+
+      const target = featureIdFor(toRel(targetFile));
+      if (!target || target === source) continue;
+
+      if (!adjacency.has(source)) adjacency.set(source, new Set());
+      adjacency.get(source).add(target);
+      if (!adjacency.has(target)) adjacency.set(target, new Set());
+    }
+  }
+
+  const index = new Map();
+  const low = new Map();
+  const stack = [];
+  const onStack = new Set();
+  const cycles = [];
+  let counter = 0;
+
+  const strongConnect = (node) => {
+    index.set(node, counter);
+    low.set(node, counter);
+    counter += 1;
+    stack.push(node);
+    onStack.add(node);
+
+    for (const next of [...(adjacency.get(node) ?? [])].sort()) {
+      if (!index.has(next)) {
+        strongConnect(next);
+        low.set(node, Math.min(low.get(node), low.get(next)));
+      } else if (onStack.has(next)) {
+        low.set(node, Math.min(low.get(node), index.get(next)));
+      }
+    }
+
+    if (low.get(node) !== index.get(node)) return;
+
+    const component = [];
+    let current;
+    do {
+      current = stack.pop();
+      onStack.delete(current);
+      component.push(current);
+    } while (current !== node);
+
+    if (component.length > 1) cycles.push(component.sort());
+  };
+
+  for (const node of [...adjacency.keys()].sort()) {
+    if (!index.has(node)) strongConnect(node);
+  }
+
+  return cycles
+    .sort((a, b) => a.join('|').localeCompare(b.join('|')))
+    .map((cycle) => ({
+      rule: 'R-AR-21',
+      file: `src/app/features/${cycle[0]}/`,
+      line: 0,
+      detail: `ciclo de features: ${[...cycle, cycle[0]].join(' → ')}`,
+      key: `cycle|${cycle.join('|')}`,
+    }));
 }
 
 /** Hallazgos de configuración hardcodeada (R-AR-11). */ export function findHardcodedConfig() {

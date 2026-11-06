@@ -41,10 +41,12 @@ un dominio reutilizable y un módulo de composición.
 | `applications/account`     | Perfil, cambio de contraseña e historial de pedidos.                               |
 | `applications/admin`       | Inventario de bodega y pantallas de administración.                                |
 | `applications/ai-scraper`  | Jobs y chat de scraping con IA (ADR-18).                                           |
-| `applications/auth`        | Login, registro, autorización por workspace y guards de sesión.                    |
+| `applications/auth`        | Login, registro y guards/interceptores de sesión.                                  |
 | `applications/billing`     | Facturación: nueva factura, listado y detalle (ADR-23).                            |
 | `applications/cart`        | Carrito, checkout y confirmación de pedido.                                        |
 | `domains/clients`          | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
+| `domains/session`          | Sesión, roles, permisos y resolución de workspace.                                 |
+| `domains/file-storage`     | Buckets, objetos, subidas y cuotas de almacenamiento por tenant.                   |
 | `domains/media-background` | Fondos multimedia de plataforma, empresa y tienda: adapter, puerto, HTTP y store.  |
 | `modules/clients`          | Composición de la página/modal de Clientes (ADR-59).                               |
 | `modules/sales`            | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
@@ -66,7 +68,7 @@ un dominio reutilizable y un módulo de composición.
 | `applications/plans`       | Planes y suscripciones.                                                            |
 | `applications/products`    | Catálogo, detalle, búsqueda y reseñas.                                             |
 | `applications/stores`      | Asistente de creación de tienda.                                                   |
-| `applications/storage`     | Almacenamiento de archivos por tenant y subida de medios.                          |
+| `applications/storage`     | Página de almacenamiento; el dominio vive en `domains/file-storage`.               |
 | `applications/vendor`      | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
 | `applications/wishlist`    | Lista de deseos persistida localmente.                                             |
 

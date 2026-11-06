@@ -1,7 +1,7 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import {
   expensesStorageKey,
   legacyExpensesStorageKey,

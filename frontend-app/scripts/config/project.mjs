@@ -143,16 +143,19 @@ export const FEATURE_CONTRACTS = {
   },
   auth: {
     kind: 'application',
-    layers: [
-      'adapters',
-      'guards',
-      'interceptors',
-      'models',
-      'pages',
-      'repositories',
-      'services',
-      'state',
-    ],
+    layers: ['guards', 'interceptors', 'pages'],
+    publicApi: true,
+    publicUi: false,
+  },
+  session: {
+    kind: 'domain',
+    layers: ['adapters', 'models', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  'file-storage': {
+    kind: 'domain',
+    layers: ['adapters', 'models', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
   },
@@ -357,7 +360,7 @@ export const FEATURE_CONTRACTS = {
   },
   storage: {
     kind: 'application',
-    layers: ['adapters', 'models', 'pages', 'repositories', 'services', 'state'],
+    layers: ['pages'],
     publicApi: true,
     publicUi: false,
   },

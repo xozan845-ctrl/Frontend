@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree } from '@angular/router';
-import { AuthStore } from '../../state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 import { companyOwnerRedirectGuard } from './company-entry.guard';
 
 describe('companyOwnerRedirectGuard', () => {

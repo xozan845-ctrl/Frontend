@@ -1,18 +1,7 @@
-/** API pública del feature `storage` para el shell que monta sus rutas. */
+/**
+ * API pública del feature `storage`: página y rutas de almacenamiento. El
+ * dominio (modelos, puerto, servicio y store) vive en
+ * `features/domains/file-storage` y se reexporta aquí.
+ */
+export * from '../../domains/file-storage/public-api';
 export { STORAGE_ROUTES } from './storage.routes';
-export { STORAGE_REPOSITORY, type StorageRepository } from './repositories/storage.repository';
-export {
-  StorageService,
-  resolveStorageAssetUrl,
-  storagePublicObjectUrl,
-} from './services/storage/storage.service';
-export type {
-  PresignedUpload,
-  StorageBucket,
-  StorageDownload,
-  StorageObject,
-  StorageObjectPage,
-  StorageObjectStatus,
-  StorageStatus,
-  StorageUploadRequest,
-} from './models/storage.model';

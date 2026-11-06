@@ -16,8 +16,7 @@ import { PRODUCT_REPOSITORY } from './features/applications/products/repositorie
 import { ProductService } from './features/applications/products/services/product/product.service';
 import { ORDER_REPOSITORY } from './features/applications/cart/repositories/order.repository';
 import { OrderService } from './features/applications/cart/services/order/order.service';
-import { AUTH_REPOSITORY } from './features/applications/auth/repositories/auth.repository';
-import { AuthService } from './features/applications/auth/services/auth/auth.service';
+import { AUTH_REPOSITORY, AuthService } from './features/domains/session/public-api';
 import { CART_REPOSITORY } from './features/applications/cart/repositories/cart.repository';
 import { CartService } from './features/applications/cart/services/cart/cart.service';
 

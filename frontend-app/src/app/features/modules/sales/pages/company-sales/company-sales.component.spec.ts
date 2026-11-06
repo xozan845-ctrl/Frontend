@@ -14,7 +14,7 @@ import {
   type CreateCompanySalePayload,
 } from '../../../../applications/empresas/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../../applications/auth/public-api';
+import { AuthStore } from '../../../../domains/session/public-api';
 import type { CatalogProduct } from '../../../../applications/products/public-api';
 
 const row: CompanySaleRow = {

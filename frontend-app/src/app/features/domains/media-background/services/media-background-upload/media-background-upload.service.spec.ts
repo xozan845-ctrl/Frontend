@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { STORAGE_REPOSITORY } from '../../../../applications/storage/public-api';
+import { STORAGE_REPOSITORY } from '../../../file-storage/public-api';
 import { MediaBackgroundUploadService } from './media-background-upload.service';
 
 describe('MediaBackgroundUploadService', () => {

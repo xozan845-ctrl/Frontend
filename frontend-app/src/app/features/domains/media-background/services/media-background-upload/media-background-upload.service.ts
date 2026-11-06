@@ -8,7 +8,7 @@ import {
 import {
   STORAGE_REPOSITORY,
   storagePublicObjectUrl,
-} from '../../../../applications/storage/public-api';
+} from '../../../file-storage/public-api';
 import type { MediaBackgroundUploadOptions } from './media-background-upload.types';
 
 /**

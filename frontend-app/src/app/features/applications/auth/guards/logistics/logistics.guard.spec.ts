@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { logisticsGuard } from './logistics.guard';
-import { AuthStore } from '../../state/auth/auth.store';
+import { AuthStore } from '../../../../domains/session/public-api';
 
 describe('logisticsGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
