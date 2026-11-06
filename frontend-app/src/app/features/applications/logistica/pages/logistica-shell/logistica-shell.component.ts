@@ -27,13 +27,16 @@ export default class LogisticaShellComponent {
   readonly isSidebarOpen = signal(false);
   readonly basePath = computed(() => {
     const url = this.router.url;
+    if (url.startsWith('/app/empresa/logistica')) return '/app/empresa/logistica';
+    if (url.startsWith('/app/tienda/logistica')) return '/app/tienda/logistica';
+    if (url.startsWith('/app/logistica')) return '/app/logistica';
     if (url.startsWith('/empresa/logistica')) return '/empresa/logistica';
     if (url.startsWith('/vendedor/logistica')) return '/vendedor/logistica';
     return '/logistica';
   });
   readonly contextLabel = computed(() => {
-    if (this.basePath() === '/empresa/logistica') return 'Logística · Empresa';
-    if (this.basePath() === '/vendedor/logistica') return 'Logística · Tienda';
+    if (this.basePath() === '/app/empresa/logistica') return 'Logística · Empresa';
+    if (this.basePath() === '/app/tienda/logistica') return 'Logística · Tienda';
     if (this.authStore.user()?.logisticsCompanyId) return 'Empresa logística';
     return 'Logística';
   });

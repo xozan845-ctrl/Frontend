@@ -19,7 +19,7 @@ export default class LogisticsCompanyOnboardingComponent {
   });
 
   private readonly navigateAfterCreate = effect(() => {
-    if (this.store.company()) void this.router.navigateByUrl('/logistica/dashboard');
+    if (this.store.company()) void this.router.navigateByUrl('/app/logistica/dashboard');
   });
 
   submit(): void {

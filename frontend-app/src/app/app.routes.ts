@@ -74,6 +74,13 @@ export const routes: Routes = [
       import('./features/applications/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
+    path: 'app',
+    loadChildren: () =>
+      import('./features/applications/workspace/workspace.routes').then(
+        (module) => module.WORKSPACE_ROUTES,
+      ),
+  },
+  {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
     children: [...HOME_ROUTES, ...PRODUCTS_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],

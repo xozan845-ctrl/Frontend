@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
-import { canEnterWorkspace } from '../../../auth/public-api';
+import { canEnterWorkspace, workspaceLanding } from '../../../auth/public-api';
 
 /**
  * Protege el workspace de empresa: solo el propietario del tenant administra
@@ -22,5 +22,5 @@ export const companyGuard: CanActivateFn = async (_route, state) => {
     return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 
-  return router.createUrlTree(['/vendedor/inicio']);
+  return router.createUrlTree([workspaceLanding(user)]);
 };

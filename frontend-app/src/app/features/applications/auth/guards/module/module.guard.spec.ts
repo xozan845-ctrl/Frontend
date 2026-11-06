@@ -73,14 +73,14 @@ describe('moduleGuard', () => {
     user.set(seller);
     setup();
 
-    await expect(run('company.sales')).resolves.toEqual({ commands: ['/vendedor/inicio'] });
+    await expect(run('company.sales')).resolves.toEqual({ commands: ['/app/tienda/inicio'] });
   });
 
   it('debe respetar los permisos delegados del vendedor', async () => {
     user.set({ ...seller, permissions: ['store:read'] } as User);
     setup();
 
-    await expect(run('store.reports')).resolves.toEqual({ commands: ['/vendedor/inicio'] });
+    await expect(run('store.reports')).resolves.toEqual({ commands: ['/app/tienda/inicio'] });
   });
 
   it('debe redirigir al login sin sesión', async () => {
@@ -108,6 +108,6 @@ describe('moduleGuard', () => {
     user.set(owner);
     setup();
 
-    await expect(run('no.existe')).resolves.toEqual({ commands: ['/empresa/inicio'] });
+    await expect(run('no.existe')).resolves.toEqual({ commands: ['/app/empresa/inicio'] });
   });
 });

@@ -47,7 +47,8 @@ que son verificables por máquina.
 > (`ALLOWED_COMMIT_SCOPES`). `pwa` se añadió para cambios de service worker y
 > configuración de despliegue del frontend (R-GC-1, R-AR-11); `orders` para los
 > primitivos compartidos de pedidos (ADR-57); `purchases` para el dominio de
-> compras, órdenes y proveedores (ADR-66).
+> compras, órdenes y proveedores (ADR-66); `workspace` para la composición
+> role-driven del backoffice y sus rutas compartidas (R-AR-12, R-AR-16).
 >
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,

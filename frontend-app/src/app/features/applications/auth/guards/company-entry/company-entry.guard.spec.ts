@@ -36,7 +36,7 @@ describe('companyOwnerRedirectGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/empresa/inicio']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/empresa/inicio']);
   });
 
   it('permite completar el onboarding a un empresario sin tenant', async () => {
@@ -68,6 +68,6 @@ describe('companyOwnerRedirectGuard', () => {
 
     expect(await result).toBe(tree);
     expect(refreshTokenOnce).toHaveBeenCalledOnce();
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/empresa/inicio']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/empresa/inicio']);
   });
 });

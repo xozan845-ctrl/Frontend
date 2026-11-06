@@ -17,7 +17,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         id: 'store.home',
         label: 'Inicio',
         icon: 'fa-solid fa-house',
-        link: '/vendedor/inicio',
+        link: '/app/tienda/inicio',
         testId: 'vendor-nav-inicio',
         workspace: 'store',
         section: 'operacion',

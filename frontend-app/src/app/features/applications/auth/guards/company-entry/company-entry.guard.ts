@@ -18,7 +18,7 @@ export const companyOwnerRedirectGuard: CanActivateFn = async () => {
 
   const user = authStore.user();
   if (isCompanyOwnerRole(user?.role) && user?.tenantId) {
-    return router.createUrlTree(['/empresa/inicio']);
+    return router.createUrlTree(['/app/empresa/inicio']);
   }
 
   return true;

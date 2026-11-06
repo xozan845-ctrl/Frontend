@@ -1,16 +1,36 @@
 import { Routes } from '@angular/router';
+import { workspaceLandingGuard } from './guards/workspace-landing.guard';
 
 /**
- * Punto de composición de las rutas compartidas company/store. La fábrica vive
- * en `constants/commercial.routes.ts` y se montará en las rutas canónicas del
- * workspace en la siguiente fase.
+ * Entrada canónica del backoffice: `/app` resuelve el contexto por rol y
+ * `/app/<contexto>` monta el árbol del workspace correspondiente con el shell
+ * compartido. Las rutas antiguas (`/empresa`, `/vendedor`, etc.) se conservan
+ * como compatibilidad.
  */
 export const WORKSPACE_ROUTES: Routes = [
+  { path: '', pathMatch: 'full', canActivate: [workspaceLandingGuard], children: [] },
+  {
+    path: 'tienda',
+    loadChildren: () => import('../vendor/vendor.routes').then((module) => module.VENDOR_ROUTES),
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('../admin/admin.routes').then((module) => module.ADMIN_ROUTES),
+  },
+  {
+    path: 'logistica',
+    loadChildren: () =>
+      import('../logistica/logistica.routes').then((module) => module.LOGISTICA_ROUTES),
+  },
+  {
+    path: 'facturacion',
+    loadChildren: () => import('../billing/billing.routes').then((module) => module.BILLING_ROUTES),
+  },
   {
     path: '',
     loadChildren: () =>
-      import('./constants/commercial.routes').then((module) =>
-        module.commercialScopeRoutes('company'),
+      import('../empresas/empresas.routes').then((module) =>
+        module.EMPRESAS_ROUTES.filter((route) => route.path === 'empresa'),
       ),
   },
 ];

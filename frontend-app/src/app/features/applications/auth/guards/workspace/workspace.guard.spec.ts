@@ -55,7 +55,7 @@ describe('workspaceGuard', () => {
     );
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/admin/inventario']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/admin/inventario']);
   });
 
   it('exige el permiso explícito de roles de tienda', async () => {
@@ -77,7 +77,7 @@ describe('workspaceGuard', () => {
     );
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/vendedor/inicio']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/tienda/inicio']);
   });
 
   it('conserva la URL al enviar a login a un anónimo', async () => {

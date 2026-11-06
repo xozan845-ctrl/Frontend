@@ -27,12 +27,12 @@ export class Header {
   readonly isCompanyOwner = computed(() => isCompanyOwnerRole(this.authStore.user()?.role));
   readonly homeLink = computed(() =>
     this.isCompanyOwner()
-      ? ['/empresa/inicio']
+      ? ['/app/empresa/inicio']
       : this.storeId()
         ? ['/tienda', this.storeId()]
         : ['/'],
   );
-  readonly companyWorkspaceLink = ['/empresa/inicio'];
+  readonly companyWorkspaceLink = ['/app/empresa/inicio'];
   readonly shopLink = computed(() =>
     this.storeId() ? ['/tienda', this.storeId(), 'shop'] : ['/'],
   );

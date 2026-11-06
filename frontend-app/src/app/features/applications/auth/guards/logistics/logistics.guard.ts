@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { workspaceLanding } from '../../models/authorization.model';
 import { AuthStore } from '../../state/auth/auth.store';
 
 /** Roles que pueden consultar envíos (admin global o empresario de la empresa). */
@@ -29,5 +30,5 @@ export const logisticsGuard: CanActivateFn = async (_route, state) => {
     return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree([workspaceLanding(user)]);
 };

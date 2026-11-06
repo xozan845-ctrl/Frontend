@@ -148,7 +148,7 @@ describe('StoreEntryComponent', () => {
       ) as HTMLButtonElement
     ).click();
 
-    expect(navigate).toHaveBeenCalledWith(['/empresa/inicio']);
+    expect(navigate).toHaveBeenCalledWith(['/app/empresa/inicio']);
   });
 
   it('carga el fondo de plataforma al entrar', async () => {

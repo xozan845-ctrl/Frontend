@@ -8,7 +8,7 @@ export const VENDOR_CLIENTS_PAGE_CONFIG: ClientsPageConfig = {
   title: 'Clientes',
   subtitle: 'CRM de tu cartera. Consulta, analiza y administra los clientes de tus ventas.',
   homeLabel: 'Inicio',
-  homeLink: '/vendedor/inicio',
+  homeLink: '/app/tienda/inicio',
   importEnabled: true,
 };
 

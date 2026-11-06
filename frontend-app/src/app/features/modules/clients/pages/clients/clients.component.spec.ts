@@ -111,7 +111,7 @@ describe('ClientsPageComponent', () => {
     title: 'Clientes',
     subtitle: 'CRM compartido de prueba.',
     homeLabel: 'Inicio',
-    homeLink: '/empresa/inicio',
+    homeLink: '/app/empresa/inicio',
     importEnabled: true,
   };
 
@@ -173,13 +173,13 @@ describe('ClientsPageComponent', () => {
       title: 'Mis clientes',
       subtitle: 'Cartera del vendedor.',
       homeLabel: 'Panel',
-      homeLink: '/vendedor/inicio',
+      homeLink: '/app/tienda/inicio',
       importEnabled: false,
     });
 
     expect(fixture.nativeElement.textContent).toContain('Mis clientes');
     expect(fixture.nativeElement.textContent).toContain('Cartera del vendedor.');
-    const home = fixture.nativeElement.querySelector('a[href="/vendedor/inicio"]');
+    const home = fixture.nativeElement.querySelector('a[href="/app/tienda/inicio"]');
     expect(home?.textContent).toContain('Panel');
     expect(fixture.nativeElement.querySelector('[data-testid="clients-import"]')).toBeNull();
   });

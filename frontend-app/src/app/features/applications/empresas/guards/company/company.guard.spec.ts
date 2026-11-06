@@ -5,7 +5,7 @@ import { companyGuard } from './company.guard';
 
 describe('companyGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
-  const state = { url: '/empresa/inicio' } as RouterStateSnapshot;
+  const state = { url: '/app/empresa/inicio' } as RouterStateSnapshot;
 
   const run = (store: Record<string, unknown>) => {
     const tree = {} as UrlTree;
@@ -49,7 +49,7 @@ describe('companyGuard', () => {
     });
 
     expect(await result).toBe(tree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(['/vendedor/inicio']);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/app/tienda/inicio']);
   });
 
   it('conserva la URL al llevar a un anónimo al login', async () => {
@@ -62,7 +62,7 @@ describe('companyGuard', () => {
 
     expect(await result).toBe(tree);
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/empresa/inicio' },
+      queryParams: { returnUrl: '/app/empresa/inicio' },
     });
   });
 });

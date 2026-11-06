@@ -410,7 +410,7 @@ describe('CreateStoreComponent', () => {
     await vi.waitFor(() => expect(fixture.componentInstance.wizard.store()).toEqual(createdStore));
     fixture.componentInstance.skipProducts();
 
-    await vi.waitFor(() => expect(navigateByUrl).toHaveBeenCalledWith('/empresa/inicio'));
+    await vi.waitFor(() => expect(navigateByUrl).toHaveBeenCalledWith('/app/empresa/inicio'));
   });
 
   it('debe mostrar el estado de error del catálogo con reintento', async () => {

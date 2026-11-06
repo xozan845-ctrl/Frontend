@@ -397,7 +397,7 @@ export const FEATURE_CONTRACTS = {
   },
   workspace: {
     kind: 'application',
-    layers: ['constants'],
+    layers: ['constants', 'guards'],
     publicApi: false,
     publicUi: false,
   },
@@ -614,6 +614,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'stores',
   'vendor',
   'wishlist',
+  'workspace',
   // Capas y piezas de la app
   'adapters',
   'api',
