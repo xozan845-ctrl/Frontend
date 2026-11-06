@@ -112,7 +112,7 @@ describe('RegisterFormComponent', () => {
 
   // ADR-24: el alta pedida desde el header de facturación crea cuenta de facturador.
   it('debe registrar como facturador cuando el alta llega de facturación', async () => {
-    const fixture = await setup({ rol: 'biller', returnUrl: '/facturacion/nueva' });
+    const fixture = await setup({ rol: 'biller', returnUrl: '/app/tienda/facturacion/nueva' });
     fixture.componentInstance.registerForm.setValue({
       name: 'Fabi',
       email: 'fabi@tienda.com',
@@ -132,7 +132,7 @@ describe('RegisterFormComponent', () => {
   });
 
   it('debe titular y avisar del alta de facturador', async () => {
-    const fixture = await setup({ rol: 'biller', returnUrl: '/facturacion/nueva' });
+    const fixture = await setup({ rol: 'biller', returnUrl: '/app/tienda/facturacion/nueva' });
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.querySelector('h2')?.textContent).toContain('Facturador');

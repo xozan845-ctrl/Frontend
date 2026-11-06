@@ -164,7 +164,7 @@ test('R-E-15: se puede crear una empresa paso a paso', async ({ page }) => {
   await page.getByTestId('skip-products').click();
 
   // Un empresario termina el onboarding en su workspace de gestión.
-  await expect(page).toHaveURL(/\/empresa\/inicio/);
+  await expect(page).toHaveURL(/\/app\/empresa\/inicio/);
   await expect(page.getByTestId('company-nav-inicio')).toBeVisible();
 });
 

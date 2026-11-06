@@ -32,15 +32,17 @@ sesión (`workspaceLanding`):
 - `/app/tienda` — workspace de tienda (`vendedor`).
 - `/app/admin` — plataforma (`admin`/`super_admin`).
 - `/app/logistica` — logística (empresa, tienda o empresa logística).
-- `/app/facturacion` — submódulo de facturación de tienda.
+
+Facturación es un submódulo de tienda (`/app/tienda/facturacion`) y comparte el
+sidebar/guard del workspace; `/ia` es una herramienta independiente. Las rutas
+antiguas redirigen a `/app` mediante un componente de compatibilidad.
 
 Todos comparten `WorkspaceShellComponent` y el registro `WORKSPACE_MODULES`;
 el sidebar y los guards filtran por `workspace` + `permission`, no por rutas
 duplicadas. Los módulos comerciales compartidos (clientes, bancos, cuentas por
 pagar, códigos de barras, créditos y reportes) se montan desde
 `features/applications/workspace/constants/commercial.routes.ts` con providers
-de scope company/store. Las rutas antiguas (`/empresa`, `/vendedor`, `/admin`,
-`/logistica`, `/facturacion`) se mantienen como compatibilidad.
+de scope company/store.
 
 ## Sistema visual Glass
 

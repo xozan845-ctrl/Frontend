@@ -6,7 +6,10 @@
           aria-label="Ruta de navegación"
           class="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase"
         >
-          <a routerLink="/facturacion/facturas" class="transition-colors hover:text-accent-600">
+          <a
+            routerLink="/app/tienda/facturacion/facturas"
+            class="transition-colors hover:text-accent-600"
+          >
             Facturas
           </a>
           <i class="fa-solid fa-chevron-right text-[8px]" aria-hidden="true"></i>
@@ -48,7 +51,7 @@
           Descargar PDF
         </button>
         <a
-          routerLink="/facturacion/facturas"
+          routerLink="/app/tienda/facturacion/facturas"
           class="btn btn-primary btn-sm shrink-0"
           data-testid="billing-back-invoices"
         >
@@ -200,7 +203,7 @@
       title="No encontramos esa factura"
       subtitle="Revisa el enlace o vuelve al listado de facturas."
       actionLabel="Ver facturas"
-      actionRoute="/facturacion/facturas"
+      actionRoute="/app/tienda/facturacion/facturas"
     />
   }
 </div>

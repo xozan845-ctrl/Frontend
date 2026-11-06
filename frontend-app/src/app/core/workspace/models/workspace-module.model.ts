@@ -3,7 +3,7 @@ export type WorkspaceScope = 'platform' | 'company' | 'store' | 'logistics';
 
 /** Sección visual del sidebar de un workspace. */
 export type WorkspaceModuleSection =
-  'operacion' | 'administracion' | 'finanzas' | 'analisis' | 'billing' | 'footer';
+  'operacion' | 'administracion' | 'finanzas' | 'analisis' | 'footer';
 
 /** Estado de implementación del módulo. */
 export type WorkspaceModuleStatus = 'ready' | 'soon';

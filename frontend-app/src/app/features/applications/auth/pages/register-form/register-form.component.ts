@@ -69,7 +69,7 @@ export class RegisterFormComponent {
   private redirectAfterAuth(): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     const fallback = this.isBillerIntent
-      ? '/facturacion/nueva'
+      ? '/app/tienda/facturacion/nueva'
       : this.isSellerIntent
         ? '/crear-empresa'
         : '/';

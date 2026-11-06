@@ -23,10 +23,6 @@ export const WORKSPACE_ROUTES: Routes = [
       import('../logistica/logistica.routes').then((module) => module.LOGISTICA_ROUTES),
   },
   {
-    path: 'facturacion',
-    loadChildren: () => import('../billing/billing.routes').then((module) => module.BILLING_ROUTES),
-  },
-  {
     path: '',
     loadChildren: () =>
       import('../empresas/empresas.routes').then((module) =>

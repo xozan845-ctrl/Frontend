@@ -18,11 +18,18 @@ import { storefrontResolver } from './features/applications/products/resolvers/s
  * `/tienda/:storeId`, y `storefrontResolver` carga la tienda de la URL antes de
  * activarlas. No hay tienda por defecto (Core Engine no expone un directorio).
  */
+const legacyWorkspaceRedirect = () =>
+  import('./features/applications/workspace/pages/legacy-workspace-redirect/legacy-workspace-redirect.component').then(
+    (module) => module.default,
+  );
+
 export const routes: Routes = [
   ...AUTH_ROUTES,
   ...PLANS_ROUTES,
   ...ACCOUNT_ROUTES,
-  ...EMPRESAS_ROUTES,
+  // Las invitaciones públicas viven fuera del workspace; `empresa` se redirige
+  // al contexto canónico de `/app`.
+  ...EMPRESAS_ROUTES.filter((route) => route.path !== 'empresa'),
   // La entrada raíz (`/`) debe ir **antes** que las rutas lazy con path vacío:
   // si no, `stores` captura la URL vacía con un match sin componente (el outlet
   // queda en blanco, sin error) y `ROOT_ROUTES` nunca se llega a evaluar.
@@ -44,42 +51,23 @@ export const routes: Routes = [
       ),
   },
   {
-    // Panel del vendedor (ADR-20): POS con pedidos en tiempo real. Se carga lazy
-    // con `loadChildren` para que ni sus stores ni el POS viajen en el bundle
-    // inicial (R-LZ-1, R-PF-1).
-    path: 'vendedor',
-    loadChildren: () =>
-      import('./features/applications/vendor/vendor.routes').then((m) => m.VENDOR_ROUTES),
-  },
-  {
-    // Facturación (ADR-23): extensión visual del panel del vendedor. Se carga
-    // lazy para no arrastrar sus páginas al bundle inicial (R-LZ-1, R-PF-1).
-    path: 'facturacion',
-    loadChildren: () =>
-      import('./features/applications/billing/billing.routes').then((m) => m.BILLING_ROUTES),
-  },
-  {
-    // Logística (ADR-25): tablero visual de rutas y entregas. Se carga lazy
-    // para que el mapa (Leaflet) y sus paneles no viajen en el bundle inicial
-    // (R-LZ-1, R-PF-1).
-    path: 'logistica',
-    loadChildren: () =>
-      import('./features/applications/logistica/logistica.routes').then((m) => m.LOGISTICA_ROUTES),
-  },
-  {
-    // Administración (ADR-33): inventario y futuras pantallas admin. Lazy para
-    // no arrastrar sus stores/servicios al bundle inicial (R-LZ-1, R-PF-1).
-    path: 'admin',
-    loadChildren: () =>
-      import('./features/applications/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
-  },
-  {
     path: 'app',
     loadChildren: () =>
       import('./features/applications/workspace/workspace.routes').then(
         (module) => module.WORKSPACE_ROUTES,
       ),
   },
+  // Compatibilidad: las URLs antiguas redirigen al contexto canónico `/app`.
+  { path: 'empresa', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
+  { path: 'empresa/**', loadComponent: legacyWorkspaceRedirect },
+  { path: 'vendedor', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
+  { path: 'vendedor/**', loadComponent: legacyWorkspaceRedirect },
+  { path: 'admin', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
+  { path: 'admin/**', loadComponent: legacyWorkspaceRedirect },
+  { path: 'logistica', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
+  { path: 'logistica/**', loadComponent: legacyWorkspaceRedirect },
+  { path: 'facturacion', pathMatch: 'full', loadComponent: legacyWorkspaceRedirect },
+  { path: 'facturacion/**', loadComponent: legacyWorkspaceRedirect },
   {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },

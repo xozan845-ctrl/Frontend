@@ -42,24 +42,20 @@ describe('workspace-modules.constants', () => {
     expect(workspaceModuleById('no.existe')).toBeUndefined();
   });
 
-  it('debe incluir plataforma, logística y facturación', () => {
+  it('debe incluir plataforma y logística', () => {
     const platformIds = workspaceModuleGroups('platform', () => true).flatMap((group) =>
       group.items.map((item) => item.id),
     );
     const logisticsIds = workspaceModuleGroups('logistics', () => true).flatMap((group) =>
       group.items.map((item) => item.id),
     );
-    const billingIds = workspaceModuleGroups('store', () => true, ['billing']).flatMap((group) =>
-      group.items.map((item) => item.id),
-    );
-    const defaultStoreIds = workspaceModuleGroups('store', () => true).flatMap((group) =>
+    const storeIds = workspaceModuleGroups('store', () => true).flatMap((group) =>
       group.items.map((item) => item.id),
     );
 
     expect(platformIds).toContain('platform.inventory');
     expect(logisticsIds).toContain('logistics.dashboard');
-    expect(billingIds).toContain('billing.new');
-    expect(defaultStoreIds).not.toContain('billing.new');
+    expect(storeIds).toContain('store.billing');
   });
 
   it('debe mantener ids y testIds únicos', () => {

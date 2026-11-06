@@ -46,3 +46,15 @@ test('R-AR-12: workspace de logística en /app/logistica', async ({ page }) => {
   await login(page, '/app/logistica/dashboard', 'empresario-logistica@tienda.test');
   await expect(page.getByTestId('logistica-dashboard')).toBeVisible();
 });
+
+test('R-AR-12: facturación vive dentro de tienda', async ({ page }) => {
+  await login(page, '/app/tienda/facturacion/nueva', 'vendedor@tienda.test');
+  await expect(page.getByTestId('billing-new-invoice-page')).toBeVisible();
+});
+
+test('R-AR-12: las rutas antiguas redirigen a /app', async ({ page }) => {
+  await page.goto('/vendedor/pedidos', { waitUntil: 'domcontentloaded' });
+  await page.waitForURL(/\/login\?.*returnUrl=.*app%2Ftienda%2Fpedidos/, {
+    timeout: 30_000,
+  });
+});

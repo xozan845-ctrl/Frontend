@@ -37,7 +37,7 @@ describe('InvoiceListTableComponent', () => {
       '[data-testid="billing-invoice-link-fac-2"]',
     ) as HTMLAnchorElement;
 
-    expect(link.getAttribute('href')).toBe('/facturacion/facturas/fac-2');
+    expect(link.getAttribute('href')).toBe('/app/tienda/facturacion/facturas/fac-2');
   });
 
   it('debe mostrar el estado vacío', async () => {

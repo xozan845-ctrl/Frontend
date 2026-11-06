@@ -1,32 +1,22 @@
 import { Routes } from '@angular/router';
-import { workspaceGuard } from '../auth/public-api';
 
 /**
- * Rutas del módulo de facturación (ADR-23): extensión visual del panel del
- * vendedor, cargada con `loadChildren` desde `app.routes.ts` para no formar
- * parte del bundle inicial (`R-AR-12`, `R-LZ-1`). El shell aporta el sidebar
- * del diseño y las páginas se cargan con `loadComponent`.
+ * Páginas de facturación (ADR-23). Se montan dentro del workspace de tienda
+ * (`/app/tienda/facturacion`); el shell y el guard de tienda los aporta el
+ * workspace padre. No tienen shell propio para evitar un sidebar anidado.
  */
-export const BILLING_ROUTES: Routes = [
+export const BILLING_PAGE_ROUTES: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'nueva' },
   {
-    path: '',
-    canActivate: [workspaceGuard],
-    data: { workspace: 'store', permission: 'store:manage-billing' },
-    loadComponent: () => import('./pages/billing-shell/billing-shell.component'),
-    children: [
-      { path: '', pathMatch: 'full', redirectTo: 'nueva' },
-      {
-        path: 'nueva',
-        loadComponent: () => import('./pages/new-invoice/new-invoice.component'),
-      },
-      {
-        path: 'facturas',
-        loadComponent: () => import('./pages/invoices/invoices.component'),
-      },
-      {
-        path: 'facturas/:id',
-        loadComponent: () => import('./pages/invoice-detail/invoice-detail.component'),
-      },
-    ],
+    path: 'nueva',
+    loadComponent: () => import('./pages/new-invoice/new-invoice.component'),
+  },
+  {
+    path: 'facturas',
+    loadComponent: () => import('./pages/invoices/invoices.component'),
+  },
+  {
+    path: 'facturas/:id',
+    loadComponent: () => import('./pages/invoice-detail/invoice-detail.component'),
   },
 ];
