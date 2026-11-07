@@ -1,4 +1,4 @@
-import type { Product } from '../../products/public-api';
+import type { Product } from './product.model';
 
 /** Línea del carrito enriquecida por el backend. */
 export interface CartItem {

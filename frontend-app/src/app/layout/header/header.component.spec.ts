@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 
 import { Header } from './header.component';
 import { AUTH_REPOSITORY, AuthStore, type User } from '../../features/domains/session/public-api';
-import { PRODUCT_REPOSITORY } from '../../features/applications/products/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../features/domains/storefront/public-api';
 import { CartStore, CartUiStore } from '../../features/applications/cart/public-api';
 
 const authRepoStub = {

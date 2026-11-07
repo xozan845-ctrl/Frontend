@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { Footer } from './footer.component';
-import { PRODUCT_REPOSITORY } from '../../features/applications/products/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../features/domains/storefront/public-api';
 
 const productRepoStub = { getStorefront: () => of({ store: null, products: [] }) };
 

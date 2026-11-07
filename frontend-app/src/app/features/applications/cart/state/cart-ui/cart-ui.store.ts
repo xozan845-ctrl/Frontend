@@ -1,5 +1,5 @@
 import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
-import type { CartUiState } from '../cart/cart.state';
+import type { CartUiState } from '../../../../domains/storefront/public-api';
 
 const initialState: CartUiState = { isSidebarOpen: false };
 

@@ -1,10 +1,10 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Product } from '../../models/product.model';
-import { ProductStore } from '../product/product.store';
+import { Product } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { RecentlyViewedStore } from '../recently-viewed/recently-viewed.store';
-import { ReviewsStore } from '../reviews/reviews.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist/wishlist.store';
+import { ReviewsStore } from '../../../../domains/storefront/public-api';
+import { WishlistStore } from '../../../../domains/storefront/public-api';
 import { ProductDetailStore } from './product-detail.store';
 
 const product: Product = {

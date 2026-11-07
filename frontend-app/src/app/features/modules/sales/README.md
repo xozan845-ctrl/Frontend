@@ -26,6 +26,6 @@ pedidos/POS del vendedor sobre los dominios y stores de sus features.
 La empresa carga `sales.routes.ts` desde `EMPRESAS_ROUTES`; el vendedor carga
 las páginas desde `VENDOR_ROUTES` y mantiene sus stores en el shell para que
 sobrevivan a la navegación. El dominio de ventas de empresa y el portal viven en
-`features/domains/company-sales`; el POS del vendedor sigue en
-`features/applications/vendor` hasta la extracción de su dominio. El módulo solo
-compone presentación y providers (ADR-63/64/77).
+`features/domains/company-sales`; el POS, pedidos, ofertas y catálogo de tienda
+viven en `features/domains/store-sales`. El módulo solo compone presentación y
+providers (ADR-63/64/77/78).

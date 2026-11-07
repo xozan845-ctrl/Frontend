@@ -1,12 +1,16 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { WishlistStore } from '../../state/wishlist/wishlist.store';
-import { CartStore } from '../../../cart/public-api';
+import {
+  CartStore,
+  ProductStore,
+  WishlistStore,
+  type Product,
+} from '../../../../domains/storefront/public-api';
+import type { QuickViewProduct } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.types';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { StarRatingComponent } from '../../../../../shared/ui/star-rating/star-rating.component';
-import { Product, ProductStore } from '../../../products/public-api';
-import { QuickViewModalComponent } from '../../../products/public-ui';
+import { QuickViewModalComponent } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.component';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
 
@@ -47,8 +51,8 @@ export class WishlistComponent {
     return vm ? { ...vm, isInWishlist: true } : null;
   });
 
-  addToCart(product: Product): void {
-    this.cartStore.addItem(product);
+  addToCart(product: QuickViewProduct): void {
+    this.cartStore.addItem(product as Product);
   }
 
   removeFromWishlist(productId: string | number): void {

@@ -13,11 +13,11 @@ import { Subject, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Product } from '../../models/product.model';
-import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
-import { StarRatingComponent } from '../../../../../shared/ui/star-rating/star-rating.component';
-import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import type { QuickViewProduct } from './quick-view-modal.types';
+import { CartFlyService } from '../cart-fly/cart-fly.service';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
+import { FocusTrapDirective } from '../../directives/focus-trap.directive';
+import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-quick-view-modal',
@@ -27,7 +27,7 @@ import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
   styleUrl: './quick-view-modal.component.css',
 })
 export class QuickViewModalComponent {
-  product = input<Product | null>(null);
+  product = input<QuickViewProduct | null>(null);
   /** Tienda activa para construir enlaces store-scoped (multi-tienda). */
   storeId = input<string>('');
   /** Datos que aporta el contenedor: sin stores de dominio (R-SO-6). */
@@ -35,8 +35,8 @@ export class QuickViewModalComponent {
   avgRating = input<number>(0);
   reviewCount = input<number>(0);
   closeModal = output<void>();
-  addToCart = output<Product>();
-  toggleWishlist = output<Product>();
+  addToCart = output<QuickViewProduct>();
+  toggleWishlist = output<QuickViewProduct>();
 
   private readonly cartFlyService = inject(CartFlyService);
 

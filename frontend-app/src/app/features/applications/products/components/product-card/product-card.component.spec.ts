@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { Product } from '../../models/product.model';
+import { Product } from '../../../../domains/storefront/public-api';
 import { ProductCardComponent } from './product-card.component';
 
 const product: Product = {

@@ -3,30 +3,30 @@ import { STORAGE_ROUTES } from '../storage/public-api';
 import { moduleGuard } from '../auth/public-api';
 import { commercialScopeRoutes } from '../workspace/constants/commercial.routes';
 import {
+  CLIENT_REPOSITORY,
+  ClientSearchStore,
+  ClientService,
+  OrderDraftStore,
+  VENDOR_OFFER_REPOSITORY,
+  VENDOR_ORDER_REPOSITORY,
+  VENDOR_ORDERS_SOURCE,
+  VENDOR_PRODUCT_REPOSITORY,
+  VendorCatalogStore,
+  VendorOfferService,
+  VendorOffersStore,
+  VendorOrderService,
+  VendorOrdersStore,
+  VendorProductService,
+  createVendorOrdersSource,
+  type VendorOrderRepository,
+} from '../../domains/store-sales/public-api';
+import {
   CATALOG_PRODUCT_REPOSITORY,
   CatalogProductService,
 } from '../../domains/catalog/public-api';
-import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { STORE_REPOSITORY, StoreService } from '../stores/public-api';
+import { CatalogProductsStore } from '../products/state/catalog-product/catalog-product.store';
 import { vendorGuard } from './guards/vendor/vendor.guard';
-import { createVendorOrdersSource } from './services/vendor-orders-source/vendor-orders-source.service';
-import { CLIENT_REPOSITORY } from './repositories/client.repository';
-import { VENDOR_OFFER_REPOSITORY } from './repositories/vendor-offer.repository';
-import {
-  VENDOR_ORDER_REPOSITORY,
-  VENDOR_ORDERS_SOURCE,
-  type VendorOrderRepository,
-} from './repositories/vendor-order.repository';
-import { VENDOR_PRODUCT_REPOSITORY } from './repositories/vendor-product.repository';
-import { ClientService } from './services/client/client.service';
-import { VendorOfferService } from './services/vendor-offer/vendor-offer.service';
-import { VendorOrderService } from './services/vendor-order/vendor-order.service';
-import { VendorProductService } from './services/vendor-product/vendor-product.service';
-import { ClientSearchStore } from './state/client-search/client-search.store';
-import { OrderDraftStore } from './state/order-draft/order-draft.store';
-import { VendorCatalogStore } from './state/vendor-catalog/vendor-catalog.store';
-import { VendorOffersStore } from './state/vendor-offers/vendor-offers.store';
-import { VendorOrdersStore } from './state/vendor-orders/vendor-orders.store';
 import { VendorStoreStore } from './state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from './state/store-logo/store-logo.store';
 import { STORAGE_REPOSITORY, StorageService } from '../storage/public-api';

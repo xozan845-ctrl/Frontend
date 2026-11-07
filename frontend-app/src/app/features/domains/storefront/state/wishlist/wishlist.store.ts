@@ -7,8 +7,8 @@ import {
   patchState,
   withHooks,
 } from '@ngrx/signals';
-import { ReviewsStore } from '../../../products/public-api';
-import type { Product } from '../../../products/public-api';
+import { ReviewsStore } from '../reviews/reviews.store';
+import type { Product } from '../../models/product.model';
 import type { WishlistState } from './wishlist.state';
 
 const WISHLIST_KEY = 'ecom_wishlist';

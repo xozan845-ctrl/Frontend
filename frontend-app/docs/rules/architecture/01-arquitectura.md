@@ -79,7 +79,8 @@ de scope company/store. El feature `workspace` declara el contrato
 El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
 `domains/company-catalog`; los módulos de catálogo, compras y ventas los
 consumen por su API pública. Las ventas y el portal de tiendas de empresa viven
-en `domains/company-sales`.
+en `domains/company-sales`. El storefront (productos, carrito, wishlist y
+reseñas) vive en `domains/storefront`; el grafo de features es acíclico.
 
 ## Notas
 

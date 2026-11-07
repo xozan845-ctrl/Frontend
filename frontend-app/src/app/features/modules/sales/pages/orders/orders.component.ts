@@ -5,7 +5,7 @@ import {
   ORDER_STATUS_LABELS,
   VendorOrdersStore,
   type OrderStatus,
-} from '../../../../applications/vendor/public-api';
+} from '../../../../domains/store-sales/public-api';
 import { RecentOrdersTableComponent } from '../../../../applications/vendor/public-ui';
 
 /**

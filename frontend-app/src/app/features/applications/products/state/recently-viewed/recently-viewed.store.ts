@@ -1,7 +1,7 @@
 import { effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
-import { Product } from '../../models/product.model';
-import type { RecentlyViewedState } from '../product/product.state';
+import { Product } from '../../../../domains/storefront/public-api';
+import type { RecentlyViewedState } from '../../../../domains/storefront/public-api';
 
 const RECENTLY_VIEWED_KEY = 'ecom_recently_viewed';
 const MAX_ITEMS = 10;

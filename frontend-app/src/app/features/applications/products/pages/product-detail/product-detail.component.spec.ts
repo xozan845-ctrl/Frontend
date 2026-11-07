@@ -2,15 +2,15 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthStore } from '../../../../domains/session/public-api';
-import { CartStore } from '../../../cart/state/cart/cart.store';
+import { CartStore } from '../../../../domains/storefront/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
-import { ProductStore } from '../../state/product/product.store';
-import { ReviewsStore } from '../../state/reviews/reviews.store';
+import { ProductStore } from '../../../../domains/storefront/public-api';
+import { ReviewsStore } from '../../../../domains/storefront/public-api';
 import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist/wishlist.store';
-import { Product } from '../../models/product.model';
+import { WishlistStore } from '../../../../domains/storefront/public-api';
+import { Product } from '../../../../domains/storefront/public-api';
 import { ProductDetailComponent } from './product-detail.component';
 
 const product: Product = {

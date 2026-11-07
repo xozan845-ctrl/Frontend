@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
-import { Product } from '../../models/product.model';
+import { CartFlyService } from '../../ui/cart-fly/cart-fly.service';
+import { Product } from '../../../features/domains/storefront/public-api';
 import { QuickViewModalComponent } from './quick-view-modal.component';
 
 const product: Product = {

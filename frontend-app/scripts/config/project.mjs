@@ -178,6 +178,18 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
+  'store-sales': {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
+  storefront: {
+    kind: 'domain',
+    layers: ['adapters', 'constants', 'models', 'repositories', 'services', 'state'],
+    publicApi: true,
+    publicUi: false,
+  },
   billing: {
     kind: 'application',
     layers: ['components', 'constants', 'models', 'pages'],
@@ -363,17 +375,7 @@ export const FEATURE_CONTRACTS = {
   },
   products: {
     kind: 'application',
-    layers: [
-      'adapters',
-      'components',
-      'constants',
-      'models',
-      'pages',
-      'repositories',
-      'resolvers',
-      'services',
-      'state',
-    ],
+    layers: ['components', 'pages', 'resolvers', 'state'],
     publicApi: true,
     publicUi: true,
   },
@@ -391,17 +393,7 @@ export const FEATURE_CONTRACTS = {
   },
   vendor: {
     kind: 'application',
-    layers: [
-      'adapters',
-      'components',
-      'constants',
-      'guards',
-      'models',
-      'pages',
-      'repositories',
-      'services',
-      'state',
-    ],
+    layers: ['components', 'constants', 'guards', 'pages', 'state'],
     publicApi: true,
     publicUi: true,
   },
@@ -411,7 +403,7 @@ export const FEATURE_CONTRACTS = {
     publicApi: false,
     publicUi: false,
   },
-  wishlist: { kind: 'application', layers: ['pages', 'state'], publicApi: true, publicUi: false },
+  wishlist: { kind: 'application', layers: ['pages'], publicApi: true, publicUi: false },
 };
 
 /** Ficheros raíz de un feature que se consideran capa `root`. */

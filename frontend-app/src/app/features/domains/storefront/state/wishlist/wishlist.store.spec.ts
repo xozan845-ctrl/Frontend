@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { WishlistStore } from './wishlist.store';
-import { Product } from '../../../products/models/product.model';
+import { Product } from '../../models/product.model';
 
 const product = (id: number): Product => ({
   id,

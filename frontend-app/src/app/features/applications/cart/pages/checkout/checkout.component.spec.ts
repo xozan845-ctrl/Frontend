@@ -3,12 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthStore } from '../../../../domains/session/public-api';
-import { CartStore } from '../../state/cart/cart.store';
-import { ProductStore } from '../../../products/state/product/product.store';
+import { CartStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { Product } from '../../../products/models/product.model';
+import { Product } from '../../../../domains/storefront/public-api';
 import { CheckoutComponent } from './checkout.component';
 
 const product: Product = {

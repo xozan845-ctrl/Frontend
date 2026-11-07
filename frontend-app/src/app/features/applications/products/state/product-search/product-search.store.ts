@@ -1,7 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { PRODUCT_CATEGORIES } from '../../constants/categories.constants';
-import { ProductStore } from '../product/product.store';
+import { PRODUCT_CATEGORIES } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import type { ProductSearchState } from './product-search.state';
 
 /**

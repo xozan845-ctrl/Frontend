@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { ProductStore } from '../../../products/state/product/product.store';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 import { ConfirmationComponent } from './confirmation.component';
 

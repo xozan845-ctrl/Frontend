@@ -43,13 +43,15 @@ un dominio reutilizable y un módulo de composición.
 | `applications/ai-scraper`  | Jobs y chat de scraping con IA (ADR-18).                                           |
 | `applications/auth`        | Login, registro y guards/interceptores de sesión.                                  |
 | `applications/billing`     | Facturación: nueva factura, listado y detalle (ADR-23).                            |
-| `applications/cart`        | Carrito, checkout y confirmación de pedido.                                        |
+| `applications/cart`        | Checkout y confirmación; el carrito vive en `domains/storefront`.                  |
 | `domains/clients`          | Dominio de cartera de clientes compartido por empresa y vendedor (ADR-56).         |
 | `domains/session`          | Sesión, roles, permisos y resolución de workspace.                                 |
 | `domains/file-storage`     | Buckets, objetos, subidas y cuotas de almacenamiento por tenant.                   |
 | `domains/catalog`          | Catálogo maestro de productos: modelo, puerto y servicio.                          |
 | `domains/company-catalog`  | Catálogo administrable de empresa: productos, servicios y operaciones.             |
 | `domains/company-sales`    | Ventas, pedidos y portal de tiendas de empresa.                                    |
+| `domains/store-sales`      | POS, pedidos, ofertas y catálogo de tienda.                                        |
+| `domains/storefront`       | Productos, carrito, wishlist y reseñas del storefront.                             |
 | `domains/media-background` | Fondos multimedia de plataforma, empresa y tienda: adapter, puerto, HTTP y store.  |
 | `modules/clients`          | Composición de la página/modal de Clientes (ADR-59).                               |
 | `modules/sales`            | Composición de Ventas de empresa y Pedidos/POS del vendedor (ADR-63/64).           |
@@ -69,11 +71,11 @@ un dominio reutilizable y un módulo de composición.
 | `applications/home`        | Inicio, entrada multi-tienda y 404.                                                |
 | `applications/logistica`   | Tablero contextual de rutas, entregas y mapa Leaflet (ADR-25).                     |
 | `applications/plans`       | Planes y suscripciones.                                                            |
-| `applications/products`    | Catálogo, detalle, búsqueda y reseñas.                                             |
+| `applications/products`    | Storefront: catálogo, detalle y búsqueda; dominio en `domains/storefront`.         |
 | `applications/stores`      | Asistente de creación de tienda.                                                   |
 | `applications/storage`     | Página de almacenamiento; el dominio vive en `domains/file-storage`.               |
 | `applications/vendor`      | Panel del vendedor: POS y pedidos; clientes por el feature compartido (ADR-20/55). |
-| `applications/wishlist`    | Lista de deseos persistida localmente.                                             |
+| `applications/wishlist`    | Página de favoritos; store en `domains/storefront`.                                |
 
 ## Contratos de capas
 

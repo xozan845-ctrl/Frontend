@@ -2029,3 +2029,43 @@ contexto y consecuencias.
 - **Consecuencias**: ventas y portal dejan de depender de la aplicación de
   empresa; el contrato de órdenes queda compartido entre storefront y
   backoffice. No cambian rutas ni comportamiento para el usuario.
+
+## ADR-78: Dominio de ventas de tienda
+
+- **Fecha**: 2026-11-07
+- **Estado**: Aceptado
+- **Contexto**: `applications/vendor` contenía el POS, pedidos, ofertas,
+  catálogo, clientes y reportes de tienda, que `modules/sales` consumía por la
+  API pública de la aplicación. Eso mantenía acoplamiento módulo → aplicación.
+- **Decisión**:
+  - Se crea `features/domains/store-sales` con modelos, adaptadores, puertos,
+    servicios, stores de POS/pedidos/ofertas/catálogo y reportes de tienda.
+  - `applications/vendor` conserva el shell, guard, páginas, branding y la tabla
+    de pedidos recientes; consume el dominio por su API pública.
+  - `modules/sales`, `modules/reports` y el shell de tienda consumen
+    `domains/store-sales` en lugar de la aplicación.
+  - El estado de branding (`VendorStoreState`) permanece en la aplicación.
+- **Consecuencias**: los módulos de tienda ya no dependen de
+  `applications/vendor` para tipos, stores o servicios. El comportamiento y las
+  rutas no cambian.
+
+## ADR-79: Dominio de storefront y cierre de ciclos
+
+- **Fecha**: 2026-11-07
+- **Estado**: Aceptado
+- **Contexto**: `applications/products`, `applications/cart` y
+  `applications/wishlist` se importaban entre sí para compartir producto,
+  carrito, wishlist y reseñas, formando un ciclo que `R-AR-21` registraba como
+  deuda.
+- **Decisión**:
+  - Se crea `features/domains/storefront` con modelos (producto, tienda, reseña,
+    carrito), adaptadores, puertos, servicios y stores (`ProductStore`,
+    `CartStore`, `WishlistStore`, `ReviewsStore`).
+  - Las tres aplicaciones conservan páginas, rutas y stores de UI propios y
+    consumen el dominio por su API pública.
+  - La vista rápida de producto se mueve a `shared/ui/quick-view-modal` con un
+    tipo local; así wishlist deja de depender de products.
+  - El baseline de `architecture-layers` queda vacío.
+- **Consecuencias**: desaparecen los ciclos entre features y el storefront
+  comparte una única fuente de producto/carrito/wishlist. Las rutas y el
+  comportamiento no cambian.

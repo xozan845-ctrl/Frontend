@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Product } from '../../models/product.model';
+import { Product } from '../../../../domains/storefront/public-api';
 import { ProductCarouselComponent } from './product-carousel.component';
 
 const products: Product[] = [

@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import type { CreateOrderPayload } from '../../models/order.model';
 import type { OrderResponse } from '../../../../domains/orders/public-api';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
-import type { OrderState } from '../cart/cart.state';
+import type { OrderState } from '../../../../domains/storefront/public-api';
 
 const STORAGE_KEY = 'ecom_last_order';
 

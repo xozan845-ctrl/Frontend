@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, convertToParamMap } from '@angular/router';
 import { storefrontResolver } from './storefront.resolver';
-import { ProductStore } from '../../state/product/product.store';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 
 describe('storefrontResolver', () => {
   const run = (storeId: string | null, store: Record<string, unknown>) => {

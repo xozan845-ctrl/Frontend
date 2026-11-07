@@ -10,7 +10,7 @@ import {
   type OrderStatus,
   type VendorOrder,
   type VendorOrderRepository,
-} from '../../../../applications/vendor/public-api';
+} from '../../../../domains/store-sales/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 
