@@ -503,7 +503,7 @@
 ## Auditoría 19 — Dominios de catálogo (2026-11-06)
 
 - **Contexto:** `applications/company` y `applications/shop` proveían el
-  catálogo a `modules/catalog`, `modules/purchases` y `modules/sales`, lo que
+  catálogo a `modules/company/catalog`, `modules/company/purchases` y `modules/shared/sales`, lo que
   mantenía acoplamiento módulo → aplicación.
 - **Cambio:** se creó `domains/catalog` con el catálogo maestro (`CatalogProduct`,
   puerto y servicio) y `domains/company-catalog` con productos, servicios,
@@ -511,7 +511,7 @@
   `applications/company` ya no exporta catálogo; `applications/shop`
   conserva el storefront y reexporta el dominio.
 - **Resultado:**
-  - ✅ `modules/catalog` y las partes de `modules/purchases`/`modules/sales`
+  - ✅ `modules/company/catalog` y las partes de `modules/company/purchases`/`modules/shared/sales`
     consumen dominios, no aplicaciones.
   - ✅ `R-AR-20` sigue en verde y no se añadieron ciclos nuevos.
   - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
@@ -526,13 +526,13 @@
 ## Auditoría 20 — Dominio de ventas y portal de empresa (2026-11-06)
 
 - **Contexto:** `applications/company` proveía ventas y portal a
-  `modules/sales`, `modules/finance` y `modules/reports`, y dependía del
+  `modules/shared/sales`, `modules/company/finance` y `modules/shared/reports`, y dependía del
   contrato de órdenes de `applications/cart`.
 - **Cambio:** el contrato de órdenes se movió a `domains/orders`; se creó
   `domains/company-sales` con ventas, portal, pedidos, adaptadores, puertos,
   servicios y stores. El portal se carga en una ruta lazy propia.
 - **Resultado:**
-  - ✅ `modules/sales`, `modules/finance` y `modules/reports` consumen el
+  - ✅ `modules/shared/sales`, `modules/company/finance` y `modules/shared/reports` consumen el
     dominio de ventas.
   - ✅ El bundle inicial vuelve a quedar dentro del presupuesto de 560 kB.
   - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
@@ -547,14 +547,14 @@
 ## Auditoría 21 — Dominios de tienda y storefront (2026-11-07)
 
 - **Contexto:** `applications/store` proveía el POS y pedidos a
-  `modules/sales`, y `applications/shop`, `applications/cart` y
+  `modules/shared/sales`, y `applications/shop`, `applications/cart` y
   `applications/wishlist` se importaban entre sí formando un ciclo.
 - **Cambio:** se creó `domains/store-sales` (POS, pedidos, ofertas, catálogo de
   tienda y reportes) y `domains/storefront` (productos, carrito, wishlist y
   reseñas). La vista rápida pasó a `shared/ui/quick-view-modal`. El baseline de
   `R-AR-21` quedó vacío.
 - **Resultado:**
-  - ✅ `modules/sales` y `modules/reports` consumen `domains/store-sales`.
+  - ✅ `modules/shared/sales` y `modules/shared/reports` consumen `domains/store-sales`.
   - ✅ El grafo de features es acíclico; no hay deuda en `architecture-layers`.
   - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
     lint:css, build dentro de presupuesto y 60/60 e2e en verde.
@@ -569,6 +569,16 @@
 
 - **Cambio:** `products` → `shop`, `stores` → `onboarding`, `vendor` → `store`
   y `empresas` → `company`; rutas y constantes alineadas con el nuevo nombre.
+- **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
+  lint, lint:css, build y 60/60 e2e en verde.
+- **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 23 — Scopes de módulos (2026-11-07)
+
+- **Cambio:** módulos planos → `modules/shared/*` y `modules/company/*`; contratos
+  y gobernanza actualizados para rutas anidadas.
 - **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.

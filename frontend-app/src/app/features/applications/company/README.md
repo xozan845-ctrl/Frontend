@@ -62,15 +62,15 @@ logística; el adapter tolera respuestas planas o con envelope `{ data }` y
 ## Decisión
 
 La página y los modales de **Ventas** se componen en
-`features/modules/sales` (ADR-63); el catálogo administrable de productos,
-servicios y materia prima se compone en `features/modules/catalog` (ADR-65),
-Compras en `features/modules/purchases` (ADR-66), Gastos en
-`features/modules/expenses` (ADR-72) y Caja en `features/modules/finance`
+`features/modules/shared/sales` (ADR-63); el catálogo administrable de productos,
+servicios y materia prima se compone en `features/modules/company/catalog` (ADR-65),
+Compras en `features/modules/company/purchases` (ADR-66), Gastos en
+`features/modules/company/expenses` (ADR-72) y Caja en `features/modules/company/finance`
 (ADR-73). Cuentas por pagar
-en `features/modules/payables` (ADR-67), Bancos en `features/modules/banks`
-(ADR-68), Códigos de barras en `features/modules/barcodes` (ADR-69), Créditos
-en `features/modules/credits` (ADR-70) y Reportes en
-`features/modules/reports` (ADR-71). El catálogo administrable vive en
+en `features/modules/shared/payables` (ADR-67), Bancos en `features/modules/shared/banks`
+(ADR-68), Códigos de barras en `features/modules/shared/barcodes` (ADR-69), Créditos
+en `features/modules/shared/credits` (ADR-70) y Reportes en
+`features/modules/shared/reports` (ADR-71). El catálogo administrable vive en
 `features/domains/company-catalog` y el catálogo maestro en
 `features/domains/catalog` (ADR-76). Las ventas y el portal de tiendas viven en
 `features/domains/company-sales` (ADR-77). Este feature conserva empresa,

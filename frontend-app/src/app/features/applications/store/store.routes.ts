@@ -89,18 +89,19 @@ export const STORE_ROUTES: Routes = [
       {
         path: 'ventas/nuevo',
         canActivate: [moduleGuard('store.sales')],
-        loadComponent: () => import('../../modules/sales/pages/new-order/new-order.component'),
+        loadComponent: () =>
+          import('../../modules/shared/sales/pages/new-order/new-order.component'),
       },
       {
         path: 'pedidos',
         canActivate: [moduleGuard('store.orders')],
-        loadComponent: () => import('../../modules/sales/pages/orders/orders.component'),
+        loadComponent: () => import('../../modules/shared/sales/pages/orders/orders.component'),
       },
       {
         path: 'pedidos/:id',
         canActivate: [moduleGuard('store.orders')],
         loadComponent: () =>
-          import('../../modules/sales/pages/order-detail/order-detail.component'),
+          import('../../modules/shared/sales/pages/order-detail/order-detail.component'),
       },
       ...commercialScopeRoutes('store'),
       {

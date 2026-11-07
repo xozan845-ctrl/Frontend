@@ -323,9 +323,9 @@ export function findContractPathViolations() {
   for (const feature of Object.keys(FEATURE_CONTRACTS)) {
     const contract = FEATURE_CONTRACTS[feature];
     const parts = feature.split('/');
-    const isModule = parts.length === 2 && parts[0] === 'modules';
+    const isModule = parts[0] === 'modules' && parts.length >= 3;
     const group = isModule ? 'modules' : contract.kind === 'domain' ? 'domains' : 'applications';
-    const featureName = isModule ? parts[1] : parts[0];
+    const featureName = isModule ? parts.slice(1).join('/') : parts[0];
     const directory = resolveInApp('src/app/features', group, featureName);
     if (!existsSync(directory)) {
       findings.push(

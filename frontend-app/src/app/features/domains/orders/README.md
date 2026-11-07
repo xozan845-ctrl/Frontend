@@ -20,4 +20,4 @@ store común y `shared/orders/order-table` la tabla, para que el dominio siga si
 dependencias de UI ni de estado y no arrastre esas piezas al bundle inicial
 (ADR-62). Pedidos del vendedor y Ventas de empresa ya usan el store; empresa
 solo implementa la capacidad de listado. La composición de Ventas y de Pedidos/POS del vendedor vive en
-`features/modules/sales` (ADR-63/64).
+`features/modules/shared/sales` (ADR-63/64).

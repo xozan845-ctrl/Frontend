@@ -90,9 +90,9 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `GLASS_ADOPTION_ADOPTED` y `GLASS_ADOPTION_PENDING_MAX`.
 
 **Bitácora de migración:** 2026-11-05 — `layout/header`, `layout/footer`,
-`modules/barcodes`, `modules/credits`, `modules/reports`, `admin`, `storage`,
+`modules/shared/barcodes`, `modules/shared/credits`, `modules/shared/reports`, `admin`, `storage`,
 `shared/orders`, `auth`, `plans`, `stores`, `home`, `ai-scraper`, `wishlist`,
-`shared/pipes`, `shared/ui`, `modules/expenses`, `vendor`, `modules/clients`,
+`shared/pipes`, `shared/ui`, `modules/company/expenses`, `vendor`, `modules/shared/clients`,
 `billing`, `cart`, `empresas`, `logistica`, `finance`,
 `sales`, `purchases`, `catalog`, `products`, `account`, `banks` y `payables`.
 Ratchet cerrado: **36 raíces adoptadas y backlog 0**.

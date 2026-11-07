@@ -202,67 +202,67 @@ export const FEATURE_CONTRACTS = {
     publicApi: true,
     publicUi: false,
   },
-  'modules/clients': {
+  'modules/shared/clients': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/sales': {
+  'modules/shared/sales': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/catalog': {
+  'modules/company/catalog': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/finance': {
+  'modules/company/finance': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/expenses': {
+  'modules/company/expenses': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/purchases': {
+  'modules/company/purchases': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/payables': {
+  'modules/shared/payables': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/banks': {
+  'modules/shared/banks': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/barcodes': {
+  'modules/shared/barcodes': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/credits': {
+  'modules/shared/credits': {
     kind: 'module',
     layers: ['components', 'pages'],
     publicApi: false,
     publicUi: false,
   },
-  'modules/reports': {
+  'modules/shared/reports': {
     kind: 'module',
     layers: ['pages'],
     publicApi: false,
@@ -511,9 +511,9 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/applications/company/pages/company-shell',
   'features/applications/logistica/pages/logistica-shell',
   'features/applications/store/pages/vendor-shell',
-  'features/modules/barcodes',
-  'features/modules/credits',
-  'features/modules/reports',
+  'features/modules/shared/barcodes',
+  'features/modules/shared/credits',
+  'features/modules/shared/reports',
   'features/applications/admin',
   'features/applications/storage',
   'shared/orders',
@@ -525,21 +525,21 @@ export const GLASS_ADOPTION_ADOPTED = [
   'features/applications/wishlist',
   'shared/pipes',
   'shared/ui',
-  'features/modules/expenses',
+  'features/modules/company/expenses',
   'features/applications/store',
-  'features/modules/clients',
+  'features/modules/shared/clients',
   'features/applications/billing',
   'features/applications/cart',
   'features/applications/company',
   'features/applications/logistica',
-  'features/modules/finance',
-  'features/modules/sales',
-  'features/modules/purchases',
-  'features/modules/catalog',
+  'features/modules/company/finance',
+  'features/modules/shared/sales',
+  'features/modules/company/purchases',
+  'features/modules/company/catalog',
   'features/applications/shop',
   'features/applications/account',
-  'features/modules/banks',
-  'features/modules/payables',
+  'features/modules/shared/banks',
+  'features/modules/shared/payables',
 ];
 
 /** Techo del backlog de superficies pendientes (solo puede bajar). */
@@ -562,6 +562,8 @@ export const REQUIRED_READMES = [
   'src/app/features/applications/README.md',
   'src/app/features/domains/README.md',
   'src/app/features/modules/README.md',
+  'src/app/features/modules/shared/README.md',
+  'src/app/features/modules/company/README.md',
 ];
 
 /**

@@ -51,10 +51,10 @@ export function classify(rel) {
   if (parts[0] === 'src' && parts[1] === 'app' && parts[2] === 'features') {
     // `features/<grupo>/<feature>/` conserva el nombre lógico del feature,
     // mientras `modules/<module>/` mantiene su identidad de composición.
-    if (parts[3] === 'modules' && parts[4]) {
-      const feature = `modules/${parts[4]}`;
-      if (parts.length === 6) return { kind: 'feature-root', feature, file: parts[5] };
-      return { kind: 'feature', feature, layer: parts[5] };
+    if (parts[3] === 'modules' && parts[4] && parts[5]) {
+      const feature = `modules/${parts[4]}/${parts[5]}`;
+      if (parts.length === 7) return { kind: 'feature-root', feature, file: parts[6] };
+      return { kind: 'feature', feature, layer: parts[6] };
     }
 
     if (['applications', 'domains'].includes(parts[3]) && parts[4]) {
@@ -274,7 +274,9 @@ export function findLayerViolations() {
 function featureIdFor(rel) {
   const parts = rel.split('/');
   if (parts[0] !== 'src' || parts[1] !== 'app' || parts[2] !== 'features') return null;
-  if (parts[3] === 'modules' && parts[4]) return `modules/${parts[4]}`;
+  if (parts[3] === 'modules' && parts[4] && parts[5]) {
+    return `modules/${parts[4]}/${parts[5]}`;
+  }
   if ((parts[3] === 'applications' || parts[3] === 'domains') && parts[4]) {
     return `${parts[3]}/${parts[4]}`;
   }

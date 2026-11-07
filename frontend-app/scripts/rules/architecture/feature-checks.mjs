@@ -64,16 +64,21 @@ export function findFeatureStructureViolations() {
   }
   const modulesDir = join(featuresDir, 'modules');
   if (existsSync(modulesDir)) {
-    for (const entry of readdirSync(modulesDir, { withFileTypes: true }).filter((item) =>
+    for (const scope of readdirSync(modulesDir, { withFileTypes: true }).filter((item) =>
       item.isDirectory(),
     )) {
-      featureEntries.push({
-        name: entry.name,
-        group: 'modules',
-        dir: join(modulesDir, entry.name),
-        rel: `${FEATURES_ROOT}/modules/${entry.name}`,
-        contractKey: `modules/${entry.name}`,
-      });
+      const scopeDir = join(modulesDir, scope.name);
+      for (const entry of readdirSync(scopeDir, { withFileTypes: true }).filter((item) =>
+        item.isDirectory(),
+      )) {
+        featureEntries.push({
+          name: entry.name,
+          group: 'modules',
+          dir: join(scopeDir, entry.name),
+          rel: `${FEATURES_ROOT}/modules/${scope.name}/${entry.name}`,
+          contractKey: `modules/${scope.name}/${entry.name}`,
+        });
+      }
     }
   }
   featureEntries.sort((a, b) => a.contractKey.localeCompare(b.contractKey));

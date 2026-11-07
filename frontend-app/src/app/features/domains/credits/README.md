@@ -12,4 +12,4 @@ Dominio de ventas a crédito para empresa y tienda del vendedor.
 El store recibe `CREDITS_SCOPE_CONFIG` del workspace: empresa usa el tenant y la
 tienda usa el `storeId` del vendedor. Cada ámbito guarda en
 `ecom_company_credits_*` o `ecom_store_credits_*` (ADR-70). La composición vive
-en `features/modules/credits`.
+en `features/modules/shared/credits`.

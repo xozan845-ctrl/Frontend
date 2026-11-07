@@ -12,4 +12,4 @@ para que Compras y Caja sigan evolucionando sin mezclar contratos.
 
 Migra los gastos del store anterior (`ecom_company_expenses_*`) a
 `ecom_company_expenses_ledger_*` la primera vez. La composición vive en
-`features/modules/expenses` (ADR-72).
+`features/modules/company/expenses` (ADR-72).

@@ -32,7 +32,9 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     companyModuleId: 'company.clients',
     storeModuleId: 'store.clients',
     loadChildren: () =>
-      import('../../../modules/clients/clients.routes').then((module) => module.CLIENTS_ROUTES),
+      import('../../../modules/shared/clients/clients.routes').then(
+        (module) => module.CLIENTS_ROUTES,
+      ),
     providers: {
       company: [
         { provide: CLIENTS_PAGE_CONFIG, useValue: COMPANY_CLIENTS_PAGE_CONFIG },
@@ -49,7 +51,7 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     companyModuleId: 'company.banks',
     storeModuleId: 'store.banks',
     loadChildren: () =>
-      import('../../../modules/banks/banks.routes').then((module) => module.BANKS_ROUTES),
+      import('../../../modules/shared/banks/banks.routes').then((module) => module.BANKS_ROUTES),
     providers: {
       company: [{ provide: BANKS_SCOPE_CONFIG, useValue: COMPANY_BANKS_SCOPE_CONFIG }],
       store: [{ provide: BANKS_SCOPE_CONFIG, useValue: VENDOR_BANKS_SCOPE_CONFIG }],
@@ -60,7 +62,9 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     companyModuleId: 'company.payables',
     storeModuleId: 'store.payables',
     loadChildren: () =>
-      import('../../../modules/payables/payables.routes').then((module) => module.PAYABLES_ROUTES),
+      import('../../../modules/shared/payables/payables.routes').then(
+        (module) => module.PAYABLES_ROUTES,
+      ),
     providers: {
       company: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: COMPANY_PAYABLES_SCOPE_CONFIG }],
       store: [{ provide: PAYABLES_SCOPE_CONFIG, useValue: VENDOR_PAYABLES_SCOPE_CONFIG }],
@@ -71,7 +75,9 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     companyModuleId: 'company.barcodes',
     storeModuleId: 'store.barcodes',
     loadChildren: () =>
-      import('../../../modules/barcodes/barcodes.routes').then((module) => module.BARCODES_ROUTES),
+      import('../../../modules/shared/barcodes/barcodes.routes').then(
+        (module) => module.BARCODES_ROUTES,
+      ),
     providers: {
       company: [{ provide: BARCODES_SCOPE_CONFIG, useValue: COMPANY_BARCODES_SCOPE_CONFIG }],
       store: [{ provide: BARCODES_SCOPE_CONFIG, useValue: VENDOR_BARCODES_SCOPE_CONFIG }],
@@ -82,7 +88,9 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     companyModuleId: 'company.credit',
     storeModuleId: 'store.credit',
     loadChildren: () =>
-      import('../../../modules/credits/credits.routes').then((module) => module.CREDITS_ROUTES),
+      import('../../../modules/shared/credits/credits.routes').then(
+        (module) => module.CREDITS_ROUTES,
+      ),
     providers: {
       company: [{ provide: CREDITS_SCOPE_CONFIG, useValue: COMPANY_CREDITS_SCOPE_CONFIG }],
       store: [{ provide: CREDITS_SCOPE_CONFIG, useValue: VENDOR_CREDITS_SCOPE_CONFIG }],
@@ -94,10 +102,10 @@ const commercialModules: readonly CommercialModuleRoute[] = [
     storeModuleId: 'store.reports',
     loadChildren: (scope) =>
       scope === 'company'
-        ? import('../../../modules/reports/reports.routes').then(
+        ? import('../../../modules/shared/reports/reports.routes').then(
             (module) => module.COMPANY_REPORTS_ROUTES,
           )
-        : import('../../../modules/reports/reports.routes').then(
+        : import('../../../modules/shared/reports/reports.routes').then(
             (module) => module.VENDOR_REPORTS_ROUTES,
           ),
     providers: { company: [], store: [] },
