@@ -428,7 +428,7 @@ contexto y consecuencias.
   endpoints de pedidos/clientes/stock del vendedor, así que el contrato se
   asume en el frontend con adapters tolerantes y modo `mock` mientras llega el
   backend.
-- **Decisión**: crear el feature **`vendor`** (`features/applications/vendor/`) como extensión
+- **Decisión**: crear el feature **`vendor`** (`features/applications/store/`) como extensión
   del módulo de tienda, con su mismo lenguaje visual (tokens `surface`/`accent`,
   Outfit/Plus Jakarta Sans, animaciones existentes, dark mode, `appCurrency`):
   - **Rutas** `/vendedor` (lazy vía `loadChildren`, guard de rol `vendedor`) con
@@ -657,7 +657,7 @@ contexto y consecuencias.
   tienda fallaba contra el backend real porque el JWT del empresario recién
   registrado no incluía `tenant_id`.
 - **Decisión**:
-  - Nuevo feature lazy **`features/applications/empresas/`** con modelos, adapter, puerto
+  - Nuevo feature lazy **`features/applications/company/`** con modelos, adapter, puerto
     (`COMPANY_REPOSITORY`), servicio HTTP y `CompanyStore` (R-AR-3, R-AR-4).
   - Se consumen los cuatro endpoints del contrato: alta (`POST /empresas`),
     consulta (`GET /empresas/:id`), cambio de modalidad
@@ -1073,7 +1073,7 @@ contexto y consecuencias.
 - **Consecuencias**: la jerarquía visual y de permisos coincide con el modelo
   empresarial. La siguiente etapa añadirá slugs legibles para empresas/tiendas
   y resolverá la identidad por slug contra el backend; los UUID siguen siendo
-  claves internas. Revertir es volver a anidar `EMPRESAS_ROUTES` en `vendor` y
+  claves internas. Revertir es volver a anidar `COMPANY_ROUTES` en `vendor` y
   restaurar el chrome global en todas las rutas.
 
 ## ADR-44: Autorización por workspace, scope y propiedad logística
@@ -1421,9 +1421,9 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: existían dos implementaciones de Clientes: el CRM de empresa
-  (`features/applications/empresas/pages/company-clients`, derivado de `/orders/empresa` y
+  (`features/applications/company/pages/company-clients`, derivado de `/orders/empresa` y
   con registro local por tenant) y la lista del vendedor
-  (`features/applications/vendor/pages/clients`, contra el contrato asumido
+  (`features/applications/store/pages/clients`, contra el contrato asumido
   `/vendedores/clientes`, que Core Engine no implementa). Duplicaban modelo,
   store, modal y tabla, y el vendedor no tenía KPIs ni segmentos.
 - **Decisión**:
@@ -1626,12 +1626,12 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la página y los modales de Ventas de empresa vivían dentro de
-  `features/applications/empresas` junto al dominio y al store. `empresas/public-api`
-  exportaba `EMPRESAS_ROUTES`, así que un módulo de composición que importara
+  `features/applications/company` junto al dominio y al store. `empresas/public-api`
+  exportaba `COMPANY_ROUTES`, así que un módulo de composición que importara
   stores o tokens desde el API pública podía cerrar un ciclo con las rutas del
   workspace.
 - **Decisión**:
-  - `EMPRESAS_ROUTES` deja de exportarse por `public-api.ts`; `app.routes.ts`
+  - `COMPANY_ROUTES` deja de exportarse por `public-api.ts`; `app.routes.ts`
     importa el archivo de rutas directamente, como punto de composición.
   - `empresas/public-api` expone los stores (`CompanySalesStore`,
     `CompanyServicesStore`), servicios, tokens, constantes y tipos que necesita
@@ -1639,20 +1639,20 @@ contexto y consecuencias.
   - Se crea `features/modules/sales` con la página, los modales de venta rápida
     y asistente, el selector de pago y `SALES_ROUTES`.
   - El dominio de ventas, el store, los adaptadores y las constantes siguen en
-    `features/applications/empresas`; el módulo solo compone presentación y providers.
-  - `EMPRESAS_ROUTES` carga `SALES_ROUTES` con `loadChildren`, manteniendo la
+    `features/applications/company`; el módulo solo compone presentación y providers.
+  - `COMPANY_ROUTES` carga `SALES_ROUTES` con `loadChildren`, manteniendo la
     página lazy y sin duplicar el dominio en otro feature.
 - **Consecuencias**: la composición de Ventas deja de depender de las rutas de
   empresas y no hay ciclos. El bundle inicial pasa a 552.43 kB (techo 555 kB) y
   el chunk de Ventas sigue lazy (~68 kB). Pedidos del vendedor permanece en
-  `features/applications/vendor`; mover su composición al módulo queda como siguiente fase.
+  `features/applications/store`; mover su composición al módulo queda como siguiente fase.
 
 ## ADR-64: Composición de Pedidos y POS del vendedor
 
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la lista de pedidos, el detalle y el punto de venta del
-  vendedor vivían en `features/applications/vendor` mezclados con el dominio, los stores y
+  vendedor vivían en `features/applications/store` mezclados con el dominio, los stores y
   los adaptadores. El módulo `modules/sales` ya componía Ventas de empresa
   (ADR-63) y era el lugar natural para esta experiencia.
 - **Decisión**:
@@ -1661,19 +1661,19 @@ contexto y consecuencias.
     `create-client-modal`, `order-draft-panel`, `order-info-fields`,
     `order-line`, `product-pick-card`, `product-pick-grid`,
     `quantity-stepper` y `confirm-modal`).
-  - `features/applications/vendor` conserva el dominio, los tipos, las constantes, los
+  - `features/applications/store` conserva el dominio, los tipos, las constantes, los
     repositorios, los servicios y los stores (`VendorOrdersStore`,
     `OrderDraftStore`, `ClientSearchStore`, `VendorCatalogStore`).
   - `VENDOR_ROUTES` mantiene los providers de esos stores en el shell para que
     sobrevivan a la navegación y los libere al salir del panel; solo cambian
     las rutas lazy de las páginas al módulo.
-  - `recent-orders-table` se queda en `features/applications/vendor` porque también lo usa
+  - `recent-orders-table` se queda en `features/applications/store` porque también lo usa
     el inicio del panel; se expone por `vendor/public-api` para el POS y la
     lista del módulo.
   - `vendor/public-api` amplía su superficie con stores, tokens, servicios,
     constantes, tipos y la tabla reciente que consume la composición.
 - **Consecuencias**: `modules/sales` compone las dos experiencias de venta y
-  `features/applications/vendor` queda como dominio/estado del panel. El bundle inicial se
+  `features/applications/store` queda como dominio/estado del panel. El bundle inicial se
   mantiene en 552.43 kB y las páginas siguen en chunks lazy
   (`new-order` ~39 kB, `vendor-routes` ~26 kB). El inicio del vendedor y la
   tabla reciente permanecen en su feature para no acoplar el dashboard al
@@ -1684,7 +1684,7 @@ contexto y consecuencias.
 - **Fecha**: 2026-10-27
 - **Estado**: Aceptado
 - **Contexto**: la página de productos/servicios de empresa, la tabla del
-  catálogo y el modal de alta/edición vivían en `features/applications/empresas` junto a los
+  catálogo y el modal de alta/edición vivían en `features/applications/company` junto a los
   stores, modelos, constantes y adaptadores. El patrón de módulos ya estaba
   probado con Clientes y Ventas/Pedidos.
 - **Decisión**:
@@ -1693,9 +1693,9 @@ contexto y consecuencias.
     `CATALOG_ROUTES`.
   - Los providers (`CompanyProductsStore`, `CompanyServicesStore` y
     `CATALOG_PRODUCT_REPOSITORY`) se mueven de la página a las rutas del módulo.
-  - `features/applications/empresas` conserva stores, modelos, constantes, adaptadores y
+  - `features/applications/company` conserva stores, modelos, constantes, adaptadores y
     servicios; su API pública expone stores, constantes y tipos del catálogo.
-  - `EMPRESAS_ROUTES` carga `CATALOG_ROUTES` con `loadChildren` en
+  - `COMPANY_ROUTES` carga `CATALOG_ROUTES` con `loadChildren` en
     `/empresa/productos`, manteniendo la página lazy.
   - El módulo declara su contrato `modules/catalog` (`components`, `pages`) y su
     README.
@@ -1984,19 +1984,19 @@ contexto y consecuencias.
 
 - **Fecha**: 2026-11-06
 - **Estado**: Aceptado
-- **Contexto**: `applications/empresas` concentraba el catálogo administrable y
-  `applications/products` el catálogo maestro, de modo que `modules/catalog` y
+- **Contexto**: `applications/company` concentraba el catálogo administrable y
+  `applications/shop` el catálogo maestro, de modo que `modules/catalog` y
   otros consumidores dependían de aplicaciones para acceder a modelos, puertos y
   stores. Eso impedía cumplir `R-AR-20`.
 - **Decisión**:
   - Se crea `features/domains/catalog` con el modelo `CatalogProduct`, DTO,
     adaptador, puerto `CATALOG_PRODUCT_REPOSITORY` y `CatalogProductService`.
-    `applications/products` conserva la experiencia de storefront y reexporta
+    `applications/shop` conserva la experiencia de storefront y reexporta
     el dominio para sus consumidores.
   - Se crea `features/domains/company-catalog` con productos, servicios, combos,
     promociones, importación CSV y operaciones de inventario: modelos,
     adaptadores, puertos, servicios, stores y constantes.
-  - `applications/empresas` conserva empresa, ventas, invitaciones, portal,
+  - `applications/company` conserva empresa, ventas, invitaciones, portal,
     reportes y logística; ya no exporta el catálogo.
   - `modules/catalog`, `modules/purchases` y las partes de `modules/sales` que
     usan servicios del catálogo consumen `domains/company-catalog` y
@@ -2009,7 +2009,7 @@ contexto y consecuencias.
 
 - **Fecha**: 2026-11-06
 - **Estado**: Aceptado
-- **Contexto**: `applications/empresas` concentraba las ventas de empresa y el
+- **Contexto**: `applications/company` concentraba las ventas de empresa y el
   portal de tiendas/pedidos, que consumían `modules/sales`, `modules/finance`,
   `modules/reports` y las páginas de empresa. También dependía del contrato de
   órdenes de `applications/cart`.
@@ -2020,7 +2020,7 @@ contexto y consecuencias.
   - Se crea `features/domains/company-sales` con modelos, adaptadores, puerto
     `COMPANY_PORTAL_REPOSITORY`, servicio HTTP, fuente de pedidos y stores de
     ventas (`CompanySalesStore`) y portal (`CompanyPortalStore`).
-  - `applications/empresas` conserva empresa, invitaciones, reportes, logística
+  - `applications/company` conserva empresa, invitaciones, reportes, logística
     y la composición visual del workspace.
   - El portal de tiendas se carga con `company-stores.routes.ts` para que sus
     providers no entren en el bundle inicial.
@@ -2034,26 +2034,26 @@ contexto y consecuencias.
 
 - **Fecha**: 2026-11-07
 - **Estado**: Aceptado
-- **Contexto**: `applications/vendor` contenía el POS, pedidos, ofertas,
+- **Contexto**: `applications/store` contenía el POS, pedidos, ofertas,
   catálogo, clientes y reportes de tienda, que `modules/sales` consumía por la
   API pública de la aplicación. Eso mantenía acoplamiento módulo → aplicación.
 - **Decisión**:
   - Se crea `features/domains/store-sales` con modelos, adaptadores, puertos,
     servicios, stores de POS/pedidos/ofertas/catálogo y reportes de tienda.
-  - `applications/vendor` conserva el shell, guard, páginas, branding y la tabla
+  - `applications/store` conserva el shell, guard, páginas, branding y la tabla
     de pedidos recientes; consume el dominio por su API pública.
   - `modules/sales`, `modules/reports` y el shell de tienda consumen
     `domains/store-sales` en lugar de la aplicación.
   - El estado de branding (`VendorStoreState`) permanece en la aplicación.
 - **Consecuencias**: los módulos de tienda ya no dependen de
-  `applications/vendor` para tipos, stores o servicios. El comportamiento y las
+  `applications/store` para tipos, stores o servicios. El comportamiento y las
   rutas no cambian.
 
 ## ADR-79: Dominio de storefront y cierre de ciclos
 
 - **Fecha**: 2026-11-07
 - **Estado**: Aceptado
-- **Contexto**: `applications/products`, `applications/cart` y
+- **Contexto**: `applications/shop`, `applications/cart` y
   `applications/wishlist` se importaban entre sí para compartir producto,
   carrito, wishlist y reseñas, formando un ciclo que `R-AR-21` registraba como
   deuda.
@@ -2069,3 +2069,20 @@ contexto y consecuencias.
 - **Consecuencias**: desaparecen los ciclos entre features y el storefront
   comparte una única fuente de producto/carrito/wishlist. Las rutas y el
   comportamiento no cambian.
+
+## ADR-80: Taxonomía de aplicaciones por intención
+
+- **Fecha**: 2026-11-07
+- **Estado**: Aceptado
+- **Contexto**: los nombres de las aplicaciones no coincidían con sus rutas ni
+  con su intención (`products` era el storefront, `stores` el alta, `vendor` la
+  tienda y `empresas` la empresa), lo que dificultaba localizar código.
+- **Decisión**:
+  - `applications/products` → `applications/shop` (experiencia de compra).
+  - `applications/stores` → `applications/onboarding` (alta de empresa/tienda).
+  - `applications/vendor` → `applications/store` (workspace `/app/tienda`).
+  - `applications/empresas` → `applications/company` (workspace `/app/empresa`).
+  - Los archivos de rutas pasan a `<feature>.routes.ts` y las constantes a
+    `SHOP_ROUTES`, `ONBOARDING_ROUTES`, `STORE_ROUTES` y `COMPANY_ROUTES`.
+- **Consecuencias**: el nombre de la carpeta describe la intención y coincide
+  con la ruta/rol. Las URLs y el comportamiento no cambian.

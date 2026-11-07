@@ -11,7 +11,7 @@ export const WORKSPACE_ROUTES: Routes = [
   { path: '', pathMatch: 'full', canActivate: [workspaceLandingGuard], children: [] },
   {
     path: 'tienda',
-    loadChildren: () => import('../vendor/vendor.routes').then((module) => module.VENDOR_ROUTES),
+    loadChildren: () => import('../store/store.routes').then((module) => module.STORE_ROUTES),
   },
   {
     path: 'admin',
@@ -25,6 +25,6 @@ export const WORKSPACE_ROUTES: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('../empresas/empresas.routes').then((module) => [module.COMPANY_WORKSPACE_ROUTE]),
+      import('../company/company.routes').then((module) => [module.COMPANY_WORKSPACE_ROUTE]),
   },
 ];

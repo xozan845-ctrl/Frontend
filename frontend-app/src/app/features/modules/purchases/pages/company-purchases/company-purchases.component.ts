@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { CompanyStore } from '../../../../applications/empresas/public-api';
+import { CompanyStore } from '../../../../applications/company/public-api';
 import {
   CompanyProductsStore,
   type CompanyCatalogFormValue,

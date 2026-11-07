@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Product, ProductStore, ReviewsStore } from '../../../products/public-api';
-import { ProductCardComponent } from '../../../products/public-ui';
+import { Product, ProductStore, ReviewsStore } from '../../../shop/public-api';
+import { ProductCardComponent } from '../../../shop/public-ui';
 import { CartStore } from '../../../cart/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';

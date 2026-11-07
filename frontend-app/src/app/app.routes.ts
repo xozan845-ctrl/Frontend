@@ -4,10 +4,10 @@ import { AUTH_ROUTES } from './features/applications/auth/auth.routes';
 import { CART_ROUTES } from './features/applications/cart/cart.routes';
 import { HOME_ROUTES, ROOT_ROUTES } from './features/applications/home/home.routes';
 import { PLANS_ROUTES } from './features/applications/plans/plans.routes';
-import { PRODUCTS_ROUTES } from './features/applications/products/products.routes';
+import { SHOP_ROUTES } from './features/applications/shop/shop.routes';
 import { WISHLIST_ROUTES } from './features/applications/wishlist/wishlist.routes';
-import { COMPANY_INVITATION_ROUTES } from './features/applications/empresas/empresas.routes';
-import { storefrontResolver } from './features/applications/products/resolvers/storefront/storefront.resolver';
+import { COMPANY_INVITATION_ROUTES } from './features/applications/company/company.routes';
+import { storefrontResolver } from './features/applications/shop/resolvers/storefront/storefront.resolver';
 
 /**
  * Punto de composición de rutas (`R-AR-2`, `R-AR-12`): cada feature aporta sus
@@ -32,7 +32,9 @@ export const routes: Routes = [
     // (puertos, servicios y store del asistente) al bundle inicial (R-LZ-1, R-PF-1).
     path: '',
     loadChildren: () =>
-      import('./features/applications/stores/stores.routes').then((m) => m.STORES_ROUTES),
+      import('./features/applications/onboarding/onboarding.routes').then(
+        (m) => m.ONBOARDING_ROUTES,
+      ),
   },
   {
     // Feature de scraping con IA: backend independiente (`ai_scraper_executor`).
@@ -53,7 +55,7 @@ export const routes: Routes = [
   {
     path: 'tienda/:storeId',
     resolve: { storefront: storefrontResolver },
-    children: [...HOME_ROUTES, ...PRODUCTS_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],
+    children: [...HOME_ROUTES, ...SHOP_ROUTES, ...CART_ROUTES, ...WISHLIST_ROUTES],
   },
   {
     path: '**',

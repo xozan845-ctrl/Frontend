@@ -26,9 +26,9 @@ test('release readiness: calcula el siguiente tag', () => {
 });
 
 test('release readiness: separa artefacto de app, tests, docs y dependencias', () => {
-  assert.equal(isArtifactFile('frontend-app/src/app/features/applications/products/x.ts'), true);
+  assert.equal(isArtifactFile('frontend-app/src/app/features/applications/shop/x.ts'), true);
   assert.equal(
-    isArtifactFile('frontend-app/src/app/features/applications/products/x.spec.ts'),
+    isArtifactFile('frontend-app/src/app/features/applications/shop/x.spec.ts'),
     false,
   );
   assert.equal(isArtifactFile('frontend-app/src/test-setup.ts'), false);

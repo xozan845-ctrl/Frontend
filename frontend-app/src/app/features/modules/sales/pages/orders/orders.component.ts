@@ -6,7 +6,7 @@ import {
   VendorOrdersStore,
   type OrderStatus,
 } from '../../../../domains/store-sales/public-api';
-import { RecentOrdersTableComponent } from '../../../../applications/vendor/public-ui';
+import { RecentOrdersTableComponent } from '../../../../applications/store/public-ui';
 
 /**
  * Página "Pedidos" (ADR-20): lista completa con filtro por estado en chips y

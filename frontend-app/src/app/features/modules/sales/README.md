@@ -20,10 +20,10 @@ pedidos/POS del vendedor sobre los dominios y stores de sus features.
 - `components/client-picker`, `create-client-modal`, `order-draft-panel`,
   `order-info-fields`, `order-line`, `product-pick-card`,
   `product-pick-grid`, `quantity-stepper` y `confirm-modal`: piezas del POS.
-- `recent-orders-table` sigue en `features/applications/vendor` porque también lo usa el
+- `recent-orders-table` sigue en `features/applications/store` porque también lo usa el
   inicio del panel.
 
-La empresa carga `sales.routes.ts` desde `EMPRESAS_ROUTES`; el vendedor carga
+La empresa carga `sales.routes.ts` desde `COMPANY_ROUTES`; el vendedor carga
 las páginas desde `VENDOR_ROUTES` y mantiene sus stores en el shell para que
 sobrevivan a la navegación. El dominio de ventas de empresa y el portal viven en
 `features/domains/company-sales`; el POS, pedidos, ofertas y catálogo de tienda

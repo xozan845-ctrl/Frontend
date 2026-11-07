@@ -12,4 +12,4 @@ Dominio del POS y los pedidos del vendedor. Consume `domains/orders` y
 - `constants/`: estados, IVA, intervalos y configuración de reportes.
 
 La composición visual vive en `features/modules/sales`; el shell y el branding
-de tienda siguen en `applications/vendor`.
+de tienda siguen en `applications/store`.

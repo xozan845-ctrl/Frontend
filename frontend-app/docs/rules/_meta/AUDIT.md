@@ -36,7 +36,7 @@
   páginas, guards y rutas. `R-AR-20` impide que un dominio importe una
   aplicación y `R-AR-21` protege el grafo de ciclos.
 - El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
-  `domains/company-catalog`; `applications/empresas` ya no exporta catálogo.
+  `domains/company-catalog`; `applications/company` ya no exporta catálogo.
   Las ventas y el portal de tiendas viven en `domains/company-sales`; el POS y
   los pedidos de tienda en `domains/store-sales`; productos, carrito, wishlist y
   reseñas en `domains/storefront`.

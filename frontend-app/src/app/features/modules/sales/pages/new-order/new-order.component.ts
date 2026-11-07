@@ -23,7 +23,7 @@ import {
   type CreateClientPayload,
   type OrderDraftInfo,
 } from '../../../../domains/store-sales/public-api';
-import { RecentOrdersTableComponent } from '../../../../applications/vendor/public-ui';
+import { RecentOrdersTableComponent } from '../../../../applications/store/public-ui';
 
 /**
  * Punto de venta "Nuevo pedido" (ADR-20): contenedor que conecta los stores

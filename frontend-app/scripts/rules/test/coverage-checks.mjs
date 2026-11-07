@@ -16,9 +16,9 @@ const toRel = (path) => relative(appRoot, path).split(sep).join('/');
 // Estos adapters transforman estado local del POS, no DTOs del gateway. Se
 // excluyen de R-C-8 y mantienen sus propios tests de lógica de dominio.
 const LOCAL_ONLY_ADAPTERS = new Set([
-  'src/app/features/applications/empresas/adapters/company-catalog/company-catalog.adapter.ts',
-  'src/app/features/applications/empresas/adapters/company-sale/company-sale.adapter.ts',
-  'src/app/features/applications/empresas/adapters/company-service/company-service.adapter.ts',
+  'src/app/features/applications/company/adapters/company-catalog/company-catalog.adapter.ts',
+  'src/app/features/applications/company/adapters/company-sale/company-sale.adapter.ts',
+  'src/app/features/applications/company/adapters/company-service/company-service.adapter.ts',
 ]);
 
 /** Hallazgos de R-COV-2. */
