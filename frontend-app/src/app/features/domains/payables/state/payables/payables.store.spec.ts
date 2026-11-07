@@ -1,9 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
-import { PAYABLES_SCOPE_CONFIG } from '../../../../../shared/payables/constants/payables-config.tokens';
-import type { PayablesScopeConfig } from '../../../../../shared/payables/models/payables-config.model';
+import { PAYABLES_SCOPE_CONFIG } from '@shared/payables/constants/payables-config.tokens';
+import type { PayablesScopeConfig } from '@shared/payables/models/payables-config.model';
 import { payablesStorageKey } from '../../public-api';
 import { PayablesStore } from './payables.store';
 import type { PayableRecord } from '../../models/payables.model';

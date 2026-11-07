@@ -1,11 +1,11 @@
-import { resolveApiAssetUrl } from '../../../../../core/config/asset-url.config';
+import { resolveApiAssetUrl } from '@core/config/asset-url.config';
 import {
   EMPTY_MEDIA_BACKGROUND,
   MediaBackgroundConfig,
   MediaBackgroundMediaType,
   MediaBackgroundPosition,
   clampMediaBackgroundOverlay,
-} from '../../../../../core/models/media-background.model';
+} from '@core/models/media-background.model';
 
 const POSITIONS: readonly MediaBackgroundPosition[] = ['center', 'top', 'bottom', 'left', 'right'];
 

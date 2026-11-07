@@ -1,4 +1,4 @@
-import type { CreditsScopeConfig } from '../../../../shared/credits/models/credits-config.model';
+import type { CreditsScopeConfig } from '@shared/credits/models/credits-config.model';
 
 /** Configuración de créditos en la tienda del vendedor. */
 export const VENDOR_CREDITS_SCOPE_CONFIG: CreditsScopeConfig = {

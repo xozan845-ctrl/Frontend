@@ -1,15 +1,15 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NotificationService } from '../../../../../../core/services/notification/notification.service';
-import { StoreConfigService } from '../../../../../../core/services/store-config/store-config.service';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../../../domains/session/public-api';
-import { CompanySalesStore } from '../../../../../domains/company-sales/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { StoreConfigService } from '@core/services/store-config/store-config.service';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AuthStore } from '@domains/session/public-api';
+import { CompanySalesStore } from '@domains/company-sales/public-api';
 import {
   BanksStore,
   type BankAccount,
   type CreateBankAccountPayload,
-} from '../../../../../domains/banks/public-api';
+} from '@domains/banks/public-api';
 import {
   CASH_SECTIONS,
   CASH_TRANSFER_CASH_ID,
@@ -28,7 +28,7 @@ import {
   type CreatePettyCashMovementPayload,
   type FinanceTab,
   type PettyCashMovementType,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 import { CashBanksPanelComponent } from '../../components/cash-banks-panel/cash-banks-panel.component';
 import { CashBankModalComponent } from '../../components/cash-bank-modal/cash-bank-modal.component';
 import { CashClosureModalComponent } from '../../components/cash-closure-modal/cash-closure-modal.component';

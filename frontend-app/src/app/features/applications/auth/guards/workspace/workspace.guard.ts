@@ -6,8 +6,8 @@ import {
   type Permission,
   type Workspace,
   workspaceLanding,
-} from '../../../../domains/session/public-api';
-import { AuthStore } from '../../../../domains/session/public-api';
+} from '@domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 /**
  * Guard común para módulos que no pertenecen a un único feature. El backend

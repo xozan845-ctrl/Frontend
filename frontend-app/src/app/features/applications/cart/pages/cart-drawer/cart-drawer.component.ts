@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { CartStore } from '../../../../domains/storefront/public-api';
+import { CartStore } from '@domains/storefront/public-api';
 import { CartUiStore } from '../../state/cart-ui/cart-ui.store';
-import { ProductStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
 import { AuthStore } from '../../../auth/public-api';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { FocusTrapDirective } from '../../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-cart-drawer',

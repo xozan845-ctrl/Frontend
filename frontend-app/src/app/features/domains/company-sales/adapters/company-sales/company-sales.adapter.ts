@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendCompanySaleDTO, BackendCompanySalesDTO } from '../../models/company-sales.dto';
 import { CompanySale, CompanySalesAccount } from '../../models/company-sales.model';
 

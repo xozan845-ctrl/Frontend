@@ -1,9 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
-import { BARCODES_SCOPE_CONFIG } from '../../../../../shared/barcodes/constants/barcodes-config.tokens';
-import type { BarcodesScopeConfig } from '../../../../../shared/barcodes/models/barcodes-config.model';
+import { BARCODES_SCOPE_CONFIG } from '@shared/barcodes/constants/barcodes-config.tokens';
+import type { BarcodesScopeConfig } from '@shared/barcodes/models/barcodes-config.model';
 import { BarcodesStore } from './barcodes.store';
 import { barcodesStorageKey } from '../../public-api';
 import { generateEan13 } from '../../adapters/barcodes/barcodes.adapter';

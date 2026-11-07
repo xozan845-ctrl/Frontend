@@ -1,4 +1,4 @@
-import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
+import { MediaBackgroundConfig } from '@core/models/media-background.model';
 
 /** Estado del store de fondos multimedia (una ranura por ámbito). */
 export interface MediaBackgroundState {

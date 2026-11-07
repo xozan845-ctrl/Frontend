@@ -1,12 +1,9 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
-import type {
-  CashClosurePreview,
-  CreateCashClosurePayload,
-} from '../../../../../domains/finance/public-api';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
+import type { CashClosurePreview, CreateCashClosurePayload } from '@domains/finance/public-api';
 
 /** Arqueo de cierre: efectivo contado contra el saldo esperado. */
 @Component({

@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { ADMIN_ORDER_REPOSITORY } from '../../repositories/admin-order.repository';
 import type { AdminOrdersState } from './admin-orders.state';
 

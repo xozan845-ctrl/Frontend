@@ -82,6 +82,12 @@ consumen por su API pública. Las ventas y el portal de tiendas de empresa viven
 en `domains/company-sales`. El storefront (productos, carrito, wishlist y
 reseñas) vive en `domains/storefront`; el grafo de features es acíclico.
 
+## Imports
+
+Los imports profundos usan los alias de `tsconfig.json`: `@app/*`, `@core/*`,
+`@shared/*`, `@features/*` y `@domains/*`. El motor de reglas resuelve estos
+alias, por lo que las fronteras y ciclos se siguen validando.
+
 ## Notas
 
 - La regla de precio/dinero del backend (centavos) **no aplica** aquí: el

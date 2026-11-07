@@ -1,7 +1,7 @@
 import { Component, effect, input, output, signal } from '@angular/core';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import type { CompanyScanResult } from '../../../../../domains/company-catalog/public-api';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import type { CompanyScanResult } from '@domains/company-catalog/public-api';
 
 /** Modal de búsqueda por código de barras (R-PS-04). */
 @Component({

@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import PersonalComponent from './personal.component';
 import { PersonalStore } from '../../state/personal/personal.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { FieldEmployee } from '../../models/personal.model';
 
 const employee: FieldEmployee = {

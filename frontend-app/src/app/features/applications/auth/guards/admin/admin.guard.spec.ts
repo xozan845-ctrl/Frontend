@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { adminGuard } from './admin.guard';
-import { AuthStore } from '../../../../domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 describe('adminGuard', () => {
   const route = {} as ActivatedRouteSnapshot;

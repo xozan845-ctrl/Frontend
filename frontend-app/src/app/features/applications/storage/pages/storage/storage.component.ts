@@ -1,15 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, effect, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import {
   StorageObject,
   StorageStore,
   formatStorageBytes,
   storageBucketUsage,
   storageObjectStatusLabel,
-} from '../../../../domains/file-storage/public-api';
+} from '@domains/file-storage/public-api';
 
 /** Almacenamiento del tenant (ADR-42). */
 @Component({

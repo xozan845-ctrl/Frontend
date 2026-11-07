@@ -1,7 +1,4 @@
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import { COMPANY_SERVICE_MAX_DURATION_MINUTES } from '../../constants/company-services.constants';
 import type { CompanyCatalogSort } from '../../models/company-catalog.model';
 import type {

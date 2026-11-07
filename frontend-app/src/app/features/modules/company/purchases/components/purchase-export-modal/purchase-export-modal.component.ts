@@ -10,9 +10,9 @@ import {
   type PurchasePeriod,
   type PurchaseRecord,
   type Supplier,
-} from '../../../../../domains/purchases/public-api';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+} from '@domains/purchases/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 
 /** Panel de exportación con filtros, resumen y descarga Excel/PDF. */
 @Component({

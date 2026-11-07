@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import EnviosComponent from './envios.component';
 import { EnviosStore } from '../../state/envios/envios.store';
 import { AuthStore } from '../../../auth/public-api';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { Shipment } from '../../models/envio.model';
 
 const shipment: Shipment = {

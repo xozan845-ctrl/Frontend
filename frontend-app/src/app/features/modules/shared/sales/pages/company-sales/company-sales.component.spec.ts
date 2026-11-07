@@ -10,14 +10,14 @@ import {
   type CompanySalePeriod,
   type CompanySaleRow,
   type CreateCompanySalePayload,
-} from '../../../../../domains/company-sales/public-api';
+} from '@domains/company-sales/public-api';
 import {
   CompanyServicesStore,
   type CompanyServiceModel,
-} from '../../../../../domains/company-catalog/public-api';
-import { SeoService } from '../../../../../../core/services/seo/seo.service';
-import { AuthStore } from '../../../../../domains/session/public-api';
-import type { CatalogProduct } from '../../../../../domains/catalog/public-api';
+} from '@domains/company-catalog/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
+import { AuthStore } from '@domains/session/public-api';
+import type { CatalogProduct } from '@domains/catalog/public-api';
 
 const row: CompanySaleRow = {
   id: 'sale-1',

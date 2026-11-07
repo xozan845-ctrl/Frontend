@@ -1,13 +1,13 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { NotificationService } from '../../../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../../../core/services/seo/seo.service';
-import { BANKS_SCOPE_CONFIG } from '../../../../../../shared/banks/constants/banks-config.tokens';
-import { AuthStore } from '../../../../../domains/session/public-api';
-import { CompanySalesStore } from '../../../../../domains/company-sales/public-api';
-import { BanksStore } from '../../../../../domains/banks/public-api';
-import { FinanceStore, cashToday } from '../../../../../domains/finance/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SeoService } from '@core/services/seo/seo.service';
+import { BANKS_SCOPE_CONFIG } from '@shared/banks/constants/banks-config.tokens';
+import { AuthStore } from '@domains/session/public-api';
+import { CompanySalesStore } from '@domains/company-sales/public-api';
+import { BanksStore } from '@domains/banks/public-api';
+import { FinanceStore, cashToday } from '@domains/finance/public-api';
 import FinanceComponent from './finance.component';
 
 describe('FinanceComponent', () => {

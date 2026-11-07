@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseNewModalComponent } from './purchase-new-modal.component';
-import type { PurchaseProductOption, Supplier } from '../../../../../domains/purchases/public-api';
+import type { PurchaseProductOption, Supplier } from '@domains/purchases/public-api';
 
 const PRODUCT: PurchaseProductOption = {
   id: 'product-1',

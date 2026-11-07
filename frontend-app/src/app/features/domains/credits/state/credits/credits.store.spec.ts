@@ -1,9 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
-import { CREDITS_SCOPE_CONFIG } from '../../../../../shared/credits/constants/credits-config.tokens';
-import type { CreditsScopeConfig } from '../../../../../shared/credits/models/credits-config.model';
+import { CREDITS_SCOPE_CONFIG } from '@shared/credits/constants/credits-config.tokens';
+import type { CreditsScopeConfig } from '@shared/credits/models/credits-config.model';
 import { CreditsStore } from './credits.store';
 import { creditsStorageKey } from '../../public-api';
 import type { CreditRecord } from '../../models/credit.model';

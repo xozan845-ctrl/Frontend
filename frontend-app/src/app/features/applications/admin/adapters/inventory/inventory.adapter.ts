@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendInventoryLineDTO } from '../../models/inventory.dto';
 import { InventoryLine } from '../../models/inventory.model';
 

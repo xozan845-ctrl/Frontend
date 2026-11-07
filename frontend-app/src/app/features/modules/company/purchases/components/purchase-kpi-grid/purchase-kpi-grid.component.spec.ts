@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseKpiGridComponent } from './purchase-kpi-grid.component';
-import type { PurchaseKpis } from '../../../../../domains/purchases/public-api';
+import type { PurchaseKpis } from '@domains/purchases/public-api';
 
 const KPIS: PurchaseKpis = {
   todayTotal: 100,

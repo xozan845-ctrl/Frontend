@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { isPlatformRole, workspaceLanding } from '../../../../domains/session/public-api';
-import { AuthStore } from '../../../../domains/session/public-api';
+import { isPlatformRole, workspaceLanding } from '@domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 /** Indica si el rol puede acceder al área de administración. */
 export function isAdminRole(role?: string): boolean {

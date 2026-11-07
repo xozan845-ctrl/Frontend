@@ -5,7 +5,7 @@ import { EMPTY, forkJoin, from, of, pipe, Observable, throwError } from 'rxjs';
 import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { AuthStore } from '../../../auth/public-api';
 import { COMPANY_REPOSITORY } from '../../../company/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '@domains/catalog/public-api';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   CreateStoreProductDraft,
@@ -16,7 +16,7 @@ import {
 } from '../../models/store-wizard.model';
 import { STORE_REPOSITORY } from '../../repositories/store.repository';
 import { CATALOG_REPOSITORY } from '../../repositories/catalog.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { StoreWizardState } from './store-wizard.state';
 
 const initialState: StoreWizardState = {

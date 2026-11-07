@@ -1,8 +1,8 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { Product } from '../../../../domains/storefront/public-api';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { Product } from '@domains/storefront/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-product-carousel',

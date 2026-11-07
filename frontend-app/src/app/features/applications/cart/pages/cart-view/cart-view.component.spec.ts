@@ -1,12 +1,12 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { CartStore } from '../../../../domains/storefront/public-api';
-import { ProductStore } from '../../../../domains/storefront/public-api';
-import { AuthStore } from '../../../../domains/session/public-api';
-import { Product } from '../../../../domains/storefront/public-api';
+import { CartStore } from '@domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
+import { AuthStore } from '@domains/session/public-api';
+import { Product } from '@domains/storefront/public-api';
 import { CartViewComponent } from './cart-view.component';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 
 const product: Product = {
   id: 21,

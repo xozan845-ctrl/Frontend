@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
-import type { CashClosure, CashClosurePreview } from '../../../../../domains/finance/public-api';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
+import type { CashClosure, CashClosurePreview } from '@domains/finance/public-api';
 
 /** Arqueo y cierres diarios de la caja. */
 @Component({

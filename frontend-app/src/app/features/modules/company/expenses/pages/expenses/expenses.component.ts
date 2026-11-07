@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import {
   EXPENSE_PAYMENT_METHODS,
   EXPENSE_STATUSES,
@@ -14,7 +14,7 @@ import {
   type ExpenseReportExport,
   type ExpenseStatus,
   type ExpenseType,
-} from '../../../../../domains/expenses/public-api';
+} from '@domains/expenses/public-api';
 import { ExpenseModalComponent } from '../../components/expense-modal/expense-modal.component';
 import { ExpenseReportModalComponent } from '../../components/expense-report-modal/expense-report-modal.component';
 

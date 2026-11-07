@@ -1,6 +1,6 @@
 import { of, throwError } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { COMPANY_CATALOG_OPERATIONS_REPOSITORY } from '../../repositories/company-catalog-operations.repository';
 import type {
   CompanyCombo,

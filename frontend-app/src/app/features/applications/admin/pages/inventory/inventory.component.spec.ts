@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import AdminInventoryComponent from './inventory.component';
 import { InventoryStore } from '../../state/inventory/inventory.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import { InventoryLine } from '../../models/inventory.model';
 
 const lines: InventoryLine[] = [

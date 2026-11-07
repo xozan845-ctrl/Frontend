@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   EXPENSE_PAYMENT_METHODS,
   EXPENSE_TYPES,
@@ -17,7 +17,7 @@ import {
   type ExpensePaymentMethod,
   type ExpenseRecord,
   type ExpenseType,
-} from '../../../../../domains/expenses/public-api';
+} from '@domains/expenses/public-api';
 
 function todayInput(): string {
   const now = new Date();

@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
-import { InitialsPipe } from '../../../../../shared/pipes/initials.pipe';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { InitialsPipe } from '@shared/pipes/initials.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { BillingClient } from '../../models/billing.model';
 
 /**

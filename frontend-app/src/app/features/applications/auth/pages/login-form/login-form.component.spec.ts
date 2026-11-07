@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { LoginFormComponent } from './login-form.component';
-import { AuthStore } from '../../../../domains/session/public-api';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { AuthStore } from '@domains/session/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
 
 describe('LoginFormComponent', () => {
   const authStore = {

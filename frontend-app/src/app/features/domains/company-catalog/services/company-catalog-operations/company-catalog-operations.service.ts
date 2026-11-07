@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
-import { unwrapApiSingleResponse } from '../../../../../core/models/api-response.dto';
+import { toUserMessage } from '@core/models/api-error';
+import { unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import {
   adaptCombosFromBackend,
   adaptComboFromBackend,

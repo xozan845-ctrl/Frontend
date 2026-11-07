@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { LineTotalPipe } from '../../../../../shared/pipes/line-total.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { LineTotalPipe } from '@shared/pipes/line-total.pipe';
 import { InvoiceLine } from '../../models/billing.model';
 
 /**

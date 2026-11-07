@@ -10,11 +10,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { ProductStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
 import { ProductSearchStore } from '../../state/product-search/product-search.store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import type { HighlightPart } from './search-autocomplete.types';
 
 @Component({

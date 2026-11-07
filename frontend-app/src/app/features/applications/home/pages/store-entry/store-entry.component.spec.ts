@@ -2,10 +2,10 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import StoreEntryComponent from './store-entry.component';
-import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { MediaBackgroundConfig } from '@core/models/media-background.model';
+import { SeoService } from '@core/services/seo/seo.service';
 import { AuthStore } from '../../../auth/public-api';
-import { MediaBackgroundStore } from '../../../../domains/media-background/public-api';
+import { MediaBackgroundStore } from '@domains/media-background/public-api';
 import type { User } from '../../../auth/public-api';
 
 describe('StoreEntryComponent', () => {

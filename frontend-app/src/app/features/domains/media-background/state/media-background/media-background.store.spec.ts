@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
-import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
+import { MediaBackgroundConfig } from '@core/models/media-background.model';
 import { MEDIA_BACKGROUND_REPOSITORY } from '../../repositories/media-background.repository';
 import { MediaBackgroundStore } from './media-background.store';
 

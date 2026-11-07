@@ -1,10 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
-import {
-  BANK_ACCOUNT_TYPES,
-  type BankAccount,
-  type BanksSummary,
-} from '../../../../../domains/banks/public-api';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
+import { BANK_ACCOUNT_TYPES, type BankAccount, type BanksSummary } from '@domains/banks/public-api';
 
 /** Cuentas bancarias de la empresa dentro del centro de caja. */
 @Component({

@@ -3,16 +3,16 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
-import { MediaBackgroundEditorComponent } from '../../../../../shared/ui/media-background-editor/media-background-editor.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '@shared/ui/image-dropzone/image-dropzone.component';
+import { MediaBackgroundEditorComponent } from '@shared/ui/media-background-editor/media-background-editor.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import {
   MediaBackgroundDraft,
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from '../../state/store-logo/store-logo.store';
 

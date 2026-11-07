@@ -5,7 +5,7 @@ import {
   CLIENTS_DATA_SOURCE,
   type ClientsDataSource,
 } from '../../repositories/clients-data-source.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { clientsStorageKey } from '../../constants/clients.constants';
 import type { ClientOrder } from '../../models/client.model';
 

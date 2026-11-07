@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { toUserMessage } from '@core/models/api-error';
 import { adaptInventoryFromBackend } from '../../adapters/inventory/inventory.adapter';
 import { InventoryLine } from '../../models/inventory.model';
 import { InventoryRepository } from '../../repositories/inventory.repository';

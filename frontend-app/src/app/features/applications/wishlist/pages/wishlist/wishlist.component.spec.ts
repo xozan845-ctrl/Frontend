@@ -1,13 +1,13 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { CartStore } from '../../../../domains/storefront/public-api';
-import { ReviewsStore } from '../../../../domains/storefront/public-api';
-import { ProductStore } from '../../../../domains/storefront/public-api';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { Product } from '../../../../domains/storefront/public-api';
+import { CartStore } from '@domains/storefront/public-api';
+import { ReviewsStore } from '@domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
+import { Product } from '@domains/storefront/public-api';
 import { WishlistComponent } from './wishlist.component';
-import { WishlistStore } from '../../../../domains/storefront/public-api';
+import { WishlistStore } from '@domains/storefront/public-api';
 
 const product: Product = {
   id: 12,

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseCustomizeModalComponent } from './purchase-customize-modal.component';
-import type { PurchaseDocumentSettings } from '../../../../../domains/purchases/public-api';
+import type { PurchaseDocumentSettings } from '@domains/purchases/public-api';
 
 const SETTINGS: PurchaseDocumentSettings = {
   logoSize: 'mediano',

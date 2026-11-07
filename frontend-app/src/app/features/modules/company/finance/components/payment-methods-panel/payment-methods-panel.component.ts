@@ -1,9 +1,9 @@
 import { Component, input, output } from '@angular/core';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import {
   CASH_PAYMENT_METHOD_KINDS,
   type CashPaymentMethodSummary,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 /** Configuración y uso de los métodos de pago de la empresa. */
 @Component({

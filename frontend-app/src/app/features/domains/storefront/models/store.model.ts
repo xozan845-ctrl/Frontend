@@ -3,7 +3,7 @@
  * tiene una tienda y publica sus propias ofertas. El storefront resuelve la
  * tienda desde la URL (`/tienda/:storeId`), nunca desde configuración estática.
  */
-import type { MediaBackgroundConfig } from '../../../../core/models/media-background.model';
+import type { MediaBackgroundConfig } from '@core/models/media-background.model';
 
 export interface Store {
   id: string;

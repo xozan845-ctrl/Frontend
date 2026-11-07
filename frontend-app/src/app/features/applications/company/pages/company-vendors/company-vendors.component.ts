@@ -9,14 +9,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { InvitationStatusPipe } from '../../../../../shared/pipes/invitation-status.pipe';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
+import { InvitationStatusPipe } from '@shared/pipes/invitation-status.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '@shared/ui/image-dropzone/image-dropzone.component';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
-import { CompanyPortalStore } from '../../../../domains/company-sales/public-api';
+import { CompanyPortalStore } from '@domains/company-sales/public-api';
 import { CompanyInvitationsStore } from '../../state/company-invitations/company-invitations.store';
 import { SellerAvatarStore } from '../../state/seller-avatar/seller-avatar.store';
 

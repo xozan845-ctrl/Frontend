@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { BillingProduct } from '../../models/billing.model';
 
 /**

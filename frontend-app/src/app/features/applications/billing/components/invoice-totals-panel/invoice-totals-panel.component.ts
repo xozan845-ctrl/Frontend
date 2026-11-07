@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { BILLING_TAX_RATE } from '../../constants/billing.constants';
 
 /**

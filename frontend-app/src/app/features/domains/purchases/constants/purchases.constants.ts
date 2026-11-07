@@ -114,3 +114,11 @@ export function purchaseStorageKey(
       .slice(0, 80) || 'default';
   return `ecom_company_purchase_${kind}_${suffix}`;
 }
+
+/** Cantidad de páginas del historial. */
+export function purchasePageCount(
+  filteredCount: number,
+  pageSize = PURCHASE_HISTORY_PAGE_SIZE,
+): number {
+  return Math.max(1, Math.ceil(filteredCount / pageSize));
+}

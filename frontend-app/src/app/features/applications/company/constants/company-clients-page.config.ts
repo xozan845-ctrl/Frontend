@@ -1,7 +1,7 @@
 import type {
   ClientsPageConfig,
   ClientsScopeConfig,
-} from '../../../../shared/clients/models/clients-config.model';
+} from '@shared/clients/models/clients-config.model';
 
 /** Configuración de la página de clientes en el workspace de empresa. */
 export const COMPANY_CLIENTS_PAGE_CONFIG: ClientsPageConfig = {

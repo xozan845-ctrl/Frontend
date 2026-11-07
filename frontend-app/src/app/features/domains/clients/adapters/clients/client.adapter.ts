@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { CLIENT_ACTIVE_DAYS, CLIENT_FREQUENT_ORDERS } from '../../constants/clients.constants';
 import type {
   Client,

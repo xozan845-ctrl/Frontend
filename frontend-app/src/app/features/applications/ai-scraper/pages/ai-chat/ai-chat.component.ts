@@ -3,13 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiSessionStore } from '../../state/ai-session/ai-session.store';
 import { AiSession } from '../../models/ai-session.model';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import { AiStatusBadgeComponent } from '../../components/ai-status-badge/ai-status-badge.component';
 import { AiChatMessageComponent } from '../../components/ai-chat-message/ai-chat-message.component';
 import { AiResultsTableComponent } from '../../components/ai-results-table/ai-results-table.component';
 import { AI_SCRAPER_PRACTICE_SITES } from '../../constants/ai-scraper.constants';
-import { MediaBackgroundComponent } from '../../../../../shared/ui/media-background/media-background.component';
-import { MediaBackgroundStore } from '../../../../domains/media-background/public-api';
+import { MediaBackgroundComponent } from '@shared/ui/media-background/media-background.component';
+import { MediaBackgroundStore } from '@domains/media-background/public-api';
 import type { ChatSuggestion, SessionGroup } from './ai-chat.types';
 
 /** Parsea headers opcionales (JSON `{ "Authorization": "Bearer x" }`). */

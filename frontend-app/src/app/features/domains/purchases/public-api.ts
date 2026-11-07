@@ -39,12 +39,13 @@ export {
   PURCHASE_PERIODS,
   PURCHASE_STATUS_FILTERS,
   PURCHASE_STATUS_LABELS,
+  purchasePageCount,
   purchaseStorageKey,
 } from './constants/purchases.constants';
 export {
   buildPurchaseReport,
   buildPurchaseReportHtml,
   purchaseReportCsv,
-  purchaseToday,
-} from './adapters/purchases/purchases.adapter';
+} from './adapters/purchases/purchases-report.adapter';
+export { purchaseToday } from './adapters/purchases/purchases.adapter';
 export { PurchasesStore } from './state/purchases/purchases.store';

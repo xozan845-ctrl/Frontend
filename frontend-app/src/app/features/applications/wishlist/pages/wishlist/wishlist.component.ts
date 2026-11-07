@@ -6,13 +6,13 @@ import {
   ProductStore,
   WishlistStore,
   type Product,
-} from '../../../../domains/storefront/public-api';
-import type { QuickViewProduct } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.types';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { StarRatingComponent } from '../../../../../shared/ui/star-rating/star-rating.component';
-import { QuickViewModalComponent } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.component';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+} from '@domains/storefront/public-api';
+import type { QuickViewProduct } from '@shared/ui/quick-view-modal/quick-view-modal.types';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { StarRatingComponent } from '@shared/ui/star-rating/star-rating.component';
+import { QuickViewModalComponent } from '@shared/ui/quick-view-modal/quick-view-modal.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-wishlist',

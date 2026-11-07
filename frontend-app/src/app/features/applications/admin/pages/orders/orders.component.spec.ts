@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import AdminOrdersComponent from './orders.component';
 import { AdminOrdersStore } from '../../state/orders/admin-orders.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { OrderResponse, OrderTimelineEvent } from '../../../cart/public-api';
 
 const order: OrderResponse = {

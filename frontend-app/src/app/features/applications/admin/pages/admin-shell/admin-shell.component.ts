@@ -6,8 +6,8 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
+import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 
 /** Shell del workspace de plataforma (admin/super_admin). */
 @Component({

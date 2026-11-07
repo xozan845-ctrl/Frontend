@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { AuthStore } from '../../../auth/public-api';
 import { Shipment, ShipmentProvider, shipmentStatusLabel } from '../../models/envio.model';
 import { EnviosStore } from '../../state/envios/envios.store';

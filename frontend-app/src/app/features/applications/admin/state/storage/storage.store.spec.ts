@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { StorageStore } from './storage.store';
 import { STORAGE_REPOSITORY, StorageRepository } from '../../repositories/storage.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { StoragePage, StorageTenant } from '../../models/storage.model';
 
 const tenant: StorageTenant = {

@@ -20,7 +20,7 @@ import {
   isSellerRole,
 } from '../../models/auth.model';
 import { AUTH_REPOSITORY } from '../../repositories/auth.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { AuthState } from './auth.state';
 
 const initialState: AuthState = {

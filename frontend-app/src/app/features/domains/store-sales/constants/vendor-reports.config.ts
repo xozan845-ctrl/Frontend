@@ -1,4 +1,4 @@
-import type { ReportsScopeConfig } from '../../../../shared/reports/models/reports-config.model';
+import type { ReportsScopeConfig } from '@shared/reports/models/reports-config.model';
 
 /** Configuración de reportes en la tienda del vendedor. */
 export const VENDOR_REPORTS_SCOPE_CONFIG: ReportsScopeConfig = {

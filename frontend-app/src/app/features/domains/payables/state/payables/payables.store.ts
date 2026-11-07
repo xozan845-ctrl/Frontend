@@ -7,7 +7,7 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
 import {
   computePayablesSummary,
@@ -16,7 +16,7 @@ import {
   sanitizePayableRecords,
   todayDate,
 } from '../../adapters/payables/payables.adapter';
-import { PAYABLES_SCOPE_CONFIG } from '../../../../../shared/payables/constants/payables-config.tokens';
+import { PAYABLES_SCOPE_CONFIG } from '@shared/payables/constants/payables-config.tokens';
 import { PAYABLES_MAX_RECORDS, payablesStorageKey } from '../../constants/payables.constants';
 import type {
   CreatePayablePayload,

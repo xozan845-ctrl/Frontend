@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   COMPANY_PRODUCT_CONTENT_UNITS,
   COMPANY_PRODUCT_PURCHASE_UNITS,
@@ -12,7 +12,7 @@ import {
   type CompanyCatalogRow,
   type CompanyCatalogStatus,
   COMPANY_SERVICE_MAX_DURATION_MINUTES,
-} from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-catalog/public-api';
 
 /**
  * Modal de alta/edición de productos y servicios (ADR-55). Componente

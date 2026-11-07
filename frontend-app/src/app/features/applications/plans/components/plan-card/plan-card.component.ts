@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import type { PlanFeature, PlanTier } from '../../models/plan.model';
 
 /**

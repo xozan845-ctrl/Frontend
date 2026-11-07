@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import type { OrderDraftLine } from '../../../../../domains/store-sales/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import type { OrderDraftLine } from '@domains/store-sales/public-api';
 import { QuantityStepperComponent } from '../quantity-stepper/quantity-stepper.component';
 
 /**

@@ -1,12 +1,12 @@
 import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   cashToday,
   type CreatePettyCashMovementPayload,
   type PettyCashFund,
   type PettyCashMovementType,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 import type { PettyCashModalMode } from './petty-cash-modal.component.types';
 
 /** Alta de movimientos o ajuste del fondo de caja chica. */

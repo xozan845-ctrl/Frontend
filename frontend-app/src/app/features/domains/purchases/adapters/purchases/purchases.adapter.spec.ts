@@ -1,8 +1,6 @@
 import {
   buildPurchaseHistoryRows,
   buildPurchaseOrderRows,
-  buildPurchaseReport,
-  buildPurchaseReportHtml,
   buildSupplierRows,
   computePurchaseKpis,
   createDirectPurchaseRecord,
@@ -15,13 +13,17 @@ import {
   isPurchaseInPeriod,
   migrateFinancePurchases,
   nextDocumentNumber,
-  purchasePageCount,
-  purchaseReportCsv,
   sanitizePurchaseDocumentSettings,
   sanitizePurchaseOrders,
   sanitizePurchaseRecords,
   sanitizeSuppliers,
 } from './purchases.adapter';
+import {
+  buildPurchaseReport,
+  buildPurchaseReportHtml,
+  purchaseReportCsv,
+} from './purchases-report.adapter';
+import { purchasePageCount } from '../../constants/purchases.constants';
 import type {
   PurchaseDocumentSettings,
   PurchaseOrder,

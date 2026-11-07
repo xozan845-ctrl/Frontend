@@ -1,10 +1,10 @@
 import { Component, effect, input, output, signal } from '@angular/core';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { parseProductsCsv } from '../../../../../domains/company-catalog/public-api';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { parseProductsCsv } from '@domains/company-catalog/public-api';
 import type {
   CompanyProductImportResult,
   CompanyProductImportRow,
-} from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-catalog/public-api';
 
 /** Modal de importación CSV con validación y vista previa (R-PS-04). */
 @Component({

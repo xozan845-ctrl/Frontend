@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { RutasStore } from './rutas.store';
 import { RUTA_REPOSITORY, RutaRepository } from '../../repositories/ruta.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { Parada, Ruta } from '../../models/ruta.model';
 
 const stop: Parada = {

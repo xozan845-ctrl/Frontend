@@ -3,7 +3,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { FieldIncident } from '../../models/incidencia.model';
 import { INCIDENCIA_REPOSITORY } from '../../repositories/incidencia.repository';
 import type { IncidenciasState } from './incidencias.state';

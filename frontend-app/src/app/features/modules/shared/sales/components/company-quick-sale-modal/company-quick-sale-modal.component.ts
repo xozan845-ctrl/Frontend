@@ -1,15 +1,15 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import type { CatalogProduct } from '../../../../../domains/catalog/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import type { CatalogProduct } from '@domains/catalog/public-api';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
-import { OrderTotalsComponent } from '../../../../../../shared/orders/components/order-totals/order-totals.component';
+import { OrderTotalsComponent } from '@shared/orders/components/order-totals/order-totals.component';
 import {
   createCompanySaleLineId,
   type CompanySaleLine,
   type CompanySalePaymentMethod,
   type CreateCompanySalePayload,
-} from '../../../../../domains/company-sales/public-api';
+} from '@domains/company-sales/public-api';
 
 function toMoney(value: number): number {
   return Math.round(value * 100) / 100;

@@ -6,10 +6,7 @@ import {
   BackendTiendaDTO,
   BackendStorefrontDTO,
 } from '../../models/product.dto';
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import type { CatalogEntry } from '../../models/catalog-entry.model';
 
 const DEFAULT_FALLBACK_IMAGE =

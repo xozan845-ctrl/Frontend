@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { OrderStore } from './order.store';
-import type { OrderResponse } from '../../../../domains/orders/public-api';
+import type { OrderResponse } from '@domains/orders/public-api';
 import { ORDER_REPOSITORY } from '../../repositories/order.repository';
 
 const order: OrderResponse = {

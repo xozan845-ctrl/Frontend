@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { toUserMessage } from '@core/models/api-error';
 import { adaptVendorProductsFromBackend } from '../../adapters/vendor/vendor.adapter';
 import { VendorProduct } from '../../models/vendor-order.model';
 import { VendorProductRepository } from '../../repositories/vendor-product.repository';

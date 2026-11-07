@@ -9,13 +9,13 @@ import {
   untracked,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import {
   cashToday,
   type CashTransferAccount,
   type CreateCashTransferPayload,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 /** Transferencia interna entre caja y cuentas bancarias. */
 @Component({

@@ -12,7 +12,7 @@ import {
   type CompanyPortalRepository,
 } from '../../../domains/company-sales/public-api';
 import { COMPANY_BANKS_SCOPE_CONFIG } from '../../../applications/company/constants/company-banks.config';
-import { BANKS_SCOPE_CONFIG } from '../../../../shared/banks/constants/banks-config.tokens';
+import { BANKS_SCOPE_CONFIG } from '@shared/banks/constants/banks-config.tokens';
 import { BanksStore } from '../../../domains/banks/public-api';
 import { FinanceStore, type FinanceTab } from '../../../domains/finance/public-api';
 

@@ -3,8 +3,8 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
-import { toUserMessage } from '../../../../../core/models/api-error';
-import type { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
+import { toUserMessage } from '@core/models/api-error';
+import type { MediaBackgroundConfig } from '@core/models/media-background.model';
 import { MEDIA_BACKGROUND_REPOSITORY } from '../../repositories/media-background.repository';
 import type { MediaBackgroundState } from './media-background.state';
 

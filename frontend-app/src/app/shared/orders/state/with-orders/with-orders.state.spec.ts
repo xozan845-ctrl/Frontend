@@ -2,7 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { signalStore } from '@ngrx/signals';
 import { of, throwError } from 'rxjs';
-import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { OrdersDataSource } from '../../repositories/orders-data-source/orders-data-source.repository';
 import { withOrders } from './with-orders.state';
 

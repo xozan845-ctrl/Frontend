@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyInventoryMovementModalComponent } from './company-inventory-movement-modal.component';
-import type { CatalogProduct } from '../../../../../domains/catalog/public-api';
+import type { CatalogProduct } from '@domains/catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

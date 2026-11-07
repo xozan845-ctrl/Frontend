@@ -1,4 +1,4 @@
-import { formatMoney } from '../../../../../core/config/currency.config';
+import { formatMoney } from '@core/config/currency.config';
 import { cashCategoryLabel, CASH_MOVEMENT_SOURCES } from '../../constants/finance.constants';
 import type {
   CashLedgerEntry,

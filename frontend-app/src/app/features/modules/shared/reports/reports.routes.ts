@@ -7,7 +7,7 @@ import {
   COMPANY_PORTAL_REPOSITORY,
   CompanyPortalService,
 } from '../../../domains/company-sales/public-api';
-import { REPORTS_SCOPE_CONFIG } from '../../../../shared/reports/constants/reports-config.tokens';
+import { REPORTS_SCOPE_CONFIG } from '@shared/reports/constants/reports-config.tokens';
 import {
   VENDOR_REPORTS_SCOPE_CONFIG,
   VendorReportsSource,

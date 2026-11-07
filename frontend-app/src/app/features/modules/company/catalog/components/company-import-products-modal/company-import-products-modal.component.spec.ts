@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyImportProductsModalComponent } from './company-import-products-modal.component';
-import type { CompanyProductImportRow } from '../../../../../domains/company-catalog/public-api';
+import type { CompanyProductImportRow } from '@domains/company-catalog/public-api';
 
 const row: CompanyProductImportRow = {
   sku: 'SKU-1',

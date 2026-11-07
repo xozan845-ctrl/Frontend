@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseDirectModalComponent } from './purchase-direct-modal.component';
-import type { Supplier } from '../../../../../domains/purchases/public-api';
+import type { Supplier } from '@domains/purchases/public-api';
 
 const SUPPLIER: Supplier = {
   id: 'supplier-1',

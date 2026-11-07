@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { SeoService } from '../../../../../../core/services/seo/seo.service';
-import { ExpensesStore, type ExpenseRecord } from '../../../../../domains/expenses/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
+import { ExpensesStore, type ExpenseRecord } from '@domains/expenses/public-api';
 import ExpensesComponent from './expenses.component';
 
 const ROW: ExpenseRecord = {

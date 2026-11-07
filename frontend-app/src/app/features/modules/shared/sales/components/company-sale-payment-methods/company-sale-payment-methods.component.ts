@@ -2,7 +2,7 @@ import { Component, input, output } from '@angular/core';
 import {
   COMPANY_SALE_PAYMENT_METHODS,
   type CompanySalePaymentMethod,
-} from '../../../../../domains/company-sales/public-api';
+} from '@domains/company-sales/public-api';
 
 /** Selector accesible de forma de pago compartido por los modales de venta. */
 @Component({

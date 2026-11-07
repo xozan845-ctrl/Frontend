@@ -1,10 +1,10 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   CASH_PAYMENT_METHOD_KINDS,
   type CreateCashPaymentMethodPayload,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 /** Alta de un método de pago personalizado. */
 @Component({

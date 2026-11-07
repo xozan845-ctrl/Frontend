@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CompanyScanModalComponent } from './company-scan-modal.component';
-import type { CompanyScanResult } from '../../../../../domains/company-catalog/public-api';
+import type { CompanyScanResult } from '@domains/company-catalog/public-api';
 
 const result: CompanyScanResult = {
   kind: 'servicio',

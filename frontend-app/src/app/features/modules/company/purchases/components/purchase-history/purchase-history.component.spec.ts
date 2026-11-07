@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseHistoryComponent } from './purchase-history.component';
-import type { PurchaseHistoryRow } from '../../../../../domains/purchases/public-api';
+import type { PurchaseHistoryRow } from '@domains/purchases/public-api';
 
 const ROW: PurchaseHistoryRow = {
   id: 'purchase-1',

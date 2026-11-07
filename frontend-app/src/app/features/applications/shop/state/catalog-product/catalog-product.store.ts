@@ -3,14 +3,14 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import {
   CatalogProductFilters,
   CatalogProductStatus,
   CreateCatalogProductData,
   UpdateCatalogProductData,
-} from '../../../../domains/catalog/public-api';
-import { CATALOG_PRODUCT_REPOSITORY } from '../../../../domains/catalog/public-api';
+} from '@domains/catalog/public-api';
+import { CATALOG_PRODUCT_REPOSITORY } from '@domains/catalog/public-api';
 import type { CatalogProductsState } from './catalog-product.state';
 
 const initialState: CatalogProductsState = {

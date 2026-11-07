@@ -6,15 +6,15 @@ import {
   MediaBackgroundConfig,
   MediaBackgroundDraft,
   EMPTY_MEDIA_BACKGROUND,
-} from '../../../../../core/models/media-background.model';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+} from '@core/models/media-background.model';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import { adminGuard } from '../../../auth/public-api';
 import {
   MediaBackgroundStore,
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 import { ADMIN_ROUTES } from '../../admin.routes';
 
 const CONFIG: MediaBackgroundConfig = {

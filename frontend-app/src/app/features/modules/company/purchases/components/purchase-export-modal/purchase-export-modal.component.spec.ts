@@ -4,7 +4,7 @@ import type {
   PurchaseDocumentSettings,
   PurchaseRecord,
   Supplier,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 
 function localDate(): string {
   const date = new Date();

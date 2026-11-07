@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { CREDITS_SCOPE_CONFIG } from '../../../../../../shared/credits/constants/credits-config.tokens';
-import { CreditsStore, type CreateCreditPayload } from '../../../../../domains/credits/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { CREDITS_SCOPE_CONFIG } from '@shared/credits/constants/credits-config.tokens';
+import { CreditsStore, type CreateCreditPayload } from '@domains/credits/public-api';
 import { CreditFormComponent } from '../../components/credit-form/credit-form.component';
 
 /**

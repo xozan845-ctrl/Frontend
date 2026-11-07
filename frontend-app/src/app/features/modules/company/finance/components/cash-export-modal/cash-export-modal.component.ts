@@ -1,6 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import {
   CASH_FLOWS,
   CASH_MOVEMENT_CATEGORIES,
@@ -18,7 +18,7 @@ import {
   type CashPaymentMethod,
   type CashPeriod,
   type CashStatusFilter,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 /** Reporte de caja con filtros y exportación a Excel (CSV) o PDF. */
 @Component({

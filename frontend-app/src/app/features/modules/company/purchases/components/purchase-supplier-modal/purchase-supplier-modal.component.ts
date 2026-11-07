@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import type { CreateSupplierInput } from '../../../../../domains/purchases/public-api';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import type { CreateSupplierInput } from '@domains/purchases/public-api';
 
 /** Alta rápida de proveedor. */
 @Component({

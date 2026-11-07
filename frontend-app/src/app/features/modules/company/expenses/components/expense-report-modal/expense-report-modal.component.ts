@@ -1,5 +1,5 @@
 import { Component, HostListener, computed, input, output, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import {
   EXPENSE_CATEGORIES,
   EXPENSE_PAYMENT_METHODS,
@@ -13,7 +13,7 @@ import {
   type ExpenseReportExport,
   type ExpenseStatusFilter,
   type ExpenseType,
-} from '../../../../../domains/expenses/public-api';
+} from '@domains/expenses/public-api';
 
 /** Modal de reporte de gastos; filtra y delega la descarga al contenedor. */
 @Component({

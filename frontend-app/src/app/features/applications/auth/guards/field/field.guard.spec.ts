@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { fieldGuard } from './field.guard';
-import { AuthStore } from '../../../../domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 describe('fieldGuard', () => {
   const route = {} as ActivatedRouteSnapshot;

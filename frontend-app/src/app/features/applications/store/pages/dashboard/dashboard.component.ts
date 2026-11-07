@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { RecentOrdersTableComponent } from '../../components/recent-orders-table/recent-orders-table.component';
-import { VendorOrdersStore } from '../../../../domains/store-sales/public-api';
+import { VendorOrdersStore } from '@domains/store-sales/public-api';
 
 /**
  * Inicio del panel del vendedor (`R-UX-1`, `R-UX-6`): KPIs del día derivados de

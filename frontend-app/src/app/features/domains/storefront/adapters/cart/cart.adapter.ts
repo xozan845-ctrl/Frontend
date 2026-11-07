@@ -1,7 +1,7 @@
 import { CartItem, CartSnapshot } from '../../models/cart.model';
 import type { Product } from '../../models/product.model';
 import { BackendCarritoDTO, BackendCarritoItemDTO } from '../../models/cart.dto';
-import { unwrapApiSingleResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiSingleResponse } from '@core/models/api-response.dto';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';

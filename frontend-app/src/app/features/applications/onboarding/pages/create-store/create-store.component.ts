@@ -13,10 +13,10 @@ import {
   WIZARD_STEPS,
 } from '../../models/store-wizard.model';
 import { CreateStoreStepperComponent } from '../../components/create-store-stepper/create-store-stepper.component';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '@shared/ui/image-dropzone/image-dropzone.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import type { NewProductRow, ProductRow } from './create-store.types';
 
 const MIN_INITIAL_PRODUCTS = 5;

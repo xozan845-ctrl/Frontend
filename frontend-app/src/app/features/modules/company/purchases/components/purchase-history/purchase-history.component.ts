@@ -1,14 +1,14 @@
 import { NgClass } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
 import {
   PURCHASE_PERIODS,
   PURCHASE_STATUS_FILTERS,
   type PurchaseHistoryRow,
   type PurchasePeriod,
   type PurchaseStatusFilter,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 
 const PERIOD_CLASSES = {
   active: 'bg-accent-600 text-white shadow-sm',

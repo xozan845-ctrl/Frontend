@@ -1,11 +1,11 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import type {
   CompanyInventoryCostMethod,
   CompanyInventorySettings,
   CompanyInventorySettingsFormValue,
-} from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-catalog/public-api';
 
 /** Modal presentacional de configuración de inventario (R-PS-04). */
 @Component({

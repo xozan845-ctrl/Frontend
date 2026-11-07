@@ -1,12 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { PAYABLES_SCOPE_CONFIG } from '../../../../../../shared/payables/constants/payables-config.tokens';
-import {
-  PayablesStore,
-  type CreatePayablePayload,
-} from '../../../../../domains/payables/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { PAYABLES_SCOPE_CONFIG } from '@shared/payables/constants/payables-config.tokens';
+import { PayablesStore, type CreatePayablePayload } from '@domains/payables/public-api';
 import { PayableFormComponent } from '../../components/payable-form/payable-form.component';
 
 /**

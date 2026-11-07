@@ -1,4 +1,4 @@
-import type { OrdersDataSource } from '../../../../../shared/orders/repositories/orders-data-source/orders-data-source.repository';
+import type { OrdersDataSource } from '@shared/orders/repositories/orders-data-source/orders-data-source.repository';
 import type { OrderResponse } from '../../../orders/public-api';
 import type { CompanyPortalRepository } from '../../repositories/company-portal.repository';
 

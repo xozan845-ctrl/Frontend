@@ -1,7 +1,7 @@
 import type {
   ClientsPageConfig,
   ClientsScopeConfig,
-} from '../../../../shared/clients/models/clients-config.model';
+} from '@shared/clients/models/clients-config.model';
 
 /** Configuración de la página de clientes en el panel del vendedor. */
 export const VENDOR_CLIENTS_PAGE_CONFIG: ClientsPageConfig = {

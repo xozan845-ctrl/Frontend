@@ -3,11 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
-import {
-  MediaBackgroundConfig,
-  MediaBackgroundDraft,
-} from '../../../../../core/models/media-background.model';
+import { toUserMessage } from '@core/models/api-error';
+import { MediaBackgroundConfig, MediaBackgroundDraft } from '@core/models/media-background.model';
 import {
   adaptMediaBackgroundFromBackend,
   adaptPanelAiMediaBackgroundFromBackend,

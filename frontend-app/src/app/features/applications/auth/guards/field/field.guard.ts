@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { canEnterWorkspace, workspaceLanding } from '../../../../domains/session/public-api';
-import { AuthStore } from '../../../../domains/session/public-api';
+import { canEnterWorkspace, workspaceLanding } from '@domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 /** Roles con acceso a la logística de campo (espeja `ROLES_LOGISTICA`). */
 const FIELD_ROLES: readonly string[] = [

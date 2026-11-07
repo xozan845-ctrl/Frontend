@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { toUserMessage } from '@core/models/api-error';
 import { Store } from '../../../shop/public-api';
 import { OfferDraft, StoreDraft } from '../../models/store-wizard.model';
 import { StoreRepository } from '../../repositories/store.repository';

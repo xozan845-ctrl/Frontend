@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AiConnectionStore } from '../../state/ai-connection/ai-connection.store';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import { AiConnectionPanelComponent } from '../../components/ai-connection-panel/ai-connection-panel.component';
 
 /**

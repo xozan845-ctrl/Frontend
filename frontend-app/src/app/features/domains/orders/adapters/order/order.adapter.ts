@@ -1,7 +1,4 @@
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import type { Order, OrderLine } from '../../models/order.model';
 
 function isRecord(value: unknown): value is Record<string, unknown> {

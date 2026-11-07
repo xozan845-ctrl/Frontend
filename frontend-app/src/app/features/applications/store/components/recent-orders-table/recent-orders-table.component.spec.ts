@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RecentOrdersTableComponent, formatOrderDate } from './recent-orders-table.component';
-import { OrderStatus, VendorOrder } from '../../../../domains/store-sales/public-api';
+import { OrderStatus, VendorOrder } from '@domains/store-sales/public-api';
 
 const order = (id: string, status: OrderStatus = 'pendiente'): VendorOrder => ({
   id,

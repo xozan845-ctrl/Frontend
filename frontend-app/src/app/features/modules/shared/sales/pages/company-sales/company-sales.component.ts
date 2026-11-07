@@ -1,14 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { SkeletonLoaderComponent } from '../../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { AuthStore } from '../../../../../domains/session/public-api';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { AuthStore } from '@domains/session/public-api';
 import { CompanyNewSaleModalComponent } from '../../components/company-new-sale-modal/company-new-sale-modal.component';
 import { CompanyQuickSaleModalComponent } from '../../components/company-quick-sale-modal/company-quick-sale-modal.component';
-import { OrderTableComponent } from '../../../../../../shared/orders/components/order-table/order-table.component';
-import type { OrderTableColumn } from '../../../../../../shared/orders/models/order-table.model';
+import { OrderTableComponent } from '@shared/orders/components/order-table/order-table.component';
+import type { OrderTableColumn } from '@shared/orders/models/order-table.model';
 import {
   COMPANY_SALE_PAYMENT_FILTERS,
   COMPANY_SALE_PERIODS,
@@ -16,8 +16,8 @@ import {
   type CompanySalePaymentFilter,
   type CompanySalePeriod,
   type CreateCompanySalePayload,
-} from '../../../../../domains/company-sales/public-api';
-import { CompanyServicesStore } from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-sales/public-api';
+import { CompanyServicesStore } from '@domains/company-catalog/public-api';
 
 const TAB_CLASSES = {
   active: 'bg-accent-600 text-white shadow-sm',

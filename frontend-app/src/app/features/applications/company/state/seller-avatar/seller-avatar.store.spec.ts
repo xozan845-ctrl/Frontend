@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { STORAGE_REPOSITORY, StorageRepository } from '../../../storage/public-api';
 import { COMPANY_REPOSITORY, CompanyRepository } from '../../repositories/company.repository';
 import { CompanyInvitationsStore } from '../company-invitations/company-invitations.store';

@@ -1,14 +1,14 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   DEFAULT_PURCHASE_DOCUMENT_SETTINGS,
   PURCHASE_LOGO_HEIGHT,
   PURCHASE_LOGO_SIZES,
   type PurchaseDocumentSettings,
   type PurchaseLogoSize,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 
 /** Panel de personalización de órdenes y reportes en PDF. */
 @Component({

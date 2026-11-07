@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { BankAccount, BanksSummary } from '../../../../../domains/banks/public-api';
+import type { BankAccount, BanksSummary } from '@domains/banks/public-api';
 import { CashBanksPanelComponent } from './cash-banks-panel.component';
 
 const ACCOUNT: BankAccount = {

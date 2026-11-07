@@ -1,9 +1,9 @@
 import { computed, inject } from '@angular/core';
 import { signalStore, withComputed } from '@ngrx/signals';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { ProductStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
 import { RecentlyViewedStore } from '../recently-viewed/recently-viewed.store';
-import { ReviewsStore } from '../../../../domains/storefront/public-api';
+import { ReviewsStore } from '@domains/storefront/public-api';
 
 /**
  * Proyección de estado para el detalle de producto (`R-ST-3`). Compone las

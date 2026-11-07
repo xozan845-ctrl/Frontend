@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { MediaBackgroundConfig } from '../../../../../core/models/media-background.model';
+import { MediaBackgroundConfig } from '@core/models/media-background.model';
 import { MediaBackgroundRepository } from '../../repositories/media-background.repository';
 import {
   adaptMediaBackgroundFromBackend,

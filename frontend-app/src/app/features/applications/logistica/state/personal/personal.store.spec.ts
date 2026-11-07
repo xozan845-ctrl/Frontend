@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { PersonalStore } from './personal.store';
 import { PERSONAL_REPOSITORY, PersonalRepository } from '../../repositories/personal.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { FieldEmployee } from '../../models/personal.model';
 
 const employee: FieldEmployee = {

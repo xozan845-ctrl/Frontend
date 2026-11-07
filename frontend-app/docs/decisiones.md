@@ -2105,3 +2105,24 @@ contexto y consecuencias.
     admite módulos anidados.
 - **Consecuencias**: el alcance de un módulo se deduce de su ruta. No cambian
   rutas, providers ni comportamiento.
+
+## ADR-82: Alias de imports y limpieza fina
+
+- **Fecha**: 2026-11-07
+- **Estado**: Aceptado
+- **Contexto**: había cientos de imports con cuatro o más niveles de `../`, lo
+  que dificultaba mover archivos y leer dependencias. Además, el adaptador de
+  compras superaba las 900 líneas y las etiquetas de estado de pedido estaban
+  duplicadas.
+- **Decisión**:
+  - Se añaden alias en `tsconfig.json`: `@app/*`, `@core/*`, `@shared/*`,
+    `@features/*` y `@domains/*`.
+  - El motor de reglas resuelve los alias, por lo que `R-CX-6`, `R-AR-20` y
+    `R-AR-21` siguen funcionando.
+  - Se migran los imports con profundidad ≥ 4 a alias.
+  - El reporte de compras (CSV/HTML/paginación) se separa en
+    `purchases-report.adapter.ts`.
+  - Las etiquetas de estado del POS se toman de `shared/orders`; se elimina la
+    tabla duplicada en `store-sales`.
+- **Consecuencias**: los imports profundos dejan de ser frágiles y el mayor
+  adaptador de compras queda dividido. Las rutas y el comportamiento no cambian.

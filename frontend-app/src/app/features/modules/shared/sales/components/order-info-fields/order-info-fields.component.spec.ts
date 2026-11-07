@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { OrderInfoFieldsComponent } from './order-info-fields.component';
-import type { OrderDraftInfo } from '../../../../../domains/store-sales/public-api';
+import type { OrderDraftInfo } from '@domains/store-sales/public-api';
 
 const info: OrderDraftInfo = {
   storeId: 't-1',
