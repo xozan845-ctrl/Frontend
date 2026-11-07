@@ -7,7 +7,7 @@ import {
   type CatalogProduct,
   type CatalogProductRepository,
 } from '../../../catalog/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
 import { CompanySalesStore } from './company-sales.store';
 import {

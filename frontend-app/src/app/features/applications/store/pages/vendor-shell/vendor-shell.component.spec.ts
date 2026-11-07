@@ -3,9 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import VendorShellComponent from './vendor-shell.component';
-import { WorkspaceSidebarComponent } from '../../../../../shared/ui/workspace-sidebar/workspace-sidebar.component';
+import { WorkspaceSidebarComponent } from '@shared/ui/workspace-sidebar/workspace-sidebar.component';
 import { AuthStore } from '../../../auth/public-api';
-import { BrandingService } from '../../../../../core/services/branding/branding.service';
+import { BrandingService } from '@core/services/branding/branding.service';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 import type { Store } from '../../../shop/public-api';
 

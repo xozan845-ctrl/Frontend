@@ -3,8 +3,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
-import { COMPANY_INFO } from '../../../../../core/constants/company.constants';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { COMPANY_INFO } from '@core/constants/company.constants';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import { AuthStore } from '../../../auth/public-api';
 import { SellerInvitationStore } from '../../state/seller-invitation/seller-invitation.store';
 

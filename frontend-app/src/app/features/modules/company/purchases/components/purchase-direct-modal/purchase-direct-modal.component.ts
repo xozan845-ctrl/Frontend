@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   PURCHASE_COST_TYPES,
   PURCHASE_PAYMENT_METHODS,
@@ -9,7 +9,7 @@ import {
   type PurchaseCostType,
   type PurchasePaymentMethod,
   type Supplier,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 
 /** Gasto de contado que no afecta inventario (compra directa). */
 @Component({

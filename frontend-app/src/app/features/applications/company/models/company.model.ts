@@ -1,4 +1,4 @@
-import type { MediaBackgroundConfig } from '../../../../core/models/media-background.model';
+import type { MediaBackgroundConfig } from '@core/models/media-background.model';
 
 /** Modalidad logística de una empresa (`modalidad_logistica` en Core Engine). */
 export type LogisticsMode = 'plataforma' | 'propia' | 'hibrida';

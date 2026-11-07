@@ -11,7 +11,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { fromEvent, pipe, timer } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { withOrders } from '../../../../../shared/orders/state/with-orders/with-orders.state';
+import { withOrders } from '@shared/orders/state/with-orders/with-orders.state';
 import { VENDOR_POLL_INTERVAL_MS } from '../../constants/vendor.constants';
 import { OrderStatus, VendorOrder } from '../../models/vendor-order.model';
 import { VENDOR_ORDERS_SOURCE } from '../../repositories/vendor-order.repository';

@@ -2,20 +2,20 @@ import { Component, computed, effect, inject, input, output, signal } from '@ang
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import type { CatalogProduct } from '../../../../../domains/catalog/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import type { CatalogProduct } from '@domains/catalog/public-api';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
-import { OrderTotalsComponent } from '../../../../../../shared/orders/components/order-totals/order-totals.component';
-import type { Client } from '../../../../../domains/clients/public-api';
+import { OrderTotalsComponent } from '@shared/orders/components/order-totals/order-totals.component';
+import type { Client } from '@domains/clients/public-api';
 import {
   createCompanySaleLineId,
   type CompanySaleClientMode,
   type CompanySaleLine,
   type CompanySalePaymentMethod,
   type CreateCompanySalePayload,
-} from '../../../../../domains/company-sales/public-api';
-import type { CompanyServiceModel } from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-sales/public-api';
+import type { CompanyServiceModel } from '@domains/company-catalog/public-api';
 
 const STEPS = [
   { value: 1, label: 'Cliente' },

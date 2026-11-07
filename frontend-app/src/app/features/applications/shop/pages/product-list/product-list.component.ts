@@ -7,15 +7,15 @@ import {
   ReviewsStore,
   WishlistStore,
   type Product,
-} from '../../../../domains/storefront/public-api';
-import type { QuickViewProduct } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.types';
+} from '@domains/storefront/public-api';
+import type { QuickViewProduct } from '@shared/ui/quick-view-modal/quick-view-modal.types';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { SearchAutocompleteComponent } from '../search-autocomplete/search-autocomplete.component';
-import { QuickViewModalComponent } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.component';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
-import { injectSeoCleanup } from '../../../../../core/services/seo/seo.service';
+import { QuickViewModalComponent } from '@shared/ui/quick-view-modal/quick-view-modal.component';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { ScrollRevealDirective } from '@shared/directives/scroll-reveal.directive';
+import { injectSeoCleanup } from '@core/services/seo/seo.service';
 
 @Component({
   selector: 'app-product-list',

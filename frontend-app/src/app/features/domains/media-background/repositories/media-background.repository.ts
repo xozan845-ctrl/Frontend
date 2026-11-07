@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MediaBackgroundConfig } from '../../../../core/models/media-background.model';
+import { MediaBackgroundConfig } from '@core/models/media-background.model';
 
 /**
  * Puerto de lectura del fondo multimedia. La infraestructura HTTP vive en

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 
 @Component({
   selector: 'app-not-found',

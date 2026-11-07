@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendIncidenciaDTO } from '../../models/incidencia.dto';
 import { FieldIncident } from '../../models/incidencia.model';
 

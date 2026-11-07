@@ -1,7 +1,4 @@
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import {
   BackendCatalogProductDTO,
   BackendPaginaProductosDTO,

@@ -3,7 +3,7 @@ import type {
   PettyCashFund,
   PettyCashMovement,
   PettyCashSummary,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 import { PettyCashPanelComponent } from './petty-cash-panel.component';
 
 const FUND: PettyCashFund = {

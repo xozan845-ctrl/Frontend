@@ -1,9 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import StorageComponent from './storage.component';
-import { StorageStore } from '../../../../domains/file-storage/public-api';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
-import type { StorageBucket, StorageObject } from '../../../../domains/file-storage/public-api';
+import { StorageStore } from '@domains/file-storage/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
+import type { StorageBucket, StorageObject } from '@domains/file-storage/public-api';
 
 const bucket: StorageBucket = {
   tenantId: 'tenant-1',

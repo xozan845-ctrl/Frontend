@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { InventoryStore } from './inventory.store';
 import { INVENTORY_REPOSITORY, InventoryRepository } from '../../repositories/inventory.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { InventoryLine } from '../../models/inventory.model';
 
 const lines: InventoryLine[] = [

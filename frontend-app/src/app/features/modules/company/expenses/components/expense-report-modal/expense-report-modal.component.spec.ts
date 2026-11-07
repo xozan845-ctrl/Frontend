@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ExpenseReportModalComponent } from './expense-report-modal.component';
-import type { ExpenseRecord } from '../../../../../domains/expenses/public-api';
+import type { ExpenseRecord } from '@domains/expenses/public-api';
 
 function localDate(daysFromToday = 0): string {
   const date = new Date();

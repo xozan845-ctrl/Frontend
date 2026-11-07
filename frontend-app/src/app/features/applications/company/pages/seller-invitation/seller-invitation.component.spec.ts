@@ -4,7 +4,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import SellerInvitationComponent from './seller-invitation.component';
 import { AuthStore } from '../../../auth/public-api';
 import { SellerInvitationStore } from '../../state/seller-invitation/seller-invitation.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 
 function createStore() {
   return {

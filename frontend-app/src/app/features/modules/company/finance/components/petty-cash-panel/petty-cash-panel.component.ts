@@ -1,12 +1,12 @@
 import { Component, input, output } from '@angular/core';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import type {
   PettyCashFund,
   PettyCashMovement,
   PettyCashMovementType,
   PettyCashSummary,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 /** Fondo fijo de caja chica y sus reposiciones/gastos. */
 @Component({

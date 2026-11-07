@@ -1,8 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import {
   CASH_MOVEMENT_CATEGORIES,
   CASH_MOVEMENT_TYPES,
@@ -12,7 +12,7 @@ import {
   type CashMovementType,
   type CashPaymentMethod,
   type CreateCashMovementPayload,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 const CATEGORIES_BY_TYPE: Readonly<Record<CashMovementType, readonly CashMovementCategory[]>> = {
   ingreso: ['venta', 'aporte', 'ajuste', 'otro'],

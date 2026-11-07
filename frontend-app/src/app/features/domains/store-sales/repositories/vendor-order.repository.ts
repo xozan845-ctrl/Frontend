@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { createOrdersDataSourceToken } from '../../../../shared/orders/repositories/orders-data-source/orders-data-source.repository';
+import { createOrdersDataSourceToken } from '@shared/orders/repositories/orders-data-source/orders-data-source.repository';
 import { CreateOrderPayload, OrderStatus, VendorOrder } from '../models/vendor-order.model';
 
 /** Puerto de pedidos del vendedor (Core Engine, contrato asumido ADR-20). */

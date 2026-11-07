@@ -4,11 +4,8 @@ import { map, switchMap } from 'rxjs/operators';
 import {
   MediaBackgroundUploadResult,
   MediaBackgroundMediaType,
-} from '../../../../../core/models/media-background.model';
-import {
-  STORAGE_REPOSITORY,
-  storagePublicObjectUrl,
-} from '../../../file-storage/public-api';
+} from '@core/models/media-background.model';
+import { STORAGE_REPOSITORY, storagePublicObjectUrl } from '../../../file-storage/public-api';
 import type { MediaBackgroundUploadOptions } from './media-background-upload.types';
 
 /**

@@ -3,8 +3,8 @@ import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import AccountComponent from './account.component';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SeoService } from '@core/services/seo/seo.service';
 
 describe('AccountComponent', () => {
   const authStore = {

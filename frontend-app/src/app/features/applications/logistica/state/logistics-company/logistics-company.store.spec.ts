@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { LOGISTICS_COMPANY_REPOSITORY } from '../../repositories/logistics-company.repository';
 import type { LogisticsCompanyRepository } from '../../repositories/logistics-company.repository';
 import { LogisticsCompanyStore } from './logistics-company.store';

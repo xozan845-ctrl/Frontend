@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashClosurePreview } from '../../../../../domains/finance/public-api';
+import type { CashClosurePreview } from '@domains/finance/public-api';
 import { CashClosuresPanelComponent } from './cash-closures-panel.component';
 
 const PREVIEW: CashClosurePreview = {

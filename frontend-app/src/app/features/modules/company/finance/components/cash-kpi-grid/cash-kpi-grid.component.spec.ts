@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashKpis } from '../../../../../domains/finance/public-api';
+import type { CashKpis } from '@domains/finance/public-api';
 import { CashKpiGridComponent } from './cash-kpi-grid.component';
 
 const KPIS: CashKpis = {

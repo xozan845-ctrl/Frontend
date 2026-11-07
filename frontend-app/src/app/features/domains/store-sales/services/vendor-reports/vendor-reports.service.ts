@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import type { ReportEntry, ReportsDataSource } from '../../../../domains/reports/public-api';
-import { buildReportSnapshot } from '../../../../domains/reports/public-api';
+import type { ReportEntry, ReportsDataSource } from '@domains/reports/public-api';
+import { buildReportSnapshot } from '@domains/reports/public-api';
 import { VENDOR_ORDER_REPOSITORY } from '../../repositories/vendor-order.repository';
 
 /** Fuente de reportes de la tienda sobre los pedidos del vendedor. */

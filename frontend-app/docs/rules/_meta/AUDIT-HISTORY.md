@@ -582,3 +582,14 @@
 - **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 24 — Alias y limpieza fina (2026-11-07)
+
+- **Cambio:** alias `@app/@core/@shared/@features/@domains` con resolución en el
+  motor de reglas; migración de imports profundos; separación del adaptador de
+  reportes de compras; etiquetas de estado del POS desde `shared/orders`.
+- **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
+  lint, lint:css, build y 60/60 e2e en verde.
+- **Estado global:** 🟢 **CUMPLE**.

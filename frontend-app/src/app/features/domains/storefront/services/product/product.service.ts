@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { toUserMessage } from '@core/models/api-error';
 import { adaptStorefrontFromBackend } from '../../adapters/product/product.adapter';
 import { ProductRepository, Storefront } from '../../repositories/product.repository';
 

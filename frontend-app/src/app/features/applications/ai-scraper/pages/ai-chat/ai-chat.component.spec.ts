@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AiChatComponent from './ai-chat.component';
 import { AiSessionStore } from '../../state/ai-session/ai-session.store';
 import { AiSession, AiSessionDetail } from '../../models/ai-session.model';
-import { MediaBackgroundStore } from '../../../../domains/media-background/public-api';
+import { MediaBackgroundStore } from '@domains/media-background/public-api';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

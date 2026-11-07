@@ -1,5 +1,5 @@
 import type { OrderResponse } from '../../../orders/public-api';
-import { adaptOrdersFromBackend as adaptSharedOrders } from '../../../../domains/orders/public-api';
+import { adaptOrdersFromBackend as adaptSharedOrders } from '@domains/orders/public-api';
 
 /** Normaliza `GET /orders/empresa` con el adaptador compartido de pedidos. */
 export function adaptCompanyOrdersFromBackend(response: unknown): OrderResponse[] {

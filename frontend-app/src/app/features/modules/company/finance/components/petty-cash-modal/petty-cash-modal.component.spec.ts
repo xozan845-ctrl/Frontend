@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { PettyCashFund } from '../../../../../domains/finance/public-api';
+import type { PettyCashFund } from '@domains/finance/public-api';
 import { PettyCashModalComponent } from './petty-cash-modal.component';
 
 const FUND: PettyCashFund = { amount: 0, responsible: '', updatedAt: '2026-10-20T12:00:00Z' };

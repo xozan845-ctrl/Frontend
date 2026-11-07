@@ -1,10 +1,10 @@
 import { Component, effect, inject, input, untracked } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import { OrderDetailStore } from '../../state/order-detail/order-detail.store';
 import { orderStatusLabel } from '../../../cart/public-api';
 

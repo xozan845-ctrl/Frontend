@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 
 /**
  * Confirmación accesible del panel (`R-AC-3`, `R-UX-4`): modal con

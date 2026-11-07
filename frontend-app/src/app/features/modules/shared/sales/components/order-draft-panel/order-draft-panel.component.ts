@@ -1,10 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
-import {
-  VENDOR_TAX_RATE,
-  type OrderDraftLine,
-} from '../../../../../domains/store-sales/public-api';
+import { VENDOR_TAX_RATE, type OrderDraftLine } from '@domains/store-sales/public-api';
 import { OrderLineComponent } from '../order-line/order-line.component';
-import { OrderTotalsComponent } from '../../../../../../shared/orders/components/order-totals/order-totals.component';
+import { OrderTotalsComponent } from '@shared/orders/components/order-totals/order-totals.component';
 import type { OrderLineQuantityChange } from './order-draft-panel.types';
 
 /**

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ExpenseModalComponent } from './expense-modal.component';
-import type { ExpenseRecord } from '../../../../../domains/expenses/public-api';
+import type { ExpenseRecord } from '@domains/expenses/public-api';
 
 const CATEGORIES = [
   { value: 'publicidad', label: 'Publicidad' },

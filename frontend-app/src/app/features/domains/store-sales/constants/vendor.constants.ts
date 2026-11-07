@@ -13,12 +13,7 @@ export const CLIENT_SEARCH_DEBOUNCE_MS = 300;
 export const VENDOR_DRAFT_STORAGE_KEY = 'ecom_vendor_order_draft';
 
 /** Etiquetas humanas de estado para las tablas y badges del panel (`R-UX-4`). */
-export const ORDER_STATUS_LABELS: Readonly<Record<OrderStatus, string>> = {
-  pendiente: 'Pendiente',
-  en_proceso: 'En proceso',
-  completado: 'Completado',
-  cancelado: 'Cancelado',
-};
+
 
 /**
  * Transiciones válidas de estado del pedido (`R-RB-3`): los estados finales

@@ -10,9 +10,9 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { withOrders } from '../../../../../shared/orders/state/with-orders/with-orders.state';
-import { AuthStore } from '../../../session/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { withOrders } from '@shared/orders/state/with-orders/with-orders.state';
+import { AuthStore } from '@domains/session/public-api';
 import type { OrderResponse } from '../../../orders/public-api';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../catalog/public-api';
 import {

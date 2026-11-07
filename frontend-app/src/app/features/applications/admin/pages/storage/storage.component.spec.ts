@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import AdminStorageComponent from './storage.component';
 import { StorageStore } from '../../state/storage/storage.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { StorageTenant } from '../../models/storage.model';
 
 const tenant: StorageTenant = {

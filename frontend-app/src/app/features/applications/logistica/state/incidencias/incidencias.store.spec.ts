@@ -5,7 +5,7 @@ import {
   INCIDENCIA_REPOSITORY,
   IncidenciaRepository,
 } from '../../repositories/incidencia.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { FieldIncident } from '../../models/incidencia.model';
 
 const incident: FieldIncident = {

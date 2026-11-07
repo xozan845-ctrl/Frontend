@@ -1,5 +1,5 @@
 import { environment } from '../../../../../../environments/environment';
-import { EMPTY_MEDIA_BACKGROUND } from '../../../../../core/models/media-background.model';
+import { EMPTY_MEDIA_BACKGROUND } from '@core/models/media-background.model';
 import {
   adaptMediaBackgroundFromBackend,
   adaptPanelAiMediaBackgroundFromBackend,

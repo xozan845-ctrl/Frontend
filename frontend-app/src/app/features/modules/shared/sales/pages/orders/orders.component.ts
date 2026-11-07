@@ -1,12 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import {
-  ORDER_STATUS_LABELS,
   VendorOrdersStore,
   type OrderStatus,
-} from '../../../../../domains/store-sales/public-api';
-import { RecentOrdersTableComponent } from '../../../../../applications/store/public-ui';
+} from '@domains/store-sales/public-api';
+import { orderStatusLabel } from '@shared/orders/constants/order-status.constants';
+import { RecentOrdersTableComponent } from '@features/applications/store/public-ui';
 
 /**
  * Página "Pedidos" (ADR-20): lista completa con filtro por estado en chips y
@@ -32,7 +32,12 @@ export default class OrdersComponent {
     'completado',
     'cancelado',
   ];
-  protected readonly labels = ORDER_STATUS_LABELS;
+  protected readonly labels = {
+    pendiente: orderStatusLabel('pendiente'),
+    en_proceso: orderStatusLabel('en_proceso'),
+    completado: orderStatusLabel('completado'),
+    cancelado: orderStatusLabel('cancelado'),
+  };
   protected readonly emptyTitle = computed(() =>
     this.orders.statusFilter() ? 'Sin pedidos con este estado' : 'Aún no hay pedidos',
   );

@@ -1,4 +1,4 @@
-import type { BanksScopeConfig } from '../../../../shared/banks/models/banks-config.model';
+import type { BanksScopeConfig } from '@shared/banks/models/banks-config.model';
 
 /** Configuración de bancos en la tienda del vendedor. */
 export const VENDOR_BANKS_SCOPE_CONFIG: BanksScopeConfig = {

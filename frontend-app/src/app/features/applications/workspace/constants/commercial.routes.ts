@@ -3,11 +3,11 @@ import type { CommercialModuleRoute, CommercialScope } from './commercial.types'
 import {
   CLIENTS_PAGE_CONFIG,
   CLIENTS_SCOPE_CONFIG,
-} from '../../../../shared/clients/constants/clients-config.tokens';
-import { BANKS_SCOPE_CONFIG } from '../../../../shared/banks/constants/banks-config.tokens';
-import { PAYABLES_SCOPE_CONFIG } from '../../../../shared/payables/constants/payables-config.tokens';
-import { BARCODES_SCOPE_CONFIG } from '../../../../shared/barcodes/constants/barcodes-config.tokens';
-import { CREDITS_SCOPE_CONFIG } from '../../../../shared/credits/constants/credits-config.tokens';
+} from '@shared/clients/constants/clients-config.tokens';
+import { BANKS_SCOPE_CONFIG } from '@shared/banks/constants/banks-config.tokens';
+import { PAYABLES_SCOPE_CONFIG } from '@shared/payables/constants/payables-config.tokens';
+import { BARCODES_SCOPE_CONFIG } from '@shared/barcodes/constants/barcodes-config.tokens';
+import { CREDITS_SCOPE_CONFIG } from '@shared/credits/constants/credits-config.tokens';
 import { moduleGuard } from '../../auth/public-api';
 import {
   COMPANY_CLIENTS_PAGE_CONFIG,

@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendParadaDTO, BackendRutaDTO } from '../../models/ruta.dto';
 import { Parada, Ruta } from '../../models/ruta.model';
 

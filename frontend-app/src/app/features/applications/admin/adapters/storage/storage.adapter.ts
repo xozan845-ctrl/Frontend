@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendStoragePageDTO, BackendStorageTenantDTO } from '../../models/storage.dto';
 import { StoragePage, StorageTenant, StorageTenantStatus } from '../../models/storage.model';
 

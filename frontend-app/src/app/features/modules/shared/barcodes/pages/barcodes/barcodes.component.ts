@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { BARCODES_SCOPE_CONFIG } from '../../../../../../shared/barcodes/constants/barcodes-config.tokens';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { BARCODES_SCOPE_CONFIG } from '@shared/barcodes/constants/barcodes-config.tokens';
 import {
   BARCODE_SYMBOLOGIES,
   BarcodesStore,
   type BarcodeSymbology,
   type CreateBarcodeLabelPayload,
-} from '../../../../../domains/barcodes/public-api';
+} from '@domains/barcodes/public-api';
 import { BarcodeFormComponent } from '../../components/barcode-form/barcode-form.component';
 
 /**

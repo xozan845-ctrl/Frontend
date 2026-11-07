@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { toUserMessage } from '@core/models/api-error';
 import type { CreateOrderPayload } from '../../models/order.model';
-import type { OrderResponse, OrderTimelineEvent } from '../../../../domains/orders/public-api';
+import type { OrderResponse, OrderTimelineEvent } from '@domains/orders/public-api';
 import { OrderRepository } from '../../repositories/order.repository';
 import {
   adaptOrderListFromBackend,

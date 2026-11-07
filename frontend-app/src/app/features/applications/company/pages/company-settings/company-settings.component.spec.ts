@@ -5,13 +5,13 @@ import CompanySettingsComponent from './company-settings.component';
 import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import { Company, LogisticsMode } from '../../models/company.model';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 
 const company: Company = {
   id: 'c-1',

@@ -1,14 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { BANKS_SCOPE_CONFIG } from '../../../../../../shared/banks/constants/banks-config.tokens';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { BANKS_SCOPE_CONFIG } from '@shared/banks/constants/banks-config.tokens';
 import {
   BANK_ACCOUNT_TYPES,
   BanksStore,
   type BankAccount,
   type BankAccountType,
   type CreateBankAccountPayload,
-} from '../../../../../domains/banks/public-api';
+} from '@domains/banks/public-api';
 import { BankFormComponent } from '../../components/bank-form/bank-form.component';
 
 /**

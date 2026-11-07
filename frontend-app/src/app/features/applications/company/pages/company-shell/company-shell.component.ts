@@ -6,9 +6,9 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { BrandingService } from '../../../../../core/services/branding/branding.service';
-import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
+import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { BrandingService } from '@core/services/branding/branding.service';
+import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { COMPANY_WORKSPACE_PROVIDERS, CompanyStore } from '../../state/company/company.store';
 

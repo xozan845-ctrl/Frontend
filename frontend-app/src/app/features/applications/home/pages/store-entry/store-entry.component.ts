@@ -1,13 +1,13 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStore } from '../../../auth/public-api';
-import { hasVisibleMediaBackground } from '../../../../../core/models/media-background.model';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { MediaBackgroundComponent } from '../../../../../shared/ui/media-background/media-background.component';
+import { hasVisibleMediaBackground } from '@core/models/media-background.model';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { MediaBackgroundComponent } from '@shared/ui/media-background/media-background.component';
 import {
   MEDIA_BACKGROUND_PROVIDERS,
   MediaBackgroundStore,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 
 /** Un `storeId` válido: alfanumérico con guiones (UUID/slug), 1–100 caracteres. */
 const STORE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;

@@ -70,10 +70,25 @@ export function classify(rel) {
 const isTypeDeclarationFile = (rel, src) =>
   TYPE_DECLARATION_FILE_PATTERNS.some((pattern) => pattern.test(rel)) || !hasRuntimeCode(src);
 
-/** Resuelve un import relativo a un archivo `.ts` existente. */
+/** Alias de `tsconfig.json` soportados por el motor de reglas. */
+const IMPORT_ALIASES = {
+  '@app/': 'src/app/',
+  '@core/': 'src/app/core/',
+  '@shared/': 'src/app/shared/',
+  '@features/': 'src/app/features/',
+  '@domains/': 'src/app/features/domains/',
+};
+
+/** Resuelve un import relativo o con alias a un archivo `.ts` existente. */
 function resolveImport(fromFile, specifier) {
-  if (!specifier.startsWith('.')) return null;
-  const base = resolve(dirname(fromFile), specifier);
+  let base;
+  if (specifier.startsWith('.')) {
+    base = resolve(dirname(fromFile), specifier);
+  } else {
+    const alias = Object.keys(IMPORT_ALIASES).find((prefix) => specifier.startsWith(prefix));
+    if (!alias) return null;
+    base = resolveInApp(`${IMPORT_ALIASES[alias]}${specifier.slice(alias.length)}`);
+  }
   for (const candidate of [base, `${base}.ts`, join(base, 'index.ts')]) {
     if (existsSync(candidate) && statSync(candidate).isFile()) return candidate;
   }

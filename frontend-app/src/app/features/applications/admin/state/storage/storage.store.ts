@@ -3,7 +3,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { StorageTenantStatus, bytesToGigabytes } from '../../models/storage.model';
 import { STORAGE_REPOSITORY } from '../../repositories/storage.repository';
 import type { StorageState } from './storage.state';

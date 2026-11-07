@@ -5,8 +5,8 @@ import {
   hasPermission,
   workspaceLanding,
   type Permission,
-} from '../../../../domains/session/public-api';
-import { AuthStore } from '../../../../domains/session/public-api';
+} from '@domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
 
 /**
  * Guard de módulo: resuelve workspace y permiso desde el registro único.
@@ -24,7 +24,7 @@ export function moduleGuard(moduleId: string): CanActivateFn {
 
     const user = authStore.user();
     const { workspaceModuleById } =
-      await import('../../../../../core/workspace/constants/workspace-modules.constants');
+      await import('@core/workspace/constants/workspace-modules.constants');
     const module = workspaceModuleById(moduleId);
     const allowed =
       !!module &&

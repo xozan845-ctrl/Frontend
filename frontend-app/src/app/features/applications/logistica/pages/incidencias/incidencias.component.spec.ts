@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import IncidenciasComponent from './incidencias.component';
 import { IncidenciasStore } from '../../state/incidencias/incidencias.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { FieldIncident } from '../../models/incidencia.model';
 
 const incident: FieldIncident = {

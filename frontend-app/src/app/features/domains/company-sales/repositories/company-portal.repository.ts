@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { createOrdersDataSourceToken } from '../../../../shared/orders/repositories/orders-data-source/orders-data-source.repository';
+import { createOrdersDataSourceToken } from '@shared/orders/repositories/orders-data-source/orders-data-source.repository';
 import type { OrderResponse } from '../../orders/public-api';
 import { CompanySalesAccount } from '../models/company-sales.model';
 import { CompanyStore } from '../models/company-store.model';

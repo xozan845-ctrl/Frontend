@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashTransferAccount } from '../../../../../domains/finance/public-api';
+import type { CashTransferAccount } from '@domains/finance/public-api';
 import { CashTransferModalComponent } from './cash-transfer-modal.component';
 
 const ACCOUNTS: CashTransferAccount[] = [

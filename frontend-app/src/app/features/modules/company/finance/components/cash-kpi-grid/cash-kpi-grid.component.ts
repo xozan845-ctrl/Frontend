@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
-import type { CashKpis } from '../../../../../domains/finance/public-api';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
+import type { CashKpis } from '@domains/finance/public-api';
 import type { KpiCard } from './cash-kpi-grid.component.types';
 
 /** Tarjetas del centro financiero; solo presenta los KPIs del store. */

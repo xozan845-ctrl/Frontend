@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../../../../environments/environment';
-import { MediaBackgroundDraft } from '../../../../../core/models/media-background.model';
+import { MediaBackgroundDraft } from '@core/models/media-background.model';
 import { MediaBackgroundWriteService } from './media-background-write.service';
 
 const draft: MediaBackgroundDraft = {

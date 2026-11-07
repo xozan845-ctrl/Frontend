@@ -1,12 +1,12 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../../../core/services/notification/notification.service';
-import { CompanyStore } from '../../../../../applications/company/public-api';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CompanyStore } from '@features/applications/company/public-api';
 import {
   CompanyProductsStore,
   type CompanyCatalogFormValue,
-} from '../../../../../domains/company-catalog/public-api';
-import { AuthStore } from '../../../../../domains/session/public-api';
+} from '@domains/company-catalog/public-api';
+import { AuthStore } from '@domains/session/public-api';
 import {
   PurchasesStore,
   type CreateDirectPurchaseInput,
@@ -17,7 +17,7 @@ import {
   purchaseToday,
   type PurchaseDocumentSettings,
   type PurchaseProductOption,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 import { PurchaseCustomizeModalComponent } from '../../components/purchase-customize-modal/purchase-customize-modal.component';
 import { PurchaseDirectModalComponent } from '../../components/purchase-direct-modal/purchase-direct-modal.component';
 import { PurchaseExportModalComponent } from '../../components/purchase-export-modal/purchase-export-modal.component';

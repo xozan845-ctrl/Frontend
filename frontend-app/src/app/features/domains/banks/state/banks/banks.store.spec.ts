@@ -1,9 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { AuthStore } from '../../../session/public-api';
-import { BANKS_SCOPE_CONFIG } from '../../../../../shared/banks/constants/banks-config.tokens';
-import type { BanksScopeConfig } from '../../../../../shared/banks/models/banks-config.model';
+import { BANKS_SCOPE_CONFIG } from '@shared/banks/constants/banks-config.tokens';
+import type { BanksScopeConfig } from '@shared/banks/models/banks-config.model';
 import { BanksStore } from './banks.store';
 import { banksStorageKey } from '../../public-api';
 import type { BankAccount } from '../../models/bank.model';

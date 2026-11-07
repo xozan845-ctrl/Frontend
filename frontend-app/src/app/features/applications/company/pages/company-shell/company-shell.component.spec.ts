@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import CompanyShellComponent from './company-shell.component';
 import { AuthStore } from '../../../auth/public-api';
-import { BrandingService } from '../../../../../core/services/branding/branding.service';
+import { BrandingService } from '@core/services/branding/branding.service';
 import { CompanyStore } from '../../state/company/company.store';
 import type { Company } from '../../models/company.model';
 

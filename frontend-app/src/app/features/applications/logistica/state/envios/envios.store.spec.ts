@@ -3,7 +3,7 @@ import { of, throwError } from 'rxjs';
 import { EnviosStore } from './envios.store';
 import { ENVIO_REPOSITORY, EnvioRepository } from '../../repositories/envio.repository';
 import { AuthStore } from '../../../auth/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { Shipment } from '../../models/envio.model';
 
 const shipment: Shipment = {

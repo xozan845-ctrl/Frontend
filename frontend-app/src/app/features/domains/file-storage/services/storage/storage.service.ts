@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { from, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
-import { resolveApiAssetUrl } from '../../../../../core/config/asset-url.config';
-import { toUserMessage } from '../../../../../core/models/api-error';
+import { resolveApiAssetUrl } from '@core/config/asset-url.config';
+import { toUserMessage } from '@core/models/api-error';
 import {
   adaptPresignedUploadFromBackend,
   adaptStorageBucketFromBackend,

@@ -1,5 +1,5 @@
 import type { OrderResponse } from '../../../orders/public-api';
-import type { Client } from '../../../../domains/clients/public-api';
+import type { Client } from '@domains/clients/public-api';
 import type { CompanySalesAccount } from '../../models/company-sales.model';
 import type {
   CompanySaleFilters,

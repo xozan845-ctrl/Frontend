@@ -2,16 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { NEVER, Observable, of, throwError } from 'rxjs';
 import DashboardComponent from './dashboard.component';
-import { createVendorOrdersSource } from '../../../../domains/store-sales/public-api';
+import { createVendorOrdersSource } from '@domains/store-sales/public-api';
 import {
   VENDOR_ORDER_REPOSITORY,
   VENDOR_ORDERS_SOURCE,
   VendorOrderRepository,
-} from '../../../../domains/store-sales/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { VendorOrder } from '../../../../domains/store-sales/public-api';
-import { VendorOrdersStore } from '../../../../domains/store-sales/public-api';
+} from '@domains/store-sales/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SeoService } from '@core/services/seo/seo.service';
+import { VendorOrder } from '@domains/store-sales/public-api';
+import { VendorOrdersStore } from '@domains/store-sales/public-api';
 
 const now = new Date();
 const atDay = (daysAgo: number, hours: number): string =>

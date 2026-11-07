@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { VendorStoreStore } from './vendor-store.store';
 import { STORE_REPOSITORY, StoreRepository } from '../../../onboarding/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { Store } from '../../../shop/public-api';
 
 const store: Store = {

@@ -1,8 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import type { PurchaseOrderRow } from '../../../../../domains/purchases/public-api';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import type { PurchaseOrderRow } from '@domains/purchases/public-api';
 
 /** Listado de órdenes de compra (solicitudes previas a la compra real). */
 @Component({

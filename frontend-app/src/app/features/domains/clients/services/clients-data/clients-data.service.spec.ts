@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ClientsHttpDataSource } from './clients-data.service';
 import { environment } from '../../../../../../environments/environment';
-import { CLIENTS_SCOPE_CONFIG } from '../../../../../shared/clients/constants/clients-config.tokens';
+import { CLIENTS_SCOPE_CONFIG } from '@shared/clients/constants/clients-config.tokens';
 import { AuthStore } from '../../../session/public-api';
 
 const userId = signal<string | number>('vendedor-1');

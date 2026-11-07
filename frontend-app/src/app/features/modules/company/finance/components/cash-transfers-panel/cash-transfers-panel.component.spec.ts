@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashTransfer, CashTransferSummary } from '../../../../../domains/finance/public-api';
+import type { CashTransfer, CashTransferSummary } from '@domains/finance/public-api';
 import { CashTransfersPanelComponent } from './cash-transfers-panel.component';
 
 const TRANSFER: CashTransfer = {

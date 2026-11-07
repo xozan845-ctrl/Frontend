@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { AdminOrdersStore } from './admin-orders.store';
 import { ADMIN_ORDER_REPOSITORY } from '../../repositories/admin-order.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { OrderResponse } from '../../../cart/public-api';
 
 const order: OrderResponse = {

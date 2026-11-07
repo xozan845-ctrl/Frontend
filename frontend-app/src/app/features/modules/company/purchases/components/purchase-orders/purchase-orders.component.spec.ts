@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseOrdersComponent } from './purchase-orders.component';
-import type { PurchaseOrderRow } from '../../../../../domains/purchases/public-api';
+import type { PurchaseOrderRow } from '@domains/purchases/public-api';
 
 const ROW: PurchaseOrderRow = {
   id: 'order-1',

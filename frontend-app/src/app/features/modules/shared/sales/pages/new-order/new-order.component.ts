@@ -8,7 +8,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import { ClientPickerComponent } from '../../components/client-picker/client-picker.component';
 import { CreateClientModalComponent } from '../../components/create-client-modal/create-client-modal.component';
 import { OrderDraftPanelComponent } from '../../components/order-draft-panel/order-draft-panel.component';
@@ -22,8 +22,8 @@ import {
   type Client,
   type CreateClientPayload,
   type OrderDraftInfo,
-} from '../../../../../domains/store-sales/public-api';
-import { RecentOrdersTableComponent } from '../../../../../applications/store/public-ui';
+} from '@domains/store-sales/public-api';
+import { RecentOrdersTableComponent } from '@features/applications/store/public-ui';
 
 /**
  * Punto de venta "Nuevo pedido" (ADR-20): contenedor que conecta los stores

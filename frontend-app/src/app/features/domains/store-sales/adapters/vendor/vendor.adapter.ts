@@ -1,7 +1,4 @@
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
 import {
   BackendClienteDTO,
   BackendOfertaVendedorDTO,
@@ -12,7 +9,7 @@ import {
   adaptOrderFromBackend as adaptSharedOrder,
   adaptOrdersFromBackend as adaptSharedOrders,
   type Order as SharedOrder,
-} from '../../../../domains/orders/public-api';
+} from '@domains/orders/public-api';
 import { Client, OrderStatus, VendorOrder, VendorProduct } from '../../models/vendor-order.model';
 import { VendorOffer, VendorOfferPage } from '../../models/vendor-offer.model';
 

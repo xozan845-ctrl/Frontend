@@ -3,7 +3,7 @@ import { patchState, signalStoreFeature, withMethods, withState } from '@ngrx/si
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { OrdersFeatureOptions, OrdersState } from '../../models/orders-state.model';
 import type { OrdersDataSource } from '../../repositories/orders-data-source/orders-data-source.repository';
 

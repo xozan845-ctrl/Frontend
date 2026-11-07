@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { VendorOffer } from '../../../../domains/store-sales/public-api';
-import { VendorOffersStore } from '../../../../domains/store-sales/public-api';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { VendorOffer } from '@domains/store-sales/public-api';
+import { VendorOffersStore } from '@domains/store-sales/public-api';
 
 /**
  * Ofertas del vendedor (ADR-29): lista paginada y edición del margen. La

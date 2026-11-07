@@ -1,12 +1,9 @@
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { VendorOrder } from '../../../../domains/store-sales/public-api';
-import { OrderTableComponent } from '../../../../../shared/orders/components/order-table/order-table.component';
-import type {
-  OrderTableColumn,
-  OrderTableRow,
-} from '../../../../../shared/orders/models/order-table.model';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { VendorOrder } from '@domains/store-sales/public-api';
+import { OrderTableComponent } from '@shared/orders/components/order-table/order-table.component';
+import type { OrderTableColumn, OrderTableRow } from '@shared/orders/models/order-table.model';
 
 /** Fecha corta del pedido para la tabla; `—` si la API no la trae (`R-RB-4`). */
 export function formatOrderDate(iso: string): string {

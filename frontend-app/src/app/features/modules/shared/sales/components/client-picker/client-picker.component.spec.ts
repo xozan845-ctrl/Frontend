@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ClientPickerComponent } from './client-picker.component';
-import type { Client } from '../../../../../domains/store-sales/public-api';
+import type { Client } from '@domains/store-sales/public-api';
 
 const carla: Client = {
   id: 'vc-1',

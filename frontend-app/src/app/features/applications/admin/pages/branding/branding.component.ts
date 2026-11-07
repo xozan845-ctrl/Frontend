@@ -1,16 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { MediaBackgroundEditorComponent } from '../../../../../shared/ui/media-background-editor/media-background-editor.component';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { MediaBackgroundEditorComponent } from '@shared/ui/media-background-editor/media-background-editor.component';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import {
   MEDIA_BACKGROUND_PROVIDERS,
   MediaBackgroundDraft,
   MediaBackgroundStore,
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 
 /**
  * Personalización global de plataforma (ADR-38/ADR-40): fondo del sitio y

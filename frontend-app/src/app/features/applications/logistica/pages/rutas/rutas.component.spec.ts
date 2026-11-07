@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import RutasComponent from './rutas.component';
 import { RutasStore } from '../../state/rutas/rutas.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import type { Parada, Ruta } from '../../models/ruta.model';
 
 const stop: Parada = {

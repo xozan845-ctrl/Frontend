@@ -1,7 +1,7 @@
 import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { formatCurrency } from '../../../../../core/config/currency.config';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
+import { formatCurrency } from '@core/config/currency.config';
+import { injectSeoPage } from '@core/services/seo/seo.service';
 import {
   BILLING_CLIENTS,
   BILLING_INVOICES,

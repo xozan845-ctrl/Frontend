@@ -1,4 +1,4 @@
-import type { CatalogProduct, CatalogProductStatus } from '../../../../domains/catalog/public-api';
+import type { CatalogProduct, CatalogProductStatus } from '@domains/catalog/public-api';
 
 export interface CatalogProductsState {
   products: CatalogProduct[];

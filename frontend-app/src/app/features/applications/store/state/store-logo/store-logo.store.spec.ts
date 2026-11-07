@@ -1,7 +1,7 @@
 import { signal, type Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { STORAGE_REPOSITORY, StorageRepository } from '../../../storage/public-api';
 import { STORE_REPOSITORY, StoreRepository } from '../../../onboarding/public-api';
 import type { Store } from '../../../shop/public-api';

@@ -1,4 +1,4 @@
-import { unwrapApiListResponse } from '../../../../../core/models/api-response.dto';
+import { unwrapApiListResponse } from '@core/models/api-response.dto';
 import { BackendEnvioDTO } from '../../models/envio.dto';
 import { LogisticsMode, Shipment, ShipmentProvider } from '../../models/envio.model';
 

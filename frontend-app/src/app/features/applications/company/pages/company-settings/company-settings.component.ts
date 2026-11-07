@@ -4,10 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
-import { ImageDropzoneComponent } from '../../../../../shared/ui/image-dropzone/image-dropzone.component';
-import { MediaBackgroundEditorComponent } from '../../../../../shared/ui/media-background-editor/media-background-editor.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
+import { ImageDropzoneComponent } from '@shared/ui/image-dropzone/image-dropzone.component';
+import { MediaBackgroundEditorComponent } from '@shared/ui/media-background-editor/media-background-editor.component';
 import { AuthStore, isCompanyOwnerRole } from '../../../auth/public-api';
 import {
   STORAGE_REPOSITORY,
@@ -19,7 +19,7 @@ import {
   MediaBackgroundDraft,
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 import {
   COMPANY_TYPE_OPTIONS,
   CURRENCY_OPTIONS,

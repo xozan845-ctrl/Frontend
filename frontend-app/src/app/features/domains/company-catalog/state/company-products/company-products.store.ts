@@ -3,7 +3,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, forkJoin, of, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import { CATALOG_PRODUCT_REPOSITORY } from '../../../catalog/public-api';
 import {
   buildInventoryCsv,

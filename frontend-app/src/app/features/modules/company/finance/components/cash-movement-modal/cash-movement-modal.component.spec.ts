@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashPaymentMethod } from '../../../../../domains/finance/public-api';
+import type { CashPaymentMethod } from '@domains/finance/public-api';
 import { CashMovementModalComponent } from './cash-movement-modal.component';
 
 const METHOD: CashPaymentMethod = {

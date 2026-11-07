@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import {
   FieldEmployee,
   hasLocation,

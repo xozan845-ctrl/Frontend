@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CompanyInvitationsStore } from './company-invitations.store';
 import { COMPANY_INVITATION_REPOSITORY } from '../../repositories/company-invitation.repository';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 
 describe('CompanyInvitationsStore', () => {
   it('carga vendedores y genera una invitación', async () => {

@@ -1,4 +1,4 @@
-import type { BarcodesScopeConfig } from '../../../../shared/barcodes/models/barcodes-config.model';
+import type { BarcodesScopeConfig } from '@shared/barcodes/models/barcodes-config.model';
 
 /** Configuración de códigos de barras en la tienda del vendedor. */
 export const VENDOR_BARCODES_SCOPE_CONFIG: BarcodesScopeConfig = {

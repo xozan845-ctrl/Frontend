@@ -1,19 +1,19 @@
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { LineTotalPipe } from '../../../../../../shared/pipes/line-total.pipe';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { SkeletonLoaderComponent } from '../../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { LineTotalPipe } from '@shared/pipes/line-total.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
-import { OrderStatusBadgeComponent } from '../../../../../../shared/orders/components/order-status-badge/order-status-badge.component';
+import { OrderStatusBadgeComponent } from '@shared/orders/components/order-status-badge/order-status-badge.component';
+import { orderStatusLabel } from '@shared/orders/constants/order-status.constants';
 import {
   ORDER_STATUS_ACTIONS,
-  ORDER_STATUS_LABELS,
   ORDER_STATUS_TRANSITIONS,
   VendorOrdersStore,
   type OrderStatus,
-} from '../../../../../domains/store-sales/public-api';
+} from '@domains/store-sales/public-api';
 import type { TimelineStep } from './order-detail.types';
 
 /**
@@ -47,22 +47,22 @@ export default class OrderDetailComponent {
   private readonly loadOrder = this.orders.loadOrder(this.id);
 
   protected readonly timelineSteps: TimelineStep[] = [
-    { status: 'pendiente', label: ORDER_STATUS_LABELS.pendiente },
-    { status: 'en_proceso', label: ORDER_STATUS_LABELS.en_proceso },
-    { status: 'completado', label: ORDER_STATUS_LABELS.completado },
+    { status: 'pendiente', label: orderStatusLabel('pendiente') },
+    { status: 'en_proceso', label: orderStatusLabel('en_proceso') },
+    { status: 'completado', label: orderStatusLabel('completado') },
   ];
   protected readonly actionLabels = ORDER_STATUS_ACTIONS;
   protected readonly pendingStatus = signal<OrderStatus | null>(null);
   protected readonly isConfirmOpen = computed(() => this.pendingStatus() !== null);
   protected readonly confirmLabel = computed(() => {
     const status = this.pendingStatus();
-    return status ? (ORDER_STATUS_ACTIONS[status] ?? ORDER_STATUS_LABELS[status]) : 'Confirmar';
+    return status ? (ORDER_STATUS_ACTIONS[status] ?? orderStatusLabel(status)) : 'Confirmar';
   });
   protected readonly confirmMessage = computed(() => {
     const order = this.orders.selectedOrder();
     const status = this.pendingStatus();
     if (!order || !status) return '';
-    return `¿Seguro que quieres pasar el pedido ${order.id} a ${ORDER_STATUS_LABELS[status].toLowerCase()}?`;
+    return `¿Seguro que quieres pasar el pedido ${order.id} a ${orderStatusLabel(status).toLowerCase()}?`;
   });
   protected readonly nextStatuses = computed<readonly OrderStatus[]>(() => {
     const order = this.orders.selectedOrder();

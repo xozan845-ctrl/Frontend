@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { injectSeoPage } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { orderStatusLabel } from '../../../cart/public-api';
 import { AdminOrdersStore } from '../../state/orders/admin-orders.store';
 

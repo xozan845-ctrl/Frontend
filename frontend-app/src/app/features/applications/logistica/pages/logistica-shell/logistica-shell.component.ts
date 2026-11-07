@@ -7,8 +7,8 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '../../../../../core/workspace/constants/workspace-modules.constants';
-import { WorkspaceShellComponent } from '../../../../../shared/ui/workspace-shell/workspace-shell.component';
+import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 
 /**
  * Shell del módulo de logística (ADR-25). Comparte el chrome con el resto de

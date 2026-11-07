@@ -11,23 +11,23 @@ import {
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '@domains/storefront/public-api';
 import { ProductDetailStore } from '../../state/product-detail/product-detail.store';
 import { CartStore } from '../../../cart/public-api';
-import { ReviewsStore } from '../../../../domains/storefront/public-api';
+import { ReviewsStore } from '@domains/storefront/public-api';
 import { RecentlyViewedStore } from '../../state/recently-viewed/recently-viewed.store';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
-import { StarRatingComponent } from '../../../../../shared/ui/star-rating/star-rating.component';
-import { ImageLightboxComponent } from '../../../../../shared/ui/image-lightbox/image-lightbox.component';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SpinnerComponent } from '@shared/ui/spinner/spinner.component';
+import { StarRatingComponent } from '@shared/ui/star-rating/star-rating.component';
+import { ImageLightboxComponent } from '@shared/ui/image-lightbox/image-lightbox.component';
 import { ProductCarouselComponent } from '../../components/product-carousel/product-carousel.component';
-import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
-import { injectSeoCleanup } from '../../../../../core/services/seo/seo.service';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { TrustBadgesComponent } from '../../../../../shared/ui/trust-badges/trust-badges.component';
-import type { TrustBadge } from '../../../../../shared/ui/trust-badges/trust-badges.types';
+import { CartFlyService } from '@shared/ui/cart-fly/cart-fly.service';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
+import { injectSeoCleanup } from '@core/services/seo/seo.service';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { TrustBadgesComponent } from '@shared/ui/trust-badges/trust-badges.component';
+import type { TrustBadge } from '@shared/ui/trust-badges/trust-badges.types';
 
 @Component({
   selector: 'app-product-detail',

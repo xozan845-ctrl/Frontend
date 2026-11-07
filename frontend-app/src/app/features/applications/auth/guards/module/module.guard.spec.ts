@@ -2,8 +2,8 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { moduleGuard } from './module.guard';
-import { AuthStore } from '../../../../domains/session/public-api';
-import type { User } from '../../../../domains/session/public-api';
+import { AuthStore } from '@domains/session/public-api';
+import type { User } from '@domains/session/public-api';
 
 const user = signal<User | null>(null);
 const refreshToken = signal<string | null>(null);

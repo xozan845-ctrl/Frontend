@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { CashMovement } from '../../../../../domains/finance/public-api';
+import type { CashMovement } from '@domains/finance/public-api';
 import { CashExportModalComponent } from './cash-export-modal.component';
 
 function movement(): CashMovement {

@@ -1,8 +1,8 @@
 import { Component, computed, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectSeoCleanup } from '../../../../../core/services/seo/seo.service';
-import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
-import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { injectSeoCleanup } from '@core/services/seo/seo.service';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
 import { BILLING_INVOICES, paymentTermLabel } from '../../constants/billing.fixtures';
 import { InvoiceLinesTableComponent } from '../../components/invoice-lines-table/invoice-lines-table.component';
 import { InvoiceStatusBadgeComponent } from '../../components/invoice-status-badge/invoice-status-badge.component';

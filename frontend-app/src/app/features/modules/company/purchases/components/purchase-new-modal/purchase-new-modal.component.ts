@@ -1,8 +1,8 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import {
   PURCHASE_PAYMENT_METHODS,
   purchaseToday,
@@ -14,7 +14,7 @@ import {
   type PurchaseProductOption,
   type PurchaseStatus,
   type Supplier,
-} from '../../../../../domains/purchases/public-api';
+} from '@domains/purchases/public-api';
 import type { WizardMode, WizardStage, WizardStep } from './purchase-new-modal.types';
 
 function round2(value: number): number {

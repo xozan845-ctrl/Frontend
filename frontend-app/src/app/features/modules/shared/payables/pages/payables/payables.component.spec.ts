@@ -1,9 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { SeoService } from '../../../../../../core/services/seo/seo.service';
-import { PAYABLES_SCOPE_CONFIG } from '../../../../../../shared/payables/constants/payables-config.tokens';
-import type { PayablesScopeConfig } from '../../../../../../shared/payables/models/payables-config.model';
-import { PayablesStore, type PayableRow } from '../../../../../domains/payables/public-api';
+import { SeoService } from '@core/services/seo/seo.service';
+import { PAYABLES_SCOPE_CONFIG } from '@shared/payables/constants/payables-config.tokens';
+import type { PayablesScopeConfig } from '@shared/payables/models/payables-config.model';
+import { PayablesStore, type PayableRow } from '@domains/payables/public-api';
 import PayablesComponent from './payables.component';
 
 const config: PayablesScopeConfig = {

@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
-import { formatCurrency } from '../../../../../../core/config/currency.config';
-import type { PurchaseKpis } from '../../../../../domains/purchases/public-api';
+import { formatCurrency } from '@core/config/currency.config';
+import type { PurchaseKpis } from '@domains/purchases/public-api';
 import type { PurchaseKpiCard } from './purchase-kpi-grid.types';
 
 /** Tarjetas de indicadores de compras; recibe el VM ya calculado por el store. */

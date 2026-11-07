@@ -14,7 +14,7 @@ import type { Product } from '../../models/product.model';
 import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { CART_REPOSITORY } from '../../repositories/cart.repository';
 import { AuthStore } from '../../../session/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
+import { NotificationService } from '@core/services/notification/notification.service';
 import type { CartState } from './cart.state';
 
 const initialState: CartState = {

@@ -1,11 +1,8 @@
 import { Store } from '../../../shop/public-api';
 import { CatalogProductOption } from '../../models/store-wizard.model';
 import { BackendProductoCatalogoDTO, BackendTiendaDTO } from '../../models/store.dto';
-import {
-  unwrapApiListResponse,
-  unwrapApiSingleResponse,
-} from '../../../../../core/models/api-response.dto';
-import { adaptMediaBackgroundFromBackend } from '../../../../domains/media-background/public-api';
+import { unwrapApiListResponse, unwrapApiSingleResponse } from '@core/models/api-response.dto';
+import { adaptMediaBackgroundFromBackend } from '@domains/media-background/public-api';
 
 /**
  * Tienda del vendedor (`POST /vendedores/tienda`, `GET /vendedores/me/tienda`).

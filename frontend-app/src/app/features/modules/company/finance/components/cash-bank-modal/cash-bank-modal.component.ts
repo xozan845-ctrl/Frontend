@@ -1,12 +1,12 @@
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import {
   BANK_ACCOUNT_TYPES,
   type BankAccount,
   type BankAccountType,
   type CreateBankAccountPayload,
-} from '../../../../../domains/banks/public-api';
+} from '@domains/banks/public-api';
 
 /** Alta/edición de una cuenta bancaria desde el centro de caja. */
 @Component({

@@ -1,5 +1,5 @@
 import type { CartItem } from '../../models/cart.model';
-import type { OrderResponse } from '../../../../domains/orders/public-api';
+import type { OrderResponse } from '@domains/orders/public-api';
 
 export interface CartState {
   items: CartItem[];

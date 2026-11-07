@@ -1,8 +1,8 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { injectSeoPage } from '../../../../../../core/services/seo/seo.service';
-import { FocusTrapDirective } from '../../../../../../shared/directives/focus-trap.directive';
-import { AppCurrencyPipe } from '../../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
+import { injectSeoPage } from '@core/services/seo/seo.service';
+import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
 import { CompanyCatalogTableComponent } from '../../components/company-catalog-table/company-catalog-table.component';
 import { CompanyComboModalComponent } from '../../components/company-combo-modal/company-combo-modal.component';
 import { CompanyImportProductsModalComponent } from '../../components/company-import-products-modal/company-import-products-modal.component';
@@ -33,7 +33,7 @@ import {
   type CompanyPromotion,
   type CompanyPromotionFormValue,
   type CompanyScanResult,
-} from '../../../../../domains/company-catalog/public-api';
+} from '@domains/company-catalog/public-api';
 
 /**
  * Catálogo administrable de la empresa (ADR-55): KPIs, pestañas de productos,

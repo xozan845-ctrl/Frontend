@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PurchaseSuppliersComponent } from './purchase-suppliers.component';
-import type { SupplierRow } from '../../../../../domains/purchases/public-api';
+import type { SupplierRow } from '@domains/purchases/public-api';
 
 const ROW: SupplierRow = {
   id: 'supplier-1',

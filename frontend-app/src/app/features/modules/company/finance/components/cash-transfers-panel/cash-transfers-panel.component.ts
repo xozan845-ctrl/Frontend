@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
-import type { CashTransfer, CashTransferSummary } from '../../../../../domains/finance/public-api';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
+import type { CashTransfer, CashTransferSummary } from '@domains/finance/public-api';
 
 /** Transferencias internas entre caja y cuentas bancarias. */
 @Component({

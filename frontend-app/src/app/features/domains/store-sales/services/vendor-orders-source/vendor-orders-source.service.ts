@@ -1,4 +1,4 @@
-import type { OrdersDataSource } from '../../../../../shared/orders/repositories/orders-data-source/orders-data-source.repository';
+import type { OrdersDataSource } from '@shared/orders/repositories/orders-data-source/orders-data-source.repository';
 import type { OrderStatus, VendorOrder } from '../../models/vendor-order.model';
 import type { VendorOrderRepository } from '../../repositories/vendor-order.repository';
 

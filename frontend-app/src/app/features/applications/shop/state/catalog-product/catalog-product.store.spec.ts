@@ -1,12 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CatalogProductsStore } from './catalog-product.store';
-import {
-  CATALOG_PRODUCT_REPOSITORY,
-  CatalogProductRepository,
-} from '../../../../domains/catalog/public-api';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { CatalogProduct } from '../../../../domains/catalog/public-api';
+import { CATALOG_PRODUCT_REPOSITORY, CatalogProductRepository } from '@domains/catalog/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CatalogProduct } from '@domains/catalog/public-api';
 
 const product: CatalogProduct = {
   id: 'p-1',

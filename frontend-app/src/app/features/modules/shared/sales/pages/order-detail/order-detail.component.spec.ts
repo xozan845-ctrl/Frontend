@@ -10,9 +10,9 @@ import {
   type OrderStatus,
   type VendorOrder,
   type VendorOrderRepository,
-} from '../../../../../domains/store-sales/public-api';
-import { NotificationService } from '../../../../../../core/services/notification/notification.service';
-import { SeoService } from '../../../../../../core/services/seo/seo.service';
+} from '@domains/store-sales/public-api';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { SeoService } from '@core/services/seo/seo.service';
 
 const pendingOrder: VendorOrder = {
   id: 'PED-000126',

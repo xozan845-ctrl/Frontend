@@ -6,9 +6,9 @@ import { ProductStore } from '../../../shop/public-api';
 import { CartStore } from '../../../cart/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
 import { ReviewsStore } from '../../../shop/public-api';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { NotificationService } from '../../../../../core/services/notification/notification.service';
-import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
+import { SeoService } from '@core/services/seo/seo.service';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CartFlyService } from '@shared/ui/cart-fly/cart-fly.service';
 import { HomeComponent } from './home.component';
 
 const products: Product[] = [

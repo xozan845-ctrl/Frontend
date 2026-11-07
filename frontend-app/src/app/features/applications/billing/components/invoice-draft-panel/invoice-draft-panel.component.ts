@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { LineTotalPipe } from '../../../../../shared/pipes/line-total.pipe';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { LineTotalPipe } from '@shared/pipes/line-total.pipe';
 import { InvoiceLine } from '../../models/billing.model';
 import { InvoiceTotalsPanelComponent } from '../invoice-totals-panel/invoice-totals-panel.component';
 import type { InvoiceLineQuantityChange } from './invoice-draft-panel.types';

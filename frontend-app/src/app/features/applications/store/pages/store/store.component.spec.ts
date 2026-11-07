@@ -4,13 +4,13 @@ import { provideRouter } from '@angular/router';
 import VendorStoreComponent from './store.component';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
 import { StoreLogoStore } from '../../state/store-logo/store-logo.store';
-import { SeoService } from '../../../../../core/services/seo/seo.service';
+import { SeoService } from '@core/services/seo/seo.service';
 import { Store } from '../../../shop/public-api';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   MediaBackgroundUploadService,
   MediaBackgroundWriteService,
-} from '../../../../domains/media-background/public-api';
+} from '@domains/media-background/public-api';
 
 const store: Store = {
   id: 't-1',

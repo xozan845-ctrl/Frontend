@@ -1,9 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type {
-  CashLedgerEntry,
-  CashMovement,
-  CashPaymentMethod,
-} from '../../../../../domains/finance/public-api';
+import type { CashLedgerEntry, CashMovement, CashPaymentMethod } from '@domains/finance/public-api';
 import { CashMovementsPanelComponent } from './cash-movements-panel.component';
 
 const METHOD: CashPaymentMethod = {

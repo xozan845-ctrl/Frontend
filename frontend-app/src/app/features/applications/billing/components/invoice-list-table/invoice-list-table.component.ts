@@ -1,8 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';
-import { AppDatePipe } from '../../../../../shared/pipes/app-date.pipe';
-import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
+import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
 import { Invoice } from '../../models/billing.model';
 import { InvoiceStatusBadgeComponent } from '../invoice-status-badge/invoice-status-badge.component';
 

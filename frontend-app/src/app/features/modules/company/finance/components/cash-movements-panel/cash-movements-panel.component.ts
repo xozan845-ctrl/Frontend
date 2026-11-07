@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
-import { AppDatePipe } from '../../../../../../shared/pipes/app-date.pipe';
-import { CashMoneyPipe } from '../../../../../../shared/pipes/cash-money.pipe';
+import { AppDatePipe } from '@shared/pipes/app-date.pipe';
+import { CashMoneyPipe } from '@shared/pipes/cash-money.pipe';
 import {
   CASH_MOVEMENT_CATEGORIES,
   CASH_PAGE_SIZE,
@@ -10,7 +10,7 @@ import {
   type CashMovementCategory,
   type CashPaymentMethod,
   type CashPeriod,
-} from '../../../../../domains/finance/public-api';
+} from '@domains/finance/public-api';
 
 const BADGE_BY_CATEGORY: Readonly<Record<CashMovementCategory, string>> = {
   venta: 'badge badge-success',
