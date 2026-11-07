@@ -2,7 +2,7 @@
 
 Dominio de **clientes** reutilizado por el workspace de empresa y el panel del
 vendedor. Este feature declara `kind: 'domain'`: modelo, adaptador, store, servicios y
-puertos. La página y el modal viven en `features/modules/clients` (ADR-59).
+puertos. La página y el modal viven en `features/modules/shared/clients` (ADR-59).
 
 | Capa            | Responsabilidad                                                       |
 | --------------- | --------------------------------------------------------------------- |
@@ -17,7 +17,7 @@ puertos. La página y el modal viven en `features/modules/clients` (ADR-59).
 ## Decisión
 
 Empresa y vendedor comparten el mismo dominio (ADR-56). La composición está en
-`features/modules/clients` (ADR-59). El **estado** decide qué
+`features/modules/shared/clients` (ADR-59). El **estado** decide qué
 se muestra: la fuente de datos entrega solo las órdenes del ámbito activo y la
 configuración de ruta define título, miga de pan y capacidades. Empresa usa
 `GET /orders/empresa` y storage por tenant; vendedor usa

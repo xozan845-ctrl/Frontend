@@ -59,16 +59,16 @@ que son verificables por máquina.
 > `empresas` ya no declara `components/`: su sidebar pasó a
 > `shared/ui/workspace-sidebar` y el resto de composición vive en módulos.
 > El feature `clients` es un dominio compartido por empresa y vendedor
-> (`kind: 'domain'`); su composición vive en `features/modules/clients`. Los
+> (`kind: 'domain'`); su composición vive en `features/modules/shared/clients`. Los
 > módulos anidados se descubren bajo `features/modules/<módulo>` y los features
 > los dominios no exigen rutas (ADR-59). `orders` es un dominio (`kind: 'domain'`)
-> consumido por los adaptadores de empresa y vendedor (ADR-60). `modules/sales`
+> consumido por los adaptadores de empresa y vendedor (ADR-60). `modules/shared/sales`
 > compone Ventas de empresa, Pedidos/POS del vendedor (ADR-63/64), el catálogo
 > administrable de empresa (ADR-65), Cuentas por
 > pagar, Bancos, Códigos de barras, Créditos y Reportes con scope
-> empresa/tienda (ADR-67/68/69/70/71). `modules/expenses` compone la pantalla de
-> Gastos, su ledger y sus reportes (ADR-72); `modules/finance` compone Caja,
-> cierres, caja chica, bancos y transferencias (ADR-73); `modules/purchases`
+> empresa/tienda (ADR-67/68/69/70/71). `modules/company/expenses` compone la pantalla de
+> Gastos, su ledger y sus reportes (ADR-72); `modules/company/finance` compone Caja,
+> cierres, caja chica, bancos y transferencias (ADR-73); `modules/company/purchases`
 > compone el centro de compras, historial, proveedores, órdenes, compra directa,
 > exportación y asistente de nueva compra (ADR-66).
 > El feature `logistica` declara además `guards/` porque sus rutas deben

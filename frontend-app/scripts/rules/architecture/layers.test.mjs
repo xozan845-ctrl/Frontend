@@ -34,10 +34,10 @@ export default defineSuite({
   run: ({ test, assert }) => {
     test('los módulos anidados se clasifican como features propias', () => {
       assert.deepEqual(
-        classify('src/app/features/modules/sales/pages/orders/orders.component.ts'),
+        classify('src/app/features/modules/shared/sales/pages/orders/orders.component.ts'),
         {
           kind: 'feature',
-          feature: 'modules/sales',
+          feature: 'modules/shared/sales',
           layer: 'pages',
         },
       );

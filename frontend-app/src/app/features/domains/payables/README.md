@@ -12,4 +12,4 @@ Dominio de cuentas por pagar para empresa y tienda del vendedor.
 El store recibe `PAYABLES_SCOPE_CONFIG` del workspace: empresa usa el tenant y
 la tienda usa el `storeId` del vendedor. Cada ámbito guarda en
 `ecom_company_payables_*` o `ecom_store_payables_*` (ADR-67). La composición
-vive en `features/modules/payables`.
+vive en `features/modules/shared/payables`.

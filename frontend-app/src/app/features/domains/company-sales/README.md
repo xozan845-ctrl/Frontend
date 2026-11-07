@@ -10,5 +10,5 @@ Dominio de ventas de empresa, pedidos del portal y tiendas del tenant. Consume
 - `state/`: `CompanySalesStore` y `CompanyPortalStore`.
 - `constants/`: periodos, métodos de pago y claves de persistencia.
 
-La composición visual de ventas vive en `features/modules/sales`; el portal de
+La composición visual de ventas vive en `features/modules/shared/sales`; el portal de
 tiendas y vendedores se consume desde `applications/company`.

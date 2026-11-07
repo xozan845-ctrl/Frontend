@@ -4,20 +4,25 @@ Aquí viven los módulos de workspace: páginas, rutas y componentes que compone
 uno o varios dominios. No contienen modelos, adapters ni stores duplicados.
 
 ```text
-features/modules/<módulo>/
-├── pages/       # pantallas del módulo
-├── components/  # UI propia del módulo
-├── <módulo>.routes.ts
-└── README.md
+features/modules/
+├── shared/                 # módulos usados por empresa y tienda
+│   └── <módulo>/
+│       ├── pages/
+│       ├── components/
+│       ├── <módulo>.routes.ts
+│       └── README.md
+└── company/                # módulos exclusivos de empresa
+    └── <módulo>/
 ```
 
 ## Dominio vs módulo
 
 - `features/domains/<dominio>/` es reutilizable y declara `kind: 'domain'`: mantiene
   modelos, adapters, state, servicios y puertos, sin páginas ni rutas.
-- `features/modules/<módulo>/` compone dominios por su `public-api.ts`.
-  Su contrato declara solo las capas de presentación que necesita.
+- `features/modules/<scope>/<módulo>/` compone dominios por su `public-api.ts`.
+  Su contrato se declara como `modules/<scope>/<módulo>` y solo incluye capas de
+  presentación.
 
 Ejemplo piloto: `features/domains/clients` es el dominio compartido y
-`features/modules/clients` es la composición que consumen empresa y vendedor
+`features/modules/shared/clients` es la composición que consumen empresa y vendedor
 (ADR-59). `cart` no es un módulo de workspace y sigue fuera de esta carpeta.

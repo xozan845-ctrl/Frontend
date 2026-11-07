@@ -11,4 +11,4 @@ la fuente de datos de cada workspace implementa `ReportsDataSource`.
 | `state/`        | `ReportsStore` con snapshot, días recientes y carga delegada.    |
 
 Las fuentes viven en `features/empresas` y `features/vendor`; la composición
-en `features/modules/reports` (ADR-71).
+en `features/modules/shared/reports` (ADR-71).

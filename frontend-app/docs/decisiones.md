@@ -1519,7 +1519,7 @@ contexto y consecuencias.
     y `<módulo>.routes.ts`. Consume dominios por su `public-api.ts`.
   - `R-AR-16` descubre módulos anidados bajo `features/modules` y omite la
     exigencia de rutas para features `domainOnly`.
-  - Piloto: `features/modules/clients` contiene la página, el modal y las rutas;
+  - Piloto: `features/modules/shared/clients` contiene la página, el modal y las rutas;
     `features/domains/clients` queda como dominio. Empresa y vendedor apuntan sus rutas
     al módulo y siguen inyectando `CLIENTS_PAGE_CONFIG`/`CLIENTS_SCOPE_CONFIG`.
   - `cart` no es un módulo de workspace y permanece fuera.
@@ -1554,7 +1554,7 @@ contexto y consecuencias.
   empresa/vendedor se importan eager; el aviso de presupuesto sube de 550 a
   555 kB (el error permanece en 560 kB, R-PF-1). La siguiente fase puede
   extraer el store/tabla compartidos y mover la composición de Ventas/Pedidos a
-  `features/modules/sales` sin volver a tocar el contrato de entrada.
+  `features/modules/shared/sales` sin volver a tocar el contrato de entrada.
 
 ## ADR-61: Tabla de pedidos compartida
 
@@ -1619,7 +1619,7 @@ contexto y consecuencias.
   para vendedor y empresa. El bundle inicial pasa de 551.98 a 552.08 kB en la
   primera migración y a 552.27 kB al migrar empresa (techo de aviso 555 kB);
   la feature del store permanece lazy. Queda mover la composición de
-  Ventas/Pedidos a `features/modules/sales`.
+  Ventas/Pedidos a `features/modules/shared/sales`.
 
 ## ADR-63: Módulo de composición de Ventas
 
@@ -1636,7 +1636,7 @@ contexto y consecuencias.
   - `empresas/public-api` expone los stores (`CompanySalesStore`,
     `CompanyServicesStore`), servicios, tokens, constantes y tipos que necesita
     la composición, sin exportar rutas.
-  - Se crea `features/modules/sales` con la página, los modales de venta rápida
+  - Se crea `features/modules/shared/sales` con la página, los modales de venta rápida
     y asistente, el selector de pago y `SALES_ROUTES`.
   - El dominio de ventas, el store, los adaptadores y las constantes siguen en
     `features/applications/company`; el módulo solo compone presentación y providers.
@@ -1653,10 +1653,10 @@ contexto y consecuencias.
 - **Estado**: Aceptado
 - **Contexto**: la lista de pedidos, el detalle y el punto de venta del
   vendedor vivían en `features/applications/store` mezclados con el dominio, los stores y
-  los adaptadores. El módulo `modules/sales` ya componía Ventas de empresa
+  los adaptadores. El módulo `modules/shared/sales` ya componía Ventas de empresa
   (ADR-63) y era el lugar natural para esta experiencia.
 - **Decisión**:
-  - Se mueven a `features/modules/sales` las páginas `orders`, `order-detail` y
+  - Se mueven a `features/modules/shared/sales` las páginas `orders`, `order-detail` y
     `new-order`, junto con los componentes del POS (`client-picker`,
     `create-client-modal`, `order-draft-panel`, `order-info-fields`,
     `order-line`, `product-pick-card`, `product-pick-grid`,
@@ -1672,7 +1672,7 @@ contexto y consecuencias.
     lista del módulo.
   - `vendor/public-api` amplía su superficie con stores, tokens, servicios,
     constantes, tipos y la tabla reciente que consume la composición.
-- **Consecuencias**: `modules/sales` compone las dos experiencias de venta y
+- **Consecuencias**: `modules/shared/sales` compone las dos experiencias de venta y
   `features/applications/store` queda como dominio/estado del panel. El bundle inicial se
   mantiene en 552.43 kB y las páginas siguen en chunks lazy
   (`new-order` ~39 kB, `vendor-routes` ~26 kB). El inicio del vendedor y la
@@ -1688,7 +1688,7 @@ contexto y consecuencias.
   stores, modelos, constantes y adaptadores. El patrón de módulos ya estaba
   probado con Clientes y Ventas/Pedidos.
 - **Decisión**:
-  - Se crea `features/modules/catalog` con la página `company-products`, la
+  - Se crea `features/modules/company/catalog` con la página `company-products`, la
     tabla `company-catalog-table`, el modal `company-product-modal` y
     `CATALOG_ROUTES`.
   - Los providers (`CompanyProductsStore`, `CompanyServicesStore` y
@@ -1697,12 +1697,12 @@ contexto y consecuencias.
     servicios; su API pública expone stores, constantes y tipos del catálogo.
   - `COMPANY_ROUTES` carga `CATALOG_ROUTES` con `loadChildren` en
     `/empresa/productos`, manteniendo la página lazy.
-  - El módulo declara su contrato `modules/catalog` (`components`, `pages`) y su
+  - El módulo declara su contrato `modules/company/catalog` (`components`, `pages`) y su
     README.
 - **Consecuencias**: la administración del catálogo queda separada de la
   infraestructura de empresa y reutiliza el mismo patrón que Ventas/Pedidos. El
   bundle inicial pasa a 552.46 kB (techo 555 kB) y el chunk del catálogo sigue
-  lazy (~60 kB). El vendedor conserva sus ofertas y el POS en `modules/sales`;
+  lazy (~60 kB). El vendedor conserva sus ofertas y el POS en `modules/shared/sales`;
   una composición de catálogo del vendedor podrá reutilizar este módulo cuando
   exista la vista correspondiente.
 
@@ -1722,7 +1722,7 @@ contexto y consecuencias.
     cada colección a 500 entradas.
   - `FinanceStore` deriva totales del mes, pendientes de pago y saldo de caja;
     las altas y bajas avisan por `NotificationService`.
-  - Se crea `features/modules/finance` con una página compartida por sección,
+  - Se crea `features/modules/company/finance` con una página compartida por sección,
     paneles presentacionales de compras, gastos y caja, y las rutas
     `PURCHASES_ROUTES`/`EXPENSES_ROUTES`/`CASH_ROUTES`.
   - `/empresa/compras`, `/empresa/gastos` y `/empresa/caja` cargan el módulo con
@@ -1751,7 +1751,7 @@ contexto y consecuencias.
   - `PayablesStore` resuelve el id con el scope: `tenantId` para empresa y
     `storeId` para tienda del vendedor. Persiste en
     `ecom_company_payables_*` o `ecom_store_payables_*` y limita a 500 cuentas.
-  - Se crea `features/modules/payables` con página, formulario presentacional y
+  - Se crea `features/modules/shared/payables` con página, formulario presentacional y
     `PAYABLES_ROUTES`; el workspace padre provee el scope.
   - `/empresa/cuentas-por-pagar` y `/vendedor/cuentas-por-pagar` cargan el
     módulo con `loadChildren`. Se añade `store:payables:manage` a permisos de
@@ -1777,7 +1777,7 @@ contexto y consecuencias.
     las rutas eager no importen el dominio.
   - Persistencia aislada: `ecom_company_banks_*` para empresa y
     `ecom_store_banks_*` para tienda; límite de 200 cuentas por ámbito.
-  - Se crea `features/modules/banks` con página, formulario de alta/edición y
+  - Se crea `features/modules/shared/banks` con página, formulario de alta/edición y
     `BANKS_ROUTES`; el workspace provee el scope.
   - Se añaden `/empresa/bancos` y `/vendedor/bancos`, los módulos
     `company.banks`/`store.banks`, y los permisos `company:banks:manage` y
@@ -1801,7 +1801,7 @@ contexto y consecuencias.
     dominio desde las rutas eager.
   - Persistencia aislada: `ecom_company_barcodes_*` y
     `ecom_store_barcodes_*`; máximo 500 etiquetas y 100 copias por etiqueta.
-  - Se crea `features/modules/barcodes` con página, formulario y
+  - Se crea `features/modules/shared/barcodes` con página, formulario y
     `BARCODES_ROUTES`; el workspace provee el scope.
   - Se añaden `/empresa/codigos-de-barras` y
     `/vendedor/codigos-de-barras`, los módulos `company.barcodes`/`store.barcodes`
@@ -1824,7 +1824,7 @@ contexto y consecuencias.
     desde las rutas eager.
   - Persistencia aislada: `ecom_company_credits_*` y `ecom_store_credits_*`;
     máximo 500 créditos por ámbito. El saldo se limita al importe original.
-  - Se crea `features/modules/credits` con página, formulario y
+  - Se crea `features/modules/shared/credits` con página, formulario y
     `CREDITS_ROUTES`; el workspace provee el scope.
   - Se añaden `/empresa/creditos` y `/vendedor/creditos`, los módulos
     `company.credit`/`store.credit`, y el permiso `store:credit:manage`.
@@ -1848,7 +1848,7 @@ contexto y consecuencias.
   - Las fuentes viven en cada workspace: `CompanyReportsSource` lee
     `/orders/empresa` y `VendorReportsSource` los pedidos del vendedor; ambas
     se proveen en la ruta.
-  - Se crea `features/modules/reports` con página y `REPORTS_ROUTES`; el
+  - Se crea `features/modules/shared/reports` con página y `REPORTS_ROUTES`; el
     workspace provee `REPORTS_SCOPE_CONFIG` y la fuente.
   - Se activan `/empresa/reportes` y `/vendedor/reportes`; los módulos
     `company.reports` y `store.reports` pasan a `ready`.
@@ -1872,12 +1872,12 @@ contexto y consecuencias.
   - `ExpensesStore` aporta CRUD, estados, filtros, paginación, KPIs y categorías
     personalizadas; persiste en `ecom_company_expenses_ledger_*` y migra los
     registros de `ecom_company_expenses_*` la primera vez.
-  - Se crea `features/modules/expenses` con la página y los modales de alta y
+  - Se crea `features/modules/company/expenses` con la página y los modales de alta y
     reporte; `/empresa/gastos` carga este módulo en lugar de la pestaña de
     finanzas.
   - El reporte filtra por período, estado, tipo, categoría, pago y beneficiario,
     exporta CSV compatible con Excel y genera una vista imprimible para PDF.
-  - Compras y Caja siguen en `modules/finance`; el dominio `finance` no cambia
+  - Compras y Caja siguen en `modules/company/finance`; el dominio `finance` no cambia
     en esta entrega.
 - **Consecuencias**: Gastos evoluciona sin tocar Compras, con una UI completa y
   datos migrados. El bundle inicial queda en 544.22 kB (techo 555 kB); el chunk
@@ -1906,16 +1906,16 @@ contexto y consecuencias.
     los modales de alta/edición y reporte. `/empresa/caja` carga este módulo.
   - El reporte filtra por período, tipo, estado, método y búsqueda; exporta CSV
     compatible con Excel y genera una vista imprimible para PDF.
-  - Compras sigue en `modules/finance`; el dominio `finance` no cambia en esta
+  - Compras sigue en `modules/company/finance`; el dominio `finance` no cambia en esta
     entrega y su ledger de caja solo se usa para migrar.
 - **Consecuencias**: Caja evoluciona sin tocar Compras, con una UI completa y
   datos migrados. El dominio puede integrarse con finanzas en una fase posterior
   si se unifican los ledgers.
 
 > **Nota (2026-11-06):** esta implementación quedó sustituida por
-> `features/modules/finance` + `features/domains/finance`. Los directorios
+> `features/modules/company/finance` + `features/domains/finance`. Los directorios
 > `domains/cash` y `modules/cash` se eliminaron por duplicidad y falta de uso;
-> `/app/empresa/caja` se compone desde `modules/finance`.
+> `/app/empresa/caja` se compone desde `modules/company/finance`.
 
 ## ADR-74: Catálogo de productos y servicios con persistencia server-side
 
@@ -1985,7 +1985,7 @@ contexto y consecuencias.
 - **Fecha**: 2026-11-06
 - **Estado**: Aceptado
 - **Contexto**: `applications/company` concentraba el catálogo administrable y
-  `applications/shop` el catálogo maestro, de modo que `modules/catalog` y
+  `applications/shop` el catálogo maestro, de modo que `modules/company/catalog` y
   otros consumidores dependían de aplicaciones para acceder a modelos, puertos y
   stores. Eso impedía cumplir `R-AR-20`.
 - **Decisión**:
@@ -1998,7 +1998,7 @@ contexto y consecuencias.
     adaptadores, puertos, servicios, stores y constantes.
   - `applications/company` conserva empresa, ventas, invitaciones, portal,
     reportes y logística; ya no exporta el catálogo.
-  - `modules/catalog`, `modules/purchases` y las partes de `modules/sales` que
+  - `modules/company/catalog`, `modules/company/purchases` y las partes de `modules/shared/sales` que
     usan servicios del catálogo consumen `domains/company-catalog` y
     `domains/catalog`.
 - **Consecuencias**: el catálogo deja de depender de aplicaciones y queda
@@ -2010,8 +2010,8 @@ contexto y consecuencias.
 - **Fecha**: 2026-11-06
 - **Estado**: Aceptado
 - **Contexto**: `applications/company` concentraba las ventas de empresa y el
-  portal de tiendas/pedidos, que consumían `modules/sales`, `modules/finance`,
-  `modules/reports` y las páginas de empresa. También dependía del contrato de
+  portal de tiendas/pedidos, que consumían `modules/shared/sales`, `modules/company/finance`,
+  `modules/shared/reports` y las páginas de empresa. También dependía del contrato de
   órdenes de `applications/cart`.
 - **Decisión**:
   - El contrato de órdenes (`OrderResponse`, `OrderItem`, `OrderTimelineEvent`,
@@ -2024,7 +2024,7 @@ contexto y consecuencias.
     y la composición visual del workspace.
   - El portal de tiendas se carga con `company-stores.routes.ts` para que sus
     providers no entren en el bundle inicial.
-  - `modules/sales`, `modules/finance` y `modules/reports` consumen el dominio
+  - `modules/shared/sales`, `modules/company/finance` y `modules/shared/reports` consumen el dominio
     por su API pública.
 - **Consecuencias**: ventas y portal dejan de depender de la aplicación de
   empresa; el contrato de órdenes queda compartido entre storefront y
@@ -2035,14 +2035,14 @@ contexto y consecuencias.
 - **Fecha**: 2026-11-07
 - **Estado**: Aceptado
 - **Contexto**: `applications/store` contenía el POS, pedidos, ofertas,
-  catálogo, clientes y reportes de tienda, que `modules/sales` consumía por la
+  catálogo, clientes y reportes de tienda, que `modules/shared/sales` consumía por la
   API pública de la aplicación. Eso mantenía acoplamiento módulo → aplicación.
 - **Decisión**:
   - Se crea `features/domains/store-sales` con modelos, adaptadores, puertos,
     servicios, stores de POS/pedidos/ofertas/catálogo y reportes de tienda.
   - `applications/store` conserva el shell, guard, páginas, branding y la tabla
     de pedidos recientes; consume el dominio por su API pública.
-  - `modules/sales`, `modules/reports` y el shell de tienda consumen
+  - `modules/shared/sales`, `modules/shared/reports` y el shell de tienda consumen
     `domains/store-sales` en lugar de la aplicación.
   - El estado de branding (`VendorStoreState`) permanece en la aplicación.
 - **Consecuencias**: los módulos de tienda ya no dependen de
@@ -2086,3 +2086,22 @@ contexto y consecuencias.
     `SHOP_ROUTES`, `ONBOARDING_ROUTES`, `STORE_ROUTES` y `COMPANY_ROUTES`.
 - **Consecuencias**: el nombre de la carpeta describe la intención y coincide
   con la ruta/rol. Las URLs y el comportamiento no cambian.
+
+## ADR-81: Scopes de módulos compartidos y de empresa
+
+- **Fecha**: 2026-11-07
+- **Estado**: Aceptado
+- **Contexto**: `features/modules/` era una lista plana donde convivían módulos
+  usados por empresa y tienda con módulos exclusivos de empresa, sin que el
+  nombre indicara su alcance.
+- **Decisión**:
+  - `features/modules/shared/<módulo>` para clientes, bancos, cuentas por pagar,
+    códigos de barras, créditos, reportes y ventas/pedidos.
+  - `features/modules/company/<módulo>` para catálogo, compras, gastos y
+    caja/finanzas.
+  - Los contratos pasan a `modules/shared/<módulo>` y
+    `modules/company/<módulo>`.
+  - El motor de gobernanza (`classify`, descubrimiento de contratos y rutas)
+    admite módulos anidados.
+- **Consecuencias**: el alcance de un módulo se deduce de su ruta. No cambian
+  rutas, providers ni comportamiento.

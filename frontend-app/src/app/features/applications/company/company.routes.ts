@@ -47,20 +47,22 @@ export const COMPANY_WORKSPACE_ROUTE: Route = {
       path: 'ventas',
       canActivate: [moduleGuard('company.sales')],
       loadChildren: () =>
-        import('../../modules/sales/sales.routes').then((module) => module.SALES_ROUTES),
+        import('../../modules/shared/sales/sales.routes').then((module) => module.SALES_ROUTES),
     },
     ...commercialScopeRoutes('company'),
     {
       path: 'productos',
       canActivate: [moduleGuard('company.catalog')],
       loadChildren: () =>
-        import('../../modules/catalog/catalog.routes').then((module) => module.CATALOG_ROUTES),
+        import('../../modules/company/catalog/catalog.routes').then(
+          (module) => module.CATALOG_ROUTES,
+        ),
     },
     {
       path: 'compras',
       canActivate: [moduleGuard('company.purchases')],
       loadChildren: () =>
-        import('../../modules/purchases/purchases.routes').then(
+        import('../../modules/company/purchases/purchases.routes').then(
           (module) => module.PURCHASES_ROUTES,
         ),
     },
@@ -68,13 +70,15 @@ export const COMPANY_WORKSPACE_ROUTE: Route = {
       path: 'gastos',
       canActivate: [moduleGuard('company.expenses')],
       loadChildren: () =>
-        import('../../modules/expenses/expenses.routes').then((module) => module.EXPENSES_ROUTES),
+        import('../../modules/company/expenses/expenses.routes').then(
+          (module) => module.EXPENSES_ROUTES,
+        ),
     },
     {
       path: 'caja',
       canActivate: [moduleGuard('company.cash')],
       loadChildren: () =>
-        import('../../modules/finance/finance.routes').then((module) => module.CASH_ROUTES),
+        import('../../modules/company/finance/finance.routes').then((module) => module.CASH_ROUTES),
     },
     companySoonRoute(
       'salarios',

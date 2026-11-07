@@ -11,4 +11,4 @@ Dominio del módulo de compras del workspace de empresa.
 
 Cada empresa guarda sus documentos en `ecom_company_purchase_*`; el store migra
 las compras simples del módulo de finanzas para no perder registros. La
-composición visual vive en `features/modules/purchases`.
+composición visual vive en `features/modules/company/purchases`.

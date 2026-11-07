@@ -11,4 +11,4 @@ del workspace de empresa. Consume el catálogo maestro de `domains/catalog`.
   `CompanyCatalogOperationsStore`.
 - `constants/`: unidades, tamaños de página y etiquetas.
 
-La composición visual vive en `features/modules/catalog`.
+La composición visual vive en `features/modules/company/catalog`.

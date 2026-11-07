@@ -24,5 +24,5 @@ adaptadores tolerantes.
   los datos por empresa (`R-NC-11`).
 
 El feature declara `kind: 'domain'` (ADR-66): no tiene páginas ni rutas. La
-composición visual vive en `features/modules/finance`; el store se provee en la
+composición visual vive en `features/modules/company/finance`; el store se provee en la
 ruta de caja junto con `BanksStore` y `CompanySalesStore`.
