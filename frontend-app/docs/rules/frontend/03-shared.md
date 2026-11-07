@@ -18,5 +18,5 @@ genérico y sin acoplarse a los dominios.
   `shared/directives/*`; los servicios transversales (`seo`, `store-config`,
   `notification`) y los helpers genéricos (`api-response.dto.ts`) viven en
   `core/` (`R-AR-13`).
-- La pieza de buscador vive en `features/applications/products/components/` y consume su
+- La pieza de buscador vive en `features/applications/shop/components/` y consume su
   propio store: `shared/` no tiene dependencias hacia `features/`.

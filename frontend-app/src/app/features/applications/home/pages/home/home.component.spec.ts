@@ -1,11 +1,11 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Product } from '../../../products/public-api';
-import { ProductStore } from '../../../products/public-api';
+import { Product } from '../../../shop/public-api';
+import { ProductStore } from '../../../shop/public-api';
 import { CartStore } from '../../../cart/public-api';
 import { WishlistStore } from '../../../wishlist/public-api';
-import { ReviewsStore } from '../../../products/public-api';
+import { ReviewsStore } from '../../../shop/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';

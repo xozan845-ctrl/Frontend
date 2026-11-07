@@ -11,7 +11,7 @@ catálogo maestro de `features/domains/catalog`.
 - `components/company-product-modal`: alta/edición de productos y servicios.
 - `catalog.routes.ts`: ruta lazy y providers de stores y puertos de catálogo.
 
-La empresa carga este módulo desde `EMPRESAS_ROUTES`. Los modelos, constantes,
+La empresa carga este módulo desde `COMPANY_ROUTES`. Los modelos, constantes,
 adaptadores y stores viven en `features/domains/company-catalog`; el catálogo
 maestro (producto, puerto y servicio) en `features/domains/catalog`. El módulo
 no duplica dominio ni estado (ADR-65, ADR-76).

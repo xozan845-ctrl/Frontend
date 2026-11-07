@@ -1,0 +1,18 @@
+import { InjectionToken } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Store } from '../../shop/public-api';
+import { OfferDraft, StoreDraft } from '../models/store-wizard.model';
+
+/** Puerto de creación y gestión de la tienda del vendedor (Core Engine). */
+export interface StoreRepository {
+  /** Crea la tienda del vendedor autenticado (`POST /vendedores/tienda`). */
+  createStore(draft: StoreDraft): Observable<Store>;
+  /** Tienda del vendedor autenticado o `null` (`GET /vendedores/me/tienda`, 404 → null). */
+  getMyStore(): Observable<Store | null>;
+  /** Publica un producto con margen (`POST /vendedores/productos`). */
+  publishOffer(storeId: string, offer: OfferDraft): Observable<void>;
+  /** Asocia o quita el logo de la tienda (`PATCH /tiendas/:id/logo`). */
+  updateLogo(storeId: string, logoObjectId: string | null): Observable<Store>;
+}
+
+export const STORE_REPOSITORY = new InjectionToken<StoreRepository>('StoreRepository');

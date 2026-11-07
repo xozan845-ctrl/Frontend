@@ -1,7 +1,7 @@
 # domains/storefront/ — Productos, carrito y wishlist
 
 Dominio compartido del storefront: catálogo público, detalle, carrito híbrido,
-favoritos y reseñas. Las experiencias `applications/products`,
+favoritos y reseñas. Las experiencias `applications/shop`,
 `applications/cart` y `applications/wishlist` consumen su API pública.
 
 - `models/`: producto, tienda, reseña, carrito y DTOs.

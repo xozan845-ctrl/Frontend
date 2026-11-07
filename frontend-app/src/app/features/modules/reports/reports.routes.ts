@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import {
   COMPANY_REPORTS_SCOPE_CONFIG,
   CompanyReportsSource,
-} from '../../applications/empresas/public-api';
+} from '../../applications/company/public-api';
 import {
   COMPANY_PORTAL_REPOSITORY,
   CompanyPortalService,

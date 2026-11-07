@@ -11,4 +11,4 @@ Dominio de ventas de empresa, pedidos del portal y tiendas del tenant. Consume
 - `constants/`: periodos, métodos de pago y claves de persistencia.
 
 La composición visual de ventas vive en `features/modules/sales`; el portal de
-tiendas y vendedores se consume desde `applications/empresas`.
+tiendas y vendedores se consume desde `applications/company`.

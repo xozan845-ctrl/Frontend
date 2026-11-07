@@ -12,19 +12,19 @@ import { moduleGuard } from '../../auth/public-api';
 import {
   COMPANY_CLIENTS_PAGE_CONFIG,
   COMPANY_CLIENTS_SCOPE_CONFIG,
-} from '../../empresas/constants/company-clients-page.config';
+} from '../../company/constants/company-clients-page.config';
 import {
   VENDOR_CLIENTS_PAGE_CONFIG,
   VENDOR_CLIENTS_SCOPE_CONFIG,
-} from '../../vendor/constants/vendor-clients-page.config';
-import { COMPANY_BANKS_SCOPE_CONFIG } from '../../empresas/constants/company-banks.config';
-import { VENDOR_BANKS_SCOPE_CONFIG } from '../../vendor/constants/vendor-banks.config';
-import { COMPANY_PAYABLES_SCOPE_CONFIG } from '../../empresas/constants/company-payables.config';
-import { VENDOR_PAYABLES_SCOPE_CONFIG } from '../../vendor/constants/vendor-payables.config';
-import { COMPANY_BARCODES_SCOPE_CONFIG } from '../../empresas/constants/company-barcodes.config';
-import { VENDOR_BARCODES_SCOPE_CONFIG } from '../../vendor/constants/vendor-barcodes.config';
-import { COMPANY_CREDITS_SCOPE_CONFIG } from '../../empresas/constants/company-credits.config';
-import { VENDOR_CREDITS_SCOPE_CONFIG } from '../../vendor/constants/vendor-credits.config';
+} from '../../store/constants/vendor-clients-page.config';
+import { COMPANY_BANKS_SCOPE_CONFIG } from '../../company/constants/company-banks.config';
+import { VENDOR_BANKS_SCOPE_CONFIG } from '../../store/constants/vendor-banks.config';
+import { COMPANY_PAYABLES_SCOPE_CONFIG } from '../../company/constants/company-payables.config';
+import { VENDOR_PAYABLES_SCOPE_CONFIG } from '../../store/constants/vendor-payables.config';
+import { COMPANY_BARCODES_SCOPE_CONFIG } from '../../company/constants/company-barcodes.config';
+import { VENDOR_BARCODES_SCOPE_CONFIG } from '../../store/constants/vendor-barcodes.config';
+import { COMPANY_CREDITS_SCOPE_CONFIG } from '../../company/constants/company-credits.config';
+import { VENDOR_CREDITS_SCOPE_CONFIG } from '../../store/constants/vendor-credits.config';
 
 const commercialModules: readonly CommercialModuleRoute[] = [
   {

@@ -1,8 +1,8 @@
 import type { Route, Routes } from '@angular/router';
 import { ADMIN_ROUTES } from '../../../features/applications/admin/admin.routes';
-import { COMPANY_WORKSPACE_ROUTE } from '../../../features/applications/empresas/empresas.routes';
+import { COMPANY_WORKSPACE_ROUTE } from '../../../features/applications/company/company.routes';
 import { LOGISTICA_ROUTES } from '../../../features/applications/logistica/logistica.routes';
-import { VENDOR_ROUTES } from '../../../features/applications/vendor/vendor.routes';
+import { STORE_ROUTES } from '../../../features/applications/store/store.routes';
 import {
   WORKSPACE_MODULES,
   workspaceModuleById,
@@ -63,7 +63,7 @@ function matchesRoute(route: Route, segments: readonly string[]): boolean {
 async function workspaceRouteTree(): Promise<Route[]> {
   return resolveRoutes([
     COMPANY_WORKSPACE_ROUTE,
-    { path: 'tienda', children: VENDOR_ROUTES },
+    { path: 'tienda', children: STORE_ROUTES },
     { path: 'admin', children: ADMIN_ROUTES },
     { path: 'logistica', children: LOGISTICA_ROUTES },
   ]);

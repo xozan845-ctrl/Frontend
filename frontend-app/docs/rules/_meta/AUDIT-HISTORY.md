@@ -502,13 +502,13 @@
 
 ## Auditoría 19 — Dominios de catálogo (2026-11-06)
 
-- **Contexto:** `applications/empresas` y `applications/products` proveían el
+- **Contexto:** `applications/company` y `applications/shop` proveían el
   catálogo a `modules/catalog`, `modules/purchases` y `modules/sales`, lo que
   mantenía acoplamiento módulo → aplicación.
 - **Cambio:** se creó `domains/catalog` con el catálogo maestro (`CatalogProduct`,
   puerto y servicio) y `domains/company-catalog` con productos, servicios,
   combos, promociones, importación CSV y operaciones de inventario.
-  `applications/empresas` ya no exporta catálogo; `applications/products`
+  `applications/company` ya no exporta catálogo; `applications/shop`
   conserva el storefront y reexporta el dominio.
 - **Resultado:**
   - ✅ `modules/catalog` y las partes de `modules/purchases`/`modules/sales`
@@ -525,7 +525,7 @@
 
 ## Auditoría 20 — Dominio de ventas y portal de empresa (2026-11-06)
 
-- **Contexto:** `applications/empresas` proveía ventas y portal a
+- **Contexto:** `applications/company` proveía ventas y portal a
   `modules/sales`, `modules/finance` y `modules/reports`, y dependía del
   contrato de órdenes de `applications/cart`.
 - **Cambio:** el contrato de órdenes se movió a `domains/orders`; se creó
@@ -546,8 +546,8 @@
 
 ## Auditoría 21 — Dominios de tienda y storefront (2026-11-07)
 
-- **Contexto:** `applications/vendor` proveía el POS y pedidos a
-  `modules/sales`, y `applications/products`, `applications/cart` y
+- **Contexto:** `applications/store` proveía el POS y pedidos a
+  `modules/sales`, y `applications/shop`, `applications/cart` y
   `applications/wishlist` se importaban entre sí formando un ciclo.
 - **Cambio:** se creó `domains/store-sales` (POS, pedidos, ofertas, catálogo de
   tienda y reportes) y `domains/storefront` (productos, carrito, wishlist y
@@ -562,3 +562,13 @@
   Actions y tag `v1.27.0`.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 22 — Taxonomía de aplicaciones (2026-11-07)
+
+- **Cambio:** `products` → `shop`, `stores` → `onboarding`, `vendor` → `store`
+  y `empresas` → `company`; rutas y constantes alineadas con el nuevo nombre.
+- **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
+  lint, lint:css, build y 60/60 e2e en verde.
+- **Estado global:** 🟢 **CUMPLE**.

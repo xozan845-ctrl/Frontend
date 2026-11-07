@@ -19,7 +19,7 @@ import {
 
 /**
  * Rutas del módulo compartido de Ventas. La composición vive aquí; el dominio,
- * el store y los adaptadores siguen en `features/applications/empresas` y se consumen por su
+ * el store y los adaptadores siguen en `features/applications/company` y se consumen por su
  * API pública (ADR-63).
  */
 export const SALES_ROUTES: Routes = [
