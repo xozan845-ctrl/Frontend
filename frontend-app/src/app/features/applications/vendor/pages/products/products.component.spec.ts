@@ -2,9 +2,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import VendorProductsComponent from './products.component';
-import { VendorOffersStore } from '../../state/vendor-offers/vendor-offers.store';
+import { VendorOffersStore } from '../../../../domains/store-sales/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
-import { VendorOffer } from '../../models/vendor-offer.model';
+import { VendorOffer } from '../../../../domains/store-sales/public-api';
 
 const offer: VendorOffer = {
   id: 'of-1',

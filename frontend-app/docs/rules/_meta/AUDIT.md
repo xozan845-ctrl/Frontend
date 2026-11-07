@@ -37,7 +37,10 @@
   aplicación y `R-AR-21` protege el grafo de ciclos.
 - El catálogo maestro vive en `domains/catalog` y el administrable de empresa en
   `domains/company-catalog`; `applications/empresas` ya no exporta catálogo.
-  Las ventas y el portal de tiendas viven en `domains/company-sales`.
+  Las ventas y el portal de tiendas viven en `domains/company-sales`; el POS y
+  los pedidos de tienda en `domains/store-sales`; productos, carrito, wishlist y
+  reseñas en `domains/storefront`.
+- El grafo de features es acíclico: `R-AR-21` no tiene deuda en el baseline.
 - Evidencia: **349 archivos / 1.930 tests**, 24 suites de reglas (53/259 IDs),
   typecheck, lint, build, E2E y smoke de Firebase en verde. Versión de trabajo:
   `1.27.0`.

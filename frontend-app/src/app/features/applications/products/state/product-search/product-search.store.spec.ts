@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Product } from '../../models/product.model';
-import { ProductStore } from '../product/product.store';
+import { Product } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { ProductSearchStore } from './product-search.store';
 
 const products: Product[] = [

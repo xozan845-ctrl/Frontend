@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ProductStore } from '../../../products/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { OrderStore } from '../../state/order/order.store';
 import { orderStatusLabel } from '../../../../domains/orders/public-api';
 import { AppCurrencyPipe } from '../../../../../shared/pipes/app-currency.pipe';

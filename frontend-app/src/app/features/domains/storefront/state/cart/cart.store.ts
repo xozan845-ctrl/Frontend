@@ -10,10 +10,10 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, Observable, forkJoin, pipe } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
-import type { Product } from '../../../products/public-api';
+import type { Product } from '../../models/product.model';
 import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { CART_REPOSITORY } from '../../repositories/cart.repository';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import type { CartState } from './cart.state';
 

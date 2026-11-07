@@ -12,13 +12,13 @@ import { routes } from './app.routes';
 import { RuntimeConfigService } from './core/config/runtime-config.service';
 import { authInterceptor } from './features/applications/auth/interceptors/auth/auth.interceptor';
 import { aiScraperAuthInterceptor } from './features/applications/ai-scraper/interceptors/ai-scraper-auth/ai-scraper-auth.interceptor';
-import { PRODUCT_REPOSITORY } from './features/applications/products/repositories/product.repository';
-import { ProductService } from './features/applications/products/services/product/product.service';
+import { PRODUCT_REPOSITORY } from './features/domains/storefront/public-api';
+import { ProductService } from './features/domains/storefront/public-api';
 import { ORDER_REPOSITORY } from './features/applications/cart/repositories/order.repository';
 import { OrderService } from './features/applications/cart/services/order/order.service';
 import { AUTH_REPOSITORY, AuthService } from './features/domains/session/public-api';
-import { CART_REPOSITORY } from './features/applications/cart/repositories/cart.repository';
-import { CartService } from './features/applications/cart/services/cart/cart.service';
+import { CART_REPOSITORY } from './features/domains/storefront/public-api';
+import { CartService } from './features/domains/storefront/public-api';
 
 export const appConfig: ApplicationConfig = {
   providers: [

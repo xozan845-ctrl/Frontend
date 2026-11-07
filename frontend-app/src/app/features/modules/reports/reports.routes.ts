@@ -11,7 +11,7 @@ import { REPORTS_SCOPE_CONFIG } from '../../../shared/reports/constants/reports-
 import {
   VENDOR_REPORTS_SCOPE_CONFIG,
   VendorReportsSource,
-} from '../../applications/vendor/public-api';
+} from '../../domains/store-sales/public-api';
 import { REPORTS_DATA_SOURCE, ReportsStore } from '../../domains/reports/public-api';
 
 const reportsModule = () =>

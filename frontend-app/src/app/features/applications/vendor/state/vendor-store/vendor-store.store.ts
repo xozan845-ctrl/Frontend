@@ -6,7 +6,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { STORE_REPOSITORY } from '../../../stores/public-api';
 import type { Store } from '../../../products/public-api';
-import type { VendorStoreState } from '../vendor.state';
+import type { VendorStoreState } from './vendor-store.state';
 
 const initialState: VendorStoreState = {
   store: null,

@@ -541,3 +541,24 @@
   Actions y tag `v1.27.0`.
 - **Estado global:** 🟢 **CUMPLE**.
 - **Snapshot:** [`AUDIT.md`](./AUDIT.md).
+
+---
+
+## Auditoría 21 — Dominios de tienda y storefront (2026-11-07)
+
+- **Contexto:** `applications/vendor` proveía el POS y pedidos a
+  `modules/sales`, y `applications/products`, `applications/cart` y
+  `applications/wishlist` se importaban entre sí formando un ciclo.
+- **Cambio:** se creó `domains/store-sales` (POS, pedidos, ofertas, catálogo de
+  tienda y reportes) y `domains/storefront` (productos, carrito, wishlist y
+  reseñas). La vista rápida pasó a `shared/ui/quick-view-modal`. El baseline de
+  `R-AR-21` quedó vacío.
+- **Resultado:**
+  - ✅ `modules/sales` y `modules/reports` consumen `domains/store-sales`.
+  - ✅ El grafo de features es acíclico; no hay deuda en `architecture-layers`.
+  - ✅ 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck, lint,
+    lint:css, build dentro de presupuesto y 60/60 e2e en verde.
+- **Pendiente operativo:** secret `FIREBASE_SERVICE_ACCOUNT`, runners de GitHub
+  Actions y tag `v1.27.0`.
+- **Estado global:** 🟢 **CUMPLE**.
+- **Snapshot:** [`AUDIT.md`](./AUDIT.md).

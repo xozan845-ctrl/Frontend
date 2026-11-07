@@ -2,9 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { CartStore } from './cart.store';
 import { CartItem, CartSnapshot } from '../../models/cart.model';
-import { Product } from '../../../products/models/product.model';
+import { Product } from '../../models/product.model';
 import { CART_REPOSITORY, CartRepository } from '../../repositories/cart.repository';
-import { AuthStore } from '../../../auth/public-api';
+import { AuthStore } from '../../../session/public-api';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 
 const product = (id: number, price = 100): Product => ({

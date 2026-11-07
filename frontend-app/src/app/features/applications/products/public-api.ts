@@ -1,11 +1,12 @@
 /**
  * API de aplicación pública de `products` para dominios consumidores.
- * Expone modelos y stores; no importar sus rutas internas desde otro dominio.
+ * Expone el storefront y el catálogo administrable; no importar sus rutas
+ * internas desde otro dominio.
  */
-export type { Product, ProductVariant } from './models/product.model';
-export type { Store } from './models/store.model';
-export { ProductStore } from './state/product/product.store';
-export { ReviewsStore } from './state/reviews/reviews.store';
+export type { Product, ProductVariant } from '../../domains/storefront/public-api';
+export type { Store } from '../../domains/storefront/public-api';
+export { ProductStore } from '../../domains/storefront/public-api';
+export { ReviewsStore } from '../../domains/storefront/public-api';
 export { CatalogProductsStore } from './state/catalog-product/catalog-product.store';
 export {
   CATALOG_PRODUCT_REPOSITORY,

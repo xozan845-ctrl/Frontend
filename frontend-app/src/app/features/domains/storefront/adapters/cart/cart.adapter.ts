@@ -1,5 +1,5 @@
 import { CartItem, CartSnapshot } from '../../models/cart.model';
-import type { Product } from '../../../products/public-api';
+import type { Product } from '../../models/product.model';
 import { BackendCarritoDTO, BackendCarritoItemDTO } from '../../models/cart.dto';
 import { unwrapApiSingleResponse } from '../../../../../core/models/api-response.dto';
 

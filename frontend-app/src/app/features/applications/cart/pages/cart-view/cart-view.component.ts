@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
-import { CartStore } from '../../state/cart/cart.store';
-import { ProductStore } from '../../../products/public-api';
+import { CartStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { AuthStore } from '../../../auth/public-api';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';

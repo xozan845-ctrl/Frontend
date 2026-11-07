@@ -22,7 +22,7 @@ import {
   type Client,
   type CreateClientPayload,
   type OrderDraftInfo,
-} from '../../../../applications/vendor/public-api';
+} from '../../../../domains/store-sales/public-api';
 import { RecentOrdersTableComponent } from '../../../../applications/vendor/public-ui';
 
 /**

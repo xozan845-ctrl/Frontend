@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { SearchAutocompleteComponent } from './search-autocomplete.component';
-import { ProductStore } from '../../state/product/product.store';
-import { Product } from '../../models/product.model';
+import { ProductStore } from '../../../../domains/storefront/public-api';
+import { Product } from '../../../../domains/storefront/public-api';
 
 const products: Product[] = [
   {

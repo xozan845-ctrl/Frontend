@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { ProductStore } from '../../state/product/product.store';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { ProductSearchStore } from '../../state/product-search/product-search.store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';

@@ -2,15 +2,15 @@ import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { CartStore } from '../../../cart/state/cart/cart.store';
-import { WishlistStore } from '../../../wishlist/state/wishlist/wishlist.store';
-import { ReviewsStore } from '../../state/reviews/reviews.store';
-import { ProductStore } from '../../state/product/product.store';
+import { CartStore } from '../../../../domains/storefront/public-api';
+import { WishlistStore } from '../../../../domains/storefront/public-api';
+import { ReviewsStore } from '../../../../domains/storefront/public-api';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { SeoService } from '../../../../../core/services/seo/seo.service';
 import { NotificationService } from '../../../../../core/services/notification/notification.service';
 import { CartFlyService } from '../../../../../shared/ui/cart-fly/cart-fly.service';
-import { Product } from '../../models/product.model';
-import { Store } from '../../models/store.model';
+import { Product } from '../../../../domains/storefront/public-api';
+import { Store } from '../../../../domains/storefront/public-api';
 import { ProductListComponent } from './product-list.component';
 
 const products: Product[] = [

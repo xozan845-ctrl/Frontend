@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
-import { CartStore } from '../../state/cart/cart.store';
+import { CartStore } from '../../../../domains/storefront/public-api';
 import { CartUiStore } from '../../state/cart-ui/cart-ui.store';
-import { ProductStore } from '../../../products/state/product/product.store';
+import { ProductStore } from '../../../../domains/storefront/public-api';
 import { AuthStore } from '../../../../domains/session/public-api';
-import { Product } from '../../../products/models/product.model';
+import { Product } from '../../../../domains/storefront/public-api';
 import { CartDrawerComponent } from './cart-drawer.component';
 
 const product: Product = {

@@ -1,18 +1,21 @@
 import { Component, DestroyRef, inject, signal, effect, computed, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { ProductStore } from '../../state/product/product.store';
-import { CartStore } from '../../../cart/public-api';
-import { WishlistStore } from '../../../wishlist/public-api';
-import { ReviewsStore } from '../../state/reviews/reviews.store';
+import {
+  CartStore,
+  ProductStore,
+  ReviewsStore,
+  WishlistStore,
+  type Product,
+} from '../../../../domains/storefront/public-api';
+import type { QuickViewProduct } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.types';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SkeletonLoaderComponent } from '../../../../../shared/ui/skeleton/skeleton-loader.component';
 import { SearchAutocompleteComponent } from '../search-autocomplete/search-autocomplete.component';
-import { QuickViewModalComponent } from '../../components/quick-view-modal/quick-view-modal.component';
+import { QuickViewModalComponent } from '../../../../../shared/ui/quick-view-modal/quick-view-modal.component';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
 import { injectSeoCleanup } from '../../../../../core/services/seo/seo.service';
-import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-product-list',
@@ -71,8 +74,8 @@ export class ProductListComponent {
     };
   }
 
-  onToggleWishlist(product: Product) {
-    this.wishlistStore.toggle(product);
+  onToggleWishlist(product: QuickViewProduct) {
+    this.wishlistStore.toggle(product as Product);
   }
 
   sortOptions = [
@@ -121,8 +124,8 @@ export class ProductListComponent {
     else this.productStore.setPriceMax(num);
   }
 
-  addToCart(product: Product) {
-    this.cartStore.addItem(product);
+  addToCart(product: QuickViewProduct) {
+    this.cartStore.addItem(product as Product);
   }
 
   openQuickView(product: Product) {

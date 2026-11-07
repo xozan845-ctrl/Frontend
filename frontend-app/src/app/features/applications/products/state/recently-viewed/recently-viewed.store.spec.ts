@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RecentlyViewedStore } from './recently-viewed.store';
-import { Product } from '../../models/product.model';
+import { Product } from '../../../../domains/storefront/public-api';
 
 const product = (id: number): Product => ({
   id,
