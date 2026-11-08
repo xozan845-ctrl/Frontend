@@ -2159,6 +2159,8 @@ contexto y consecuencias.
     `company-catalog-operations.validation.ts`.
   - `company-products` extrae la sección de combos y los diálogos de baja.
   - `company-settings` extrae la tarjeta resumen y el formulario de alta de empresa.
+  - `company-product-modal` extrae los campos de estado y `company-new-sale-modal`
+    extrae su pie de navegación.
   - `purchase-new-modal` extrae el formulario de producto nuevo.
   - Con ello, las plantillas principales quedan por debajo de 700 líneas.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas

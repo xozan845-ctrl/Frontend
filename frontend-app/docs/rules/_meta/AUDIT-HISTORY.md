@@ -612,6 +612,6 @@
 - **Cambio:** división de `purchases.adapter` en creación/backend/reportes;
   validadores de catálogo extraídos; secciones y diálogos de catálogo,
   resumen de empresa y formulario de producto nuevo extraídos a componentes.
-- **Resultado:** 358 archivos / 1.938 tests; 24 suites (53/259 IDs); typecheck,
+- **Resultado:** 360 archivos / 1.940 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.

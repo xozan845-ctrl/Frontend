@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import CompanyProductStatusFieldsComponent from '../company-product-status-fields/company-product-status-fields.component';
 import {
   COMPANY_PRODUCT_CONTENT_UNITS,
   COMPANY_PRODUCT_PURCHASE_UNITS,
@@ -21,7 +22,7 @@ import {
 @Component({
   selector: 'app-company-product-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, FocusTrapDirective],
+  imports: [ReactiveFormsModule, FocusTrapDirective, CompanyProductStatusFieldsComponent],
   templateUrl: './company-product-modal.component.html',
 })
 export class CompanyProductModalComponent {
