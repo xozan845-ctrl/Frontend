@@ -27,28 +27,16 @@ import {
   companyTypeLabel,
   logisticsModeLabel,
 } from '../../constants/company.constants';
-import { CompanyProfileData, CompanyType, LogisticsMode } from '../../models/company.model';
+import {
+  CompanyType,
+  CreateCompanyData,
+  LogisticsMode,
+} from '../../models/company.model';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
+import { MAX_LENGTH, SLUG_PATTERN } from '../../constants/company-form.constants';
 import CompanySettingsSummaryComponent from '../../components/company-settings-summary/company-settings-summary.component';
-
-const SLUG_PATTERN = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/;
-const MAX_LENGTH = {
-  taxId: 30,
-  legalName: 160,
-  commercialName: 160,
-  description: 1000,
-  phone: 40,
-  website: 200,
-  address: 300,
-  city: 80,
-  department: 80,
-  country: 80,
-  timezone: 64,
-  sector: 80,
-  legalRepresentative: 160,
-  businessHours: 120,
-} as const;
+import CompanyCreateFormComponent from '../../components/company-create-form/company-create-form.component';
 
 /**
  * Gestión de la empresa del empresario (ADR-27): metadatos comerciales y
@@ -61,6 +49,7 @@ const MAX_LENGTH = {
   standalone: true,
   imports: [
     CompanySettingsSummaryComponent,
+    CompanyCreateFormComponent,
     ReactiveFormsModule,
     RouterLink,
     DatePipe,
@@ -132,24 +121,6 @@ export default class CompanySettingsComponent {
       .updateCompany(company.id, draft)
       .pipe(tap((background) => this.companyStore.applyCompanyUpdate({ ...company, background })));
   };
-
-  readonly createCompanyForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(160)]],
-    slug: [
-      '',
-      [Validators.minLength(2), Validators.maxLength(80), Validators.pattern(SLUG_PATTERN)],
-    ],
-    logisticsMode: this.fb.nonNullable.control<LogisticsMode>('plataforma', Validators.required),
-    companyType: this.fb.nonNullable.control<CompanyType>('comercial', Validators.required),
-    legalName: ['', [Validators.maxLength(MAX_LENGTH.legalName)]],
-    commercialName: ['', [Validators.maxLength(MAX_LENGTH.commercialName)]],
-    taxId: ['', [Validators.maxLength(MAX_LENGTH.taxId)]],
-    phone: ['', [Validators.maxLength(MAX_LENGTH.phone)]],
-    contactEmail: ['', [Validators.email]],
-    city: ['', [Validators.maxLength(MAX_LENGTH.city)]],
-    country: ['Nicaragua', [Validators.maxLength(MAX_LENGTH.country)]],
-    currency: ['NIO', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
-  });
 
   readonly profileForm = this.fb.nonNullable.group({
     legalName: ['', [Validators.maxLength(MAX_LENGTH.legalName)]],
@@ -237,30 +208,9 @@ export default class CompanySettingsComponent {
     });
   });
 
-  submitCompany(): void {
-    if (!this.isEmpresario() || this.createCompanyForm.invalid || this.saving()) {
-      this.createCompanyForm.markAllAsTouched();
-      return;
-    }
-
-    const raw = this.createCompanyForm.getRawValue();
-    const slug = raw.slug.trim().toLowerCase();
-    this.companyStore.create({
-      name: raw.name.trim(),
-      logisticsMode: raw.logisticsMode,
-      type: raw.companyType,
-      ...(slug ? { slug } : {}),
-      ...this.compactProfile({
-        legalName: raw.legalName,
-        commercialName: raw.commercialName,
-        taxId: raw.taxId,
-        phone: raw.phone,
-        contactEmail: raw.contactEmail,
-        city: raw.city,
-        country: raw.country,
-        currency: raw.currency,
-      }),
-    });
+  onCreateCompany(payload: CreateCompanyData): void {
+    if (!this.isEmpresario() || this.saving()) return;
+    this.companyStore.create(payload);
   }
 
   submitProfile(): void {
@@ -351,11 +301,6 @@ export default class CompanySettingsComponent {
   }
 
   /** Omite metadatos vacíos para no enviar ruido al alta de la empresa. */
-  private compactProfile(data: CompanyProfileData): CompanyProfileData {
-    return Object.fromEntries(
-      Object.entries(data).filter(([, value]) => typeof value === 'string' && value.trim()),
-    ) as CompanyProfileData;
-  }
 
   private objectUrl(file: File): string | null {
     try {
