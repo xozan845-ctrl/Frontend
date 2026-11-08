@@ -10,7 +10,12 @@ import {
   adaptOrdersFromBackend as adaptSharedOrders,
   type Order as SharedOrder,
 } from '@domains/orders/public-api';
-import { Client, OrderStatus, VendorOrder, VendorProduct } from '../../models/vendor-order.model';
+import {
+  PosClient,
+  OrderStatus,
+  VendorOrder,
+  VendorProduct,
+} from '../../models/vendor-order.model';
 import { VendorOffer, VendorOfferPage } from '../../models/vendor-offer.model';
 
 /** Alias tolerados del `estado` del backend hacia los estados del dominio. */
@@ -83,7 +88,7 @@ export function adaptOrdersFromBackend(response: unknown): VendorOrder[] {
  * Cliente de la cartera (`GET /vendedores/clientes`, `POST /vendedores/clientes`).
  * `null` si no hay id; código, teléfono y correo caen a cadena vacía.
  */
-export function adaptClientFromBackend(raw: unknown): Client | null {
+export function adaptClientFromBackend(raw: unknown): PosClient | null {
   const cliente = unwrapApiSingleResponse<BackendClienteDTO>(raw);
   if (!cliente || typeof cliente !== 'object') return null;
   if (!hasId(cliente.id)) return null;
@@ -98,10 +103,10 @@ export function adaptClientFromBackend(raw: unknown): Client | null {
 }
 
 /** Lista de clientes tolerante a array directo o envelopes. */
-export function adaptClientsFromBackend(response: unknown): Client[] {
+export function adaptClientsFromBackend(response: unknown): PosClient[] {
   return unwrapApiListResponse<unknown>(response)
     .map((raw) => adaptClientFromBackend(raw))
-    .filter((client): client is Client => client !== null);
+    .filter((client): client is PosClient => client !== null);
 }
 
 /**

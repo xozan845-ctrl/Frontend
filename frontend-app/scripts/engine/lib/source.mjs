@@ -139,7 +139,7 @@ export function extractImports(src) {
   const masked = maskComments(src);
   const results = [];
   const patterns = [
-    /(?:^|\n)\s*(?:import|export)\s+(?:type\s+)?[^'"\n;]*?\s+from\s+['"]([^'"]+)['"]/g,
+    /^\s*(?:import|export)\s+(?:type\s+)?(?:(?!\bimport\b)[\s\S])*?\s+from\s+['"]([^'"]+)['"]/gm,
     /(?:^|\n)\s*import\s+['"]([^'"]+)['"]/g,
     /\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
   ];

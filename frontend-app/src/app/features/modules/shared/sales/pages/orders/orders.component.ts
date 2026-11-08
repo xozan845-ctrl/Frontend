@@ -1,10 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '@core/services/seo/seo.service';
-import {
-  VendorOrdersStore,
-  type OrderStatus,
-} from '@domains/store-sales/public-api';
+import { VendorOrdersStore, type OrderStatus } from '@domains/store-sales/public-api';
 import { orderStatusLabel } from '@shared/orders/constants/order-status.constants';
 import { RecentOrdersTableComponent } from '@features/applications/store/public-ui';
 

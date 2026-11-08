@@ -14,7 +14,6 @@ export const VENDOR_DRAFT_STORAGE_KEY = 'ecom_vendor_order_draft';
 
 /** Etiquetas humanas de estado para las tablas y badges del panel (`R-UX-4`). */
 
-
 /**
  * Transiciones válidas de estado del pedido (`R-RB-3`): los estados finales
  * (`completado`, `cancelado`) no vuelven atrás. Si el backend define otro

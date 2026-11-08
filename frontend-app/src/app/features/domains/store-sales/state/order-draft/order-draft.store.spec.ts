@@ -8,7 +8,7 @@ import {
 import { NotificationService } from '@core/services/notification/notification.service';
 import { VENDOR_DRAFT_STORAGE_KEY } from '../../constants/vendor.constants';
 import {
-  Client,
+  PosClient,
   DeliveryMethod,
   VendorOrder,
   VendorProduct,
@@ -24,7 +24,7 @@ const product = (id: string, price: number, inStock = true): VendorProduct => ({
   inStock,
 });
 
-const client: Client = {
+const client: PosClient = {
   id: 'vc-1',
   code: 'CL-00125',
   name: 'Carla López',

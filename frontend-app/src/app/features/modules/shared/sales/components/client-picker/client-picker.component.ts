@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { InitialsPipe } from '@shared/pipes/initials.pipe';
 import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.component';
-import type { Client } from '@domains/store-sales/public-api';
+import type { PosClient } from '@domains/store-sales/public-api';
 
 /**
  * Selector de cliente del POS (presentacional, `R-SO-8`): buscador, lista de
@@ -15,13 +15,13 @@ import type { Client } from '@domains/store-sales/public-api';
   templateUrl: './client-picker.component.html',
 })
 export class ClientPickerComponent {
-  readonly selected = input<Client | null>(null);
-  readonly results = input.required<Client[]>();
+  readonly selected = input<PosClient | null>(null);
+  readonly results = input.required<PosClient[]>();
   readonly query = input.required<string>();
   readonly loading = input(false);
   readonly error = input<string | null>(null);
   readonly queryChange = output<string>();
-  readonly clientSelected = output<Client>();
+  readonly clientSelected = output<PosClient>();
   readonly clearSelection = output<void>();
   readonly createRequested = output<void>();
   readonly retry = output<void>();

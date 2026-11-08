@@ -593,3 +593,14 @@
 - **Resultado:** 349 archivos / 1.930 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 25 — Clientes e imports multilínea (2026-11-08)
+
+- **Cambio:** `Client` del POS → `PosClient`; parser CSV a
+  `client-csv.adapter.ts`; `extractImports` detecta imports multilínea; los
+  stores pueden consumir adapters/mocks puros.
+- **Resultado:** 351 archivos / 1.931 tests; 24 suites (53/259 IDs); typecheck,
+  lint, lint:css, build y 60/60 e2e en verde.
+- **Estado global:** 🟢 **CUMPLE**.

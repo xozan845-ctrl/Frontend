@@ -12,7 +12,7 @@ import {
 } from 'rxjs/operators';
 import { NotificationService } from '@core/services/notification/notification.service';
 import { CLIENT_SEARCH_DEBOUNCE_MS } from '../../constants/vendor.constants';
-import { Client, CreateClientPayload } from '../../models/vendor-order.model';
+import { PosClient, CreateClientPayload } from '../../models/vendor-order.model';
 import { CLIENT_REPOSITORY } from '../../repositories/client.repository';
 import type { ClientSearchState } from '../vendor.state';
 
@@ -39,7 +39,7 @@ export const ClientSearchStore = signalStore(
       notificationService = inject(NotificationService),
     ) => {
       /** Consulta de cartera compartida por la búsqueda con `debounce` y el reintento. */
-      const fetchResults = (query: string): Observable<Client[]> =>
+      const fetchResults = (query: string): Observable<PosClient[]> =>
         clientRepo.searchClients(query).pipe(
           tap((results) => patchState(store, { results, loading: false })),
           catchError((err: Error) => {

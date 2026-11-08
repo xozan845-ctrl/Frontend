@@ -4,8 +4,11 @@ export type OrderStatus = 'pendiente' | 'en_proceso' | 'completado' | 'cancelado
 /** Método de entrega elegido al registrar el pedido (panel "Información del pedido"). */
 export type DeliveryMethod = 'retiro_tienda' | 'envio_domicilio';
 
-/** Cliente de la cartera del vendedor. */
-export interface Client {
+/**
+ * Cliente del POS: vista mínima para buscar/seleccionar en el punto de venta.
+ * No confundir con `domains/clients.Client`, que es la cartera CRM completa.
+ */
+export interface PosClient {
   id: string;
   /** Código visible en el POS (`CL-00125`); vacío si el backend no lo trae. */
   code: string;
@@ -68,7 +71,7 @@ export interface OrderDraftInfo {
 
 /** Borrador del pedido en curso (POS). */
 export interface OrderDraft {
-  client: Client | null;
+  client: PosClient | null;
   info: OrderDraftInfo;
   lines: OrderDraftLine[];
   /** Descuento porcentual 0–100 aplicado al subtotal. */

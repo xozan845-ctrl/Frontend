@@ -12,7 +12,7 @@ import {
   VendorCatalogStore,
   VendorOrdersStore,
   createVendorOrdersSource,
-  type Client,
+  type PosClient,
   type ClientRepository,
   type VendorOrder,
   type VendorOrderRepository,
@@ -61,7 +61,7 @@ const products: VendorProduct[] = [
   },
 ];
 
-const clients: Client[] = [
+const clients: PosClient[] = [
   {
     id: 'vc-1',
     code: 'CL-00125',
@@ -96,7 +96,7 @@ const createdOrder: VendorOrder = {
   notes: '',
 };
 
-const createdClient: Client = {
+const createdClient: PosClient = {
   id: 'vc-126',
   code: 'CL-00126',
   name: 'Salón Vero',

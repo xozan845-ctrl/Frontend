@@ -8,7 +8,7 @@ export {
   VENDOR_TAX_RATE,
 } from './constants/vendor.constants';
 export type {
-  Client,
+  PosClient,
   CreateClientPayload,
   CreateOrderPayload,
   DeliveryMethod,

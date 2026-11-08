@@ -1,5 +1,5 @@
 import type {
-  Client,
+  PosClient,
   OrderDraftInfo,
   OrderDraftLine,
   OrderStatus,
@@ -10,16 +10,16 @@ import type { VendorOffer } from '../models/vendor-offer.model';
 
 export interface ClientSearchState {
   query: string;
-  results: Client[];
+  results: PosClient[];
   loading: boolean;
   error: string | null;
   creating: boolean;
   /** Cliente recién creado; el contenedor lo selecciona y luego lo reconoce. */
-  lastCreated: Client | null;
+  lastCreated: PosClient | null;
 }
 
 export interface OrderDraftState {
-  client: Client | null;
+  client: PosClient | null;
   info: OrderDraftInfo;
   lines: OrderDraftLine[];
   discountPercent: number;

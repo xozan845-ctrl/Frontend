@@ -44,7 +44,7 @@ export const FEATURE_LAYER_DEPENDENCIES = {
   repositories: new Set(['models', 'repositories']),
   adapters: new Set(['models', 'adapters', 'constants']),
   services: new Set(['models', 'repositories', 'adapters', 'services', 'constants']),
-  state: new Set(['models', 'repositories', 'services', 'state', 'constants']),
+  state: new Set(['models', 'repositories', 'services', 'adapters', 'mocks', 'state', 'constants']),
   pages: new Set([
     'models',
     'state',
