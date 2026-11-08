@@ -6,6 +6,7 @@ import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import type { CatalogProduct } from '@domains/catalog/public-api';
 import { CompanySalePaymentMethodsComponent } from '../company-sale-payment-methods/company-sale-payment-methods.component';
+import CompanyNewSaleFooterComponent from '../company-new-sale-footer/company-new-sale-footer.component';
 import { OrderTotalsComponent } from '@shared/orders/components/order-totals/order-totals.component';
 import type { Client } from '@domains/clients/public-api';
 import {
@@ -52,6 +53,7 @@ function todayInput(): string {
     AppCurrencyPipe,
     FocusTrapDirective,
     CompanySalePaymentMethodsComponent,
+    CompanyNewSaleFooterComponent,
     OrderTotalsComponent,
   ],
   templateUrl: './company-new-sale-modal.component.html',

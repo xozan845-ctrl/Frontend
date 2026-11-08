@@ -666,38 +666,15 @@
         }
       </div>
 
-      <footer
-        class="flex flex-col gap-3 border-t border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-surface-700"
-      >
-        <button type="button" class="btn btn-secondary btn-sm" (click)="dismiss.emit()">
-          Cancelar
-        </button>
-        <div class="flex items-center justify-between gap-2 sm:justify-end">
-          @if (hasItems()) {
-            <span class="text-xs font-black tabular-nums text-slate-600 dark:text-slate-300">
-              {{ total() | appCurrency }}
-            </span>
-          }
-          @if (step() > 1) {
-            <button type="button" class="btn btn-secondary btn-sm" (click)="previous()">
-              Anterior
-            </button>
-          }
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            data-testid="new-sale-next"
-            (click)="next()"
-          >
-            {{ isLastStep() ? 'Registrar venta' : 'Siguiente' }}
-            <i
-              [class]="isLastStep() ? 'fa-solid fa-check' : 'fa-solid fa-arrow-right'"
-              class="text-[10px]"
-              aria-hidden="true"
-            ></i>
-          </button>
-        </div>
-      </footer>
+      <app-company-new-sale-footer
+        [total]="total()"
+        [hasItems]="hasItems()"
+        [step]="step()"
+        [isLastStep]="isLastStep()"
+        (dismiss)="dismiss.emit()"
+        (previous)="previous()"
+        (next)="next()"
+      />
     </div>
   </div>
 }
