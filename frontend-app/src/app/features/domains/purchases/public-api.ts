@@ -48,4 +48,11 @@ export {
   purchaseReportCsv,
 } from './adapters/purchases/purchases-report.adapter';
 export { purchaseToday } from './adapters/purchases/purchases.adapter';
+export {
+  migrateFinancePurchases,
+  sanitizePurchaseDocumentSettings,
+  sanitizePurchaseOrders,
+  sanitizePurchaseRecords,
+  sanitizeSuppliers,
+} from './adapters/purchases/purchases-backend.adapter';
 export { PurchasesStore } from './state/purchases/purchases.store';

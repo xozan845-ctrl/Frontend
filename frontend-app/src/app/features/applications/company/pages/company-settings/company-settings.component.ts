@@ -30,6 +30,7 @@ import {
 import { CompanyProfileData, CompanyType, LogisticsMode } from '../../models/company.model';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
+import CompanySettingsSummaryComponent from '../../components/company-settings-summary/company-settings-summary.component';
 
 const SLUG_PATTERN = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/;
 const MAX_LENGTH = {
@@ -59,6 +60,7 @@ const MAX_LENGTH = {
   selector: 'app-company-settings',
   standalone: true,
   imports: [
+    CompanySettingsSummaryComponent,
     ReactiveFormsModule,
     RouterLink,
     DatePipe,

@@ -1,7 +1,6 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
+import PurchaseNewProductFormComponent from '../purchase-new-product-form/purchase-new-product-form.component';
 import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import {
   PURCHASE_PAYMENT_METHODS,
@@ -25,7 +24,7 @@ function round2(value: number): number {
 @Component({
   selector: 'app-purchase-new-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, FocusTrapDirective, AppCurrencyPipe],
+  imports: [FocusTrapDirective, AppCurrencyPipe, PurchaseNewProductFormComponent],
   templateUrl: './purchase-new-modal.component.html',
 })
 export class PurchaseNewModalComponent {
@@ -57,7 +56,6 @@ export class PurchaseNewModalComponent {
   readonly notes = signal('');
   readonly date = signal(purchaseToday());
   readonly localError = signal<string | null>(null);
-  readonly newProductTotal = signal(0);
 
   readonly steps = computed<readonly WizardStep[]>(() =>
     this.mode() === 'orden'
@@ -117,25 +115,6 @@ export class PurchaseNewModalComponent {
     return false;
   });
 
-  private readonly fb = inject(FormBuilder);
-
-  readonly newProductForm = this.fb.nonNullable.group({
-    supplierId: [''],
-    name: ['', [Validators.required, Validators.maxLength(140)]],
-    category: ['', Validators.maxLength(80)],
-    sku: ['', Validators.maxLength(60)],
-    paymentMethod: ['efectivo' as PurchasePaymentMethod, Validators.required],
-    unitCost: [0, [Validators.required, Validators.min(0.01)]],
-    salePrice: [0, [Validators.required, Validators.min(0.01)]],
-    quantity: [1, [Validators.required, Validators.min(1)]],
-  });
-
-  private readonly syncNewProductTotal = this.newProductForm.valueChanges
-    .pipe(takeUntilDestroyed())
-    .subscribe((value) => {
-      this.newProductTotal.set(round2(Number(value.unitCost) * Number(value.quantity)));
-    });
-
   private readonly resetOnOpen = effect(() => {
     if (!this.open()) return;
     this.stage.set(this.mode() === 'orden' ? 'wizard' : 'choice');
@@ -151,17 +130,6 @@ export class PurchaseNewModalComponent {
     this.notes.set('');
     this.date.set(purchaseToday());
     this.localError.set(null);
-    this.newProductForm.reset({
-      supplierId: '',
-      name: '',
-      category: '',
-      sku: '',
-      paymentMethod: 'efectivo',
-      unitCost: 0,
-      salePrice: 0,
-      quantity: 1,
-    });
-    this.newProductTotal.set(0);
   });
 
   selectStage(stage: 'existing' | 'new'): void {
@@ -347,28 +315,6 @@ export class PurchaseNewModalComponent {
       costType: 'inventario',
       lines,
       notes: this.notes().trim(),
-    });
-  }
-
-  submitNewProduct(): void {
-    if (this.newProductForm.invalid) {
-      this.newProductForm.markAllAsTouched();
-      return;
-    }
-    const value = this.newProductForm.getRawValue();
-    const supplier = this.suppliers().find((item) => item.id === value.supplierId);
-    this.localError.set(null);
-    this.createProductPurchase.emit({
-      date: purchaseToday(),
-      supplierId: supplier?.id ?? null,
-      supplierName: supplier?.name ?? '',
-      productName: value.name.trim(),
-      category: value.category.trim(),
-      sku: value.sku.trim(),
-      paymentMethod: value.paymentMethod,
-      unitCost: Number(value.unitCost),
-      salePrice: Number(value.salePrice),
-      quantity: Math.max(1, Math.trunc(Number(value.quantity))),
     });
   }
 }

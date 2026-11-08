@@ -11,13 +11,15 @@ import {
   createSupplier,
   filterPurchaseRecords,
   isPurchaseInPeriod,
-  migrateFinancePurchases,
   nextDocumentNumber,
+} from './purchases.adapter';
+import {
+  migrateFinancePurchases,
   sanitizePurchaseDocumentSettings,
   sanitizePurchaseOrders,
   sanitizePurchaseRecords,
   sanitizeSuppliers,
-} from './purchases.adapter';
+} from './purchases-backend.adapter';
 import {
   buildPurchaseReport,
   buildPurchaseReportHtml,

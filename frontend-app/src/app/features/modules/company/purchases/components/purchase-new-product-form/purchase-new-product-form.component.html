@@ -1,0 +1,173 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="flex items-center gap-2">
+    <i class="fa-solid fa-plus text-accent-600 dark:text-accent-400" aria-hidden="true"></i>
+    <h3 class="font-heading text-lg font-black tracking-tight">Producto nuevo</h3>
+  </div>
+  <p class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+    Esto crea el producto en tu inventario, registra la compra y descuenta el costo de Caja
+    automáticamente. A diferencia de Productos/Servicios, aquí siempre se descuenta de caja (no hay
+    opción “ya lo tenía”).
+  </p>
+
+  <div class="mt-4 grid gap-3">
+    <div>
+      <label
+        for="purchase-new-product-supplier"
+        class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        Proveedor (opcional)
+      </label>
+      <select
+        id="purchase-new-product-supplier"
+        class="input mt-1 py-2.5 text-xs"
+        formControlName="supplierId"
+      >
+        <option value="">— Sin proveedor / Seleccionar —</option>
+        @for (supplier of suppliers(); track supplier.id) {
+          <option [value]="supplier.id">{{ supplier.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="purchase-new-product-name"
+        class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        Nombre del producto *
+      </label>
+      <input
+        id="purchase-new-product-name"
+        type="text"
+        class="input mt-1 py-2.5 text-xs"
+        placeholder="Ej: Taladro inalámbrico"
+        formControlName="name"
+      />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <p class="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+          Indica el nombre del producto.
+        </p>
+      }
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label
+          for="purchase-new-product-category"
+          class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+        >
+          Categoría
+        </label>
+        <input
+          id="purchase-new-product-category"
+          type="text"
+          class="input mt-1 py-2.5 text-xs"
+          placeholder="Ej: Herramientas"
+          formControlName="category"
+        />
+      </div>
+      <div>
+        <label
+          for="purchase-new-product-sku"
+          class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+        >
+          SKU / código (opcional)
+        </label>
+        <input
+          id="purchase-new-product-sku"
+          type="text"
+          class="input mt-1 py-2.5 text-xs"
+          placeholder="Ej: TAL-001"
+          formControlName="sku"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label
+        for="purchase-new-product-payment"
+        class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        Método de pago *
+      </label>
+      <select
+        id="purchase-new-product-payment"
+        class="input mt-1 py-2.5 text-xs"
+        formControlName="paymentMethod"
+      >
+        @for (method of paymentMethods; track method.value) {
+          <option [value]="method.value">{{ method.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label
+          for="purchase-new-product-cost"
+          class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+        >
+          Costo unitario (compra) *
+        </label>
+        <input
+          id="purchase-new-product-cost"
+          type="number"
+          min="0.01"
+          step="0.01"
+          class="input mt-1 py-2.5 text-xs"
+          placeholder="0.00"
+          formControlName="unitCost"
+        />
+      </div>
+      <div>
+        <label
+          for="purchase-new-product-price"
+          class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+        >
+          Precio de venta *
+        </label>
+        <input
+          id="purchase-new-product-price"
+          type="number"
+          min="0.01"
+          step="0.01"
+          class="input mt-1 py-2.5 text-xs"
+          placeholder="0.00"
+          formControlName="salePrice"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label
+        for="purchase-new-product-quantity"
+        class="text-[10px] font-bold tracking-widest text-slate-400 uppercase"
+      >
+        Cantidad / stock inicial *
+      </label>
+      <input
+        id="purchase-new-product-quantity"
+        type="number"
+        min="1"
+        step="1"
+        class="input mt-1 py-2.5 text-xs"
+        formControlName="quantity"
+      />
+    </div>
+
+    <p class="alert alert-success rounded-xl p-3 text-xs font-bold">
+      Total a descontar de caja:
+      {{ total() | appCurrency }}
+    </p>
+  </div>
+
+  <div
+    class="glass-footer sticky bottom-0 z-10 -mx-5 -mb-5 mt-5 flex items-center justify-end gap-2 px-5 py-4"
+  >
+    <button type="button" class="btn btn-ghost btn-sm" (click)="dismiss.emit()">Cancelar</button>
+    <button type="submit" class="btn btn-primary btn-sm" data-testid="purchase-new-product-save">
+      <i class="fa-solid fa-check text-xs" aria-hidden="true"></i>
+      Comprar y agregar al inventario
+    </button>
+  </div>
+</form>

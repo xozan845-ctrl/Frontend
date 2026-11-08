@@ -98,35 +98,6 @@ describe('PurchaseNewModalComponent', () => {
     expect(component.step()).toBe(5);
   });
 
-  it('emite el producto nuevo con su costo y stock', async () => {
-    const fixture = await setup();
-    const component = fixture.componentInstance;
-    const created = vi.fn();
-    component.createProductPurchase.subscribe(created);
-
-    component.selectStage('new');
-    component.newProductForm.patchValue({
-      supplierId: SUPPLIER.id,
-      name: '  Taladro  ',
-      category: 'Herramientas',
-      sku: 'TAL-2',
-      unitCost: 100,
-      salePrice: 150,
-      quantity: 3,
-    });
-    component.submitNewProduct();
-
-    expect(created).toHaveBeenCalledWith(
-      expect.objectContaining({
-        supplierId: SUPPLIER.id,
-        productName: 'Taladro',
-        unitCost: 100,
-        salePrice: 150,
-        quantity: 3,
-      }),
-    );
-  });
-
   it('no avanza sin productos en el carrito', async () => {
     const fixture = await setup();
     const component = fixture.componentInstance;

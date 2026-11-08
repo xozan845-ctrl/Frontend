@@ -20,15 +20,17 @@ import {
   createPurchaseRecord,
   createSupplier,
   filterPurchaseRecords,
-  migrateFinancePurchases,
   nextDocumentNumber,
   normalizePurchaseText,
   purchaseToday,
+} from '../../adapters/purchases/purchases.adapter';
+import {
+  migrateFinancePurchases,
   sanitizePurchaseDocumentSettings,
   sanitizePurchaseOrders,
   sanitizePurchaseRecords,
   sanitizeSuppliers,
-} from '../../adapters/purchases/purchases.adapter';
+} from '../../adapters/purchases/purchases-backend.adapter';
 import {
   DEFAULT_PURCHASE_DOCUMENT_SETTINGS,
   legacyFinancePurchasesKey,

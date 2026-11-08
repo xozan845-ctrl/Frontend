@@ -1,0 +1,108 @@
+<section class="glass-subtle rounded-2xl p-4 shadow-sm" aria-labelledby="combos-title">
+  <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <h2
+        id="combos-title"
+        class="flex items-center gap-2 font-heading text-lg font-black text-slate-900 dark:text-white"
+      >
+        <span aria-hidden="true">📦</span>
+        Combos
+        <span class="badge badge-success rounded-full px-2 py-0.5 text-[9px] font-bold uppercase">
+          {{ activeCount() }} activos
+        </span>
+      </h2>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Agrupa varios productos bajo un mismo nombre, SKU y código de barras. Al venderse, se
+        descuenta el stock de cada componente.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="rounded-xl bg-emerald-400 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500"
+      data-testid="new-combo"
+      (click)="create.emit()"
+    >
+      + Crear combo
+    </button>
+  </header>
+
+  @if (error(); as message) {
+    <div class="alert alert-danger mt-3 rounded-xl p-3 text-xs font-bold" role="alert">
+      {{ message }}
+    </div>
+  }
+
+  <div class="mt-3 overflow-x-auto">
+    @if (loading()) {
+      <p class="py-6 text-center text-xs text-slate-400" role="status">Cargando combos…</p>
+    } @else {
+      <table class="w-full min-w-[760px] text-left text-xs">
+        <thead>
+          <tr
+            class="border-b border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:border-surface-700"
+          >
+            <th class="py-2 pr-3 font-bold">Combo</th>
+            <th class="py-2 pr-3 font-bold">SKU / Código de barras</th>
+            <th class="py-2 pr-3 font-bold">Componentes</th>
+            <th class="py-2 pr-3 font-bold">Costo</th>
+            <th class="py-2 pr-3 font-bold">Precio</th>
+            <th class="py-2 pr-3 font-bold">Margen</th>
+            <th class="py-2 pr-3 font-bold">Estado</th>
+            <th class="py-2 text-right font-bold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
+          @for (combo of combos(); track combo.id) {
+            <tr data-testid="combo-row" [attr.data-combo-id]="combo.id">
+              <td class="py-3 pr-3">
+                <p class="font-bold text-slate-900 dark:text-white">{{ combo.name }}</p>
+                <p class="text-[10px] text-slate-400">{{ combo.description || '—' }}</p>
+              </td>
+              <td class="py-3 pr-3 font-mono text-[10px] text-slate-500">
+                {{ combo.sku }}<br />{{ combo.barcode || '—' }}
+              </td>
+              <td class="py-3 pr-3 text-slate-600 dark:text-slate-300">
+                {{ combo.components.length }} componentes
+              </td>
+              <td class="py-3 pr-3 tabular-nums">{{ combo.totalCost | appCurrency }}</td>
+              <td class="py-3 pr-3 tabular-nums">{{ combo.price | appCurrency }}</td>
+              <td class="py-3 pr-3 tabular-nums">{{ combo.margin.toFixed(1) }}%</td>
+              <td class="py-3 pr-3">
+                <span
+                  class="badge rounded-full px-2 py-1 text-[9px] font-black uppercase"
+                  [class]="combo.status === 'activo' ? 'badge-success' : 'badge-neutral'"
+                >
+                  {{ combo.status }}
+                </span>
+              </td>
+              <td class="py-3 text-right">
+                <button
+                  type="button"
+                  class="text-xs font-bold text-emerald-700"
+                  [attr.data-testid]="'edit-combo-' + combo.id"
+                  (click)="edit.emit(combo)"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="ml-2 text-xs font-bold text-red-600"
+                  [attr.data-testid]="'delete-combo-' + combo.id"
+                  (click)="remove.emit(combo)"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="py-8 text-center text-slate-400" data-testid="combos-empty">
+                Aún no has creado ningún combo.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>
