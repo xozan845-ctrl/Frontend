@@ -13,7 +13,7 @@ import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '@core/services/notification/notification.service';
 import { VENDOR_DRAFT_STORAGE_KEY, VENDOR_TAX_RATE } from '../../constants/vendor.constants';
 import {
-  Client,
+  PosClient,
   CreateOrderPayload,
   OrderDraft,
   OrderDraftInfo,
@@ -100,7 +100,7 @@ function sanitizeProduct(value: unknown): VendorProduct | null {
   };
 }
 
-function sanitizeClient(value: unknown): Client | null {
+function sanitizeClient(value: unknown): PosClient | null {
   if (!isRecord(value)) return null;
   const id = value['id'];
   if (typeof id !== 'string' || !id) return null;
@@ -231,7 +231,7 @@ export const OrderDraftStore = signalStore(
 
       return {
         /** Selecciona (o quita con `null`) el cliente del pedido. */
-        selectClient(client: Client | null): void {
+        selectClient(client: PosClient | null): void {
           patchState(store, { client });
         },
 

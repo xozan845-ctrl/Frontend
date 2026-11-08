@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ClientService } from './client.service';
 import { environment } from '../../../../../../environments/environment';
-import { Client } from '../../models/vendor-order.model';
+import { PosClient } from '../../models/vendor-order.model';
 
 describe('ClientService', () => {
   let service: ClientService;
@@ -45,7 +45,7 @@ describe('ClientService', () => {
 
   it('debe crear un cliente (POST /vendedores/clientes)', () => {
     build();
-    let client: Client | undefined;
+    let client: PosClient | undefined;
 
     service
       .createClient({ name: 'Nuevo Cliente', phone: '+505 1111 2222', email: 'nuevo@correo.com' })

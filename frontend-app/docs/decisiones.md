@@ -2126,3 +2126,22 @@ contexto y consecuencias.
     tabla duplicada en `store-sales`.
 - **Consecuencias**: los imports profundos dejan de ser frágiles y el mayor
   adaptador de compras queda dividido. Las rutas y el comportamiento no cambian.
+
+## ADR-83: Limpieza de clientes y parsing de imports
+
+- **Fecha**: 2026-11-08
+- **Estado**: Aceptado
+- **Contexto**: el adaptador de clientes superaba 600 líneas, el tipo `Client`
+  del POS se confundía con el de la cartera CRM y el extractor de imports del
+  motor de reglas no detectaba imports multilínea, dejando pasar violaciones.
+- **Decisión**:
+  - El cliente del POS pasa a llamarse `PosClient`; `domains/clients.Client`
+    sigue siendo la cartera CRM.
+  - El parser CSV de clientes se separa en `client-csv.adapter.ts`.
+  - `extractImports` admite imports multilínea y se añade una prueba.
+  - Los stores pueden consumir `adapters/` y `mocks/`: son funciones/piezas puras
+    hacia dentro; las dependencias de infraestructura siguen pasando por puertos
+    y servicios.
+- **Consecuencias**: las reglas detectan imports reales que antes se escapaban,
+  el adaptador de clientes queda dividido y los dos modelos de cliente tienen
+  nombres inequívocos.

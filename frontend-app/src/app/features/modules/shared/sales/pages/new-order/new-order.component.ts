@@ -19,7 +19,7 @@ import {
   OrderDraftStore,
   VendorCatalogStore,
   VendorOrdersStore,
-  type Client,
+  type PosClient,
   type CreateClientPayload,
   type OrderDraftInfo,
 } from '@domains/store-sales/public-api';
@@ -83,7 +83,7 @@ export default class NewOrderComponent {
 
   private readonly cleanup = inject(DestroyRef).onDestroy(() => this.orders.stopPolling());
 
-  selectClient(client: Client): void {
+  selectClient(client: PosClient): void {
     this.draft.selectClient(client);
   }
 

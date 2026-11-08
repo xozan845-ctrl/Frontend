@@ -18,10 +18,10 @@ import {
   filterClientsByChip,
   filterClientsByTab,
   findDuplicateClient,
-  parseClientsCsv,
   sanitizeClientRecords,
   searchClients,
 } from '../../adapters/clients/client.adapter';
+import { parseClientsCsv } from '../../adapters/clients/client-csv.adapter';
 import { CLIENT_PAGE_SIZE } from '../../constants/clients.constants';
 import type {
   ClientChip,

@@ -31,10 +31,10 @@ export {
   filterClientsByTab,
   findDuplicateClient,
   normalizeClientSearch,
-  parseClientsCsv,
   sanitizeClientRecords,
   searchClients,
 } from './adapters/clients/client.adapter';
+export { parseClientsCsv } from './adapters/clients/client-csv.adapter';
 export type {
   Client,
   ClientChip,

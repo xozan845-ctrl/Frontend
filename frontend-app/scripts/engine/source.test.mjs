@@ -38,6 +38,21 @@ test('extractImports lee imports estáticos, side-effect y dinámicos', () => {
   assert.deepEqual(specifiers.sort(), ['./a', './b', './c', './styles.css']);
 });
 
+test('extractImports lee imports multilínea', () => {
+  const src = [
+    'import {',
+    '  A,',
+    '  B,',
+    "} from './a';",
+    'export {',
+    '  C,',
+    "} from '@shared/c';",
+  ].join('\n');
+
+  const specifiers = extractImports(src).map((entry) => entry.specifier);
+  assert.deepEqual(specifiers.sort(), ['./a', '@shared/c']);
+});
+
 test('extractTypeDeclarations detecta interface, type y enum (no re-exports)', () => {
   const src = [
     'export interface Product { id: string }',

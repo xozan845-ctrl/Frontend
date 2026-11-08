@@ -3,9 +3,9 @@ import { of, throwError } from 'rxjs';
 import { ClientSearchStore } from './client-search.store';
 import { CLIENT_REPOSITORY, ClientRepository } from '../../repositories/client.repository';
 import { NotificationService } from '@core/services/notification/notification.service';
-import { Client } from '../../models/vendor-order.model';
+import { PosClient } from '../../models/vendor-order.model';
 
-const carla: Client = {
+const carla: PosClient = {
   id: 'vc-1',
   code: 'CL-00125',
   name: 'Carla López',
@@ -126,7 +126,7 @@ describe('ClientSearchStore', () => {
 
   it('debe crear el cliente, dejarlo en lastCreated y reconocerlo', async () => {
     const store = setup();
-    const created: Client = {
+    const created: PosClient = {
       id: 'vc-126',
       code: 'CL-00126',
       name: 'Salón Vero',

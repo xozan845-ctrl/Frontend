@@ -8,7 +8,7 @@ import {
   adaptClientFromBackend,
   adaptClientsFromBackend,
 } from '../../adapters/vendor/vendor.adapter';
-import { Client, CreateClientPayload } from '../../models/vendor-order.model';
+import { PosClient, CreateClientPayload } from '../../models/vendor-order.model';
 import { ClientRepository } from '../../repositories/client.repository';
 
 /**
@@ -22,7 +22,7 @@ export class ClientService implements ClientRepository {
   private readonly http = inject(HttpClient);
   private readonly vendorEndpoint = environment.apiConfig.endpoints.vendor;
 
-  searchClients(query: string): Observable<Client[]> {
+  searchClients(query: string): Observable<PosClient[]> {
     if (!environment.apiUrl) return this.missingApiUrl();
 
     return this.http
@@ -37,7 +37,7 @@ export class ClientService implements ClientRepository {
       );
   }
 
-  createClient(payload: CreateClientPayload): Observable<Client> {
+  createClient(payload: CreateClientPayload): Observable<PosClient> {
     if (!environment.apiUrl) return this.missingApiUrl();
 
     return this.http

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ClientPickerComponent } from './client-picker.component';
-import type { Client } from '@domains/store-sales/public-api';
+import type { PosClient } from '@domains/store-sales/public-api';
 
-const carla: Client = {
+const carla: PosClient = {
   id: 'vc-1',
   code: 'CL-00125',
   name: 'Carla López',
@@ -10,11 +10,17 @@ const carla: Client = {
   email: 'carla.lopez@correo.com',
 };
 
-const kemuel: Client = { id: 'vc-2', code: 'CL-00124', name: 'Kemuel Store', phone: '', email: '' };
+const kemuel: PosClient = {
+  id: 'vc-2',
+  code: 'CL-00124',
+  name: 'Kemuel Store',
+  phone: '',
+  email: '',
+};
 
 interface SetupOptions {
-  selected?: Client | null;
-  results?: Client[];
+  selected?: PosClient | null;
+  results?: PosClient[];
   query?: string;
   loading?: boolean;
   error?: string | null;
@@ -40,7 +46,7 @@ describe('ClientPickerComponent', () => {
   it('debe listar resultados con iniciales y emitir el cliente elegido', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
-    const selected: Client[] = [];
+    const selected: PosClient[] = [];
     fixture.componentInstance.clientSelected.subscribe((client) => selected.push(client));
 
     const options = host.querySelectorAll('[data-testid^="client-option-"]');
