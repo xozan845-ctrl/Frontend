@@ -1,0 +1,143 @@
+@if (service(); as item) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="service-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+    <div
+      class="card relative w-full max-w-md rounded-3xl p-6 shadow-2xl"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="service-delete-title"
+      tabindex="-1"
+      [appFocusTrap]="true"
+      (escape)="cancelled.emit('service')"
+    >
+      <h2
+        id="service-delete-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Eliminar servicio
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ item.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-service"
+          (click)="cancelled.emit('service')"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-service"
+          (click)="confirmed.emit('service')"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (combo(); as item) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="combo-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+    <div
+      class="card relative w-full max-w-md rounded-3xl p-6 shadow-2xl"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="combo-delete-title"
+      tabindex="-1"
+      [appFocusTrap]="true"
+      (escape)="cancelled.emit('combo')"
+    >
+      <h2
+        id="combo-delete-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Eliminar combo
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ item.name }}</strong
+        >?
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-combo"
+          (click)="cancelled.emit('combo')"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-combo"
+          (click)="confirmed.emit('combo')"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (promotion(); as item) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-testid="promotion-delete-dialog"
+  >
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" aria-hidden="true"></div>
+    <div
+      class="card relative w-full max-w-md rounded-3xl p-6 shadow-2xl"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="promotion-delete-title"
+      tabindex="-1"
+      [appFocusTrap]="true"
+      (escape)="cancelled.emit('promotion')"
+    >
+      <h2
+        id="promotion-delete-title"
+        class="font-heading text-xl font-black text-slate-900 dark:text-white"
+      >
+        Eliminar promoción
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        ¿Seguro que quieres eliminar
+        <strong class="text-slate-700 dark:text-slate-200">{{ item.name }}</strong
+        >?
+      </p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-testid="cancel-delete-promotion"
+          (click)="cancelled.emit('promotion')"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-testid="confirm-delete-promotion"
+          (click)="confirmed.emit('promotion')"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

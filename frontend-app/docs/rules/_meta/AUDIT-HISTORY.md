@@ -604,3 +604,14 @@
 - **Resultado:** 351 archivos / 1.931 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 26 — Subcomponentes y adaptadores (2026-11-08)
+
+- **Cambio:** división de `purchases.adapter` en creación/backend/reportes;
+  validadores de catálogo extraídos; secciones y diálogos de catálogo,
+  resumen de empresa y formulario de producto nuevo extraídos a componentes.
+- **Resultado:** 357 archivos / 1.938 tests; 24 suites (53/259 IDs); typecheck,
+  lint, lint:css, build y 60/60 e2e en verde.
+- **Estado global:** 🟢 **CUMPLE**.

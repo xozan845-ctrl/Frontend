@@ -2145,3 +2145,21 @@ contexto y consecuencias.
 - **Consecuencias**: las reglas detectan imports reales que antes se escapaban,
   el adaptador de clientes queda dividido y los dos modelos de cliente tienen
   nombres inequívocos.
+
+## ADR-84: Extracción de subcomponentes y adaptadores grandes
+
+- **Fecha**: 2026-11-08
+- **Estado**: Aceptado
+- **Contexto**: quedaban adaptadores y plantillas por encima de 700–1.000 líneas
+  que dificultaban revisar cambios y localizar responsabilidades.
+- **Decisión**:
+  - `purchases.adapter.ts` se divide en creación/filtros, backend/sanitización
+    (`purchases-backend.adapter.ts`) y reportes (`purchases-report.adapter.ts`).
+  - Los validadores de operaciones de catálogo salen a
+    `company-catalog-operations.validation.ts`.
+  - `company-products` extrae la sección de combos y los diálogos de baja.
+  - `company-settings` extrae la tarjeta resumen de empresa.
+  - `purchase-new-modal` extrae el formulario de producto nuevo.
+- **Consecuencias**: los archivos principales bajan de tamaño y las piezas
+  extraídas son presentacionales o funciones puras con inputs/outputs. No
+  cambian rutas ni comportamiento.

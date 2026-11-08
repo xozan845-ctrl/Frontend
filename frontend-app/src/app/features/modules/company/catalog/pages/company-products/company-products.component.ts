@@ -4,6 +4,8 @@ import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '@shared/pipes/app-date.pipe';
 import { CompanyCatalogTableComponent } from '../../components/company-catalog-table/company-catalog-table.component';
+import CompanyCatalogDeleteDialogsComponent from '../../components/company-catalog-delete-dialogs/company-catalog-delete-dialogs.component';
+import CompanyCatalogCombosSectionComponent from '../../components/company-catalog-combos-section/company-catalog-combos-section.component';
 import { CompanyComboModalComponent } from '../../components/company-combo-modal/company-combo-modal.component';
 import { CompanyImportProductsModalComponent } from '../../components/company-import-products-modal/company-import-products-modal.component';
 import { CompanyInventoryMovementModalComponent } from '../../components/company-inventory-movement-modal/company-inventory-movement-modal.component';
@@ -45,6 +47,8 @@ import {
   standalone: true,
   imports: [
     CompanyCatalogTableComponent,
+    CompanyCatalogDeleteDialogsComponent,
+    CompanyCatalogCombosSectionComponent,
     CompanyProductModalComponent,
     CompanyComboModalComponent,
     CompanyImportProductsModalComponent,
@@ -581,5 +585,17 @@ export default class CompanyProductsComponent {
     anchor.download = filename;
     anchor.click();
     URL.revokeObjectURL(url);
+  }
+
+  onDeleteConfirmed(kind: 'service' | 'combo' | 'promotion'): void {
+    if (kind === 'service') this.deleteService();
+    else if (kind === 'combo') this.deleteCombo();
+    else this.deletePromotion();
+  }
+
+  onDeleteCancelled(kind: 'service' | 'combo' | 'promotion'): void {
+    if (kind === 'service') this.cancelDelete();
+    else if (kind === 'combo') this.cancelDeleteCombo();
+    else this.cancelDeletePromotion();
   }
 }

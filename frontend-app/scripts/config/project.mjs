@@ -332,6 +332,7 @@ export const FEATURE_CONTRACTS = {
     kind: 'application',
     layers: [
       'adapters',
+      'components',
       'constants',
       'guards',
       'models',
