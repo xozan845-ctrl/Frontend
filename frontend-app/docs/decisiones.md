@@ -2158,8 +2158,9 @@ contexto y consecuencias.
   - Los validadores de operaciones de catálogo salen a
     `company-catalog-operations.validation.ts`.
   - `company-products` extrae la sección de combos y los diálogos de baja.
-  - `company-settings` extrae la tarjeta resumen de empresa.
+  - `company-settings` extrae la tarjeta resumen y el formulario de alta de empresa.
   - `purchase-new-modal` extrae el formulario de producto nuevo.
+  - Con ello, las plantillas principales quedan por debajo de 700 líneas.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.

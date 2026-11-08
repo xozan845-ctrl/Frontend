@@ -1,0 +1,240 @@
+<section class="card flex flex-col gap-5 p-6" aria-labelledby="create-company-title">
+  <div>
+    <h2 id="create-company-title" class="font-heading text-lg font-black tracking-tight uppercase">
+      Crear empresa
+    </h2>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      La empresa es el tenant comercial: agrupa tu tienda, tus vendedores y tus envíos.
+    </p>
+  </div>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col gap-4"
+    novalidate
+    data-testid="create-company-form"
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="flex flex-col gap-1">
+        <label for="company-name" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+          Nombre de la empresa
+        </label>
+        <input
+          id="company-name"
+          type="text"
+          class="input"
+          formControlName="name"
+          autocomplete="organization"
+          data-testid="company-name"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="text-xs font-bold text-red-600 dark:text-red-400">
+            El nombre debe tener entre 2 y 160 caracteres.
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label
+          for="company-create-slug"
+          class="text-xs font-bold text-slate-600 dark:text-slate-300"
+        >
+          Slug público (opcional)
+        </label>
+        <input
+          id="company-create-slug"
+          type="text"
+          class="input"
+          formControlName="slug"
+          placeholder="distribuidora-piloto"
+          autocomplete="off"
+          data-testid="company-create-slug"
+        />
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Si lo dejas vacío se deriva del nombre. Solo letras, números y guiones.
+        </p>
+        @if (form.controls.slug.invalid && form.controls.slug.touched) {
+          <p class="text-xs font-bold text-red-600 dark:text-red-400">
+            Usa entre 2 y 80 caracteres: letras, números y guiones.
+          </p>
+        }
+      </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="flex flex-col gap-1">
+        <label for="company-mode" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+          Modalidad logística
+        </label>
+        <select
+          id="company-mode"
+          class="input"
+          formControlName="logisticsMode"
+          data-testid="company-mode"
+        >
+          @for (mode of logisticsModes; track mode.value) {
+            <option [value]="mode.value">{{ mode.label }} — {{ mode.description }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label
+          for="company-create-type"
+          class="text-xs font-bold text-slate-600 dark:text-slate-300"
+        >
+          Tipo de empresa
+        </label>
+        <select
+          id="company-create-type"
+          class="input"
+          formControlName="companyType"
+          data-testid="company-create-type"
+        >
+          @for (type of companyTypes; track type.value) {
+            <option [value]="type.value">{{ type.label }} — {{ type.description }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <app-image-dropzone
+      label="Logo de la empresa (opcional)"
+      hint="Podrás cambiarlo después. Se sube al almacenamiento del tenant al crear la empresa."
+      variant="square"
+      [previewUrl]="logoPreviewUrl()"
+      [uploading]="uploadingLogo()"
+      (fileSelected)="logoSelected.emit($event)"
+      (removed)="logoRemoved.emit()"
+    />
+
+    <details
+      class="rounded-xl border border-slate-200 p-4 dark:border-surface-700"
+      data-testid="create-company-profile-details"
+    >
+      <summary class="cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-300">
+        Datos fiscales y de contacto (opcional)
+      </summary>
+
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-1">
+          <label
+            for="company-legal-name"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Razón social
+          </label>
+          <input
+            id="company-legal-name"
+            type="text"
+            class="input"
+            formControlName="legalName"
+            autocomplete="organization"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="company-commercial-name"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Nombre comercial
+          </label>
+          <input
+            id="company-commercial-name"
+            type="text"
+            class="input"
+            formControlName="commercialName"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="company-tax-id" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+            RUC
+          </label>
+          <input id="company-tax-id" type="text" class="input" formControlName="taxId" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="company-phone" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+            Teléfono
+          </label>
+          <input
+            id="company-phone"
+            type="tel"
+            class="input"
+            formControlName="phone"
+            autocomplete="tel"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="company-contact-email"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Correo de contacto
+          </label>
+          <input
+            id="company-contact-email"
+            type="email"
+            class="input"
+            formControlName="contactEmail"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="company-city" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+            Ciudad
+          </label>
+          <input
+            id="company-city"
+            type="text"
+            class="input"
+            formControlName="city"
+            autocomplete="address-level2"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="company-country" class="text-xs font-bold text-slate-600 dark:text-slate-300">
+            País
+          </label>
+          <input
+            id="company-country"
+            type="text"
+            class="input"
+            formControlName="country"
+            autocomplete="country-name"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="company-currency"
+            class="text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Moneda
+          </label>
+          <select id="company-currency" class="input" formControlName="currency">
+            @for (currency of currencies; track currency.value) {
+              <option [value]="currency.value">{{ currency.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <button
+      type="submit"
+      class="btn btn-primary self-start"
+      [disabled]="saving()"
+      data-testid="create-company-submit"
+    >
+      <i class="fa-solid fa-building text-xs" aria-hidden="true"></i>
+      {{ saving() ? 'Creando…' : 'Crear empresa' }}
+    </button>
+  </form>
+</section>

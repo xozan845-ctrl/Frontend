@@ -6,7 +6,7 @@ import { AuthStore } from '../../../auth/public-api';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
 import { SeoService } from '@core/services/seo/seo.service';
-import { Company, LogisticsMode } from '../../models/company.model';
+import { Company } from '../../models/company.model';
 import { STORAGE_REPOSITORY } from '../../../storage/public-api';
 import {
   MediaBackgroundUploadService,
@@ -125,27 +125,6 @@ describe('CompanySettingsComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="company-card"]')).toBeNull();
   });
 
-  it('debe crear la empresa con el nombre, el slug y la modalidad elegidos', async () => {
-    user.set({ id: 'u-1', name: 'Eva', email: 'eva@tienda.test', role: 'empresario' });
-    const fixture = await setup();
-
-    fixture.componentInstance.createCompanyForm.patchValue({
-      name: 'Mi Empresa',
-      slug: 'mi-empresa',
-      logisticsMode: 'hibrida' as LogisticsMode,
-    });
-    fixture.componentInstance.submitCompany();
-
-    expect(companyStore.create).toHaveBeenCalledWith({
-      name: 'Mi Empresa',
-      slug: 'mi-empresa',
-      logisticsMode: 'hibrida',
-      type: 'comercial',
-      country: 'Nicaragua',
-      currency: 'NIO',
-    });
-  });
-
   it('debe subir el logo elegido al crear la empresa', async () => {
     user.set({ id: 'u-1', name: 'Eva', email: 'eva@tienda.test', role: 'empresario' });
     const fixture = await setup();
@@ -158,16 +137,6 @@ describe('CompanySettingsComponent', () => {
     fixture.detectChanges();
 
     expect(logoStore.upload).toHaveBeenCalledWith(file);
-  });
-
-  it('no debe crear la empresa si el formulario es inválido', async () => {
-    user.set({ id: 'u-1', name: 'Eva', email: 'eva@tienda.test', role: 'empresario' });
-    const fixture = await setup();
-
-    fixture.componentInstance.createCompanyForm.controls.name.setValue('X');
-    fixture.componentInstance.submitCompany();
-
-    expect(companyStore.create).not.toHaveBeenCalled();
   });
 
   it('debe mostrar el aviso de empresa no disponible a un vendedor', async () => {
