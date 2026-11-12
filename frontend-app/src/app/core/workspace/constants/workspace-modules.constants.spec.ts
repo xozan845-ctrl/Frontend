@@ -132,6 +132,8 @@ describe('workspace-modules.constants', () => {
     expect(testIds.every((testId) => testId.length > 0)).toBe(true);
   });
 
+  // Importa el árbol de rutas lazy completo: con cobertura supera el límite
+  // por defecto de 5 s, así que se le da margen sin relajar la aserción.
   it('todos los links del registro resuelven a una ruta canónica /app', async () => {
     const tree = await workspaceRouteTree();
     const broken = WORKSPACE_MODULES.filter((module) => {
@@ -143,5 +145,5 @@ describe('workspace-modules.constants', () => {
     }).map((module) => `${module.id} -> ${module.link}`);
 
     expect(broken).toEqual([]);
-  });
+  }, 15000);
 });
