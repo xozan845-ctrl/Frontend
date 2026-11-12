@@ -54,7 +54,9 @@ describe('MediaBackgroundComponent', () => {
 
     expect(image.getAttribute('src')).toBe('https://cdn.test/fondo.jpg');
     expect(image.getAttribute('alt')).toBe('Fondo de la tienda');
-    expect(image.style.objectPosition).toBe('top');
+    // jsdom 31 normaliza `object-position: top` como `center top`; el requisito
+    // es que el fondo quede anclado arriba, no la serialización exacta.
+    expect(image.style.objectPosition).toMatch(/^(center\s+)?top$/);
     expect(overlay.style.backgroundColor).toBe('rgba(2, 6, 23, 0.4)');
   });
 
