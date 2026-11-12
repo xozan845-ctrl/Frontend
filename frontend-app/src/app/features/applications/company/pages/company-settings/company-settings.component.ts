@@ -27,11 +27,7 @@ import {
   companyTypeLabel,
   logisticsModeLabel,
 } from '../../constants/company.constants';
-import {
-  CompanyType,
-  CreateCompanyData,
-  LogisticsMode,
-} from '../../models/company.model';
+import { CompanyType, CreateCompanyData, LogisticsMode } from '../../models/company.model';
 import { CompanyStore } from '../../state/company/company.store';
 import { CompanyLogoStore } from '../../state/company-logo/company-logo.store';
 import { MAX_LENGTH, SLUG_PATTERN } from '../../constants/company-form.constants';
