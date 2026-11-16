@@ -6,6 +6,11 @@
  * desactiva la elevación al hover y se conservan las animaciones con duración
  * mínima para que los eventos `animationend` (usados por `animate.leave`) se
  * sigan emitiendo y el contenido nunca quede oculto ni bloqueado.
+ *
+ * Excepción de pausa: en movimiento reducido los efectos de entrada/salida
+ * fuerzan `running` para que `motion-pause` no deje una entrada detenida en su
+ * primer fotograma transparente. Fuera de este modo, la pausa conserva su
+ * comportamiento normal.
  */
 @media (prefers-reduced-motion: reduce) {
   .motion-fade-in,
@@ -17,6 +22,7 @@
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
+    animation-play-state: running !important;
   }
 
   .motion-slide-up,
