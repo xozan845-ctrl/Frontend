@@ -118,9 +118,14 @@ Reglas de convivencia:
   de entrada en viewport.
 - Un elemento usa un solo efecto de entrada/salida; duración, retraso y pausa se
   combinan como modificadores.
+- `motion-running` tiene prioridad sobre `motion-pause` y sobre la pausa por
+  hover: permite reanudar sin retirar el cursor; al quitar `motion-running`,
+  vuelve la pausa.
 - `prefers-reduced-motion: reduce` reduce las duraciones a `0.01ms`, anula
-  desplazamiento/escala y desactiva `motion-hover-lift`, de modo que el contenido
-  sigue visible y las salidas siguen emitiendo `animationend` (`R-AC-6`).
+  desplazamiento/escala y desactiva `motion-hover-lift`; además fuerza
+  `animation-play-state: running` en los efectos de entrada/salida para que
+  `motion-pause` no deje contenido transparente. Las salidas completan y siguen
+  emitiendo `animationend` (`R-AC-6`).
 - La biblioteca no define tokens ni primitivos Glass: `src/styles.css` sigue
   siendo su única fuente (`R-UX-7`).
 

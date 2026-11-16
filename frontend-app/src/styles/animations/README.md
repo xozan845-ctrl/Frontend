@@ -118,6 +118,20 @@ Estas clases ajustan tanto la variable como el longhand (`animation-duration` /
 `animation-delay` / `animation-play-state`), así que también funcionan sobre
 animaciones continuas de Tailwind (`animate-pulse`, `animate-spin`, …).
 
+`motion-running` tiene prioridad explícita: usa doble clase para ganar a
+`motion-pause`, y la pausa por hover excluye los elementos con
+`motion-running`. Así se puede reanudar sin retirar el cursor y, al quitar la
+clase, vuelve a aplicarse la pausa por hover.
+
+### Pausa y movimiento reducido
+
+Fuera de `prefers-reduced-motion`, `motion-pause` detiene la animación en su
+fotograma actual. En modo reducido, los seis efectos de entrada/salida fuerzan
+`animation-play-state: running` para que una entrada pausada no quede
+transparente: la animación completa su recorrido mínimo (0.01ms) y deja el
+contenido visible; las salidas terminan y siguen siendo compatibles con
+`animate.leave`. La pausa normal se conserva para el resto de animaciones.
+
 ## Ejemplos de uso
 
 ### 1. Animar una tarjeta al incorporarse al DOM
@@ -211,18 +225,21 @@ continuas que ya existan.
 
 ## Combinaciones y conflictos
 
-| Combinación                                               | ¿Permitido? | Nota                                                |
-| --------------------------------------------------------- | ----------- | --------------------------------------------------- |
-| `motion-fade-in` + `motion-duration-*` / `motion-delay-*` | Sí          | Ajustan el efecto                                   |
-| `motion-fade-in` + `motion-hover-lift`                    | Sí          | Opacidad y transform no compiten                    |
-| `motion-slide-*` o `motion-scale-*` + `motion-hover-lift` | Con cuidado | El hover no se aprecia hasta que termina la entrada |
-| Dos efectos de entrada/salida en el mismo elemento        | No          | Ambos declaran `animation`; gana el último          |
-| Efectos `motion-*` de entrada/salida + `animate-*`        | No          | Dos `animation` compitiendo en el mismo nodo        |
-| `motion-duration-*` / `motion-delay-*` / `motion-pause*`  | Sí          | Ajustan también animaciones continuas de Tailwind   |
-| `motion-*` + keyframes locales del componente             | No          | Evita dos `animation` sobre el mismo nodo           |
-| `motion-fade-in` + `appScrollReveal`                      | No          | `.scroll-reveal` controla `opacity` y `transform`   |
-| `motion-hover-lift` + `.card-hover` / `.glass-hover`      | No          | Ya elevan; duplicarías transform y transición       |
-| `motion-*` + `opacity-0` / `translate-*` de Tailwind      | No          | La utilidad estática pelea con el estado final      |
+| Combinación                                               | ¿Permitido? | Nota                                                    |
+| --------------------------------------------------------- | ----------- | ------------------------------------------------------- |
+| `motion-fade-in` + `motion-duration-*` / `motion-delay-*` | Sí          | Ajustan el efecto                                       |
+| `motion-fade-in` + `motion-hover-lift`                    | Sí          | Opacidad y transform no compiten                        |
+| `motion-slide-*` o `motion-scale-*` + `motion-hover-lift` | Con cuidado | El hover no se aprecia hasta que termina la entrada     |
+| Dos efectos de entrada/salida en el mismo elemento        | No          | Ambos declaran `animation`; gana el último              |
+| Efectos `motion-*` de entrada/salida + `animate-*`        | No          | Dos `animation` compitiendo en el mismo nodo            |
+| `motion-duration-*` / `motion-delay-*` / `motion-pause*`  | Sí          | Ajustan también animaciones continuas de Tailwind       |
+| `motion-*` + keyframes locales del componente             | No          | Evita dos `animation` sobre el mismo nodo               |
+| `motion-fade-in` + `appScrollReveal`                      | No          | `.scroll-reveal` controla `opacity` y `transform`       |
+| `motion-hover-lift` + `.card-hover` / `.glass-hover`      | No          | Ya elevan; duplicarías transform y transición           |
+| `motion-*` + `opacity-0` / `translate-*` de Tailwind      | No          | La utilidad estática pelea con el estado final          |
+| `motion-pause` + `motion-running`                         | Sí          | `motion-running` gana y reanuda                         |
+| `motion-pause-on-hover` + `motion-running`                | Sí          | Reanuda sin retirar el cursor; al quitarlo pausa        |
+| `motion-pause` + `prefers-reduced-motion: reduce`         | Sí          | La entrada/salida completa y el contenido queda visible |
 
 Tampoco uses `will-change` de forma permanente: la biblioteca no lo declara y
 las animaciones de `opacity`/`transform` ya se resuelven en el compositor.
@@ -247,8 +264,10 @@ explícita de movimiento compartido con su propia API y tokens. Migrar los
 ## Accesibilidad y rendimiento
 
 - `prefers-reduced-motion: reduce` reduce las duraciones a `0.01ms`, anula
-  desplazamiento/escala y desactiva `motion-hover-lift` (`R-AC-6`). El
-  contenido queda visible y las salidas siguen emitiendo `animationend`.
+  desplazamiento/escala, desactiva `motion-hover-lift` y fuerza
+  `animation-play-state: running` en los seis efectos de entrada/salida
+  (`R-AC-6`). El contenido queda visible incluso con `motion-pause`, y las
+  salidas siguen emitiendo `animationend` para `animate.leave`.
 - Solo se animan `opacity` y `transform`.
 - No hay animaciones automáticas ni bucles decorativos: cada efecto se activa
   con una clase o con `animate.enter`/`animate.leave`.
