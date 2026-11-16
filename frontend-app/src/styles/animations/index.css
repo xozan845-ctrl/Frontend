@@ -1,0 +1,9 @@
+/**
+ * Punto de entrada de la biblioteca de animaciones.
+ * Se importa una sola vez desde `src/styles.css`; los componentes consumen
+ * las clases `motion-*` directamente en sus plantillas.
+ */
+@import './tokens.css';
+@import './keyframes.css';
+@import './utilities.css';
+@import './reduced-motion.css';

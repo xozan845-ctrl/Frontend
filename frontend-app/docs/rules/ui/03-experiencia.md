@@ -97,6 +97,36 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `sales`, `purchases`, `catalog`, `products`, `account`, `banks` y `payables`.
 Ratchet cerrado: **36 raíces adoptadas y backlog 0**.
 
+## Biblioteca de animaciones compartida (`R-UX-5`, `R-AC-6`)
+
+`src/styles/animations/` centraliza el movimiento reutilizable:
+
+- `tokens.css` — tokens `--motion-*` (duración, retraso, distancia y easing).
+- `keyframes.css` — secuencias compartidas `app-motion-*`.
+- `utilities.css` — clases `motion-*` que se aplican en las plantillas.
+- `reduced-motion.css` — adaptación a `prefers-reduced-motion: reduce`.
+- `index.css` — entrada única, importada desde `src/styles.css`.
+
+Reglas de convivencia:
+
+- Las animaciones de Tailwind (`animate-fade-in`, `animate-slide-up`, …) siguen
+  declaradas en `tailwind.config.js` (`R-UX-5`); la biblioteca no las duplica ni
+  las reemplaza.
+- Las clases `motion-*` son explícitas: no hay animaciones automáticas ni bucles
+  por defecto. Los efectos de entrada/salida se aplican por clase o con
+  `animate.enter`/`animate.leave`; `appScrollReveal` sigue siendo el mecanismo
+  de entrada en viewport.
+- Un elemento usa un solo efecto de entrada/salida; duración, retraso y pausa se
+  combinan como modificadores.
+- `prefers-reduced-motion: reduce` reduce las duraciones a `0.01ms`, anula
+  desplazamiento/escala y desactiva `motion-hover-lift`, de modo que el contenido
+  sigue visible y las salidas siguen emitiendo `animationend` (`R-AC-6`).
+- La biblioteca no define tokens ni primitivos Glass: `src/styles.css` sigue
+  siendo su única fuente (`R-UX-7`).
+
+El catálogo completo y los ejemplos viven en
+[`src/styles/animations/README.md`](../../../src/styles/animations/README.md).
+
 ## Notas
 
 - `R-UX-1` está implementado en `products` (`skeleton-loader`, `empty-state`) y

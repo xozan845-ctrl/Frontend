@@ -15,6 +15,10 @@ Reglas de la capa de presentación: **accesibilidad** y **experiencia (UX/UI)**
 | `01-accesibilidad.md` | Nombre accesible, teclado, foco, imágenes, diálogos, contraste, movimiento   | `R-AC` (1–7) |
 | `03-experiencia.md`   | Estados de carga/error/vacío, responsive, dark mode, tokens, SEO/PWA y Glass | `R-UX` (1–8) |
 
+> El movimiento compartido (`--motion-*`, `motion-*`, `app-motion-*`) vive en
+> [`src/styles/animations/`](../../../src/styles/animations/README.md) y se
+> documenta en [`03-experiencia.md`](./03-experiencia.md).
+>
 > Los derivados (AUDIT, CHECKLIST, historiales) viven en
 > [`../_meta/`](../_meta/README.md).
 
