@@ -1,0 +1,84 @@
+/**
+ * Secuencias de movimiento compartidas (`app-motion-*`).
+ *
+ * El prefijo evita colisiones con los keyframes de Tailwind (`fadeIn`,
+ * `slideUp`, `slideDown`, `scaleIn`) y con los keyframes locales de algunos
+ * componentes (`slideUpFade`, `dropdownIn`, `shimmer`, `barPulse`, etc.).
+ *
+ * Solo animan `opacity` y `transform` para que el navegador pueda resolverlas
+ * en el compositor.
+ */
+
+@keyframes app-motion-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-motion-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* Entra desde abajo: el elemento arranca por debajo de su posición final. */
+@keyframes app-motion-slide-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-slide-distance, var(--motion-distance-md)), 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Entra desde arriba: el elemento arranca por encima de su posición final. */
+@keyframes app-motion-slide-down {
+  from {
+    opacity: 0;
+    transform: translate3d(
+      0,
+      calc(-1 * var(--motion-slide-distance, var(--motion-distance-md))),
+      0
+    );
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes app-motion-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--motion-scale-from));
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes app-motion-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(var(--motion-scale-to));
+  }
+}

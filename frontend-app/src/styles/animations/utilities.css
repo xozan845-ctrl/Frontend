@@ -1,0 +1,118 @@
+/**
+ * API pública de movimiento: clases `motion-*` para plantillas.
+ *
+ * Reglas de composición:
+ * - Los efectos de entrada/salida declaran `animation`; son mutuamente
+ *   excluyentes en un mismo elemento.
+ * - `.motion-duration-*`, `.motion-delay-*` y `.motion-pause*` se declaran
+ *   después para poder ajustar cualquier efecto sin pelear con el shorthand.
+ * - `.motion-hover-lift` solo declara `transition` y `transform` en `:hover`.
+ *   No se combina con `.card-hover`/`.glass-hover` (ya elevan) ni con entradas
+ *   basadas en `transform` en el mismo elemento.
+ * - Las entradas usan `backwards` para no dejar un `transform` persistente;
+ *   las salidas usan `forwards` para conservar el estado final hasta que el
+ *   elemento se retire del DOM.
+ */
+
+/* Entrada/salida por opacidad */
+.motion-fade-in {
+  animation: app-motion-fade-in var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-decelerate)) var(--motion-delay) backwards;
+}
+
+.motion-fade-out {
+  animation: app-motion-fade-out var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-accelerate)) var(--motion-delay) forwards;
+}
+
+/* Entrada desde abajo/arriba */
+.motion-slide-up {
+  animation: app-motion-slide-up var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-decelerate)) var(--motion-delay) backwards;
+}
+
+.motion-slide-down {
+  animation: app-motion-slide-down var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-decelerate)) var(--motion-delay) backwards;
+}
+
+/* Entrada/salida por escala */
+.motion-scale-in {
+  animation: app-motion-scale-in var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-decelerate)) var(--motion-delay) backwards;
+}
+
+.motion-scale-out {
+  animation: app-motion-scale-out var(--motion-duration)
+    var(--motion-ease, var(--motion-ease-accelerate)) var(--motion-delay) forwards;
+}
+
+/*
+ * Elevación al pasar el cursor. La doble clase asegura que la transición no
+ * sea reemplazada por primitivos globales (`.card`, `.glass-*`) que también
+ * declaran `transition` en `src/styles.css`.
+ */
+.motion-hover-lift.motion-hover-lift {
+  transition: transform var(--motion-duration) var(--motion-ease, var(--motion-ease-standard));
+}
+
+@media (hover: hover) {
+  .motion-hover-lift.motion-hover-lift:hover {
+    transform: translate3d(0, var(--motion-lift-distance), 0);
+  }
+}
+
+/* Duración rápida, normal y lenta */
+.motion-duration-fast {
+  --motion-duration: var(--motion-duration-sm);
+  animation-duration: var(--motion-duration-sm);
+}
+
+.motion-duration-normal {
+  --motion-duration: var(--motion-duration-md);
+  animation-duration: var(--motion-duration-md);
+}
+
+.motion-duration-slow {
+  --motion-duration: var(--motion-duration-lg);
+  animation-duration: var(--motion-duration-lg);
+}
+
+/* Retrasos */
+.motion-delay-none {
+  --motion-delay: 0ms;
+  animation-delay: 0ms;
+}
+
+.motion-delay-1 {
+  --motion-delay: var(--motion-delay-1);
+  animation-delay: var(--motion-delay-1);
+}
+
+.motion-delay-2 {
+  --motion-delay: var(--motion-delay-2);
+  animation-delay: var(--motion-delay-2);
+}
+
+.motion-delay-3 {
+  --motion-delay: var(--motion-delay-3);
+  animation-delay: var(--motion-delay-3);
+}
+
+.motion-delay-4 {
+  --motion-delay: var(--motion-delay-4);
+  animation-delay: var(--motion-delay-4);
+}
+
+/* Pausa/reanudación para efectos continuos (propios o de Tailwind) */
+.motion-pause {
+  animation-play-state: paused;
+}
+
+.motion-pause-on-hover:hover {
+  animation-play-state: paused;
+}
+
+.motion-running {
+  animation-play-state: running;
+}

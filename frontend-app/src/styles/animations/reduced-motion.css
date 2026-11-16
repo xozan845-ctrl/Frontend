@@ -1,0 +1,38 @@
+/**
+ * Adaptación de la biblioteca a `prefers-reduced-motion: reduce` (`R-AC-6`).
+ *
+ * La política global de `src/styles.css` ya reduce duraciones a `0.01ms`. Aquí
+ * se refuerza para esta biblioteca: se anula el desplazamiento/escala, se
+ * desactiva la elevación al hover y se conservan las animaciones con duración
+ * mínima para que los eventos `animationend` (usados por `animate.leave`) se
+ * sigan emitiendo y el contenido nunca quede oculto ni bloqueado.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .motion-fade-in,
+  .motion-fade-out,
+  .motion-slide-up,
+  .motion-slide-down,
+  .motion-scale-in,
+  .motion-scale-out {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .motion-slide-up,
+  .motion-slide-down {
+    --motion-slide-distance: 0px;
+  }
+
+  .motion-scale-in,
+  .motion-scale-out {
+    --motion-scale-from: 1;
+    --motion-scale-to: 1;
+  }
+
+  .motion-hover-lift.motion-hover-lift,
+  .motion-hover-lift.motion-hover-lift:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+}

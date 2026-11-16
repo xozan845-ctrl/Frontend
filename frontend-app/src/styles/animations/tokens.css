@@ -1,0 +1,47 @@
+/**
+ * Tokens de movimiento compartidos (`--motion-*`).
+ *
+ * Son la única fuente de duración, retraso, distancia y aceleración para la
+ * biblioteca. Las utilidades `.motion-*` los consumen; un consumidor puede
+ * sobreescribir un token en su propio elemento sin duplicar keyframes.
+ *
+ * No define tokens Glass ni primitivos visuales: eso vive en `src/styles.css`
+ * (`R-UX-7`).
+ */
+:root {
+  /* Duraciones base */
+  --motion-duration-xs: 100ms;
+  --motion-duration-sm: 150ms;
+  --motion-duration-md: 250ms;
+  --motion-duration-lg: 400ms;
+  --motion-duration-xl: 600ms;
+
+  /* Duración efectiva; `.motion-duration-*` la sobreescribe por elemento. */
+  --motion-duration: var(--motion-duration-md);
+
+  /* Retrasos */
+  --motion-delay-1: 75ms;
+  --motion-delay-2: 150ms;
+  --motion-delay-3: 300ms;
+  --motion-delay-4: 500ms;
+
+  /* Retraso efectivo; `.motion-delay-*` lo sobreescribe por elemento. */
+  --motion-delay: 0ms;
+
+  /* Distancias de desplazamiento */
+  --motion-distance-sm: 0.5rem;
+  --motion-distance-md: 1rem;
+  --motion-distance-lg: 1.5rem;
+
+  /* Elevación de interacción */
+  --motion-lift-distance: -0.125rem;
+
+  /* Escala suave de entrada/salida */
+  --motion-scale-from: 0.96;
+  --motion-scale-to: 0.96;
+
+  /* Aceleraciones */
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-decelerate: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+}
