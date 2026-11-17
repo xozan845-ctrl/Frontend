@@ -59,4 +59,28 @@ describe('AppVersionService', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(service.version()).toBe('1.28.0');
   });
+
+  // regression: version-source — el respaldo corresponde al build instalado.
+  it('debe mostrar la versión compilada mientras version.json está pendiente', () => {
+    globalThis.fetch = vi.fn().mockReturnValue(new Promise(() => {})) as typeof fetch;
+    const service = setup();
+
+    expect(service.version()).toBe(environment.appVersion);
+    expect(service.changes()).toEqual([]);
+  });
+
+  it.each([undefined, '', 123])(
+    'debe usar la versión compilada cuando el campo version es inválido (%s)',
+    async (version) => {
+      globalThis.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ version }),
+      }) as typeof fetch;
+      const service = setup();
+
+      await service.load(true);
+
+      expect(service.version()).toBe(environment.appVersion);
+    },
+  );
 });

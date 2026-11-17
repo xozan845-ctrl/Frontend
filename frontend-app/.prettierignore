@@ -6,3 +6,5 @@ coverage
 out-tsc
 # Lockfile generado por npm
 package-lock.json
+src/environments/app-version.generated.ts
+tmp

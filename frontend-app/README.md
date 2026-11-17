@@ -89,6 +89,12 @@ permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
 
 ## 📜 Scripts
 
+La versión mostrada se genera desde `package.json.version` (o `APP_VERSION` en
+CI) al instalar y antes de iniciar, compilar, probar o verificar tipos.
+`public/version.json` y `src/environments/app-version.generated.ts` son
+artefactos ignorados por Git; no se editan los environments al publicar una
+versión. Ver [`scripts/README.md`](./scripts/README.md#versión-compilada-y-manifiesto-público).
+
 | Comando                                 | Descripción                                           |
 | :-------------------------------------- | :---------------------------------------------------- |
 | `npm start`                             | Servidor de desarrollo en `http://localhost:4200`     |

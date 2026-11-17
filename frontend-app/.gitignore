@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 /public/version.json
+/src/environments/app-version.generated.ts
 
 # Node
 /node_modules

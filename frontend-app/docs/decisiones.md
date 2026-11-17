@@ -2166,3 +2166,19 @@ contexto y consecuencias.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.
+
+## ADR-85: Versión compilada y manifiesto desde una fuente común
+
+- **Fecha**: 2026-11-17
+- **Estado**: Aceptado
+- **Contexto**: los environments conservaban `1.26.0` mientras el paquete era
+  `1.27.0`; la UI inicial y el respaldo offline podían mostrar una versión vieja.
+- **Decisión**: el generador existente emite tanto `public/version.json` como
+  una constante TypeScript ignorada por Git, importada por los tres environments.
+  Ambos usan `APP_VERSION.trim()` cuando no está vacío, o `package.json.version`.
+  `postinstall` y los comandos npm de desarrollo, build, pruebas y tipos generan
+  los artefactos antes de consumirlos.
+- **Consecuencias**: la versión efectiva coincide incluso sin red; un checkout
+  limpio necesita `npm ci` con scripts habilitados, o ejecutar el generador antes
+  de invocar herramientas directamente. Los bumps siguen el flujo de release
+  existente y no requieren editar los environments.

@@ -271,12 +271,32 @@ exige documentación **del área** (rules de arquitectura/frontend/ui/security/t
 
 ## Utilidades de build (no son suites de gobernanza)
 
-| Script                                       | Uso                                                                                                                                                                                                                       |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commands/generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                                                      |
-| `commands/generate-version.mjs`              | `prebuild`/`prestart`: escribe `public/version.json` (ignorado por Git) con la versión de `package.json` o `APP_VERSION` y las novedades `feat/fix/perf/refactor` desde el último tag. El aviso PWA lo consume sin caché. |
-| `commands/generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53).                         |
-| `commands/generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                                                      |
+### Versión compilada y manifiesto público
+
+`commands/generate-version.mjs` produce `public/version.json` y
+`src/environments/app-version.generated.ts`, ambos ignorados por Git. Los tres
+environments importan `APP_VERSION` del segundo: la UI inicial y su respaldo
+offline coinciden con el manifiesto del build.
+
+La fuente base es `package.json.version`. `APP_VERSION` (opcional, por defecto
+ausente) sustituye esa versión en ambos artefactos después de aplicar `trim`;
+un valor vacío conserva la versión del paquete. CI puede usar `1.27.0+123`
+para identificar una compilación sin cambiar la versión semver del paquete.
+
+La generación corre en `postinstall` y antes de `npm run ng`, `start`, `build`,
+`watch`, `test` y `typecheck`. Un checkout limpio se prepara con `npm ci`.
+Si se omiten scripts de instalación o se invoca `ng`/`tsc` directamente, ejecutar
+primero `node scripts/commands/generate-version.mjs`.
+
+`generate-version.test.mjs` prueba la generación en carpetas temporales sin Git
+ni backend: fuente del paquete, override de CI y override vacío.
+
+| Script                                       | Uso                                                                                                                                                                                                            |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commands/generate-og-image.mjs`             | Genera `public/og-image.png` y `public/og-invitacion.png` (1200 × 630) desde `docs/assets/*.html` con Playwright. Se ejecuta con `npm run og-image`.                                                           |
+| `commands/generate-version.mjs`              | Instalación y prehooks npm: genera `public/version.json` y `src/environments/app-version.generated.ts` desde `package.json` o `APP_VERSION`; el manifiesto incluye novedades de Git y lo consume el aviso PWA. |
+| `commands/generate-invitation-html.mjs`      | `postbuild`: copia el `index.html` compilado y escribe `invitacion.html` con título, Open Graph/Twitter y `noindex` propios. `firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53).              |
+| `commands/generate-invitation-html.test.mjs` | Autotest del generador: metadatos de invitación, `noindex`, conservación del shell de Angular y rechazo de un HTML sin `<app-root>`.                                                                           |
 
 Estas utilidades no forman parte del motor de reglas; sus pruebas se ejecutan en
 `npm run test:engine` (por el patrón `scripts/commands/*.test.mjs`).
