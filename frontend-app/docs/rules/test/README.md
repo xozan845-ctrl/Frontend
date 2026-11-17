@@ -6,7 +6,7 @@ requisito) y se mantiene: **el test valida el requisito, no la implementación**
 
 El stack de pruebas es **Vitest** con `@angular/build:unit-test` y **Angular
 TestBed**. Las capas de esta área son el estándar exigible; el estado vigente
-(**117 archivos / 730 tests**) vive en
+con sus métricas y evidencia vive en
 [`../_meta/AUDIT.md`](../_meta/AUDIT.md).
 
 ## Archivos
@@ -94,7 +94,6 @@ npm audit --audit-level=high   # R-QA-6: security gate
 
 ## Pendientes
 
-El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`):
-**sin deudas abiertas** (12ª auditoría). Los pendientes históricos —cobertura
-crítica (`R-QA-1`), specs de los componentes con lógica (`R-CP-1`) y fixtures de
-contrato versionados (`R-C-8`)— quedaron cerrados.
+El estado vigente y las deudas abiertas viven en
+[`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`). Los cierres históricos se
+conservan en el histórico y no sustituyen la evidencia de una ejecución actual.

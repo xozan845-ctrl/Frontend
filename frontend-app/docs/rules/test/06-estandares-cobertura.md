@@ -35,19 +35,19 @@ Todo PR incluye las capas marcadas con ✅ para el tipo de cambio tocado.
 
 ## Gates de CI (bloquean el merge)
 
-Estado verificado contra el repo: la CI vive en `.github/workflows/ci.yml`
-([`../ci/README.md`](../ci/README.md)) y los gates **G-1…G-6 + R-QA-6** están
-efectivos. ✅ = existe y bloquea · ⏸ = regla vigente, paso no configurado (deuda)
-· N/A = no aplica.
+La CI vive en `.github/workflows/ci.yml` ([`../ci/README.md`](../ci/README.md)).
+La tabla describe la implementación de cada gate; sus resultados medidos,
+fecha, SHA y límites viven en [`../_meta/AUDIT.md`](../_meta/AUDIT.md).
+La presencia de un job no demuestra una ejecución aprobada ni protección remota.
 
 | Gate | Condición                                                                     | Estado                                    |
 | ---- | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.                        | ✅ `npm test` (144 archivos / 826 tests)  |
+| G-1  | Suite unit + componentes en verde (`npm test`), 100 %.                        | Job `test`; evidencia en `AUDIT.md`       |
 | G-2  | Cobertura ≥ umbral vigente (`R-COV-1`, `R-COV-4`): **94/88/93/95**.           | ✅ `coverageThresholds` en `angular.json` |
 | G-3  | `npm run typecheck` + `npm run build` en verde (tipos + budgets de `R-PF-1`). | ✅ job `typecheck` + `build`              |
 | G-4  | Formato conforme: `prettier --check .`.                                       | ✅                                        |
 | G-5  | Lint en verde y sin warnings (`eslint . --max-warnings=0`).                   | ✅ `eslint.config.mjs`                    |
-| G-6  | E2E de flujos críticos en verde antes de release.                             | ✅ Playwright, 13 flujos                  |
+| G-6  | E2E de flujos críticos en verde antes de release.                             | Job `e2e`; evidencia en `AUDIT.md`        |
 
 > El **security gate** (`npm audit --audit-level=high`) no es un `G-*`: es la
 > regla `R-QA-6`.

@@ -80,14 +80,12 @@ El área `test/` es el ejemplo canónico al que apuntan las demás.
 
 ## Estado actual (resumen)
 
-El repo tiene **117 archivos / 730 tests**, cobertura global
-94.28 / 88.14 / 93.76 / 95.38, CI en **6 jobs**
-(`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 13 flujos**
-(Playwright) y pipeline de despliegue (Docker + nginx + CSP). La
-**estructura enterprise** (`core/ · shared/ · layout/ · features/`) está
-**aceptada (ADR-12) y en migración**; el estado vigente (y las deudas abiertas,
-hoy ninguna) vive en [`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`); aquí solo
-se describe el punto fijo.
+Las métricas de pruebas, cobertura y motor, la evidencia de los gates y las
+deudas abiertas viven en [`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`).
+Cada medición identifica fecha, entorno y código auditado; los resultados de
+runs anteriores se conservan en [`_meta/AUDIT-HISTORY.md`](./_meta/AUDIT-HISTORY.md).
+El inventario de workflows se describe en [`ci/`](./ci/README.md) y la operación
+de despliegue en [`cd/`](./cd/README.md).
 
 ## Decisión de flujo
 
