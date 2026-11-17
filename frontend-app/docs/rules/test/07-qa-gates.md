@@ -20,5 +20,7 @@ vive lo que el pipeline exige **como política global**.
 ## Notas
 
 - `R-QA-6` no es un gate `G-*` ([`06-estandares-cobertura.md`](./06-estandares-cobertura.md)):
-  es política de seguridad. Hoy no hay CI, así que se verifica en local antes de
-  cada release; al crear `.github/workflows/ci.yml` se convierte en job.
+  es política de seguridad. El job `security-gate` de
+  `.github/workflows/ci.yml` ejecuta `npm audit --audit-level=high`; un fallo
+  bloquea los jobs de calidad que dependen de él. Los disparadores y las
+  dependencias del pipeline se documentan en [`../ci/01-flujos.md`](../ci/01-flujos.md).
