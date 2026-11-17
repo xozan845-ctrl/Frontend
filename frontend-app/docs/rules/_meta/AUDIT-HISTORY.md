@@ -615,3 +615,25 @@
 - **Resultado:** 360 archivos / 1.940 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 27 — Evidencia coherente y versión generada (2026-11-17)
+
+- **Código auditado:** `31e3b3ffda199db140ce8b67e9c322a26c28f6f4` (PR #434),
+  comparado con `main` en `be17d3e434a53c2bc048a1db2831e364f27e9e0d`.
+- **Entorno local:** Windows, Node 24.16.0, npm 11.13.0; no equivalente a CI Linux.
+- **Unit/componentes:** 360 archivos / 1.944 tests; cobertura S/B/F/L
+  94.51/88.09/94.33/96.11. Base medida: 1.940 tests,
+  94.51/88.05/94.33/96.11. Los umbrales no cambian.
+- **Motor:** 46 checks / 24 suites aprobados, 53/259 IDs; autotests 62/62.
+  Glass: 35 raíces, backlog 0, requisitos 15/15.
+- **Tipos/lint/CSS/build:** correctos; initial 545,93 kB, budget correcto.
+- **E2E:** 61/67 aprobados; seis fallos por snapshots win32 ausentes. Las
+  capturas generadas se conservaron fuera del stage, sin alterar baselines Linux.
+- **Deudas verificadas:** auditoría npm con 25 dependencias high, formato global
+  de la base con 1.426 archivos y auth.store con 72.09% de ramas críticas.
+- **CI:** Security Gate fallido en run 44143719700 del PR #431. Consulta de
+  protección de main: 404; estado remoto no verificado. Sin deploy ni release.
+- **Estado global:** **NO APTO PARA MERGE/RELEASE**. Snapshot reescrito sin
+  heredar resultados históricos y métricas repetidas sustituidas por referencias.

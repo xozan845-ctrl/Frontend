@@ -259,8 +259,9 @@ npm run release:readiness
 
 ## Estado
 
-Cobertura verificada: **44/252 IDs** de regla con check real; **sin
-contextuales** pendientes. `R-NC-10` (`any`) se verifica en ESLint
+La cobertura verificada del motor se calcula en cada `npm run rules:check`;
+las métricas ejecutadas y sus límites viven en
+[`docs/rules/_meta/AUDIT.md`](../docs/rules/_meta/AUDIT.md). `R-NC-10` (`any`) se verifica en ESLint
 (`@typescript-eslint/no-explicit-any`). Las suites de git (`git-commits`,
 `git-branch`) cubren `R-GC-1..4` y `R-GB-2`; `R-GA` (stage), `R-GP` (push) y
 `R-PR` (PR) siguen siendo proceso y revisión manual. La deuda arquitectónica
