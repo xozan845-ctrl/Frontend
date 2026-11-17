@@ -1,5 +1,5 @@
 /**
- * Genera `public/version.json` antes de build/start con:
+ * Genera `public/version.json` y la versión TypeScript antes de consumirlos:
  * - versión de `package.json` (no se edita el modal a mano);
  * - cambios user-facing desde el último tag, leídos de los commits de Git.
  *
@@ -7,7 +7,7 @@
  * worker lo consulta sin caché al detectar una actualización.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
@@ -61,6 +61,12 @@ const payload = {
   totalChanges: changes.length,
 };
 
+// El respaldo offline usa la misma versión efectiva que el manifiesto público.
+mkdirSync(join(root, 'src/environments'), { recursive: true });
+writeFileSync(
+  join(root, 'src/environments/app-version.generated.ts'),
+  `// Generado por scripts/commands/generate-version.mjs; no editar.\nexport const APP_VERSION = ${JSON.stringify(version)};\n`,
+);
 writeFileSync(join(root, 'public/version.json'), `${JSON.stringify(payload, null, 2)}\n`);
 console.log(
   `version.json: v${version} (${payload.changes.length}/${payload.totalChanges} cambios visibles)`,

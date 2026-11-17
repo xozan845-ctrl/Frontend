@@ -1,4 +1,5 @@
 import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.config';
+import { APP_VERSION } from './app-version.generated';
 
 // Entorno para pruebas E2E (R-E-12, hermetismo): el API Core Engine se responde
 // con los fixtures de Playwright (`e2e/api-mock.ts`) sobre `apiUrl: '/api/v1'`
@@ -7,7 +8,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 // pedidos) siguen en modo `mock`.
 export const environment = {
   production: false,
-  appVersion: '1.26.0',
+  appVersion: APP_VERSION,
   frontendUrl: 'http://localhost:4200',
   apiUrl: '/api/v1',
   aiScraperUrl: '/ai-api',
