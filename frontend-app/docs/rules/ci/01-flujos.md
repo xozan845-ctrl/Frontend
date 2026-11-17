@@ -22,6 +22,12 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 
 ## Jobs esperados (contrato)
 
+`ci.yml` declara 15 jobs. `release-readiness` corre solo en push a `main` y
+es informativo; `dependency-review` corre solo en PR. Los restantes dependen
+del resultado de sus predecesores. Este inventario no equivale a la lista de
+checks obligatorios de protección: esa política vive en `R-CI-7`, y su
+aplicación efectiva se verifica contra la configuración remota de `main`.
+
 | Job                 | Comando                                                                        | Gate                      |
 | ------------------- | ------------------------------------------------------------------------------ | ------------------------- |
 | `build`             | `npm ci` → `npm run build` + `check-budget`                                    | `G-3`, `R-PF-1`           |
@@ -30,7 +36,7 @@ Aplica a: cuándo y cómo se ejecutan los jobs de integración
 | `lint`              | `npm ci` → `npm run lint` (`--max-warnings=0`) + `npm run lint:css`            | `G-5`, `R-UX-7`           |
 | `typecheck`         | `npm ci` → `npm run typecheck`                                                 | `G-3`                     |
 | `rules`             | `npm ci` → `npm run rules:check` + `test:engine`                               | `R-DO-9`                  |
-| `security`          | `npm ci` → `npm audit --audit-level=high`                                      | `R-QA-6`                  |
+| `security-gate`     | `npm ci` → `npm audit --audit-level=high` + SBOM                               | `R-QA-6`, `R-EN-6`        |
 | `actionlint`        | `docker run rhysd/actionlint`                                                  | `R-CI-8`                  |
 | `shellcheck`        | `shellcheck docker-entrypoint.d/*.sh`                                          | `R-CI-8`                  |
 | `hadolint`          | `hadolint` sobre `Dockerfile`                                                  | `R-CI-8`                  |

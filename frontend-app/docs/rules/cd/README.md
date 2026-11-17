@@ -4,8 +4,12 @@ Entrega del frontend en **Firebase Hosting**. Cómo se construye la SPA, qué se
 despliega y cómo se revierte.
 
 > **Estado:** Firebase Hosting es el destino actual de producción. El repo
-> incluye `firebase.json`, `.firebaserc`, el comando de deploy y un smoke
-> versionado. `Dockerfile`/`nginx.conf` se conservan como artefactos alternos;
+> incluye `firebase.json`, `.firebaserc` y `deploy-firebase.yml`, que ejecuta
+> gates propios, build, deploy y smoke en cada push a `main` o disparo manual.
+> Si falta `FIREBASE_SERVICE_ACCOUNT`, el deploy y su smoke se omiten con aviso.
+> `firebase-hosting-smoke.yml` permite además un smoke manual o por
+> `repository_dispatch`; no se dispara automáticamente desde el workflow de deploy.
+> `Dockerfile`/`nginx.conf` se conservan como artefactos alternos;
 > Dockploy no forma parte de la operación actual. El guion operativo vive en
 > [`../../firebase-hosting-setup.md`](../../firebase-hosting-setup.md).
 
