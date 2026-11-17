@@ -80,7 +80,7 @@ estilos de componentes.
   sistema en editor y CI.
 - `R-UX-8` exige que toda superficie principal use Glass o un primitivo. Todas
   las raíces de presentación de `src/app` están en `GLASS_ADOPTION_ADOPTED`
-  (**37 raíces**) y `GLASS_ADOPTION_PENDING_MAX` es **0**; cualquier superficie
+  (inventario en `scripts/config/project.mjs`) y `GLASS_ADOPTION_PENDING_MAX` es **0**; cualquier superficie
   nueva debe nacer con Glass y no puede reabrir el backlog.
 - Los controles de acción usan `.btn-*` o `.icon-btn`; los rellenos crudos
   (`bg-accent-600`, `bg-blue-600`, etc.) también hacen fallar `R-UX-8`. Los

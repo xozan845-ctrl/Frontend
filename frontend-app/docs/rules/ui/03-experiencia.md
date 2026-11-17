@@ -95,7 +95,10 @@ El estado vivo del ratchet (raíces adoptadas y techo) se consulta en
 `shared/pipes`, `shared/ui`, `modules/company/expenses`, `vendor`, `modules/shared/clients`,
 `billing`, `cart`, `empresas`, `logistica`, `finance`,
 `sales`, `purchases`, `catalog`, `products`, `account`, `banks` y `payables`.
-Ratchet cerrado: **36 raíces adoptadas y backlog 0**.
+El inventario vigente vive en `GLASS_ADOPTION_ADOPTED` y el techo en
+`GLASS_ADOPTION_PENDING_MAX`, ambos en `scripts/config/project.mjs`. La salida
+de `visual-adoption-guards` informa las raíces y las superficies pendientes
+del checkout auditado; el snapshot de evidencia vive en `_meta/AUDIT.md`.
 
 ## Biblioteca de animaciones compartida (`R-UX-5`, `R-AC-6`)
 
