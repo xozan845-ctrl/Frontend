@@ -1,4 +1,4 @@
-import { computed, effect, inject } from '@angular/core';
+import { computed, effect, inject, DestroyRef } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -11,7 +11,14 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { EMPTY, pipe } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '@core/services/notification/notification.service';
-import { VENDOR_DRAFT_STORAGE_KEY, VENDOR_TAX_RATE } from '../../constants/vendor.constants';
+import { AuthStore, type User } from '../../../session/public-api';
+import {
+  LEGACY_VENDOR_DRAFT_STORAGE_KEY,
+  VENDOR_DRAFT_SCHEMA_VERSION,
+  vendorDraftStorageKey,
+  VENDOR_TAX_RATE,
+} from '../../constants/vendor.constants';
+import type { VendorDraftEnvelope, VendorDraftScope } from '../../models/vendor-draft.model';
 import {
   PosClient,
   CreateOrderPayload,
@@ -34,19 +41,19 @@ function todayIsoDate(): string {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
-function defaultInfo(): OrderDraftInfo {
+function defaultInfo(scope: VendorDraftScope | null = null): OrderDraftInfo {
   return {
-    storeId: '',
+    storeId: scope?.storeId ?? '',
     storeName: '',
     date: todayIsoDate(),
     deliveryMethod: 'retiro_tienda',
   };
 }
 
-function createInitialState(): OrderDraftState {
+function createInitialState(scope: VendorDraftScope | null = null): OrderDraftState {
   return {
     client: null,
-    info: defaultInfo(),
+    info: defaultInfo(scope),
     lines: [],
     discountPercent: 0,
     observations: '',
@@ -81,6 +88,30 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function toText(value: unknown, fallback = ''): string {
   return typeof value === 'string' && value.trim() ? value : fallback;
+}
+
+/** Dueño del borrador según la sesión activa; sin empresa o tienda no se persiste. */
+function scopeFromUser(user: User | null): VendorDraftScope | null {
+  if (!user) return null;
+  const tenantId = toText(user.tenantId);
+  const storeId = toText(user.storeId);
+  const userId = user.id ? String(user.id) : '';
+  if (!tenantId || !storeId || !userId) return null;
+  return { tenantId, storeId, userId };
+}
+
+function sameScope(a: VendorDraftScope | null, b: VendorDraftScope | null): boolean {
+  if (!a || !b) return a === b;
+  return a.tenantId === b.tenantId && a.storeId === b.storeId && a.userId === b.userId;
+}
+
+function sanitizeScope(value: unknown): VendorDraftScope | null {
+  if (!isRecord(value)) return null;
+  const tenantId = toText(value['tenantId']);
+  const storeId = toText(value['storeId']);
+  const userId = toText(value['userId']);
+  if (!tenantId || !storeId || !userId) return null;
+  return { tenantId, storeId, userId };
 }
 
 /** Producto del borrador saneado tras leer storage ajeno (`R-RB-4`). */
@@ -139,43 +170,70 @@ function sanitizeLines(value: unknown): OrderDraftLine[] {
   return lines;
 }
 
-/** Borrador persistido y saneado; `null` si el JSON está corrupto o no es un objeto. */
-function parseDraft(raw: string | null): OrderDraft | null {
+/** Borrador saneado; `null` si el valor no es un objeto válido (`R-RB-4`). */
+function sanitizeDraft(value: unknown): OrderDraft | null {
+  if (!isRecord(value)) return null;
+  return {
+    client: sanitizeClient(value['client']),
+    info: sanitizeInfo(value['info']),
+    lines: sanitizeLines(value['lines']),
+    discountPercent: clampPercent(value['discountPercent']),
+    observations: toText(value['observations']),
+  };
+}
+
+/** Envoltorio versionado; versión o dueño inválidos descartan el borrador. */
+function parseEnvelope(raw: string | null): VendorDraftEnvelope | null {
   if (!raw) return null;
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (!isRecord(parsed)) return null;
-    return {
-      client: sanitizeClient(parsed['client']),
-      info: sanitizeInfo(parsed['info']),
-      lines: sanitizeLines(parsed['lines']),
-      discountPercent: clampPercent(parsed['discountPercent']),
-      observations: toText(parsed['observations']),
+    if (!isRecord(parsed) || parsed['version'] !== VENDOR_DRAFT_SCHEMA_VERSION) return null;
+    const owner = sanitizeScope(parsed['owner']);
+    const draft = sanitizeDraft(parsed['draft']);
+    if (!owner || !draft) return null;
+    return { version: VENDOR_DRAFT_SCHEMA_VERSION, owner, draft };
+  } catch {
+    return null;
+  }
+}
+
+/** Hidrata solo si el envoltorio pertenece exactamente a la sesión activa. */
+function loadStoredDraft(scope: VendorDraftScope): OrderDraft | null {
+  try {
+    const envelope = parseEnvelope(localStorage.getItem(vendorDraftStorageKey(scope)));
+    if (!envelope || !sameScope(envelope.owner, scope)) return null;
+    if (envelope.draft.info.storeId && envelope.draft.info.storeId !== scope.storeId) return null;
+    return { ...envelope.draft, info: { ...envelope.draft.info, storeId: scope.storeId } };
+  } catch {
+    return null;
+  }
+}
+
+function persistDraft(scope: VendorDraftScope, draft: OrderDraft): void {
+  try {
+    const normalized: OrderDraft = { ...draft, info: { ...draft.info, storeId: scope.storeId } };
+    const envelope: VendorDraftEnvelope = {
+      version: VENDOR_DRAFT_SCHEMA_VERSION,
+      owner: scope,
+      draft: normalized,
     };
-  } catch {
-    return null;
-  }
-}
-
-function loadStoredDraft(): OrderDraft | null {
-  try {
-    return parseDraft(localStorage.getItem(VENDOR_DRAFT_STORAGE_KEY));
-  } catch {
-    return null;
-  }
-}
-
-function persistDraft(draft: OrderDraft): void {
-  try {
-    localStorage.setItem(VENDOR_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    localStorage.setItem(vendorDraftStorageKey(scope), JSON.stringify(envelope));
   } catch {
     // Storage no disponible: el borrador vive solo en memoria.
   }
 }
 
-function clearStoredDraft(): void {
+function clearStoredDraft(scope: VendorDraftScope): void {
   try {
-    localStorage.removeItem(VENDOR_DRAFT_STORAGE_KEY);
+    localStorage.removeItem(vendorDraftStorageKey(scope));
+  } catch {
+    // Storage no disponible: se ignora.
+  }
+}
+
+function removeLegacyDraft(): void {
+  try {
+    localStorage.removeItem(LEGACY_VENDOR_DRAFT_STORAGE_KEY);
   } catch {
     // Storage no disponible: se ignora.
   }
@@ -207,7 +265,10 @@ export const OrderDraftStore = signalStore(
       store,
       orderRepo = inject(VENDOR_ORDER_REPOSITORY),
       notificationService = inject(NotificationService),
+      authStore = inject(AuthStore),
     ) => {
+      const currentScope = (): VendorDraftScope | null => scopeFromUser(authStore.user());
+
       const draft = (): OrderDraft => ({
         client: store.client(),
         info: store.info(),
@@ -218,7 +279,7 @@ export const OrderDraftStore = signalStore(
 
       const buildPayload = (): CreateOrderPayload => ({
         clientId: store.client()?.id ?? null,
-        storeId: store.info().storeId,
+        storeId: currentScope()?.storeId ?? store.info().storeId,
         date: store.info().date,
         deliveryMethod: store.info().deliveryMethod,
         discountPercent: store.discountPercent(),
@@ -235,9 +296,16 @@ export const OrderDraftStore = signalStore(
           patchState(store, { client });
         },
 
-        /** Actualiza tienda, fecha o método de entrega del panel de información. */
+        /**
+         * Actualiza tienda, fecha o método de entrega del panel de información.
+         * La tienda siempre sale de la sesión activa (`R-ST-7`): nunca se factura
+         * en una tienda distinta a la del usuario autenticado.
+         */
         setOrderInfo(partial: Partial<OrderDraftInfo>): void {
-          patchState(store, { info: sanitizeInfo({ ...store.info(), ...partial }) });
+          const info = sanitizeInfo({ ...store.info(), ...partial });
+          const scope = currentScope();
+          if (scope) info.storeId = scope.storeId;
+          patchState(store, { info });
         },
 
         /**
@@ -290,17 +358,20 @@ export const OrderDraftStore = signalStore(
 
         /** Persiste el borrador y confirma al usuario (el guardado también es automático). */
         saveDraft(): void {
-          persistDraft(draft());
+          const scope = currentScope();
+          if (scope) persistDraft(scope, draft());
           notificationService.showSuccess('Borrador del pedido guardado.');
         },
 
         /** Descarta el borrador actual (memoria y storage), conservando la tienda. */
         clearDraft(): void {
-          const { storeId, storeName } = store.info();
-          clearStoredDraft();
+          const scope = currentScope();
+          const { storeName } = store.info();
+          if (scope) clearStoredDraft(scope);
+          else removeLegacyDraft();
           patchState(store, {
-            ...createInitialState(),
-            info: { ...defaultInfo(), storeId, storeName },
+            ...createInitialState(scope),
+            info: { ...defaultInfo(scope), storeName },
           });
         },
 
@@ -324,10 +395,12 @@ export const OrderDraftStore = signalStore(
 
               return orderRepo.createOrder(buildPayload()).pipe(
                 tap((order) => {
-                  const { storeId, storeName } = store.info();
+                  const scope = currentScope();
+                  const storeId = scope?.storeId ?? store.info().storeId;
+                  const { storeName } = store.info();
                   patchState(store, {
-                    ...createInitialState(),
-                    info: { ...defaultInfo(), storeId, storeName },
+                    ...createInitialState(scope),
+                    info: { ...defaultInfo(scope), storeId, storeName },
                     lastCreatedOrder: order,
                   });
                   notificationService.showSuccess(`Pedido ${order.id} registrado.`);
@@ -346,19 +419,42 @@ export const OrderDraftStore = signalStore(
     },
   ),
   withHooks({
-    onInit(store) {
-      const restored = loadStoredDraft();
-      if (restored) patchState(store, restored);
+    onInit(store, authStore = inject(AuthStore), destroyRef = inject(DestroyRef)) {
+      // El borrador global heredado no tiene dueño identificable: se descarta.
+      removeLegacyDraft();
 
-      // Persistencia centralizada y tolerante al salir de la ruta (`R-ST-7`).
+      const currentScope = (): VendorDraftScope | null => scopeFromUser(authStore.user());
+      let activeScope = currentScope();
+
+      if (activeScope) {
+        const restored = loadStoredDraft(activeScope);
+        patchState(store, restored ?? { info: defaultInfo(activeScope) });
+      }
+
+      // Persistencia centralizada por dueño y limpieza al cambiar de cuenta o
+      // tienda (`R-ST-7`, `R-SE-1`). Nunca se lee una clave de otra sesión.
       effect(() => {
-        persistDraft({
-          client: store.client(),
-          info: store.info(),
-          lines: store.lines(),
-          discountPercent: store.discountPercent(),
-          observations: store.observations(),
-        });
+        const nextScope = currentScope();
+        if (!sameScope(activeScope, nextScope)) {
+          if (activeScope) clearStoredDraft(activeScope);
+          activeScope = nextScope;
+          const restored = nextScope ? loadStoredDraft(nextScope) : null;
+          patchState(store, restored ?? createInitialState(nextScope));
+          return;
+        }
+        if (nextScope) {
+          persistDraft(nextScope, {
+            client: store.client(),
+            info: store.info(),
+            lines: store.lines(),
+            discountPercent: store.discountPercent(),
+            observations: store.observations(),
+          });
+        }
+      });
+
+      destroyRef.onDestroy(() => {
+        if (activeScope) clearStoredDraft(activeScope);
       });
     },
   }),

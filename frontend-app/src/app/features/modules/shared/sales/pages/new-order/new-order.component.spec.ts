@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -21,6 +22,7 @@ import {
 } from '@domains/store-sales/public-api';
 import { NotificationService } from '@core/services/notification/notification.service';
 import { SeoService } from '@core/services/seo/seo.service';
+import { AuthStore } from '@domains/session/public-api';
 
 const products: VendorProduct[] = [
   {
@@ -110,6 +112,7 @@ describe('NewOrderComponent (POS)', () => {
   let productRepo: VendorProductRepository;
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
   const seo = { setPage: vi.fn(), reset: vi.fn() };
+  const auth = { user: signal(null).asReadonly() };
 
   const setup = async () => {
     orderRepo = {
@@ -133,6 +136,7 @@ describe('NewOrderComponent (POS)', () => {
         { provide: VENDOR_PRODUCT_REPOSITORY, useValue: productRepo },
         { provide: NotificationService, useValue: notification },
         { provide: SeoService, useValue: seo },
+        { provide: AuthStore, useValue: auth },
         OrderDraftStore,
         VendorOrdersStore,
         ClientSearchStore,
