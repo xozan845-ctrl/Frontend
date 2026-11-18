@@ -594,6 +594,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'admin',
   'ai-scraper',
   'auth',
+  'session',
   'billing',
   'cart',
   'checkout',
