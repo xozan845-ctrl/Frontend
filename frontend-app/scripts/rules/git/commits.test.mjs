@@ -23,6 +23,7 @@ export default defineSuite({
       for (const subject of [
         'feat(cart): validar cupón de descuento (R-U-9)',
         'fix(auth): refrescar el token ante un 401',
+        'fix(session): invalidar renovaciones tardías (R-SE-1)',
         'refactor(architecture): agrupar state por unidad (R-AR-14)',
         'docs(rules): documentar las suites de git (R-DO-1)',
         'ci(rules): ejecutar el motor de gobernanza',

@@ -49,6 +49,9 @@ que son verificables por máquina.
 > primitivos compartidos de pedidos (ADR-57); `purchases` para el dominio de
 > compras, órdenes y proveedores (ADR-66); `workspace` para la composición
 > role-driven del backoffice y sus rutas compartidas (R-AR-12, R-AR-16).
+> `session` identifica el dominio `features/domains/session`, responsable de
+> autenticación y renovación de sesión (R-SE-1). Los ámbitos desconocidos siguen
+> siendo rechazados por el validador de commits (R-GC-1).
 >
 > El contrato de capas por feature de `architecture-features` se declara en
 > `FEATURE_CONTRACTS` y `FEATURE_ALLOWED_LAYERS` (`config/project.mjs`). Añadir,
