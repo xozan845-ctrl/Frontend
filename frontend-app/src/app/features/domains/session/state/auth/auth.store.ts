@@ -55,11 +55,22 @@ export const AuthStore = signalStore(
     ) => {
       // Deduplica renovaciones concurrentes disparadas por 401 (R-SE-1).
       let refreshInFlight: Promise<boolean> | null = null;
+      // Generación de sesión: invalida respuestas de renovación que pertenecen a
+      // un contexto ya reemplazado (logout, cambio de contraseña o de cuenta).
+      let sessionGeneration = 0;
+
+      const invalidateSessionRenewal = (): void => {
+        sessionGeneration += 1;
+        refreshInFlight = null;
+      };
 
       return {
         login: rxMethod<LoginCredentials>(
           pipe(
-            tap(() => patchState(store, { loading: true, error: null })),
+            tap(() => {
+              invalidateSessionRenewal();
+              patchState(store, { loading: true, error: null });
+            }),
             switchMap((credentials) =>
               authService.login(credentials).pipe(
                 tap((response) => {
@@ -83,7 +94,10 @@ export const AuthStore = signalStore(
         ),
         register: rxMethod<RegisterData>(
           pipe(
-            tap(() => patchState(store, { loading: true, error: null })),
+            tap(() => {
+              invalidateSessionRenewal();
+              patchState(store, { loading: true, error: null });
+            }),
             switchMap((userData) =>
               authService.register(userData).pipe(
                 tap((response) => {
@@ -109,10 +123,15 @@ export const AuthStore = signalStore(
         ),
         logout: rxMethod<void>(
           pipe(
-            tap(() => patchState(store, { loading: true, error: null })),
-            switchMap(() =>
-              authService.logout(store.refreshToken() ?? undefined).pipe(
+            tap(() => {
+              invalidateSessionRenewal();
+              patchState(store, { loading: true, error: null });
+            }),
+            switchMap(() => {
+              const logoutGeneration = sessionGeneration;
+              return authService.logout(store.refreshToken() ?? undefined).pipe(
                 tap(() => {
+                  if (logoutGeneration !== sessionGeneration) return;
                   patchState(store, {
                     user: null,
                     token: null,
@@ -122,6 +141,7 @@ export const AuthStore = signalStore(
                   notificationService.showInfo('Sesión cerrada correctamente');
                 }),
                 catchError((err: Error) => {
+                  if (logoutGeneration !== sessionGeneration) return EMPTY;
                   patchState(store, {
                     user: null,
                     token: null,
@@ -131,8 +151,8 @@ export const AuthStore = signalStore(
                   });
                   return EMPTY;
                 }),
-              ),
-            ),
+              );
+            }),
           ),
         ),
         clearError() {
@@ -153,10 +173,12 @@ export const AuthStore = signalStore(
         },
         /** Limpia la sesión local sin llamar al backend (p. ej. tras cambiar contraseña). */
         clearSession(): void {
+          invalidateSessionRenewal();
           patchState(store, { user: null, token: null, refreshToken: null, error: null });
         },
         /** Instala una sesión entregada por un flujo público, como una invitación aceptada. */
         setSession(response: { user: User; token?: string; refreshToken?: string }): void {
+          invalidateSessionRenewal();
           patchState(store, {
             user: response.user,
             token: response.token ?? null,
@@ -174,8 +196,10 @@ export const AuthStore = signalStore(
           const refreshToken = store.refreshToken();
           if (!refreshToken) return Promise.resolve(false);
 
+          const refreshGeneration = sessionGeneration;
           refreshInFlight = firstValueFrom(authService.refresh(refreshToken))
             .then((response) => {
+              if (refreshGeneration !== sessionGeneration) return false;
               patchState(store, {
                 user: response.user,
                 token: response.token ?? null,
@@ -185,6 +209,7 @@ export const AuthStore = signalStore(
               return Boolean(response.token);
             })
             .catch((err: Error) => {
+              if (refreshGeneration !== sessionGeneration) return false;
               patchState(store, {
                 user: null,
                 token: null,
@@ -194,7 +219,9 @@ export const AuthStore = signalStore(
               return false;
             })
             .finally(() => {
-              refreshInFlight = null;
+              if (refreshGeneration === sessionGeneration) {
+                refreshInFlight = null;
+              }
             });
           return refreshInFlight;
         },

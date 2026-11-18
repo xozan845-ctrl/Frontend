@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { delay, of, throwError } from 'rxjs';
+import { delay, of, Subject, throwError } from 'rxjs';
 import { AuthStore } from './auth.store';
 import { AuthRepository, AUTH_REPOSITORY } from '../../repositories/auth.repository';
 
@@ -379,6 +379,84 @@ describe('AuthStore', () => {
     expect(first).toBe(true);
     expect(second).toBe(true);
     expect(repo.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  // regression: R-SE-1 — una renovación tardía no debe resucitar una sesión cerrada.
+  it('no debe restaurar la sesión si la renovación se resuelve tras clearSession', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+
+    const refreshSubject = new Subject<typeof authResponse>();
+    vi.mocked(repo.refresh).mockReturnValue(refreshSubject.asObservable());
+
+    const renovacion = store.refreshTokenOnce();
+    store.clearSession();
+    refreshSubject.next(authResponse);
+    refreshSubject.complete();
+
+    await expect(renovacion).resolves.toBe(false);
+    expect(store.isAuthenticated()).toBe(false);
+    expect(store.user()).toBeNull();
+    expect(store.token()).toBeNull();
+    expect(store.refreshToken()).toBeNull();
+    await vi.waitFor(() => expect(sessionStorage.getItem('ecom_refresh_token')).toBeNull());
+  });
+
+  // regression: R-SE-1 — el resultado remoto solo aplica al contexto que inició la renovación.
+  it('debe conservar la cuenta nueva si la renovación anterior se resuelve tarde', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+
+    const refreshSubject = new Subject<typeof authResponse>();
+    vi.mocked(repo.refresh).mockReturnValue(refreshSubject.asObservable());
+    const renovacion = store.refreshTokenOnce();
+
+    const nuevaCuenta = {
+      user: { id: 2, email: 'luis@tienda.com', name: 'Luis' },
+      token: 'jwt-luis',
+      refreshToken: 'refresh-luis',
+    };
+    repo.login = vi.fn(() => of(nuevaCuenta));
+    store.login({ email: 'luis@tienda.com', password: 'secreto2' });
+    await vi.waitFor(() => expect(store.user()?.name).toBe('Luis'));
+
+    refreshSubject.next(authResponse);
+    refreshSubject.complete();
+
+    await expect(renovacion).resolves.toBe(false);
+    expect(store.user()?.id).toBe(2);
+    expect(store.token()).toBe('jwt-luis');
+    expect(store.refreshToken()).toBe('refresh-luis');
+  });
+
+  // regression: R-SE-1 — un fallo tardío tampoco debe limpiar el contexto más reciente.
+  it('no debe limpiar la cuenta nueva si falla una renovación anterior', async () => {
+    const store = setup();
+    store.login({ email: 'ana@tienda.com', password: 'secreto1' });
+    await vi.waitFor(() => expect(store.isAuthenticated()).toBe(true));
+
+    const refreshSubject = new Subject<typeof authResponse>();
+    vi.mocked(repo.refresh).mockReturnValue(refreshSubject.asObservable());
+    const renovacion = store.refreshTokenOnce();
+
+    const nuevaCuenta = {
+      user: { id: 2, email: 'luis@tienda.com', name: 'Luis' },
+      token: 'jwt-luis',
+      refreshToken: 'refresh-luis',
+    };
+    repo.login = vi.fn(() => of(nuevaCuenta));
+    store.login({ email: 'luis@tienda.com', password: 'secreto2' });
+    await vi.waitFor(() => expect(store.user()?.name).toBe('Luis'));
+
+    refreshSubject.error(new Error('expirada'));
+
+    await expect(renovacion).resolves.toBe(false);
+    expect(store.user()?.id).toBe(2);
+    expect(store.token()).toBe('jwt-luis');
+    expect(store.refreshToken()).toBe('refresh-luis');
+    expect(store.error()).toBeNull();
   });
 
   it('debe usar el mensaje por defecto cuando el logout falla sin mensaje', async () => {
