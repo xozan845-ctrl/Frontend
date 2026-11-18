@@ -1,3 +1,4 @@
+import type { VendorDraftScope } from '../models/vendor-draft.model';
 import { OrderStatus } from '../models/vendor-order.model';
 
 /** IVA aplicado al POS del vendedor (15 %, parametrizable, ADR-20). */
@@ -9,8 +10,23 @@ export const VENDOR_POLL_INTERVAL_MS = 15000;
 /** `debounce` del buscador de clientes del POS (`R-PF-6`). */
 export const CLIENT_SEARCH_DEBOUNCE_MS = 300;
 
-/** Clave del borrador del pedido en `localStorage` (`R-ST-7`, `R-NC-11`). */
-export const VENDOR_DRAFT_STORAGE_KEY = 'ecom_vendor_order_draft';
+/** Prefijo común de las claves del borrador del POS (`R-NC-11`). */
+export const VENDOR_DRAFT_STORAGE_PREFIX = 'ecom_vendor_order_draft';
+
+/**
+ * Clave global heredada del borrador (`R-ST-7`). No tiene dueño identificable,
+ * así que al iniciar el POS se elimina en lugar de migrarla.
+ */
+export const LEGACY_VENDOR_DRAFT_STORAGE_KEY = VENDOR_DRAFT_STORAGE_PREFIX;
+
+/** Versión del envoltorio persistido; un valor distinto descarta el borrador. */
+export const VENDOR_DRAFT_SCHEMA_VERSION = 2;
+
+/** Clave aislada por empresa, tienda y usuario (`R-ST-7`, `R-NC-11`). */
+export function vendorDraftStorageKey(scope: VendorDraftScope): string {
+  const encode = (value: string): string => encodeURIComponent(value || 'sin-definir');
+  return `${VENDOR_DRAFT_STORAGE_PREFIX}:v${VENDOR_DRAFT_SCHEMA_VERSION}:${encode(scope.tenantId)}:${encode(scope.storeId)}:${encode(scope.userId)}`;
+}
 
 /** Etiquetas humanas de estado para las tablas y badges del panel (`R-UX-4`). */
 

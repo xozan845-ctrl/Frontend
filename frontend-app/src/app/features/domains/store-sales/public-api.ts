@@ -3,10 +3,14 @@ export {
   CLIENT_SEARCH_DEBOUNCE_MS,
   ORDER_STATUS_ACTIONS,
   ORDER_STATUS_TRANSITIONS,
-  VENDOR_DRAFT_STORAGE_KEY,
+  LEGACY_VENDOR_DRAFT_STORAGE_KEY,
+  VENDOR_DRAFT_SCHEMA_VERSION,
+  VENDOR_DRAFT_STORAGE_PREFIX,
   VENDOR_POLL_INTERVAL_MS,
   VENDOR_TAX_RATE,
+  vendorDraftStorageKey,
 } from './constants/vendor.constants';
+export type { VendorDraftEnvelope, VendorDraftScope } from './models/vendor-draft.model';
 export type {
   PosClient,
   CreateClientPayload,

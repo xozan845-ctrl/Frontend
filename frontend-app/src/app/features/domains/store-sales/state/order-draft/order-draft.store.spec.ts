@@ -1,12 +1,18 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { OrderDraftStore } from './order-draft.store';
+import { AuthStore, type User } from '../../../session/public-api';
 import {
   VENDOR_ORDER_REPOSITORY,
   VendorOrderRepository,
 } from '../../repositories/vendor-order.repository';
 import { NotificationService } from '@core/services/notification/notification.service';
-import { VENDOR_DRAFT_STORAGE_KEY } from '../../constants/vendor.constants';
+import {
+  LEGACY_VENDOR_DRAFT_STORAGE_KEY,
+  VENDOR_DRAFT_SCHEMA_VERSION,
+  vendorDraftStorageKey,
+} from '../../constants/vendor.constants';
 import {
   PosClient,
   DeliveryMethod,
@@ -43,8 +49,32 @@ const order: VendorOrder = {
   notes: '',
 };
 
+const userA: User = {
+  id: 'u-1',
+  email: 'vendedor-a@tienda.com',
+  name: 'Vendedor A',
+  tenantId: 'empresa-1',
+  storeId: 't-1',
+};
+
+const userB: User = {
+  id: 'u-2',
+  email: 'vendedor-b@tienda.com',
+  name: 'Vendedor B',
+  tenantId: 'empresa-1',
+  storeId: 't-1',
+};
+
+const draftScope = { tenantId: 'empresa-1', storeId: 't-1', userId: 'u-1' };
+const scopedDraftKey = (userId = 'u-1', storeId = 't-1') =>
+  vendorDraftStorageKey({ tenantId: 'empresa-1', storeId, userId });
+const envelope = (draft: unknown, owner = draftScope) =>
+  JSON.stringify({ version: VENDOR_DRAFT_SCHEMA_VERSION, owner, draft });
+
 describe('OrderDraftStore', () => {
   let repo: VendorOrderRepository;
+  const sessionUser = signal<User | null>(userA);
+  const authStore = { user: sessionUser.asReadonly() };
   const notification = { showSuccess: vi.fn(), showError: vi.fn(), showInfo: vi.fn() };
 
   const setup = () => {
@@ -59,6 +89,7 @@ describe('OrderDraftStore', () => {
         OrderDraftStore,
         { provide: VENDOR_ORDER_REPOSITORY, useValue: repo },
         { provide: NotificationService, useValue: notification },
+        { provide: AuthStore, useValue: authStore },
       ],
     });
     return TestBed.inject(OrderDraftStore);
@@ -67,6 +98,7 @@ describe('OrderDraftStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    sessionUser.set(userA);
     TestBed.resetTestingModule();
   });
 
@@ -223,16 +255,27 @@ describe('OrderDraftStore', () => {
     draft.setObservations('Entregar por la tarde');
 
     await vi.waitFor(() => {
-      const stored = JSON.parse(localStorage.getItem(VENDOR_DRAFT_STORAGE_KEY) ?? 'null');
-      expect(stored?.lines).toHaveLength(1);
-      expect(stored?.observations).toBe('Entregar por la tarde');
+      const stored = JSON.parse(localStorage.getItem(scopedDraftKey()) ?? 'null');
+      expect(stored?.draft?.lines).toHaveLength(1);
+      expect(stored?.draft?.observations).toBe('Entregar por la tarde');
     });
 
     draft.clearDraft();
-    expect(localStorage.getItem(VENDOR_DRAFT_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(scopedDraftKey())).toBeNull();
     expect(draft.client()).toBeNull();
     expect(draft.lines()).toEqual([]);
     expect(draft.observations()).toBe('');
+  });
+
+  it('debe limpiar el borrador aunque no haya sesión activa', () => {
+    sessionUser.set(null);
+    const draft = setup();
+    draft.addLine(product('p-1', 180));
+
+    draft.clearDraft();
+
+    expect(draft.lines()).toEqual([]);
+    expect(draft.info().storeId).toBe('');
   });
 
   it('debe conservar la tienda al limpiar el borrador', () => {
@@ -249,8 +292,8 @@ describe('OrderDraftStore', () => {
 
   it('debe hidratar el borrador guardado al crear el store', () => {
     localStorage.setItem(
-      VENDOR_DRAFT_STORAGE_KEY,
-      JSON.stringify({
+      scopedDraftKey(),
+      envelope({
         client: { id: 'vc-1', code: 'CL-00125', name: 'Carla López', phone: '', email: '' },
         info: {
           storeId: 't-1',
@@ -278,8 +321,112 @@ describe('OrderDraftStore', () => {
     expect(draft.total()).toBe(393.3);
   });
 
+  // regression: R-ST-7/R-SE-1 — el borrador no puede filtrarse entre cuentas.
+  it('no debe restaurar el borrador de otro usuario en el mismo navegador', async () => {
+    const first = setup();
+    first.selectClient(client);
+    first.addLine(product('p-1', 180));
+    await vi.waitFor(() => expect(localStorage.length).toBeGreaterThan(0));
+
+    TestBed.resetTestingModule();
+    sessionUser.set(userB);
+    const second = setup();
+
+    expect(second.client()).toBeNull();
+    expect(second.lines()).toEqual([]);
+    expect(second.observations()).toBe('');
+  });
+
+  // regression: R-SE-1 — un envoltorio copiado a otra clave no se acepta.
+  it('debe descartar un borrador cuyo dueño no coincide con la sesión', () => {
+    localStorage.setItem(
+      scopedDraftKey('u-2'),
+      envelope({
+        client,
+        info: { storeId: 't-1', storeName: 'Tienda A', date: '2026-10-20' },
+        lines: [{ product: product('p-1', 180), quantity: 1 }],
+        discountPercent: 0,
+        observations: 'Ajeno',
+      }),
+    );
+    sessionUser.set(userB);
+
+    const draft = setup();
+
+    expect(draft.client()).toBeNull();
+    expect(draft.lines()).toEqual([]);
+    expect(draft.observations()).toBe('');
+  });
+
+  it('debe descartar un envoltorio con versión desconocida', () => {
+    localStorage.setItem(
+      scopedDraftKey(),
+      JSON.stringify({
+        version: VENDOR_DRAFT_SCHEMA_VERSION + 1,
+        owner: draftScope,
+        draft: {
+          client,
+          info: { storeId: 't-1' },
+          lines: [{ product: product('p-1', 180), quantity: 1 }],
+        },
+      }),
+    );
+
+    const draft = setup();
+
+    expect(draft.client()).toBeNull();
+    expect(draft.lines()).toEqual([]);
+  });
+
+  // regression: R-ST-7 — cambiar de tienda no arrastra el pedido anterior.
+  it('debe invalidar el borrador al cambiar de tienda y facturar en la tienda nueva', async () => {
+    const draft = setup();
+    draft.setOrderInfo({ storeId: 't-1', storeName: 'Tienda anterior' });
+    draft.selectClient(client);
+    draft.addLine(product('p-1', 180));
+    await vi.waitFor(() => expect(localStorage.length).toBeGreaterThan(0));
+
+    sessionUser.set({ ...userA, storeId: 't-2' });
+    await vi.waitFor(() => expect(draft.info().storeId).toBe('t-2'));
+
+    expect(draft.client()).toBeNull();
+    expect(draft.lines()).toEqual([]);
+    expect(draft.observations()).toBe('');
+
+    draft.addLine(product('p-2', 220));
+    draft.submitOrder();
+    await vi.waitFor(() => expect(draft.lastCreatedOrder()).toEqual(order));
+    expect(repo.createOrder).toHaveBeenCalledWith(expect.objectContaining({ storeId: 't-2' }));
+  });
+
+  // regression: R-ST-7 — el borrador global heredado no tiene dueño y se descarta.
+  it('debe descartar el borrador global heredado sin dueño', () => {
+    localStorage.setItem(
+      LEGACY_VENDOR_DRAFT_STORAGE_KEY,
+      JSON.stringify({
+        client,
+        info: {
+          storeId: 't-1',
+          storeName: 'Tienda A',
+          date: '2026-10-20',
+          deliveryMethod: 'envio_domicilio',
+        },
+        lines: [{ product: product('p-1', 180), quantity: 2 }],
+        discountPercent: 5,
+        observations: 'Del vendedor anterior',
+      }),
+    );
+
+    const draft = setup();
+
+    expect(draft.client()).toBeNull();
+    expect(draft.lines()).toEqual([]);
+    expect(draft.observations()).toBe('');
+    expect(localStorage.getItem(LEGACY_VENDOR_DRAFT_STORAGE_KEY)).toBeNull();
+  });
+
   it('debe tolerar JSON corrupto y sanear datos raros del storage', () => {
-    localStorage.setItem(VENDOR_DRAFT_STORAGE_KEY, '{corrupto');
+    localStorage.setItem(scopedDraftKey(), '{corrupto');
     let draft = setup();
 
     expect(draft.lines()).toEqual([]);
@@ -288,8 +435,8 @@ describe('OrderDraftStore', () => {
 
     TestBed.resetTestingModule();
     localStorage.setItem(
-      VENDOR_DRAFT_STORAGE_KEY,
-      JSON.stringify({
+      scopedDraftKey(),
+      envelope({
         client: { id: 7 },
         info: { date: '17/10/2026', deliveryMethod: 'dron' },
         lines: [
@@ -321,7 +468,7 @@ describe('OrderDraftStore', () => {
   });
 
   it('debe ignorar un storage que no es un objeto JSON', () => {
-    localStorage.setItem(VENDOR_DRAFT_STORAGE_KEY, '"solo texto"');
+    localStorage.setItem(scopedDraftKey(), '"solo texto"');
 
     const draft = setup();
 
@@ -348,8 +495,8 @@ describe('OrderDraftStore', () => {
     draft.saveDraft();
 
     expect(notification.showSuccess).toHaveBeenCalledWith('Borrador del pedido guardado.');
-    const stored = JSON.parse(localStorage.getItem(VENDOR_DRAFT_STORAGE_KEY) ?? 'null');
-    expect(stored?.lines).toHaveLength(1);
+    const stored = JSON.parse(localStorage.getItem(scopedDraftKey()) ?? 'null');
+    expect(stored?.draft?.lines).toHaveLength(1);
   });
 
   it('debe registrar el pedido, notificar y limpiar el borrador', async () => {
