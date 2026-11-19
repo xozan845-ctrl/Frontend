@@ -65,11 +65,13 @@ gratuito.
   `https://kb-coleccion-internacional-ni.web.app`, ese origen debe estar
   permitido en el **CORS del backend**.
 - **Override en runtime sin recompilar** (`/config.json`): la app descarga
-  `config.json` al arrancar y aplica los valores no vacíos sobre `environment`.
-  El archivo vive en `public/config.json` y se copia al build. Solo se aplica
-  en builds de producción; en `ng serve` se conserva el API local de
-  `environment.ts`. En este repo ya lleva el API de producción; para apuntar a
-  otro API o al backend de IA **en este entorno**, edítalo antes de desplegar:
+  `config.json` al arrancar y valida `apiUrl` antes de aplicarla sobre
+  `environment`. El archivo vive en `public/config.json` y se copia al build.
+  Solo se aplica en builds de producción; en `ng serve` se conserva el API
+  local de `environment.ts`. Si `apiUrl` falta o es inválida, la app no usa el
+  host compilado y falla explícitamente con `apiUrl no configurado`. En este
+  repo ya lleva el API de producción; para apuntar a otro API o al backend de
+  IA **en este entorno**, edítalo antes de desplegar:
 
   ```json
   {

@@ -27,6 +27,39 @@ describe('AuthService', () => {
     environment.apiConfig.dataSource = originalDataSource;
   });
 
+  it('debe enviar el login al host vigente cuando la configuración cambia después de construir el servicio', () => {
+    // regression: F10 (R-REG-1)
+    environment.apiUrl = 'https://api-a.test';
+    build();
+    environment.apiUrl = 'https://api-b.test';
+
+    service.login({ email: 'ana@tienda.com', password: 'secreto1' }).subscribe();
+    const request = httpMock.expectOne('https://api-b.test/auth/login');
+    request.flush({ token: 'jwt', user: { id: 1, name: 'Ana', email: 'ana@tienda.com' } });
+  });
+
+  it('debe renovar la sesión en el host vigente cuando la configuración cambia después de construir el servicio', () => {
+    // regression: F10 (R-REG-1)
+    environment.apiUrl = 'https://api-a.test';
+    build();
+    environment.apiUrl = 'https://api-b.test';
+
+    service.refresh('refresh-1').subscribe();
+    const request = httpMock.expectOne('https://api-b.test/auth/refresh');
+    request.flush({ token: 'nuevo', user: { id: 1, name: 'Ana', email: 'ana@tienda.com' } });
+  });
+
+  it('debe consultar el perfil en el host vigente cuando la configuración cambia después de construir el servicio', () => {
+    // regression: F10 (R-REG-1)
+    environment.apiUrl = 'https://api-a.test';
+    build();
+    environment.apiUrl = 'https://api-b.test';
+
+    service.me().subscribe();
+    const request = httpMock.expectOne('https://api-b.test/auth/me');
+    request.flush({ user_id: 'u-1', email: 'ana@tienda.com', rol: 'comprador' });
+  });
+
   it('debe enviar el login por POST y adaptar la respuesta', () => {
     environment.apiUrl = 'https://api.test';
     build();

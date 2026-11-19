@@ -23,9 +23,16 @@ import { AuthRepository } from '../../repositories/auth.repository';
 })
 export class AuthService implements AuthRepository {
   private readonly http = inject(HttpClient);
-  private readonly authEndpoint = environment.apiConfig?.endpoints?.auth || '/auth';
-  private readonly apiUrl = `${environment.apiUrl}${this.authEndpoint}`;
   private mockSessionUser: User | null = null;
+
+  /**
+   * Resuelve la URL en cada petición: el override de `config.json` puede
+   * aplicarse después de construir el servicio (F10).
+   */
+  private get apiUrl(): string {
+    const authEndpoint = environment.apiConfig?.endpoints?.auth || '/auth';
+    return `${environment.apiUrl}${authEndpoint}`;
+  }
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     if (environment.apiConfig?.dataSource === 'mock') {

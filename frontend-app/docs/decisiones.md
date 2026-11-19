@@ -274,17 +274,21 @@ contexto y consecuencias.
 - **Decisión**: resolver `apiUrl` en **tiempo de ejecución** desde
   `/config.json`, generado por el contenedor a partir de `API_URL`
   (`docker-entrypoint.d/40-runtime-config.sh`). La app lo carga con
-  `provideAppInitializer` antes de crear los servicios, que siguen leyendo
-  `environment` (`R-AR-11`); un valor vacío conserva el fallback de
-  `src/environments/`. Si el archivo falta o falla, no hay ruido en consola
-  (`R-E-9`). La **tienda** no vive aquí: se resuelve por URL (ADR-15).
+  `provideAppInitializer` usando `HttpBackend` (sin interceptores) para que
+  `authInterceptor` no construya la cadena de sesión antes del override; los
+  servicios resuelven `environment` después del arranque (`R-AR-11`). En
+  producción el archivo debe traer una `apiUrl` válida: si falta, está vacía o
+  es inválida, la app deja `environment.apiUrl` vacía y los servicios fallan
+  explícitamente con `apiUrl no configurado`; no se reutiliza en silencio el
+  host compilado. En desarrollo/E2E no se carga el archivo y se conserva
+  `environment`. La **tienda** no vive aquí: se resuelve por URL (ADR-15).
 - **Consecuencias**: el mismo build sirve a cualquier entorno cambiando solo
   variables del contenedor (alineado con `R-CD-4`); `config.json` se versiona
-  vacío como plantilla y se añade al `assetGroups` del service worker. El
-  override solo se aplica en builds de producción: en `ng serve` manda
-  `environment.ts` (API local), porque el CORS del API público no incluye
-  `localhost`. Revertir es volver a fijar los valores en `environment.prod.ts`
-  y quitar el `provideAppInitializer`.
+  como plantilla y se añade al `assetGroups` del service worker. El override
+  solo se aplica en builds de producción: en `ng serve` manda `environment.ts`
+  (API local), porque el CORS del API público no incluye `localhost`. Revertir
+  es volver a fijar los valores en `environment.prod.ts` y quitar el
+  `provideAppInitializer`.
 
 ## ADR-14: Moneda del storefront en córdobas (NIO)
 
