@@ -6,7 +6,13 @@ import { of } from 'rxjs';
 
 import { Header } from './header.component';
 import { AUTH_REPOSITORY, AuthStore, type User } from '../../features/domains/session/public-api';
-import { PRODUCT_REPOSITORY } from '../../features/domains/storefront/public-api';
+import {
+  LOCAL_STATE,
+  LocalStateService,
+  MemoryStorageService,
+  PRODUCT_REPOSITORY,
+  STORAGE_ENGINE,
+} from '../../features/domains/storefront/public-api';
 import { CartStore, CartUiStore } from '../../features/applications/cart/public-api';
 
 const authRepoStub = {
@@ -40,6 +46,8 @@ describe('Header', () => {
         provideRouter([]),
         { provide: AUTH_REPOSITORY, useValue: authRepoStub },
         { provide: PRODUCT_REPOSITORY, useValue: productRepoStub },
+        { provide: STORAGE_ENGINE, useClass: MemoryStorageService },
+        { provide: LOCAL_STATE, useClass: LocalStateService },
         { provide: AuthStore, useValue: authStoreStub },
         { provide: CartStore, useValue: { totalItems: () => 0 } },
         { provide: CartUiStore, useValue: { toggleSidebar: vi.fn() } },

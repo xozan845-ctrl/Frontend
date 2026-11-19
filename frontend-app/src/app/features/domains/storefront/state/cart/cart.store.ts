@@ -13,6 +13,7 @@ import { switchMap, tap, catchError } from 'rxjs/operators';
 import type { Product } from '../../models/product.model';
 import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { CART_REPOSITORY } from '../../repositories/cart.repository';
+import { LOCAL_STATE } from '../../repositories/local-state.repository';
 import { AuthStore } from '../../../session/public-api';
 import { NotificationService } from '@core/services/notification/notification.service';
 import type { CartState } from './cart.state';
@@ -24,34 +25,6 @@ const initialState: CartState = {
   loading: false,
   error: null,
 };
-
-/** Carrito del invitado: persiste en `localStorage` hasta que inicia sesión. */
-const CART_STORAGE_KEY = 'ecom_cart_items';
-
-function readLocalCart(): CartItem[] {
-  try {
-    const raw = localStorage.getItem(CART_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeLocalCart(items: CartItem[]): void {
-  try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    // Storage no disponible: se ignora.
-  }
-}
-
-function clearLocalCart(): void {
-  try {
-    localStorage.removeItem(CART_STORAGE_KEY);
-  } catch {
-    // Storage no disponible: se ignora.
-  }
-}
 
 function mergeItem(items: CartItem[], product: Product, quantity: number): CartItem[] {
   const index = items.findIndex((item) => String(item.product.id) === String(product.id));
@@ -92,6 +65,7 @@ export const CartStore = signalStore(
       cartRepo = inject(CART_REPOSITORY),
       authStore = inject(AuthStore),
       notificationService = inject(NotificationService),
+      localState = inject(LOCAL_STATE),
     ) => {
       // El carrito del servidor es solo para el rol comprador (`/carrito` es
       // comprador-only); un vendedor/admin usa el carrito local para no recibir 403.
@@ -133,7 +107,7 @@ export const CartStore = signalStore(
         loadCart() {
           if (!useServerCart()) {
             if (store.items().length === 0) {
-              patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
+              patchState(store, { items: localState.readCart().value, total: 0, expiresAt: null });
             }
             return;
           }
@@ -184,7 +158,7 @@ export const CartStore = signalStore(
         },
         /** Limpia el estado local sin llamar al backend (la orden ya vació el carrito). */
         reset() {
-          clearLocalCart();
+          localState.clearCart();
           patchState(store, {
             items: [],
             total: 0,
@@ -205,7 +179,7 @@ export const CartStore = signalStore(
                   ).pipe(switchMap(() => cartRepo.getCart()))
               ).pipe(
                 tap((snapshot) => {
-                  if (local.length > 0) clearLocalCart();
+                  if (local.length > 0) localState.clearCart();
                   patchState(store, {
                     items: snapshot.items,
                     total: snapshot.total,
@@ -230,14 +204,14 @@ export const CartStore = signalStore(
     },
   ),
   withHooks({
-    onInit(store, authStore = inject(AuthStore)) {
-      // Hidrata el carrito local de forma síncrona (R-ST-7).
-      patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
+    onInit(store, authStore = inject(AuthStore), localState = inject(LOCAL_STATE)) {
+      // Hidrata el carrito local de forma síncrona, ya validado por el puerto (R-ST-7).
+      patchState(store, { items: localState.readCart().value, total: 0, expiresAt: null });
 
       // Al iniciar sesión como comprador, vuelca el carrito local al servidor.
       effect(() => {
         if (authStore.isAuthenticated() && authStore.user()?.role === 'comprador') {
-          store.mergeLocalCart(readLocalCart());
+          store.mergeLocalCart(localState.readCart().value);
         }
       });
 
@@ -247,8 +221,8 @@ export const CartStore = signalStore(
         const items = store.items();
         const useServer = authStore.isAuthenticated() && authStore.user()?.role === 'comprador';
         if (useServer) return;
-        if (items.length === 0) clearLocalCart();
-        else writeLocalCart(items);
+        if (items.length === 0) localState.clearCart();
+        else localState.writeCart(items);
       });
     },
   }),

@@ -1,17 +1,23 @@
 /** API pública del dominio de storefront: productos, carrito, wishlist y reseñas. */
 export type { CartItem, CartSnapshot } from './models/cart.model';
 export type { CatalogEntry } from './models/catalog-entry.model';
+export type { LocalStateRecoveryReason, LocalStateResult } from './models/local-state.model';
 export type { MockItem } from './models/mock-item.model';
 export type { Product, ProductVariant } from './models/product.model';
 export type { Review } from './models/review.model';
 export type { Store } from './models/store.model';
 export { CART_REPOSITORY, type CartRepository } from './repositories/cart.repository';
+export { LOCAL_STATE, type LocalStatePort } from './repositories/local-state.repository';
 export {
   PRODUCT_REPOSITORY,
   type ProductRepository,
   type Storefront,
 } from './repositories/product.repository';
+export { STORAGE_ENGINE, type StorageEngine } from './repositories/storage-engine.repository';
 export { CartService } from './services/cart/cart.service';
+export { LocalStateService } from './services/local-state/local-state.service';
+export { BrowserStorageService } from './services/local-state/browser-storage.service';
+export { MemoryStorageService } from './services/local-state/memory-storage.service';
 export { ProductService } from './services/product/product.service';
 export { CartStore } from './state/cart/cart.store';
 export { ProductStore } from './state/product/product.store';

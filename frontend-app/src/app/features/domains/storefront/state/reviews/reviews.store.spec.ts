@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ReviewsStore } from './reviews.store';
 import { Review } from '../../models/review.model';
+import { LOCAL_STATE } from '../../repositories/local-state.repository';
+import { STORAGE_ENGINE } from '../../repositories/storage-engine.repository';
+import { LocalStateService } from '../../services/local-state/local-state.service';
+import { BrowserStorageService } from '../../services/local-state/browser-storage.service';
 
 /** Reseñas controladas del spec: producto 1 con 5 y 4 estrellas (promedio 4.5). */
 const RESENAS: Review[] = [
@@ -25,7 +29,12 @@ const RESENAS: Review[] = [
 describe('ReviewsStore', () => {
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: STORAGE_ENGINE, useClass: BrowserStorageService },
+        { provide: LOCAL_STATE, useClass: LocalStateService },
+      ],
+    });
   });
 
   afterEach(() => localStorage.clear());
@@ -85,8 +94,11 @@ describe('ReviewsStore', () => {
     store.addReview({ productId: 3, authorName: 'Luis', rating: 5, comment: 'Excelente' });
 
     await vi.waitFor(() => {
-      const stored = JSON.parse(localStorage.getItem('ecom_reviews') ?? '[]');
-      expect(stored.some((r: { authorName: string }) => r.authorName === 'Luis')).toBe(true);
+      const stored: { version?: number; context?: string; items?: { authorName: string }[] } =
+        JSON.parse(localStorage.getItem('ecom_reviews') ?? '{}');
+      expect(stored.version).toBe(1);
+      expect(stored.context).toBe('storefront');
+      expect(stored.items?.some((review) => review.authorName === 'Luis')).toBe(true);
     });
   });
 
@@ -104,5 +116,24 @@ describe('ReviewsStore', () => {
     const store = TestBed.inject(ReviewsStore);
 
     expect(store.reviews()).toEqual([]);
+  });
+
+  // regression: F09 — las reseñas persistidas se validan una a una.
+  it('debe descartar reseñas incompletas o inválidas al restaurar', () => {
+    localStorage.setItem(
+      'ecom_reviews',
+      JSON.stringify([
+        null,
+        { id: 'r-incompleta' },
+        { ...RESENAS[0], rating: 9 },
+        { ...RESENAS[1], date: 'no-es-fecha' },
+        RESENAS[0],
+      ]),
+    );
+
+    const store = TestBed.inject(ReviewsStore);
+
+    expect(store.reviews()).toEqual([RESENAS[0]]);
+    expect(() => store.getAverageRating(1)).not.toThrow();
   });
 });

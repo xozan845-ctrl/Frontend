@@ -12,13 +12,19 @@ import { routes } from './app.routes';
 import { RuntimeConfigService } from './core/config/runtime-config.service';
 import { authInterceptor } from './features/applications/auth/interceptors/auth/auth.interceptor';
 import { aiScraperAuthInterceptor } from './features/applications/ai-scraper/interceptors/ai-scraper-auth/ai-scraper-auth.interceptor';
-import { PRODUCT_REPOSITORY } from './features/domains/storefront/public-api';
-import { ProductService } from './features/domains/storefront/public-api';
+import {
+  BrowserStorageService,
+  CART_REPOSITORY,
+  CartService,
+  LOCAL_STATE,
+  LocalStateService,
+  PRODUCT_REPOSITORY,
+  ProductService,
+  STORAGE_ENGINE,
+} from './features/domains/storefront/public-api';
 import { ORDER_REPOSITORY } from './features/applications/cart/repositories/order.repository';
 import { OrderService } from './features/applications/cart/services/order/order.service';
 import { AUTH_REPOSITORY, AuthService } from './features/domains/session/public-api';
-import { CART_REPOSITORY } from './features/domains/storefront/public-api';
-import { CartService } from './features/domains/storefront/public-api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +41,8 @@ export const appConfig: ApplicationConfig = {
     { provide: ORDER_REPOSITORY, useClass: OrderService },
     { provide: AUTH_REPOSITORY, useClass: AuthService },
     { provide: CART_REPOSITORY, useClass: CartService },
+    { provide: STORAGE_ENGINE, useClass: BrowserStorageService },
+    { provide: LOCAL_STATE, useClass: LocalStateService },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
