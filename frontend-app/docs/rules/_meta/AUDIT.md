@@ -179,6 +179,12 @@ con relleno crudo hace fallar `visual-adoption-guards`.
 
 ## Deudas abiertas
 
+- **Seguimiento PR #438 (Caja):** revisar el contrato de orden intradía del
+  ledger: `movementTimestamp` combina fecha local con hora UTC y las ventas
+  reciben `12:00Z` sintético. El E2E de alta verifica concepto e importe sin
+  asumir la primera posición; cambiar el orden y su efecto en saldos requiere
+  una corrección de dominio con regresión propia (`R-IA-6`).
+
 - **Código:** ninguna de las deudas de esta auditoría. R-C-8, R-CP-1,
   R-CX-6, refresh en 401 y el smoke de Firebase Hosting tienen implementación y
   pruebas versionadas.
