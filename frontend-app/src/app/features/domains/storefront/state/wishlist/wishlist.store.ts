@@ -9,9 +9,8 @@ import {
 } from '@ngrx/signals';
 import { ReviewsStore } from '../reviews/reviews.store';
 import type { Product } from '../../models/product.model';
+import { LOCAL_STATE } from '../../repositories/local-state.repository';
 import type { WishlistState } from './wishlist.state';
-
-const WISHLIST_KEY = 'ecom_wishlist';
 
 export const WishlistStore = signalStore(
   { providedIn: 'root' },
@@ -49,23 +48,14 @@ export const WishlistStore = signalStore(
     },
   })),
   withHooks({
-    onInit(store) {
-      try {
-        const stored = localStorage.getItem(WISHLIST_KEY);
-        if (stored) {
-          patchState(store, { items: JSON.parse(stored) as Product[] });
-        }
-      } catch (e) {
-        console.error('Failed to load wishlist from localStorage', e);
-      }
+    onInit(store, localState = inject(LOCAL_STATE)) {
+      // La restauración llega validada por el límite de persistencia (R-ST-7).
+      patchState(store, { items: localState.readWishlist().value });
 
       effect(() => {
         const items = store.items();
-        try {
-          localStorage.setItem(WISHLIST_KEY, JSON.stringify(items));
-        } catch (e) {
-          console.error('Failed to save wishlist to localStorage', e);
-        }
+        if (items.length === 0) localState.clearWishlist();
+        else localState.writeWishlist(items);
       });
     },
   }),

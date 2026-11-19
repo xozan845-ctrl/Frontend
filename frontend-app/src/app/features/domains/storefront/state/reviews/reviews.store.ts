@@ -2,9 +2,8 @@ import { inject, effect } from '@angular/core';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { Review } from '../../models/review.model';
 import { NotificationService } from '@core/services/notification/notification.service';
+import { LOCAL_STATE } from '../../repositories/local-state.repository';
 import type { ReviewsState } from '../product/product.state';
-
-const REVIEWS_KEY = 'ecom_reviews';
 
 export const ReviewsStore = signalStore(
   { providedIn: 'root' },
@@ -32,28 +31,14 @@ export const ReviewsStore = signalStore(
     },
   })),
   withHooks({
-    onInit(store) {
-      // Las reseñas viven solo en localStorage; sin datos guardados, arranca vacío.
-      try {
-        const stored = localStorage.getItem(REVIEWS_KEY);
-        const parsed = stored ? JSON.parse(stored) : null;
-        // Solo se acepta un arreglo no vacío (R-RB-4).
-        patchState(store, {
-          reviews: Array.isArray(parsed) && parsed.length > 0 ? parsed : [],
-        });
-      } catch {
-        // JSON corrupto o storage no disponible: se arranca sin reseñas (R-RB-4).
-        patchState(store, { reviews: [] });
-      }
+    onInit(store, localState = inject(LOCAL_STATE)) {
+      // La restauración llega validada por el límite de persistencia (R-ST-7).
+      patchState(store, { reviews: localState.readReviews().value });
 
-      // Sync reviews to localStorage
       effect(() => {
         const reviews = store.reviews();
-        try {
-          localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
-        } catch {
-          // Storage no disponible: se ignora.
-        }
+        if (reviews.length === 0) localState.clearReviews();
+        else localState.writeReviews(reviews);
       });
     },
   }),

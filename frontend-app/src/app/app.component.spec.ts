@@ -5,7 +5,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { App } from './app.component';
 import { AUTH_REPOSITORY } from './features/domains/session/public-api';
-import { PRODUCT_REPOSITORY } from './features/domains/storefront/public-api';
+import {
+  LOCAL_STATE,
+  LocalStateService,
+  MemoryStorageService,
+  PRODUCT_REPOSITORY,
+  STORAGE_ENGINE,
+} from './features/domains/storefront/public-api';
 import { CartStore, CartUiStore } from './features/applications/cart/public-api';
 
 @Component({ standalone: true, template: '' })
@@ -33,6 +39,8 @@ describe('App', () => {
         provideHttpClient(),
         { provide: AUTH_REPOSITORY, useValue: authRepoStub },
         { provide: PRODUCT_REPOSITORY, useValue: productRepoStub },
+        { provide: STORAGE_ENGINE, useClass: MemoryStorageService },
+        { provide: LOCAL_STATE, useClass: LocalStateService },
         {
           provide: CartStore,
           useValue: {

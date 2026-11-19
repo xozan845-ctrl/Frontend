@@ -4,6 +4,10 @@ import { CartStore } from './cart.store';
 import { CartItem, CartSnapshot } from '../../models/cart.model';
 import { Product } from '../../models/product.model';
 import { CART_REPOSITORY, CartRepository } from '../../repositories/cart.repository';
+import { LOCAL_STATE } from '../../repositories/local-state.repository';
+import { STORAGE_ENGINE } from '../../repositories/storage-engine.repository';
+import { LocalStateService } from '../../services/local-state/local-state.service';
+import { BrowserStorageService } from '../../services/local-state/browser-storage.service';
 import { AuthStore } from '../../../session/public-api';
 import { NotificationService } from '@core/services/notification/notification.service';
 
@@ -25,6 +29,10 @@ const serverSnapshot: CartSnapshot = {
 };
 const emptySnapshot: CartSnapshot = { items: [], total: 0, expiresAt: null };
 const STORAGE_KEY = 'ecom_cart_items';
+const localStateProviders = [
+  { provide: STORAGE_ENGINE, useClass: BrowserStorageService },
+  { provide: LOCAL_STATE, useClass: LocalStateService },
+];
 
 describe('CartStore', () => {
   let repo: CartRepository;
@@ -42,6 +50,7 @@ describe('CartStore', () => {
     };
     TestBed.configureTestingModule({
       providers: [
+        ...localStateProviders,
         { provide: CART_REPOSITORY, useValue: repo },
         {
           provide: AuthStore,
@@ -64,7 +73,10 @@ describe('CartStore', () => {
     TestBed.resetTestingModule();
   });
 
-  afterEach(() => localStorage.clear());
+  afterEach(() => {
+    localStorage.clear();
+    vi.restoreAllMocks();
+  });
 
   // ── Invitado (carrito local) ────────────────────────────────────────────────
   it('invitado: addItem es local, persiste y muestra el mensaje para registrarse', async () => {
@@ -77,9 +89,14 @@ describe('CartStore', () => {
     expect(store.totalPrice()).toBe(100);
     expect(repo.addItem).not.toHaveBeenCalled();
     expect(notification.showInfo).toHaveBeenCalled();
-    await vi.waitFor(() =>
-      expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')).toHaveLength(1),
-    );
+    await vi.waitFor(() => {
+      const stored: { version?: number; context?: string; items?: unknown[] } = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) ?? '{}',
+      );
+      expect(stored.version).toBe(1);
+      expect(stored.context).toBe('storefront');
+      expect(stored.items).toHaveLength(1);
+    });
   });
 
   it('invitado: carga el carrito local al iniciar', async () => {
@@ -88,6 +105,47 @@ describe('CartStore', () => {
     const store = setup();
 
     await vi.waitFor(() => expect(store.totalItems()).toBe(3));
+  });
+
+  // regression: F09 — un JSON válido con forma incorrecta no debe romper el arranque.
+  it('invitado: no rompe cuando el storage contiene un objeto JSON válido sin forma de carrito', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
+
+    const store = setup();
+
+    expect(store.items()).toEqual([]);
+    expect(() => store.totalItems()).not.toThrow();
+  });
+
+  // regression: F09 — storage no disponible debe degradar a un carrito vacío.
+  it('invitado: arranca sin datos cuando el almacenamiento no está disponible', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('storage bloqueado');
+    });
+
+    const store = setup();
+
+    expect(store.items()).toEqual([]);
+    expect(() => store.totalItems()).not.toThrow();
+  });
+
+  // regression: F09 — cada línea y cantidad persistida se valida antes de restaurar.
+  it('invitado: descarta entradas inválidas al restaurar', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        null,
+        { product: product(1), quantity: -1 },
+        { product: product(2), quantity: '2' },
+        { product: { id: 3 }, quantity: 1 },
+        { product: product(4), quantity: 2 },
+      ]),
+    );
+
+    const store = setup();
+
+    expect(store.items()).toEqual([{ product: product(4), quantity: 2 }]);
+    expect(store.totalItems()).toBe(2);
   });
 
   it('invitado: updateQuantity y removeItem son locales', () => {
@@ -210,6 +268,7 @@ describe('CartStore', () => {
     };
     TestBed.configureTestingModule({
       providers: [
+        ...localStateProviders,
         { provide: CART_REPOSITORY, useValue: repo },
         {
           provide: AuthStore,
@@ -259,6 +318,7 @@ describe('CartStore', () => {
     };
     TestBed.configureTestingModule({
       providers: [
+        ...localStateProviders,
         { provide: CART_REPOSITORY, useValue: repo },
         {
           provide: AuthStore,
@@ -288,6 +348,7 @@ describe('CartStore', () => {
     };
     TestBed.configureTestingModule({
       providers: [
+        ...localStateProviders,
         { provide: CART_REPOSITORY, useValue: repo },
         {
           provide: AuthStore,
