@@ -9,8 +9,12 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
+import { environment } from '../environments/environment';
 import { RuntimeConfigService } from './core/config/runtime-config.service';
-import { authInterceptor } from './features/applications/auth/interceptors/auth/auth.interceptor';
+import {
+  AUTH_ALLOWED_DESTINATIONS,
+  authInterceptor,
+} from './features/applications/auth/interceptors/auth/auth.interceptor';
 import { aiScraperAuthInterceptor } from './features/applications/ai-scraper/interceptors/ai-scraper-auth/ai-scraper-auth.interceptor';
 import { PRODUCT_REPOSITORY } from './features/domains/storefront/public-api';
 import { ProductService } from './features/domains/storefront/public-api';
@@ -25,6 +29,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor, aiScraperAuthInterceptor])),
+    // El JWT solo viaja al API seleccionado; se lee tras `config.json` para
+    // respetar el `apiUrl` efectivo de cada despliegue (R-SE-8).
+    {
+      provide: AUTH_ALLOWED_DESTINATIONS,
+      useFactory: () => (environment.apiUrl ? [environment.apiUrl] : []),
+    },
     // Configuración de despliegue en runtime (`/config.json`) antes de crear
     // los servicios que leen `environment` (R-AR-11, R-CD-4).
     provideAppInitializer(() => inject(RuntimeConfigService).load()),
