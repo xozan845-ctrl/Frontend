@@ -12,6 +12,9 @@ Contiene infraestructura sin UI ni reglas de negocio (`R-AR-13`). No importa
 
 ## Servicios principales
 
+- `config/runtime-config.service.ts` — carga `config.json` con `HttpBackend`
+  antes de construir los clientes; en producción exige una `apiUrl` válida y
+  no reutiliza el host compilado si falta.
 - `services/seo/` — título, meta, canonical, Open Graph/Twitter y JSON-LD;
   helpers `injectSeoPage`/`injectSeoCleanup` para el ciclo de vida (`R-UX-6`,
   `R-AR-15`).

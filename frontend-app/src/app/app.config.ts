@@ -26,7 +26,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor, aiScraperAuthInterceptor])),
     // Configuración de despliegue en runtime (`/config.json`) antes de crear
-    // los servicios que leen `environment` (R-AR-11, R-CD-4).
+    // los servicios dependientes. `RuntimeConfigService` usa `HttpBackend` para
+    // no ejecutar `authInterceptor` y evitar que la sesión se construya antes
+    // del override (F10, R-AR-11, R-CD-4).
     provideAppInitializer(() => inject(RuntimeConfigService).load()),
     // Inversión de Dependencias (DIP - Clean Architecture):
     // El dominio y la capa de aplicación dependen de interfaces abstractas.

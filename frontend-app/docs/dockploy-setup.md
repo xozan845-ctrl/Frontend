@@ -83,16 +83,18 @@ Pasos:
 - Si se necesitan URLs distintas por entorno, usar `fileReplacements` de
   `angular.json`, no valores inyectados a mano en el servidor (`R-CD-4`).
 - **Configuración de runtime (`/config.json`)**: la app descarga `/config.json`
-  al arrancar (`RuntimeConfigService`) y aplica sus valores no vacíos sobre
-  `environment`. El contenedor lo genera desde variables de entorno con
+  al arrancar (`RuntimeConfigService`) y valida `apiUrl` antes de aplicarla
+  sobre `environment`. El contenedor lo genera desde variables de entorno con
   `docker-entrypoint.d/40-runtime-config.sh`, así que se ajusta **sin
   recompilar**:
 
-  | Variable  | Descripción                                                         | Ejemplo                              |
-  | --------- | ------------------------------------------------------------------- | ------------------------------------ |
-  | `API_URL` | URL base del gateway de Core Engine (opcional; vacío = environment) | `https://api.kbcoleccion.com/api/v1` |
+  | Variable  | Descripción                                                                   | Ejemplo                              |
+  | --------- | ----------------------------------------------------------------------------- | ------------------------------------ |
+  | `API_URL` | URL base del gateway de Core Engine (obligatoria en producción; sin fallback) | `https://api.kbcoleccion.com/api/v1` |
 
-  En local se usa el fallback de `environment.ts`.
+  Si `apiUrl` falta o es inválida, la app no usa el host compilado: deja la
+  configuración vacía y las llamadas fallan con `apiUrl no configurado`. En
+  local se usa el fallback de `environment.ts` porque no se carga el archivo.
 
 - **Tienda (multi-tenant)**: el storefront no lleva `storeId` en configuración.
   Cada tienda se sirve en su URL `/tienda/:storeId` (ver ADR-15); un mismo build
