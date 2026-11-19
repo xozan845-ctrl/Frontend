@@ -19,7 +19,7 @@ import type { CartState } from './cart.state';
 
 const initialState: CartState = {
   items: [],
-  total: 0,
+  total: null,
   expiresAt: null,
   loading: false,
   error: null,
@@ -80,11 +80,9 @@ export const CartStore = signalStore(
   withState(initialState),
   withComputed(({ items, total }) => ({
     totalItems: () => items().reduce((acc, item) => acc + item.quantity, 0),
-    // El servidor manda el total autoritativo; el invitado usa el derivado local.
+    // El servidor manda el total autoritativo (incluido 0); solo se deriva si falta.
     totalPrice: () =>
-      total() > 0
-        ? total()
-        : round2(items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)),
+      total() ?? round2(items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)),
   })),
   withMethods(
     (
@@ -125,7 +123,7 @@ export const CartStore = signalStore(
       );
 
       const setLocal = (items: CartItem[]): void => {
-        patchState(store, { items, total: 0, expiresAt: null });
+        patchState(store, { items, total: null, expiresAt: null });
       };
 
       return {
@@ -133,7 +131,7 @@ export const CartStore = signalStore(
         loadCart() {
           if (!useServerCart()) {
             if (store.items().length === 0) {
-              patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
+              patchState(store, { items: readLocalCart(), total: null, expiresAt: null });
             }
             return;
           }
@@ -187,7 +185,7 @@ export const CartStore = signalStore(
           clearLocalCart();
           patchState(store, {
             items: [],
-            total: 0,
+            total: null,
             expiresAt: null,
             loading: false,
             error: null,
@@ -232,7 +230,7 @@ export const CartStore = signalStore(
   withHooks({
     onInit(store, authStore = inject(AuthStore)) {
       // Hidrata el carrito local de forma síncrona (R-ST-7).
-      patchState(store, { items: readLocalCart(), total: 0, expiresAt: null });
+      patchState(store, { items: readLocalCart(), total: null, expiresAt: null });
 
       // Al iniciar sesión como comprador, vuelca el carrito local al servidor.
       effect(() => {

@@ -12,6 +12,15 @@ function toAmount(value: unknown): number {
   return Math.round(n * 100) / 100;
 }
 
+/** Distingue un total válido (incluido `0`) de un campo ausente o inválido. */
+function toOptionalAmount(value: unknown): number | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'string' && value.trim() === '') return null;
+  const n = typeof value === 'string' ? Number(value) : value;
+  if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return null;
+  return Math.round(n * 100) / 100;
+}
+
 /**
  * Normaliza la vista del carrito del servidor
  * (`GET/POST/PATCH/DELETE /carrito` → `{ items, total, expira_en }`, tolerante a
@@ -23,18 +32,13 @@ export function adaptCartFromBackend(response: unknown): CartSnapshot {
   const cart = unwrapApiSingleResponse<BackendCarritoDTO>(response);
   const rawItems = cart && typeof cart === 'object' ? cart.items : undefined;
   const items = Array.isArray(rawItems) ? rawItems.map(adaptCartItemFromBackend) : [];
-  const derivedTotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const rawTotal = cart && typeof cart === 'object' ? cart.total : undefined;
 
   return {
     items,
-    total:
-      toAmount(cart && typeof cart === 'object' ? cart.total : undefined) || round2(derivedTotal),
+    total: toOptionalAmount(rawTotal),
     expiresAt: cart && typeof cart === 'object' ? (cart.expira_en ?? cart.expiresAt ?? null) : null,
   };
-}
-
-function round2(value: number): number {
-  return Math.round(value * 100) / 100;
 }
 
 function adaptCartItemFromBackend(raw: unknown): CartItem {

@@ -123,6 +123,29 @@ describe('CartStore', () => {
     expect(store.expiresAt()).toBe('2026-10-22T18:00:00.000Z');
   });
 
+  it('con sesión: conserva el total cero aunque los items sumen otro importe', async () => {
+    authenticated = true;
+    const store = setup();
+    vi.mocked(repo.getCart).mockReturnValue(of({ items: serverItems, total: 0, expiresAt: null }));
+
+    store.loadCart();
+
+    await vi.waitFor(() => expect(store.totalPrice()).toBe(0));
+    expect(store.totalItems()).toBe(2);
+  });
+
+  it('con sesión: deriva el total cuando el servidor no envía uno válido', async () => {
+    authenticated = true;
+    const store = setup();
+    vi.mocked(repo.getCart).mockReturnValue(
+      of({ items: serverItems, total: null, expiresAt: null }),
+    );
+
+    store.loadCart();
+
+    await vi.waitFor(() => expect(store.totalPrice()).toBe(100));
+  });
+
   it('con sesión: loadCart usa el servidor', () => {
     authenticated = true;
     const store = setup();
