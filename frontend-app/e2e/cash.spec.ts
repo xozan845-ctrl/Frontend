@@ -1,6 +1,23 @@
 import { test as base, expect, type Page } from '@playwright/test';
 import { mockApi } from './api-mock';
 
+const createMovement = async (page: Page) => {
+  await page.getByTestId('cash-new-movement-page').click();
+  await page.getByTestId('cash-movement-concept').fill('Venta de mostrador');
+  await page.getByTestId('cash-movement-amount').fill('1200');
+  await page.getByTestId('cash-movement-save').click();
+  await expect(page.getByTestId('cash-movement-dialog')).toHaveCount(0);
+
+  // regression: PR-438 — el alta se verifica por sus datos, independientemente del orden.
+  const movement = page.getByTestId('cash-row').filter({
+    has: page.getByText('Venta de mostrador', { exact: true }),
+  });
+  await expect(movement).toHaveCount(1);
+  await expect(movement).toBeVisible();
+  // La quinta columna es Ingreso; el saldo puede coincidir con el importe.
+  await expect(movement.getByRole('cell').nth(4)).toHaveText('NIO 1,200.00');
+};
+
 const login = async (page: Page) => {
   await page.goto('/login?returnUrl=%2Fapp%2Fempresa%2Fcaja', { waitUntil: 'domcontentloaded' });
   await page.locator('#email').fill('empresario@tienda.test');
@@ -10,10 +27,14 @@ const login = async (page: Page) => {
 };
 
 // R-E-9: la pantalla financiera no debe emitir errores ni warnings de consola.
-const test = base.extend<{ apiMock: void; consoleIssues: string[] }>({
+const test = base.extend<{ apiMock: void; consoleIssues: string[]; cashNow: string }>({
+  cashNow: ['2026-11-19T02:25:00.000Z', { option: true }],
   apiMock: [
-    async ({ page }, use) => {
-      await mockApi(page);
+    async ({ page, cashNow }, use) => {
+      const now = new Date(cashNow);
+      // El navegador y las ventas deben compartir fecha incluso cerca de medianoche (R-FL-3).
+      await page.clock.install({ time: now });
+      await mockApi(page, now);
       await use();
     },
     { auto: true },
@@ -39,12 +60,7 @@ test('R-CAJA: movimientos, secciones y exportación del centro financiero', asyn
   await expect(page.getByTestId('cash-section-tabs')).toBeVisible();
 
   // Movimiento manual.
-  await page.getByTestId('cash-new-movement-page').click();
-  await page.getByTestId('cash-movement-concept').fill('Venta de mostrador');
-  await page.getByTestId('cash-movement-amount').fill('1200');
-  await page.getByTestId('cash-movement-save').click();
-  await expect(page.getByTestId('cash-movement-dialog')).toHaveCount(0);
-  await expect(page.getByTestId('cash-row').first()).toContainText('Venta de mostrador');
+  await createMovement(page);
 
   // Métodos de pago.
   await page.getByTestId('cash-section-methods').click();
@@ -98,3 +114,21 @@ test('R-CAJA: movimientos, secciones y exportación del centro financiero', asyn
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toContain('reporte-caja');
 });
+
+for (const [scenario, cashNow] of [
+  ['antes de medianoche local', '2026-11-19T05:59:00.000Z'],
+  ['después de medianoche local', '2026-11-19T06:01:00.000Z'],
+  ['por la tarde local', '2026-11-19T20:25:00.000Z'],
+]) {
+  test.describe(scenario, () => {
+    test.use({ cashNow });
+
+    test('debe mostrar el movimiento guardado cuando cambia la hora de ejecución (regression: PR-438)', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1440, height: 1200 });
+      await login(page);
+      await createMovement(page);
+    });
+  });
+}

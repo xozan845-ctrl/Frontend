@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { catchError, firstValueFrom, of, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { INTERCEPTOR_FREE_HTTP_CLIENT } from './interceptor-free-http-client';
 import { RuntimeConfig } from './runtime-config.model';
 
 /** Ruta relativa al `base href`; el asset vive en `public/config.json`. */
@@ -25,7 +25,7 @@ const CONFIG_TIMEOUT_MS = 5000;
   providedIn: 'root',
 })
 export class RuntimeConfigService {
-  private readonly http = inject(HttpClient);
+  private readonly http = inject(INTERCEPTOR_FREE_HTTP_CLIENT);
 
   /** Descarga `config.json` y fusiona sus valores no vacíos sobre `environment`. */
   async load(): Promise<void> {

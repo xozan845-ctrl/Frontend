@@ -28,6 +28,11 @@ datos de entrada.
 - El interceptor de auth (`auth.interceptor.ts`) ya añade `Authorization: Bearer`
   cuando `authType: 'bearer'` y soporta `withCredentials`; esa es la ruta de
   `R-SE-1`. Las cookies quedan descartadas por decisión.
+- El interceptor solo autentica y renueva ante 401 en los destinos de
+  `AUTH_ALLOWED_DESTINATIONS`, comparando **origen y ruta normalizados** (sin
+  coincidencias parciales de host o prefijo). La lista se compone en
+  `app.config.ts`; los servicios independientes y la configuración pública usan
+  clientes o cabeceras propias (`R-SE-8`).
 
 ## Verificación
 

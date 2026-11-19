@@ -475,9 +475,10 @@ function filtrarClientes(query: string): ClienteFixture[] {
  * Instala la intercepción del API en la página: se registra antes de navegar
  * (fixture `auto` de cada suite) y responde todo `/api/v1/**` con los datos
  * controlados de este módulo.
+ * `now` permite compartir el reloj del navegador en escenarios temporales (R-FL-3).
  */
-export async function mockApi(page: Page): Promise<void> {
-  const pedidos = pedidosIniciales(new Date());
+export async function mockApi(page: Page, now: Date = new Date()): Promise<void> {
+  const pedidos = pedidosIniciales(now);
   const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
   const catalogo = CATALOGO_INICIAL.map((producto) => ({ ...producto }));
   const servicios: ServicioFixture[] = [];
@@ -493,7 +494,7 @@ export async function mockApi(page: Page): Promise<void> {
   const combos: Array<Record<string, unknown>> = [];
   const promotions: Array<Record<string, unknown>> = [];
   const movements: Array<Record<string, unknown>> = [];
-  const fechaVentaDemo = new Date().toISOString();
+  const fechaVentaDemo = now.toISOString();
   const ordenes = [
     {
       id: 'o-100',

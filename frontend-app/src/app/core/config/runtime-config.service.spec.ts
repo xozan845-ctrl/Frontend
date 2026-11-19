@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { RuntimeConfigService } from './runtime-config.service';
 import { environment } from '../../../environments/environment';
@@ -73,5 +73,28 @@ describe('RuntimeConfigService', () => {
 
     httpMock.expectNone('config.json');
     expect(environment.apiUrl).toBe(originalApiUrl);
+  });
+
+  it('no debe enviar Authorization al cargar config.json aunque el cliente global tenga interceptores', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([
+            (request, next) =>
+              next(request.clone({ setHeaders: { Authorization: 'Bearer no-debe-viajar' } })),
+          ]),
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    const service = TestBed.inject(RuntimeConfigService);
+
+    const pending = service.load();
+    const request = httpMock.expectOne('config.json');
+    expect(request.request.headers.has('Authorization')).toBe(false);
+    request.flush({});
+    await pending;
   });
 });
