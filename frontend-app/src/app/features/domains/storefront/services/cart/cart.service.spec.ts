@@ -53,6 +53,20 @@ describe('CartService', () => {
     expect(result?.items[0].product).toMatchObject({ id: 'of-1', name: 'Teclado', price: 100 });
   });
 
+  it('debe conservar el total cero de la respuesta del servidor', () => {
+    environment.apiUrl = 'https://api.test';
+    build();
+    let result: CartSnapshot | undefined;
+
+    service.getCart().subscribe((snapshot) => (result = snapshot));
+    httpMock.expectOne('https://api.test/carrito').flush({
+      items: [{ oferta_id: 'of-1', cantidad: 1, precio_venta: '100.00' }],
+      total: 0,
+    });
+
+    expect(result?.total).toBe(0);
+  });
+
   it('debe añadir un item (POST /carrito/items)', () => {
     environment.apiUrl = 'https://api.test';
     build();

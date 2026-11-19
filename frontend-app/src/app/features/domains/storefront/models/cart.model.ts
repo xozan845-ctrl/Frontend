@@ -21,7 +21,11 @@ export interface CartItem {
  */
 export interface CartSnapshot {
   items: CartItem[];
-  total: number;
+  /**
+   * Total autoritativo del servidor. `null` cuando la respuesta no trae un
+   * total válido; `0` es un total válido (p. ej. una promoción completa).
+   */
+  total: number | null;
   /** ISO 8601 UTC; `null` si el carrito está vacío. */
   expiresAt: string | null;
 }

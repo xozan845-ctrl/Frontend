@@ -3,8 +3,8 @@ import type { OrderResponse } from '@domains/orders/public-api';
 
 export interface CartState {
   items: CartItem[];
-  /** Total autoritativo del servidor; 0 en el carrito local del invitado. */
-  total: number;
+  /** Total autoritativo del servidor; `null` si no hay total válido o el carrito es local. */
+  total: number | null;
   /** Expiración de la reserva del servidor (ISO 8601 UTC). */
   expiresAt: string | null;
   loading: boolean;
