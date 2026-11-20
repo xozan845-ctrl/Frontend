@@ -185,6 +185,11 @@ con relleno crudo hace fallar `visual-adoption-guards`.
 - **Operación externa:** el deploy live de Firebase Hosting se ejecuta con
   `npm run deploy`; el smoke puede dispararse manualmente o después de un deploy
   mediante `repository_dispatch`. No se requiere configuración Dockploy.
+- **Herramienta (R-COV-5):** al ejecutarse desde `frontend-app`, el lcov reporta
+  `src/app/...` y `git diff` reporta `frontend-app/src/app/...`;
+  `check-diff-coverage.mjs` compara ambas rutas con `endsWith` y concluye "sin
+  líneas ejecutables cambiadas". La cobertura diff se verifica con
+  `diff.relative=true`; queda pendiente normalizar las rutas en el script.
 - **Frontera contextual:** el contrato de pedidos/clientes/stock del backend del
   módulo `vendor` sigue pendiente del Core Engine; no se inventa un fixture de
   un endpoint que aún no existe.

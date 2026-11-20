@@ -2166,3 +2166,38 @@ contexto y consecuencias.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.
+
+## ADR-85: Métricas separadas y política única de estados de reportes
+
+- **Fecha**: 2026-11-19
+- **Estado**: Aceptado
+- **Contexto**: `buildReportSnapshot` sumaba el total de todas las entradas y
+  contaba todos los pedidos como ventas, incluidos los cancelados y devueltos.
+  Con una entrega de 100, una cancelación de 200 y una devolución de 300 el
+  reporte informaba 600 en ventas y tres pedidos, mientras otras vistas del
+  producto excluían cancelados y devueltos. La misma operación mostraba métricas
+  incompatibles y no existía una política escrita de estados.
+- **Decisión**:
+  - Cada fuente traduce el vocabulario de su API a los estados normalizados
+    `pending`, `paid`, `delivered`, `cancelled`, `returned` y `unknown` antes del
+    cálculo. Un estado no reconocido queda en `unknown` y nunca cuenta como
+    venta.
+  - La política comercial vigente es explícita y compartida: pedidos creados =
+    todas las entradas; ventas reconocidas = `paid` + `delivered`; cobros =
+    `paid`; cancelaciones = `cancelled`; devoluciones = `returned`; neto =
+    ventas reconocidas − devoluciones.
+  - El ticket promedio se calcula sobre pedidos con venta reconocida y la tabla
+    diaria agrupa solo ventas reconocidas. El desglose por estado conserva todos
+    los estados normalizados para que cancelaciones y devoluciones sean visibles.
+  - `buildReportSnapshot` es una función pura sobre `ReportEntry` normalizado y
+    vive en `domains/reports/models/report-metrics/` (dominio puro, `R-CX-1` y
+    `R-CX-4`). El adapter de `reports` solo normaliza fechas, montos y estados.
+  - La regla no se deduce del nombre de la empresa ni de la tienda: empresa y
+    vendedor usan la misma política y difieren únicamente en la traducción de
+    sus estados de origen.
+- **Consecuencias**: reportes, dashboard y vistas de ventas comparten los mismos
+  conceptos y el ejemplo de 100/200/300 muestra ventas reconocidas de 100,
+  cancelaciones de 200 y devoluciones de 300 en campos separados. La
+  unificación del universo remoto de ventas (F13) queda fuera de este cambio: el
+  vendedor no puede representar `returned` hasta que su contrato lo exponga, por
+  lo que esa deuda se mantiene abierta y no se simula en el frontend.

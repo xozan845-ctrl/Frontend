@@ -13,11 +13,22 @@ const config: ReportsScopeConfig = {
 };
 
 const snapshot: ReportSnapshot = {
-  totalSales: 300,
-  ordersCount: 2,
-  averageTicket: 150,
-  days: [{ date: '2026-10-28', total: 300, count: 2 }],
-  statuses: [{ status: 'pagada', total: 300, count: 2 }],
+  ordersCount: 3,
+  recognizedSales: 100,
+  recognizedOrders: 1,
+  collections: 100,
+  cancellations: 200,
+  cancelledOrders: 1,
+  returns: 300,
+  returnedOrders: 1,
+  netSales: -200,
+  averageTicket: 100,
+  days: [{ date: '2026-10-28', total: 100, count: 1 }],
+  statuses: [
+    { status: 'cancelled', total: 200, count: 1 },
+    { status: 'delivered', total: 100, count: 1 },
+    { status: 'returned', total: 300, count: 1 },
+  ],
 };
 
 describe('ReportsComponent', () => {
@@ -50,13 +61,18 @@ describe('ReportsComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe mostrar KPIs, días y estados', async () => {
+  // regression: F11
+  it('debe mostrar KPIs separados de ventas, cancelaciones y devoluciones', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.textContent).toContain('Reportes');
+    expect(host.textContent).toContain('Ventas reconocidas');
+    expect(host.textContent).toContain('C$100.00');
+    expect(host.textContent).toContain('C$200.00');
     expect(host.textContent).toContain('C$300.00');
-    expect(host.textContent).toContain('pagada');
+    expect(host.textContent).toContain('Cancelada');
+    expect(host.textContent).toContain('Devuelta');
     expect(host.querySelector('[data-testid="reports-days-table"]')).not.toBeNull();
     expect(store.load).toHaveBeenCalled();
   });

@@ -5,11 +5,18 @@ import type { ReportSnapshot } from '../../models/report.model';
 import { ReportsStore } from './reports.store';
 
 const SNAPSHOT: ReportSnapshot = {
-  totalSales: 300,
   ordersCount: 2,
+  recognizedSales: 300,
+  recognizedOrders: 2,
+  collections: 300,
+  cancellations: 0,
+  cancelledOrders: 0,
+  returns: 0,
+  returnedOrders: 0,
+  netSales: 300,
   averageTicket: 150,
   days: [{ date: '2026-10-28', total: 300, count: 2 }],
-  statuses: [{ status: 'pagada', total: 300, count: 2 }],
+  statuses: [{ status: 'paid', total: 300, count: 2 }],
 };
 
 describe('ReportsStore', () => {
@@ -53,7 +60,16 @@ describe('ReportsStore', () => {
   });
 
   it('debe reflejar una fuente vacía', () => {
-    snapshot.set({ ...SNAPSHOT, ordersCount: 0, totalSales: 0, days: [], statuses: [] });
+    snapshot.set({
+      ...SNAPSHOT,
+      ordersCount: 0,
+      recognizedSales: 0,
+      recognizedOrders: 0,
+      collections: 0,
+      netSales: 0,
+      days: [],
+      statuses: [],
+    });
     const store = setup();
 
     expect(store.hasData()).toBe(false);
