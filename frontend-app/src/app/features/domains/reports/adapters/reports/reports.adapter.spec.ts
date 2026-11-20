@@ -1,45 +1,84 @@
-import { buildReportSnapshot } from './reports.adapter';
+import type { ReportStateAliases } from '../../models/report.model';
+import { adaptReportEntryFromBackend } from './reports.adapter';
 
-describe('reports.adapter', () => {
-  it('debe devolver un snapshot vacío sin ventas', () => {
-    expect(buildReportSnapshot([])).toEqual({
-      totalSales: 0,
-      ordersCount: 0,
-      averageTicket: 0,
-      days: [],
-      statuses: [],
+const ALIASES: ReportStateAliases = {
+  entregada: 'delivered',
+  cancelada: 'cancelled',
+  devuelta: 'returned',
+};
+
+describe('adaptReportEntryFromBackend', () => {
+  it('debe traducir estados propios de la API al vocabulario del reporte', () => {
+    expect(
+      adaptReportEntryFromBackend({ date: '2026-11-19', total: 100, status: 'Entregada' }, ALIASES)
+        .status,
+    ).toBe('delivered');
+  });
+
+  it('debe aceptar estados canónicos sin alias', () => {
+    expect(adaptReportEntryFromBackend({ date: '', total: 0, status: 'paid' }, {}).status).toBe(
+      'paid',
+    );
+  });
+
+  it('debe marcar como desconocido un estado no reconocido', () => {
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: 'en revisión' }, ALIASES).status,
+    ).toBe('unknown');
+  });
+
+  it('no debe tomar propiedades heredadas del mapa de alias como estado', () => {
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: 'constructor' }, {}).status,
+    ).toBe('unknown');
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: '__proto__' }, ALIASES).status,
+    ).toBe('unknown');
+  });
+
+  it('debe caer a desconocido si un alias apunta a un estado inválido', () => {
+    const invalidAliases = { raro: 'vendida' } as unknown as ReportStateAliases;
+
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: 'raro' }, invalidAliases).status,
+    ).toBe('unknown');
+  });
+
+  it('debe tolerar entradas que no son objetos', () => {
+    expect(adaptReportEntryFromBackend([], ALIASES)).toEqual({
+      date: '',
+      total: 0,
+      status: 'unknown',
     });
   });
 
-  it('debe agrupar por día y estado, ordenar y calcular el promedio', () => {
-    const snapshot = buildReportSnapshot([
-      { date: '2026-10-27T12:00:00.000Z', total: 100, status: 'pagada' },
-      { date: '2026-10-27T18:00:00.000Z', total: 200, status: 'pagada' },
-      { date: '2026-10-28T09:00:00.000Z', total: 50, status: 'pendiente' },
-      { date: '', total: 25, status: '' },
-    ]);
-
-    expect(snapshot).toMatchObject({
-      totalSales: 375,
-      ordersCount: 4,
-      averageTicket: 93.75,
-    });
-    expect(snapshot.days).toEqual([
-      { date: '2026-10-28', total: 50, count: 1 },
-      { date: '2026-10-27', total: 300, count: 2 },
-    ]);
-    expect(snapshot.statuses).toEqual([
-      { status: 'pagada', total: 300, count: 2 },
-      { status: 'pendiente', total: 50, count: 1 },
-      { status: 'sin_estado', total: 25, count: 1 },
-    ]);
+  it('debe normalizar acentos, mayúsculas y espacios del estado', () => {
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: '  DEVUELTA ' }, ALIASES).status,
+    ).toBe('returned');
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: 0, status: 'en preparación' }, ALIASES).status,
+    ).toBe('unknown');
   });
 
-  it('debe redondear importes de días y estados', () => {
-    const snapshot = buildReportSnapshot([{ date: '2026-10-27', total: 10.005, status: 'pagada' }]);
+  it('debe sanear montos inválidos y negativos', () => {
+    expect(adaptReportEntryFromBackend({ date: '', total: -5, status: 'paid' }, {}).total).toBe(0);
+    expect(
+      adaptReportEntryFromBackend({ date: '', total: '12,505', status: 'paid' }, {}).total,
+    ).toBe(12.51);
+    expect(adaptReportEntryFromBackend({ date: '', total: 'x', status: 'paid' }, {}).total).toBe(0);
+  });
 
-    expect(snapshot.totalSales).toBe(10.01);
-    expect(snapshot.days[0].total).toBe(10.01);
-    expect(snapshot.statuses[0].total).toBe(10.01);
+  it('debe tolerar entradas nulas o sin fecha', () => {
+    expect(adaptReportEntryFromBackend(null, ALIASES)).toEqual({
+      date: '',
+      total: 0,
+      status: 'unknown',
+    });
+    expect(adaptReportEntryFromBackend({ total: 10, status: 'paid' }, {})).toEqual({
+      date: '',
+      total: 10,
+      status: 'paid',
+    });
   });
 });

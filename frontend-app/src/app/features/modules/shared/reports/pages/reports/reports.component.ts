@@ -3,7 +3,7 @@ import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { AppDatePipe } from '@shared/pipes/app-date.pipe';
 import { injectSeoPage } from '@core/services/seo/seo.service';
 import { REPORTS_SCOPE_CONFIG } from '@shared/reports/constants/reports-config.tokens';
-import { ReportsStore } from '@domains/reports/public-api';
+import { ReportsStore, type ReportEntryState } from '@domains/reports/public-api';
 
 /**
  * Reportes compartidos entre empresa y tienda (ADR-71). La página consume el
@@ -18,6 +18,14 @@ import { ReportsStore } from '@domains/reports/public-api';
 export default class ReportsComponent {
   readonly config = inject(REPORTS_SCOPE_CONFIG);
   readonly reports = inject(ReportsStore);
+  readonly stateLabels: Readonly<Record<ReportEntryState, string>> = {
+    pending: 'Pendiente',
+    paid: 'Pagada',
+    delivered: 'Entregada',
+    cancelled: 'Cancelada',
+    returned: 'Devuelta',
+    unknown: 'Desconocido',
+  };
 
   private readonly seoService = injectSeoPage(
     `${this.config.title} — ${this.config.scope === 'company' ? 'Empresa' : 'Panel del vendedor'}`,
