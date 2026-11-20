@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import type { ReportEntry, ReportsDataSource } from '@domains/reports/public-api';
 import { buildReportSnapshot } from '@domains/reports/public-api';
 import { COMPANY_PORTAL_REPOSITORY } from '@domains/company-sales/public-api';
+import { toCompanyReportEntry } from './company-reports.functions';
 
 /** Fuente de reportes de empresa sobre `GET /orders/empresa`. */
 @Injectable()
@@ -16,13 +17,7 @@ export class CompanyReportsSource implements ReportsDataSource {
     this.loading.set(true);
     try {
       const orders = await firstValueFrom(this.orders.orders({ limit: 100 }));
-      this.entries.set(
-        orders.map((order) => ({
-          date: order.createdAt,
-          total: order.total,
-          status: order.status,
-        })),
-      );
+      this.entries.set(orders.map(toCompanyReportEntry));
     } catch {
       this.entries.set([]);
     } finally {

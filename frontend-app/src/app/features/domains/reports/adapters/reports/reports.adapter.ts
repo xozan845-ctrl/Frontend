@@ -1,52 +1,56 @@
-import type {
-  ReportDay,
-  ReportEntry,
-  ReportSnapshot,
-  ReportStatus,
+import {
+  REPORT_ENTRY_STATES,
+  type ReportEntry,
+  type ReportEntryState,
+  type ReportStateAliases,
 } from '../../models/report.model';
 
-function round(value: number): number {
-  return Math.round(value * 100) / 100;
+const CANONICAL_STATES: ReadonlySet<string> = new Set(REPORT_ENTRY_STATES);
+
+/** Clave tolerante: minúsculas, sin acentos y con `_` en lugar de espacios. */
+function normalizeKey(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '_');
 }
 
-function dayKey(date: string): string {
-  return date ? date.slice(0, 10) : '';
+/** Monto no negativo con 2 decimales; valores inválidos caen a 0. */
+function toAmount(value: unknown): number {
+  const amount = typeof value === 'string' ? Number(value.replace(',', '.')) : value;
+  if (typeof amount !== 'number' || !Number.isFinite(amount) || amount < 0) return 0;
+  return Math.round(amount * 100) / 100;
 }
 
-/** Agrupa ventas por día y estado, y calcula total y ticket promedio. */
-export function buildReportSnapshot(entries: readonly ReportEntry[]): ReportSnapshot {
-  let totalSales = 0;
-  const days = new Map<string, ReportDay>();
-  const statuses = new Map<string, ReportStatus>();
+function toState(value: unknown, aliases: ReportStateAliases): ReportEntryState {
+  const key = normalizeKey(value);
+  if (CANONICAL_STATES.has(key)) return key as ReportEntryState;
+  if (!Object.prototype.hasOwnProperty.call(aliases, key)) return 'unknown';
 
-  for (const entry of entries) {
-    totalSales += entry.total;
+  const alias = aliases[key];
+  return CANONICAL_STATES.has(alias) ? alias : 'unknown';
+}
 
-    const key = dayKey(entry.date);
-    if (key) {
-      const day = days.get(key) ?? { date: key, total: 0, count: 0 };
-      day.total += entry.total;
-      day.count += 1;
-      days.set(key, day);
-    }
+/**
+ * Normaliza una entrada externa al modelo del reporte (`R-AR-4`). La traducción
+ * de los estados propios de cada API llega en `aliases`; un estado no reconocido
+ * queda como `unknown` y nunca se confunde con una venta válida.
+ */
+export function adaptReportEntryFromBackend(
+  raw: unknown,
+  aliases: ReportStateAliases,
+): ReportEntry {
+  const source =
+    raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? (raw as { date?: unknown; total?: unknown; status?: unknown })
+      : {};
 
-    const status = entry.status || 'sin_estado';
-    const group = statuses.get(status) ?? { status, total: 0, count: 0 };
-    group.total += entry.total;
-    group.count += 1;
-    statuses.set(status, group);
-  }
-
-  const ordersCount = entries.length;
   return {
-    totalSales: round(totalSales),
-    ordersCount,
-    averageTicket: ordersCount === 0 ? 0 : round(totalSales / ordersCount),
-    days: [...days.values()]
-      .map((day) => ({ ...day, total: round(day.total) }))
-      .sort((a, b) => b.date.localeCompare(a.date)),
-    statuses: [...statuses.values()]
-      .map((status) => ({ ...status, total: round(status.total) }))
-      .sort((a, b) => b.count - a.count || a.status.localeCompare(b.status)),
+    date: typeof source.date === 'string' ? source.date : '',
+    total: toAmount(source.total),
+    status: toState(source.status, aliases),
   };
 }

@@ -7,11 +7,13 @@
     <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ config.subtitle }}</p>
   </header>
 
-  <div class="grid gap-3 sm:grid-cols-3">
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
     <article class="card p-4" data-testid="reports-kpi-sales">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas</p>
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+        Ventas reconocidas
+      </p>
       <p class="mt-1 text-xl font-black tabular-nums">
-        {{ reports.snapshot().totalSales | appCurrency }}
+        {{ reports.snapshot().recognizedSales | appCurrency }}
       </p>
     </article>
     <article class="card p-4" data-testid="reports-kpi-orders">
@@ -22,6 +24,30 @@
       <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ticket promedio</p>
       <p class="mt-1 text-xl font-black tabular-nums">
         {{ reports.snapshot().averageTicket | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-collections">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cobros</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().collections | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-cancellations">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cancelaciones</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().cancellations | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-returns">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Devoluciones</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().returns | appCurrency }}
+      </p>
+    </article>
+    <article class="card p-4" data-testid="reports-kpi-net">
+      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Neto</p>
+      <p class="mt-1 text-xl font-black tabular-nums">
+        {{ reports.snapshot().netSales | appCurrency }}
       </p>
     </article>
   </div>
@@ -72,7 +98,9 @@
               class="glass-subtle flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-xs"
               data-testid="reports-status-row"
             >
-              <span class="font-bold uppercase">{{ status.status }}</span>
+              <span class="font-bold uppercase">{{
+                stateLabels[status.status] ?? status.status
+              }}</span>
               <span class="text-slate-500 dark:text-slate-400">{{ status.count }} pedidos</span>
               <span class="font-bold tabular-nums">{{ status.total | appCurrency }}</span>
             </li>
