@@ -1,12 +1,11 @@
+import type { ModuleAvailabilityStatus } from './module-availability.model';
+
 /** Superficies de trabajo conocidas por el registro de módulos. */
 export type WorkspaceScope = 'platform' | 'company' | 'store' | 'logistics';
 
 /** Sección visual del sidebar de un workspace. */
 export type WorkspaceModuleSection =
   'operacion' | 'administracion' | 'finanzas' | 'analisis' | 'footer';
-
-/** Estado de implementación del módulo. */
-export type WorkspaceModuleStatus = 'ready' | 'soon';
 
 /** Entrada del registro de módulos de un workspace. */
 export interface WorkspaceModule {
@@ -21,7 +20,10 @@ export interface WorkspaceModule {
   section: WorkspaceModuleSection;
   /** Permiso requerido; la sesión lo evalúa al construir la navegación. */
   permission?: string;
-  status: WorkspaceModuleStatus;
+  /** Estado de disponibilidad (ADR-85); `ready`/`soon` ya no existen. */
+  status: ModuleAvailabilityStatus;
+  /** Capacidades del paquete que activan este módulo reutilizable. */
+  requiredCapabilities?: readonly string[];
   /** Marca el enlace activo solo en coincidencia exacta (p. ej. dashboard). */
   exact?: boolean;
 }

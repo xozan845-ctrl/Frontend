@@ -40,7 +40,7 @@
         }
         <div class="flex flex-col gap-1">
           @for (item of group.items; track item.id) {
-            @if (item.status === 'soon') {
+            @if (item.status === 'en desarrollo') {
               <span
                 class="flex cursor-not-allowed items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-500"
                 aria-disabled="true"
@@ -55,7 +55,7 @@
                 <span
                   class="rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] font-black tracking-widest text-slate-500 uppercase"
                 >
-                  Pronto
+                  En desarrollo
                 </span>
               </span>
             } @else {
@@ -71,6 +71,13 @@
               >
                 <i class="w-5 text-center text-base" [class]="item.icon" aria-hidden="true"></i>
                 <span>{{ item.label }}</span>
+                @if (item.status === 'demo') {
+                  <span
+                    class="rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] font-black tracking-widest text-slate-400 uppercase"
+                  >
+                    Demo
+                  </span>
+                }
               </a>
             }
           }

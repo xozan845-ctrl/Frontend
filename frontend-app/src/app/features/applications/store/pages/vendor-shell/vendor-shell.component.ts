@@ -7,7 +7,7 @@ import {
   type Workspace,
 } from '../../../auth/public-api';
 import { BrandingService } from '@core/services/branding/branding.service';
-import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
 import { VendorStoreStore } from '../../state/vendor-store/vendor-store.store';
@@ -28,8 +28,9 @@ export default class VendorShellComponent {
   private readonly auth = inject(AuthStore);
   private readonly vendorStore = inject(VendorStoreStore);
   private readonly branding = inject(BrandingService);
+  private readonly availability = inject(ModuleAvailabilityService);
   private readonly cleanup = inject(DestroyRef).onDestroy(() => this.branding.reset());
-  readonly navGroups = workspaceModuleGroups('store', (module) => {
+  readonly navGroups = this.availability.groupsFor('store', (module) => {
     const user = this.auth.user();
     return (
       canEnterWorkspace(user, module.workspace as Workspace) &&

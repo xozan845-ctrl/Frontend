@@ -46,4 +46,42 @@ describe('ModuleAvailabilityService', () => {
       capabilities: ['workspace.logistics'],
     });
   });
+
+  it('debe dar al menú solo los módulos disponibles en el paquete contratado', () => {
+    const service = setup({ id: 'tienda', capabilities: ['module:store.sales'] });
+
+    const ids = service
+      .groupsFor('store', () => true)
+      .flatMap((group) => group.items.map((item) => item.id));
+
+    expect(ids).toEqual(['store.sales']);
+  });
+
+  it('debe reutilizar el mismo registro con otro paquete sin condicionales por empresa', () => {
+    const service = setup({
+      id: 'tienda-con-facturacion',
+      capabilities: ['module:store.sales', 'module:store.billing'],
+    });
+
+    const ids = service
+      .groupsFor('store', () => true)
+      .flatMap((group) => group.items.map((item) => item.id));
+
+    expect(ids).toEqual(['store.sales', 'store.billing']);
+    expect(
+      service.resolve({ status: 'demo', requiredCapabilities: ['module:store.billing'] }),
+    ).toMatchObject({ available: true, operational: false, label: 'Demo' });
+  });
+
+  it('debe ocultar los módulos en desarrollo incluso con comodín local', () => {
+    const service = setup({ id: 'local', capabilities: ['*'] });
+
+    const ids = service
+      .groupsFor('company', () => true)
+      .flatMap((group) => group.items.map((item) => item.id));
+
+    expect(ids).toContain('company.sales');
+    expect(ids).not.toContain('company.payroll');
+    expect(ids).not.toContain('company.taxes');
+  });
 });

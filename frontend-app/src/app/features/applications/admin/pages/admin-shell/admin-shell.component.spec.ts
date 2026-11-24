@@ -2,12 +2,17 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import AdminShellComponent from './admin-shell.component';
 import { AuthStore } from '../../../auth/public-api';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 
 describe('AdminShellComponent', () => {
   const setup = async () => {
     await TestBed.configureTestingModule({
       imports: [AdminShellComponent],
-      providers: [provideRouter([]), { provide: AuthStore, useValue: { user: () => null } }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthStore, useValue: { user: () => null } },
+        { provide: ModuleAvailabilityService, useValue: { groupsFor: () => [] } },
+      ],
     }).compileComponents();
     const fixture = TestBed.createComponent(AdminShellComponent);
     fixture.detectChanges();
