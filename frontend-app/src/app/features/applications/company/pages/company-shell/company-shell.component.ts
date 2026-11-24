@@ -6,7 +6,7 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 import { BrandingService } from '@core/services/branding/branding.service';
 import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 import { resolveStorageAssetUrl, storagePublicObjectUrl } from '../../../storage/public-api';
@@ -25,8 +25,9 @@ export default class CompanyShellComponent {
   private readonly auth = inject(AuthStore);
   private readonly companyStore = inject(CompanyStore);
   private readonly branding = inject(BrandingService);
+  private readonly availability = inject(ModuleAvailabilityService);
   private readonly cleanup = inject(DestroyRef).onDestroy(() => this.branding.reset());
-  readonly navGroups = workspaceModuleGroups('company', (module) => {
+  readonly navGroups = this.availability.groupsFor('company', (module) => {
     const user = this.auth.user();
     return (
       canEnterWorkspace(user, module.workspace as Workspace) &&

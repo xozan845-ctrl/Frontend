@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import CompanyShellComponent from './company-shell.component';
 import { AuthStore } from '../../../auth/public-api';
 import { BrandingService } from '@core/services/branding/branding.service';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 import { CompanyStore } from '../../state/company/company.store';
 import type { Company } from '../../models/company.model';
 
@@ -23,6 +24,7 @@ describe('CompanyShellComponent', () => {
         { provide: AuthStore, useValue: { user: signal(null) } },
         { provide: CompanyStore, useValue: companyStore },
         { provide: BrandingService, useValue: branding },
+        { provide: ModuleAvailabilityService, useValue: { groupsFor: () => [] } },
       ],
     })
       .overrideComponent(CompanyShellComponent, { set: { providers: [] } })

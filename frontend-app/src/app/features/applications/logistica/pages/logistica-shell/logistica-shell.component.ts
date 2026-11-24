@@ -7,7 +7,7 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 
 /**
@@ -24,6 +24,7 @@ import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-sh
 export default class LogisticaShellComponent {
   private readonly router = inject(Router);
   private readonly authStore = inject(AuthStore);
+  private readonly availability = inject(ModuleAvailabilityService);
   readonly isSidebarOpen = signal(false);
   readonly basePath = computed(() => {
     const url = this.router.url;
@@ -39,17 +40,19 @@ export default class LogisticaShellComponent {
     return 'Logística';
   });
 
-  readonly navGroups = workspaceModuleGroups('logistics', (module) => {
-    const user = this.authStore.user();
-    return (
-      canEnterWorkspace(user, module.workspace as Workspace) &&
-      (!module.permission || hasPermission(user, module.permission as Permission))
-    );
-  }).map((group) => ({
-    ...group,
-    items: group.items.map((item) => ({
-      ...item,
-      link: `${this.basePath()}/${item.path ?? ''}`.replace(/\/+$/, ''),
-    })),
-  }));
+  readonly navGroups = this.availability
+    .groupsFor('logistics', (module) => {
+      const user = this.authStore.user();
+      return (
+        canEnterWorkspace(user, module.workspace as Workspace) &&
+        (!module.permission || hasPermission(user, module.permission as Permission))
+      );
+    })
+    .map((group) => ({
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        link: `${this.basePath()}/${item.path ?? ''}`.replace(/\/+$/, ''),
+      })),
+    }));
 }

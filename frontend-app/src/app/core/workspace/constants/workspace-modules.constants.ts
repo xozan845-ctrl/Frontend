@@ -1,3 +1,4 @@
+import { moduleCapability } from '../models/module-availability.model';
 import type {
   WorkspaceModule,
   WorkspaceModuleGroup,
@@ -37,10 +38,10 @@ const SECTION_LABELS: Readonly<
 };
 
 /**
- * Registro único de módulos del workspace. El sidebar y los guards consumen
- * esta lista; la visibilidad se resuelve por workspace + permiso, no por rol.
+ * Descriptores reutilizables del workspace. El estado dice qué puede hacer la
+ * UI; la visibilidad final la resuelven permisos + paquete/capacidades (ADR-85).
  */
-export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
+const MODULE_DEFINITIONS: readonly WorkspaceModule[] = [
   // ── Empresa ─────────────────────────────────────────────────────────────
   {
     id: 'company.dashboard',
@@ -51,7 +52,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.sales',
@@ -62,7 +63,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:sales:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.clients',
@@ -73,7 +74,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:clients:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.catalog',
@@ -84,7 +85,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:catalog:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.purchases',
@@ -95,7 +96,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:purchases:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.expenses',
@@ -106,7 +107,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:expenses:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.cash',
@@ -117,7 +118,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:cash:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.banks',
@@ -128,7 +129,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:banks:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.payables',
@@ -139,7 +140,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:payables:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.payroll',
@@ -150,7 +151,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:payroll:manage',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'company.quotes',
@@ -161,7 +162,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:quotes:manage',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'company.barcodes',
@@ -172,7 +173,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:barcodes:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.credit',
@@ -183,7 +184,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:credit:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.taxes',
@@ -194,7 +195,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:taxes:manage',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'company.reports',
@@ -205,7 +206,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:reports:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.analytics',
@@ -216,7 +217,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:analytics:read',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'company.notifications',
@@ -227,7 +228,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'operacion',
     permission: 'company:notifications:read',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'company.stores',
@@ -238,7 +239,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'administracion',
     permission: 'company:manage-stores',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.sellers',
@@ -249,7 +250,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'administracion',
     permission: 'company:manage-sellers',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.logistics',
@@ -260,7 +261,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'administracion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.settings',
@@ -271,7 +272,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'footer',
     permission: 'company:settings:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'company.help',
@@ -282,7 +283,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'company',
     section: 'footer',
     permission: 'company:read',
-    status: 'soon',
+    status: 'en desarrollo',
   },
 
   // ── Vendedor / tienda ───────────────────────────────────────────────────
@@ -295,7 +296,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.catalog',
@@ -306,7 +307,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-products',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.offers',
@@ -317,7 +318,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-products',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.clients',
@@ -328,7 +329,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-clients',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.sales',
@@ -339,7 +340,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-orders',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.orders',
@@ -350,7 +351,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-orders',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.my-store',
@@ -361,7 +362,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.roles',
@@ -372,7 +373,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-roles',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.logistics',
@@ -383,7 +384,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-logistics',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.billing',
@@ -394,7 +395,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-billing',
-    status: 'ready',
+    status: 'demo',
   },
   {
     id: 'store.inventory',
@@ -405,7 +406,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:manage-products',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'store.storage',
@@ -416,7 +417,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.credit',
@@ -427,7 +428,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:credit:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.barcodes',
@@ -438,7 +439,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:barcodes:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.banks',
@@ -449,7 +450,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:banks:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.payables',
@@ -460,7 +461,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:payables:manage',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.reports',
@@ -471,7 +472,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'operacion',
     permission: 'store:reports:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'store.settings',
@@ -482,7 +483,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'footer',
     permission: 'store:manage',
-    status: 'soon',
+    status: 'en desarrollo',
   },
   {
     id: 'store.help',
@@ -493,7 +494,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'store',
     section: 'footer',
     permission: 'store:read',
-    status: 'soon',
+    status: 'en desarrollo',
   },
 
   // ── Administración de plataforma ───────────────────────────────────────
@@ -506,7 +507,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'platform',
     section: 'operacion',
     permission: 'platform:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'platform.orders',
@@ -517,7 +518,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'platform',
     section: 'operacion',
     permission: 'platform:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'platform.storage',
@@ -528,7 +529,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'platform',
     section: 'administracion',
     permission: 'platform:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'platform.branding',
@@ -539,7 +540,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'platform',
     section: 'administracion',
     permission: 'platform:read',
-    status: 'ready',
+    status: 'validado',
   },
 
   // ── Logística (empresa, tienda o empresa logística) ────────────────────
@@ -553,7 +554,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
     exact: true,
   },
   {
@@ -566,7 +567,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'logistics.map',
@@ -578,7 +579,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'en desarrollo',
   },
   {
     id: 'logistics.routes',
@@ -590,7 +591,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'logistics.orders',
@@ -602,7 +603,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'en desarrollo',
   },
   {
     id: 'logistics.couriers',
@@ -614,7 +615,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'logistics.zones',
@@ -626,7 +627,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'en desarrollo',
   },
   {
     id: 'logistics.incidents',
@@ -638,7 +639,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'validado',
   },
   {
     id: 'logistics.reports',
@@ -650,7 +651,7 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'en desarrollo',
   },
   {
     id: 'logistics.settings',
@@ -662,9 +663,19 @@ export const WORKSPACE_MODULES: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'footer',
     permission: 'logistics:read',
-    status: 'ready',
+    status: 'en desarrollo',
   },
 ];
+
+/**
+ * Registro único de módulos. Cada descriptor conserva su capacidad derivada
+ * del id para que dos paquetes distintos activen superficies distintas sin
+ * condicionales por empresa; el comodín local habilita todas (`ADR-85`).
+ */
+export const WORKSPACE_MODULES: readonly WorkspaceModule[] = MODULE_DEFINITIONS.map((module) => ({
+  ...module,
+  requiredCapabilities: module.requiredCapabilities ?? [moduleCapability(module.id)],
+}));
 
 /** Busca un módulo por id. */
 export function workspaceModuleById(id: string): WorkspaceModule | undefined {

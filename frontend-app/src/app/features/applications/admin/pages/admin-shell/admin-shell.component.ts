@@ -6,7 +6,7 @@ import {
   type Permission,
   type Workspace,
 } from '../../../auth/public-api';
-import { workspaceModuleGroups } from '@core/workspace/constants/workspace-modules.constants';
+import { ModuleAvailabilityService } from '@core/workspace/services/module-availability/module-availability.service';
 import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-shell.component';
 
 /** Shell del workspace de plataforma (admin/super_admin). */
@@ -19,8 +19,9 @@ import { WorkspaceShellComponent } from '@shared/ui/workspace-shell/workspace-sh
 export default class AdminShellComponent {
   readonly isSidebarOpen = signal(false);
   private readonly auth = inject(AuthStore);
+  private readonly availability = inject(ModuleAvailabilityService);
 
-  readonly navGroups = workspaceModuleGroups('platform', (module) => {
+  readonly navGroups = this.availability.groupsFor('platform', (module) => {
     const user = this.auth.user();
     return (
       canEnterWorkspace(user, module.workspace as Workspace) &&

@@ -19,7 +19,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         workspace: 'company',
         section: 'operacion',
         permission: 'company:read',
-        status: 'ready',
+        status: 'validado',
       },
     ],
   },
