@@ -74,4 +74,29 @@ describe('RuntimeConfigService', () => {
     httpMock.expectNone('config.json');
     expect(environment.apiUrl).toBe(originalApiUrl);
   });
+
+  it('debe exponer el paquete por defecto cuando config.json no declara uno', async () => {
+    const service = TestBed.inject(RuntimeConfigService);
+
+    const pending = service.load();
+    httpMock.expectOne('config.json').flush({ apiUrl: 'https://api.example.com/api/v1' });
+    await pending;
+
+    expect(service.packageConfig()).toEqual({ id: 'local', capabilities: ['*'] });
+  });
+
+  it('debe exponer el paquete y sus capacidades cuando config.json los declara', async () => {
+    const service = TestBed.inject(RuntimeConfigService);
+
+    const pending = service.load();
+    httpMock.expectOne('config.json').flush({
+      package: { id: 'tienda', capabilities: ['workspace.store'] },
+    });
+    await pending;
+
+    expect(service.packageConfig()).toEqual({
+      id: 'tienda',
+      capabilities: ['workspace.store'],
+    });
+  });
 });
