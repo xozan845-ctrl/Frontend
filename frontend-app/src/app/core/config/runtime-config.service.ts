@@ -1,14 +1,23 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, firstValueFrom, of, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { RuntimeConfig } from './runtime-config.model';
+import { RuntimeConfig, type RuntimePackageConfig } from './runtime-config.model';
 
 /** Ruta relativa al `base href`; el asset vive en `public/config.json`. */
 const CONFIG_URL = 'config.json';
 
 /** Tiempo máximo de espera: la app nunca debe colgarse por la config. */
 const CONFIG_TIMEOUT_MS = 5000;
+
+/**
+ * Paquete de desarrollo: habilita todo sin depender de un despliegue con
+ * `config.json`. Producción debe declarar capacidades explícitas (ADR-85).
+ */
+const DEFAULT_RUNTIME_PACKAGE: RuntimePackageConfig = {
+  id: 'local',
+  capabilities: ['*'],
+};
 
 /**
  * Carga la configuración de despliegue (`config.json`) durante el arranque de
@@ -26,6 +35,10 @@ const CONFIG_TIMEOUT_MS = 5000;
 })
 export class RuntimeConfigService {
   private readonly http = inject(HttpClient);
+  private readonly packageState = signal<RuntimePackageConfig>(DEFAULT_RUNTIME_PACKAGE);
+
+  /** Paquete vigente; única fuente para la disponibilidad de módulos (ADR-85). */
+  readonly packageConfig = this.packageState.asReadonly();
 
   /** Descarga `config.json` y fusiona sus valores no vacíos sobre `environment`. */
   async load(): Promise<void> {
@@ -62,6 +75,13 @@ export class RuntimeConfigService {
 
     if (config.aiScraperUrl) {
       environment.aiScraperUrl = config.aiScraperUrl;
+    }
+
+    if (config.package) {
+      this.packageState.set({
+        ...config.package,
+        capabilities: config.package.capabilities ?? [],
+      });
     }
   }
 }
