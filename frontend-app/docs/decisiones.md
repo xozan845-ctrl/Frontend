@@ -2206,3 +2206,7 @@ contexto y consecuencias.
     de clientes y los comprobantes y conteos ficticios: los listados quedan
     vacíos y un aviso `Demo` explica que no hay acciones reales. Ningún dato de
     muestra se presenta ya como actividad del negocio.
+  - El tablero de logística (`logistics.dashboard`) pasa a `demo` porque sus
+    paneles se alimentan del boceto (`mocks/`). Se retira `LOGISTICA_KPIS` y el
+    estado `kpis` del store: no se pintan tarjetas de indicadores inventados y
+    un aviso `Demo` sustituye al resumen con cifras de muestra.
