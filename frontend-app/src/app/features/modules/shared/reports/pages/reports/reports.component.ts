@@ -25,4 +25,9 @@ export default class ReportsComponent {
   );
 
   private readonly loadReport = this.reports.load();
+
+  /** Reintenta la lectura y conserva el último dato válido si vuelve a fallar. */
+  retry(): void {
+    void this.reports.load();
+  }
 }

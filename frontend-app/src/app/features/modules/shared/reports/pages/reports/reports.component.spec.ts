@@ -20,18 +20,32 @@ const snapshot: ReportSnapshot = {
   statuses: [{ status: 'pagada', total: 300, count: 2 }],
 };
 
+interface ComponentState {
+  loading?: boolean;
+  hasData?: boolean;
+  error?: string | null;
+  hasStaleData?: boolean;
+  lastUpdatedAt?: Date | null;
+}
+
 describe('ReportsComponent', () => {
   const store = {
     snapshot: signal(snapshot),
     loading: signal(false),
+    error: signal<string | null>(null),
+    lastUpdatedAt: signal<Date | null>(null),
+    hasStaleData: signal(false),
     recentDays: signal(snapshot.days),
     hasData: signal(true),
     load: vi.fn(),
   };
 
-  const setup = async (loading = false, hasData = true) => {
-    store.loading.set(loading);
-    store.hasData.set(hasData);
+  const setup = async (state: ComponentState = {}) => {
+    store.loading.set(state.loading ?? false);
+    store.hasData.set(state.hasData ?? true);
+    store.error.set(state.error ?? null);
+    store.hasStaleData.set(state.hasStaleData ?? false);
+    store.lastUpdatedAt.set(state.lastUpdatedAt ?? null);
     await TestBed.configureTestingModule({
       imports: [ReportsComponent],
       providers: [
@@ -62,14 +76,46 @@ describe('ReportsComponent', () => {
   });
 
   it('debe mostrar el estado de carga', async () => {
-    const fixture = await setup(true);
+    const fixture = await setup({ loading: true, hasData: false });
 
     expect(fixture.nativeElement.textContent).toContain('Cargando reporte');
   });
 
   it('debe mostrar el vacío sin ventas', async () => {
-    const fixture = await setup(false, false);
+    const fixture = await setup({ hasData: false });
 
     expect(fixture.nativeElement.textContent).toContain('No hay ventas registradas');
+  });
+
+  // regression: F12
+  it('debe mostrar el error y reintentar sin pintar KPIs en cero', async () => {
+    const fixture = await setup({
+      hasData: false,
+      error: 'No se pudieron cargar los reportes de la empresa.',
+    });
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('[data-testid="reports-error"]')).not.toBeNull();
+    expect(host.textContent).toContain('No se pudieron cargar los reportes de la empresa.');
+    expect(host.querySelector('[data-testid="reports-kpi-sales"]')).toBeNull();
+    expect(host.textContent).not.toContain('No hay ventas registradas');
+
+    host.querySelector<HTMLButtonElement>('[data-testid="reports-retry"]')?.click();
+
+    expect(store.load).toHaveBeenCalledTimes(2);
+  });
+
+  // regression: F12
+  it('debe avisar que muestra el último dato válido si falla la recarga', async () => {
+    const fixture = await setup({
+      error: 'sin red',
+      hasStaleData: true,
+      lastUpdatedAt: new Date('2026-11-24T10:30:00.000Z'),
+    });
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('[data-testid="reports-stale"]')).not.toBeNull();
+    expect(host.textContent).toContain('Mostrando el último reporte disponible');
+    expect(host.querySelector('[data-testid="reports-kpi-sales"]')).not.toBeNull();
   });
 });

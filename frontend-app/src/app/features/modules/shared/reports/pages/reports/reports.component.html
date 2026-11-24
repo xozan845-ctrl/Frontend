@@ -7,32 +7,69 @@
     <p class="max-w-2xl text-sm text-slate-500 dark:text-slate-400">{{ config.subtitle }}</p>
   </header>
 
-  <div class="grid gap-3 sm:grid-cols-3">
-    <article class="card p-4" data-testid="reports-kpi-sales">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas</p>
-      <p class="mt-1 text-xl font-black tabular-nums">
-        {{ reports.snapshot().totalSales | appCurrency }}
-      </p>
-    </article>
-    <article class="card p-4" data-testid="reports-kpi-orders">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pedidos</p>
-      <p class="mt-1 text-xl font-black tabular-nums">{{ reports.snapshot().ordersCount }}</p>
-    </article>
-    <article class="card p-4" data-testid="reports-kpi-ticket">
-      <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ticket promedio</p>
-      <p class="mt-1 text-xl font-black tabular-nums">
-        {{ reports.snapshot().averageTicket | appCurrency }}
-      </p>
-    </article>
-  </div>
+  @if (reports.error(); as message) {
+    <div
+      class="alert alert-danger flex flex-col gap-2 p-4"
+      role="alert"
+      data-testid="reports-error"
+    >
+      <p class="text-sm font-bold text-red-600 dark:text-red-400">{{ message }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm self-start"
+        data-testid="reports-retry"
+        (click)="retry()"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
 
-  @if (reports.loading()) {
+  @if (reports.hasStaleData()) {
+    <p
+      class="card p-4 text-sm text-slate-500 dark:text-slate-400"
+      role="status"
+      aria-live="polite"
+      data-testid="reports-stale"
+    >
+      Mostrando el último reporte disponible
+      @if (reports.lastUpdatedAt(); as updatedAt) {
+        (actualizado el {{ updatedAt | appDate: 'datetime' }})
+      }
+      . Vuelve a intentarlo para actualizarlo.
+    </p>
+  }
+
+  @if (reports.loading() && !reports.hasData()) {
     <p class="card p-6 text-center text-sm text-slate-500 dark:text-slate-400">Cargando reporte…</p>
   } @else if (!reports.hasData()) {
-    <p class="card p-6 text-center text-sm text-slate-500 dark:text-slate-400">
-      No hay ventas registradas para este reporte.
-    </p>
+    @if (!reports.error()) {
+      <p class="card p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        No hay ventas registradas para este reporte.
+      </p>
+    }
   } @else {
+    <div class="grid gap-3 sm:grid-cols-3">
+      <article class="card p-4" data-testid="reports-kpi-sales">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Ventas</p>
+        <p class="mt-1 text-xl font-black tabular-nums">
+          {{ reports.snapshot().totalSales | appCurrency }}
+        </p>
+      </article>
+      <article class="card p-4" data-testid="reports-kpi-orders">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pedidos</p>
+        <p class="mt-1 text-xl font-black tabular-nums">{{ reports.snapshot().ordersCount }}</p>
+      </article>
+      <article class="card p-4" data-testid="reports-kpi-ticket">
+        <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+          Ticket promedio
+        </p>
+        <p class="mt-1 text-xl font-black tabular-nums">
+          {{ reports.snapshot().averageTicket | appCurrency }}
+        </p>
+      </article>
+    </div>
+
     <div class="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
       <div class="card flex flex-col gap-3 p-5">
         <h2 class="font-heading text-lg font-black tracking-tight uppercase">Últimos días</h2>

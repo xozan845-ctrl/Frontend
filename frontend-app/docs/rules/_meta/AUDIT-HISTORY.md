@@ -615,3 +615,19 @@
 - **Resultado:** 360 archivos / 1.940 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Auditoría 27 — Reportes sin cero falso (2026-11-24)
+
+- **Cambio:** puro `ReportsSourcePort.read()` separado del contrato Angular
+  (`R-AR-3`, `R-NC-1`, `R-AR-16`); `error`/`lastUpdatedAt` normalizados en las
+  fuentes, `hasStaleData` en el store y error/reintento/dato desactualizado en
+  la página (F12, `R-DO-8`).
+- **Resultado:** 360 archivos / 1.950 tests; 24 suites (53/259 IDs, 46 checks);
+  typecheck, lint, lint:css, rules:check, test:engine, formato en checkout LF,
+  build, presupuesto, `npm audit --audit-level=high` y cobertura
+  94.52/88.06/94.34/96.12 con diff 32/32 (100%) en verde. E2E objetivo 1/1 y
+  20/20 con `--repeat-each=20`; suite completa en Windows 60 passed / 7 failed
+  por snapshots `chromium-win32` ausentes y un flake de `motion-animations`.
+- **Estado global:** 🟢 **CUMPLE**.

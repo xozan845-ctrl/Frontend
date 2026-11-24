@@ -7,8 +7,11 @@ export const ReportsStore = signalStore(
   withComputed((store, source = inject(REPORTS_DATA_SOURCE)) => ({
     snapshot: computed(() => source.snapshot()),
     loading: computed(() => source.loading()),
+    error: computed(() => source.error()),
+    lastUpdatedAt: computed(() => source.lastUpdatedAt()),
     recentDays: computed(() => source.snapshot().days.slice(0, 14)),
     hasData: computed(() => source.snapshot().ordersCount > 0),
+    hasStaleData: computed(() => source.error() !== null && source.snapshot().ordersCount > 0),
   })),
   withMethods((store, source = inject(REPORTS_DATA_SOURCE)) => ({
     load(): void | Promise<void> {
