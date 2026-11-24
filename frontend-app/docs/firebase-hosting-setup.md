@@ -145,6 +145,45 @@ node -e "const c=require('crypto'),fs=require('fs');const h=fs.readFileSync('dis
 
 ## 4. Comandos
 
+### Matriz CSP de recursos habilitados (F34)
+
+La matriz común ejecutable es `scripts/config/csp-resources.json`. Las políticas
+específicas viven en `firebase.json`, `../nginx.conf` y `src/index.html`; el
+navegador aplica la intersección de cabecera y meta. Los tests comparan ambas
+cabeceras con la matriz y prueban Leaflet e imágenes en Chromium bajo cada una.
+
+| Recurso    | Orígenes autorizados                                                       | Flujo                                                         |
+| ---------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Imágenes   | `'self'`, `data:`, `blob:`                                                 | Assets y previsualizaciones locales                           |
+| Imágenes   | `https://api.kbcoleccion.com`, `https://storage.kbcoleccion.com`           | Catálogo y logos públicos                                     |
+| Imágenes   | `https://images.unsplash.com`                                              | Fallback de catálogo                                          |
+| Imágenes   | `https://tile.openstreetmap.org`                                           | Teselas Leaflet del dashboard                                 |
+| Conexiones | `'self'`, `https://api.kbcoleccion.com`, `https://storage.kbcoleccion.com` | Configuración, API y PUT prefirmado al host configurado       |
+| Multimedia | `'self'`, `blob:`                                                          | Solo recursos locales/previsualización; video remoto excluido |
+
+`connect-src` no acepta `https:` general ni comodines. La meta conserva además
+`http://localhost:8080` y `http://localhost:3000` para desarrollo; las cabeceras
+de producción no los permiten. Fuentes y CSS conservan Google Fonts y cdnjs.
+El backend IA de producción está sin configurar: para habilitar un host externo
+se deben actualizar configuración, matriz y las tres CSP con su origen exacto,
+y repetir los tests. El proxy same-origin de nginx usa `'self'`.
+
+Un cambio de proveedor se declara en infraestructura; no se amplían permisos a
+hosts generales ni se añaden políticas a modelos de dominio o componentes
+compartidos. La autorización CSP de PUT no verifica ownership, MIME, Range,
+persistencia ni permisos del storage. Véase la exclusión F34 en
+[`backend-media-background.md`](./backend-media-background.md).
+
+```bash
+node --test scripts/commands/csp-resources.test.mjs
+npx playwright test e2e/csp.spec.ts --project chromium
+```
+
+Estas pruebas son herméticas y no acreditan despliegue. Tras publicar, comprobar
+la cabecera HTTP del destino, abrir el dashboard y las imágenes habilitadas,
+y registrar ausencia de bloqueos CSP inesperados. nginx es un destino alterno
+preparado; no se afirma que esté desplegado.
+
 ```bash
 cd frontend-app
 

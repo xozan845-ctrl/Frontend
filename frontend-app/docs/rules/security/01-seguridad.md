@@ -31,6 +31,13 @@ datos de entrada.
 
 ## Verificación
 
+F34 verifica la paridad de CSP entre destinos con
+`node --test scripts/commands/csp-resources.test.mjs` y el comportamiento en
+Chromium con `npx playwright test e2e/csp.spec.ts --project chromium`.
+La matriz `scripts/config/csp-resources.json` limita imágenes, conexiones y
+multimedia a los recursos habilitados. No permite `https:` general ni
+comodines; las garantías del storage remoto quedan fuera de esas pruebas.
+
 ```bash
 node scripts/cli.mjs rules --only security-guards   # R-SE-3/4/7/9
 ```

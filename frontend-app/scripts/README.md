@@ -17,6 +17,13 @@ que son verificables por máquina.
 
 ## Qué vigila
 
+F34: `config/csp-resources.json` declara los recursos habilitados comunes de
+hosting. `commands/csp-resources.test.mjs` (incluido en `npm run test:engine`)
+comprueba paridad Firebase/nginx y la intersección con la meta del HTML, sin
+comodines ni `https:` general. `e2e/csp.spec.ts` prueba Leaflet, imágenes,
+conexiones autorizadas y rechazos bajo ambas cabeceras con respuestas
+controladas. No valida storage remoto ni demuestra despliegue.
+
 | Suite                    | Reglas                                         | Qué comprueba                                                                                                                                                                                                                                      |
 | ------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `architecture-types`     | `R-NC-13`, `R-NC-9`, `R-CX-4`                  | Los tipos viven en archivos dedicados; no se mezclan con implementación.                                                                                                                                                                           |

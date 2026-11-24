@@ -1,5 +1,27 @@
 # Contrato backend — Media Background (plataforma, empresa y tienda)
 
+## Exclusión del alcance F34 (2026-11-24)
+
+F34 alinea únicamente la configuración CSP de Firebase Hosting, nginx y el HTML.
+No valida ni entrega ownership de assets de plataforma, MIME, Range,
+persistencia, permisos ni despliegues del storage remoto. La existencia del
+componente o de este contrato no acredita esas garantías.
+
+Los fondos de video remoto que dependan de ellas quedan fuera del alcance
+habilitado: `media-src` permite solo `'self'` y `blob:` (recursos locales y
+previsualización), sin hosts remotos. Las imágenes de catálogo, logos y teselas
+siguen teniendo una lista explícita de proveedores en `img-src`; permitir una
+imagen no certifica el ownership ni el servicio que la entrega.
+
+La matriz común de recursos vive en `scripts/config/csp-resources.json` y su
+operación se documenta en `firebase-hosting-setup.md`. Los tests de F34 usan
+respuestas controladas con las cabeceras del repositorio: no prueban storage
+real ni constituyen evidencia de despliegue. Este cambio se entrega por PR;
+la publicación y el cierre en un destino real requieren evidencia posterior.
+
+El resto del documento conserva el contrato y sus pendientes históricos del
+backend; no asigna esos cambios de servidor al trabajo F34 del frontend.
+
 > **Estado:** implementado por el backend en `develop` (2026-11-04). Pendiente
 > de despliegue en **stage**; Dockploy devuelve `404 Compose Not Found`.
 > **Fecha de la propuesta:** 2026-11-03.
