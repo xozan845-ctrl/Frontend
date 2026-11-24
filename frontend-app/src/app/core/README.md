@@ -5,7 +5,7 @@ Contiene infraestructura sin UI ni reglas de negocio (`R-AR-13`). No importa
 
 | Carpeta      | Contenido                                                              |
 | ------------ | ---------------------------------------------------------------------- |
-| `config/`    | Configuración pública: API, moneda y flags.                            |
+| `config/`    | Configuración pública: API, moneda, paquete/capacidades y flags.       |
 | `constants/` | Constantes de marca y datos corporativos.                              |
 | `models/`    | Tipos genéricos: respuestas de API, errores, notificaciones, SEO.      |
 | `services/`  | Servicios de aplicación sin UI: SEO, configuración de tienda y avisos. |

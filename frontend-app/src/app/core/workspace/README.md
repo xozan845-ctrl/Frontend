@@ -3,10 +3,11 @@
 Registro único de los módulos del workspace y de su visibilidad por sesión.
 No contiene lógica de negocio ni componentes de UI.
 
-| Unidad       | Responsabilidad                                                       |
-| ------------ | --------------------------------------------------------------------- |
-| `models/`    | `WorkspaceModule`, secciones, estado y `WorkspaceScope`.              |
-| `constants/` | `WORKSPACE_MODULES`, etiquetas de sección y agrupación por workspace. |
+| Unidad       | Responsabilidad                                                                 |
+| ------------ | ------------------------------------------------------------------------------- |
+| `models/`    | `WorkspaceModule`, secciones, `WorkspaceScope` y disponibilidad de módulos.     |
+| `constants/` | `WORKSPACE_MODULES`, etiquetas de sección, etiquetas de estado y agrupación.    |
+| `services/`  | `ModuleAvailabilityService`: resolución compartida desde el paquete en runtime. |
 
 ## Cómo funciona
 
@@ -18,6 +19,17 @@ No contiene lógica de negocio ni componentes de UI.
    hardcodeadas.
 5. `moduleGuard(id)` en `features/applications/auth` resuelve el acceso a la ruta con el
    mismo registro (importado de forma lazy).
+
+## Disponibilidad (ADR-85)
+
+`resolveModuleAvailability` combina `status` (`demo`, `en desarrollo`,
+`integrado`, `validado`) con las `capabilities` de `RuntimeConfig.package` y
+devuelve `available` (se puede mostrar/abrir) y `operational` (acciones reales).
+`ModuleAvailabilityService` es la única fuente para menú, rutas y paneles: dos
+paquetes distintos reutilizan los mismos descriptores sin condicionales por
+empresa. El comodín `*` solo habilita el entorno local; producción declara
+capacidades explícitas. Esta resolución es UX y **no** sustituye permisos ni la
+autorización del backend (`R-SE-1`).
 
 ## Añadir un módulo
 

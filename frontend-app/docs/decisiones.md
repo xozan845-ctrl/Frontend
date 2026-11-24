@@ -2166,3 +2166,35 @@ contexto y consecuencias.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.
+
+---
+
+## ADR-85: Disponibilidad de módulos por paquete y capacidades
+
+- **Fecha**: 2026-11-24
+- **Estado**: Aceptado
+- **Contexto**: el registro `WORKSPACE_MODULES` mezclaba módulos reales,
+  demostraciones y pantallas “Pronto” bajo un único estado `ready`/`soon` que
+  solo leía el sidebar. Las acciones demo y los KPIs de muestra se mostraban
+  como actividad del negocio, y el menú y el acceso directo podían discrepar.
+- **Decisión**:
+  - Los estados de disponibilidad son `demo`, `en desarrollo`, `integrado` y
+    `validado`. `demo` se muestra con etiqueta Demo pero no opera; `en desarrollo`
+    no se habilita; `integrado` y `validado` operan con fuentes reales.
+  - `RuntimeConfig.package` (`id` y `capabilities`) es la configuración de
+    activación. El entorno local usa `{ id: 'local', capabilities: ['*'] }` como
+    comodín de desarrollo; producción declara capacidades explícitas en
+    `config.json` (`R-DO-3`).
+  - `core/workspace` expone `resolveModuleAvailability` y
+    `ModuleAvailabilityService` como resolución compartida. Menú, guards y
+    rutas consumen el mismo resultado; no hay `if` por nombre de empresa.
+  - La disponibilidad visual no concede permisos: `canEnterWorkspace`,
+    `hasPermission`, `moduleGuard` y el backend/RLS siguen siendo la frontera
+    de seguridad (`R-SE-1`).
+  - Los descriptores reutilizables permanecen en `WORKSPACE_MODULES`; dos
+    paquetes con capacidades distintas pueden reutilizar la misma UI.
+- **Consecuencias**: se puede distinguir “ver” de “operar”, retirar acciones
+  demo y KPIs ficticios sin borrar módulos, y verificar menú y ruta con la misma
+  resolución. Queda como deuda migrar los descriptores y consumidores actuales
+  al nuevo contrato en cambios posteriores; hasta entonces el comodín local
+  evita bloquear el desarrollo.
