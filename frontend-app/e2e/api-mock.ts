@@ -471,13 +471,24 @@ function filtrarClientes(query: string): ClienteFixture[] {
   );
 }
 
+/** Opciones del mock; permiten fijar el instante que deriva las fechas relativas. */
+export interface MockApiOptions {
+  /**
+   * Instante de referencia del mock (se ejecuta en Node). Por defecto, ahora.
+   * Las suites que fijan el reloj del navegador deben pasar el mismo instante
+   * para que las ventas demo y los movimientos locales compartan fecha.
+   */
+  now?: Date;
+}
+
 /**
  * Instala la intercepción del API en la página: se registra antes de navegar
  * (fixture `auto` de cada suite) y responde todo `/api/v1/**` con los datos
  * controlados de este módulo.
  */
-export async function mockApi(page: Page): Promise<void> {
-  const pedidos = pedidosIniciales(new Date());
+export async function mockApi(page: Page, options: MockApiOptions = {}): Promise<void> {
+  const now = options.now ?? new Date();
+  const pedidos = pedidosIniciales(now);
   const ofertas = OFERTAS_VENDEDOR.map((oferta) => ({ ...oferta }));
   const catalogo = CATALOGO_INICIAL.map((producto) => ({ ...producto }));
   const servicios: ServicioFixture[] = [];
@@ -493,7 +504,7 @@ export async function mockApi(page: Page): Promise<void> {
   const combos: Array<Record<string, unknown>> = [];
   const promotions: Array<Record<string, unknown>> = [];
   const movements: Array<Record<string, unknown>> = [];
-  const fechaVentaDemo = new Date().toISOString();
+  const fechaVentaDemo = now.toISOString();
   const ordenes = [
     {
       id: 'o-100',
