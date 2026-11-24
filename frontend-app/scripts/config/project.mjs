@@ -270,7 +270,7 @@ export const FEATURE_CONTRACTS = {
   },
   reports: {
     kind: 'domain',
-    layers: ['adapters', 'models', 'repositories', 'state'],
+    layers: ['adapters', 'models', 'repositories', 'services', 'state'],
     publicApi: true,
     publicUi: false,
   },

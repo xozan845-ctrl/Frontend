@@ -1,6 +1,6 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { REPORTS_DATA_SOURCE } from '../../repositories/reports-source.repository';
+import { REPORTS_DATA_SOURCE } from '../../repositories/reports-source/reports-source.repository';
 import type { ReportSnapshot } from '../../models/report.model';
 import { ReportsStore } from './reports.store';
 

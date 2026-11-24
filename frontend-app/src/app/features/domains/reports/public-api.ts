@@ -2,6 +2,10 @@ export type { ReportDay, ReportEntry, ReportSnapshot, ReportStatus } from './mod
 export {
   REPORTS_DATA_SOURCE,
   type ReportsDataSource,
-} from './repositories/reports-source.repository';
+} from './repositories/reports-source/reports-source.repository';
+export type {
+  ReportsReadResult,
+  ReportsSourcePort,
+} from './services/reports-source/reports-source.port';
 export { buildReportSnapshot } from './adapters/reports/reports.adapter';
 export { ReportsStore } from './state/reports/reports.store';

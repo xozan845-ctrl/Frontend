@@ -48,6 +48,16 @@ describe('VendorReportsSource', () => {
     });
   });
 
+  it('debe exponer la lectura pura con su instante', async () => {
+    const source = setup();
+
+    const result = await source.read();
+
+    expect(result.entries).toHaveLength(1);
+    expect(result.entries[0]).toMatchObject({ date: '2026-10-28T12:00:00.000Z', total: 200 });
+    expect(result.loadedAt).toBeInstanceOf(Date);
+  });
+
   it('debe dejar el reporte vacío si falla la carga', async () => {
     const source = setup(throwError(() => new Error('sin red')));
 
