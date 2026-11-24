@@ -94,15 +94,18 @@
         <tbody class="divide-y divide-slate-100 dark:divide-surface-700">
           @for (entry of rows(); track entry.movement.id) {
             <tr data-testid="cash-row">
-              <td class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300">
+              <td
+                class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
+                data-testid="cash-row-date"
+              >
                 {{ entry.movement.date | appDate: 'short' }}
               </td>
-              <td class="py-3 pr-3">
+              <td class="py-3 pr-3" data-testid="cash-row-type">
                 <span [class]="categoryBadges[entry.movement.category]">
                   {{ categoryLabels[entry.movement.category] }}
                 </span>
               </td>
-              <td class="max-w-[240px] py-3 pr-3">
+              <td class="max-w-[240px] py-3 pr-3" data-testid="cash-row-concept">
                 <p class="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
                   {{ entry.movement.concept }}
                 </p>
@@ -112,10 +115,16 @@
                   </p>
                 }
               </td>
-              <td class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300">
+              <td
+                class="py-3 pr-3 text-xs whitespace-nowrap text-slate-600 dark:text-slate-300"
+                data-testid="cash-row-method"
+              >
                 {{ methodLabels().get(entry.movement.paymentMethod) ?? 'Otro' }}
               </td>
-              <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
+              <td
+                class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums"
+                data-testid="cash-row-income"
+              >
                 @if (entry.movement.type === 'ingreso') {
                   <span class="text-emerald-600 dark:text-emerald-400">
                     {{ entry.movement.amount | cashMoney }}
@@ -124,7 +133,10 @@
                   <span class="text-slate-400">—</span>
                 }
               </td>
-              <td class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums">
+              <td
+                class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums"
+                data-testid="cash-row-expense"
+              >
                 @if (entry.movement.type === 'egreso') {
                   <span class="text-red-600 dark:text-red-400">
                     {{ entry.movement.amount | cashMoney }}
@@ -135,6 +147,7 @@
               </td>
               <td
                 class="py-3 pr-3 text-right text-xs font-bold whitespace-nowrap tabular-nums"
+                data-testid="cash-row-balance"
                 [ngClass]="
                   entry.balance < 0
                     ? 'text-red-600 dark:text-red-400'

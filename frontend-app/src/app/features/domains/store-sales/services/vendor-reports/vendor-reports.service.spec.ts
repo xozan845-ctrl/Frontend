@@ -42,9 +42,31 @@ describe('VendorReportsSource', () => {
     await source.load();
 
     expect(source.snapshot()).toMatchObject({
-      totalSales: 200,
+      recognizedSales: 200,
+      recognizedOrders: 1,
       ordersCount: 1,
-      statuses: [{ status: 'completado', total: 200, count: 1 }],
+      averageTicket: 200,
+      statuses: [{ status: 'delivered', total: 200, count: 1 }],
+    });
+  });
+
+  // regression: F11
+  it('debe separar las cancelaciones de las ventas reconocidas', async () => {
+    const source = setup(
+      of<VendorOrder[]>([
+        { ...ORDER, status: 'completado', total: 100 },
+        { ...ORDER, status: 'cancelado', total: 200 },
+      ]),
+    );
+
+    await source.load();
+
+    expect(source.snapshot()).toMatchObject({
+      ordersCount: 2,
+      recognizedSales: 100,
+      cancellations: 200,
+      returns: 0,
+      netSales: 100,
     });
   });
 
@@ -54,8 +76,15 @@ describe('VendorReportsSource', () => {
     await source.load();
 
     expect(source.snapshot()).toEqual({
-      totalSales: 0,
       ordersCount: 0,
+      recognizedSales: 0,
+      recognizedOrders: 0,
+      collections: 0,
+      cancellations: 0,
+      cancelledOrders: 0,
+      returns: 0,
+      returnedOrders: 0,
+      netSales: 0,
       averageTicket: 0,
       days: [],
       statuses: [],

@@ -235,6 +235,31 @@ para evitar falsos verdes por caché ESM.
 5. La regla normativa sigue viviendo en `docs/rules/<area>/NN-tema.md`; el motor
    sólo la **verifica**. La regla y su check entran en el **mismo PR**.
 
+## Cobertura de diff (R-COV-5)
+
+`node scripts/commands/check-diff-coverage.mjs` (`npm run coverage:diff`) compara
+las líneas nuevas de `git diff <base>...HEAD -- src/app` con
+`coverage/frontend-app/lcov.info` y exige un mínimo de **80%**
+(`DIFF_COVERAGE_MIN`).
+
+- El diff se obtiene con cwd explícito (`appRoot`), `-c diff.relative=false` y
+  `-c core.quotePath=false`: no depende de la configuración `diff.relative` del
+  usuario ni del escapado de nombres con acentos.
+- lcov y diff se canonizan contra la raíz de `frontend-app`: acepta `src/app/…`,
+  `frontend-app/src/app/…`, `./…`, separadores `\` y rutas absolutas POSIX o
+  Windows. La comparación es **exacta** por ruta canónica; no usa nombre base
+  ni sufijos, así que dos archivos homónimos en carpetas distintas no se
+  confunden.
+- Un diff vacío es éxito. Si solo toca archivos fuera de `coverageInclude`
+  (modelos, componentes, plantillas), también es éxito y **no exige el lcov**;
+  se informa "sin líneas ejecutables cambiadas". Un **error de Git** (ref base
+  inexistente, cwd inválido) falla con código 1, para no confundirlo con un diff
+  legítimamente vacío.
+- Límites: solo evalúa `src/app`; las líneas que no aparecen en el lcov se
+  consideran no instrumentadas y no penalizan. Los hunks se leen de
+  `--unified=0`, por lo que se asume el formato estándar de Git (sin diffs
+  binarios con hunks ni nombres con saltos de línea).
+
 ## Release
 
 `scripts/commands/release-check.mjs` valida un tag antes de publicarlo: formato semver,
