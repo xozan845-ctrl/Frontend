@@ -146,6 +146,10 @@ describe('workspace-modules.constants', () => {
     expect(workspaceModuleById('company.sales')?.status).toBe('validado');
   });
 
+  it('debe marcar como demo el tablero de logística mientras no tenga fuente real', () => {
+    expect(workspaceModuleById('logistics.dashboard')?.status).toBe('demo');
+  });
+
   it('debe derivar la capacidad de activación de cada módulo reutilizable', () => {
     expect(WORKSPACE_MODULES.every((module) => module.requiredCapabilities?.length === 1)).toBe(
       true,

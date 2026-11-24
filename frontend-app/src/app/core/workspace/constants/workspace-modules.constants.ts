@@ -554,7 +554,7 @@ const MODULE_DEFINITIONS: readonly WorkspaceModule[] = [
     workspace: 'logistics',
     section: 'operacion',
     permission: 'logistics:read',
-    status: 'validado',
+    status: 'demo',
     exact: true,
   },
   {

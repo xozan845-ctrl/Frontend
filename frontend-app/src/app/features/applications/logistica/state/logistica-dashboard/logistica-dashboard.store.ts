@@ -13,7 +13,6 @@ import {
   LOGISTICA_CLIENTS,
   LOGISTICA_COURIERS,
   LOGISTICA_DELIVERY,
-  LOGISTICA_KPIS,
   LOGISTICA_ORDERS,
   LOGISTICA_ROUTES,
   LOGISTICA_VEHICLES,
@@ -24,7 +23,6 @@ const initialState: LogisticaDashboardState = {
   loading: false,
   zoneFilter: ALL_ZONES,
   dateLabel: LOGISTICA_DATES[0],
-  kpis: [],
   delivery: [],
   deliveryTotal: 0,
   couriers: [],
@@ -40,10 +38,10 @@ function filterByZone<T extends { zone: string }>(items: readonly T[], zone: str
 }
 
 /**
- * Estado del tablero de logística (ADR-25): carga los datos del boceto desde
- * `mocks/` con una latencia simulada, mantiene los filtros de zona y fecha y
- * deriva los totales del donut en `withComputed` (`R-ST-3`). Los datos son de
- * demostración hasta que Core Engine exponga rutas, repartidores y entregas.
+ * Estado del tablero de logística (ADR-25, `R-DO-3`): carga los datos del
+ * boceto desde `mocks/` con una latencia simulada, mantiene los filtros de zona
+ * y fecha y deriva los totales del donut en `withComputed` (`R-ST-3`). El
+ * tablero es `demo`: no publica KPIs ficticios hasta que exista una fuente real.
  */
 export const LogisticaDashboardStore = signalStore(
   withState(initialState),
@@ -68,7 +66,6 @@ export const LogisticaDashboardStore = signalStore(
           return timer(LOGISTICA_LOAD_DELAY_MS).pipe(
             tap(() =>
               patchState(store, {
-                kpis: LOGISTICA_KPIS,
                 delivery: LOGISTICA_DELIVERY,
                 deliveryTotal: LOGISTICA_DELIVERY_TOTAL,
                 couriers: LOGISTICA_COURIERS,

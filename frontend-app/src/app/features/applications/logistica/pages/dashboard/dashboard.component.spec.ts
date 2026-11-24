@@ -62,17 +62,19 @@ describe('LogisticaDashboardComponent', () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it('debe mostrar esqueletos y luego las cuatro tarjetas KPI', async () => {
+  it('debe etiquetar el tablero como demo y no pintar KPIs ficticios', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
+    expect(host.querySelector('[data-testid="logistica-demo-banner"]')).not.toBeNull();
     expect(host.querySelectorAll('[data-testid^="kpi-"]')).toHaveLength(0);
 
     loadDashboard(fixture);
 
-    expect(host.querySelectorAll('[data-testid^="kpi-"]')).toHaveLength(4);
-    expect(host.querySelector('[data-testid="kpi-visitas"]')?.textContent).toContain('28');
-    expect(host.querySelector('[data-testid="kpi-entregas"]')?.textContent).toContain('24');
+    expect(host.querySelectorAll('[data-testid^="kpi-"]')).toHaveLength(0);
+    expect(host.querySelector('[data-testid="logistica-kpi-empty"]')?.textContent).toContain(
+      'Aún no hay métricas reales',
+    );
     expect(host.querySelector('[data-testid="order-row"]')).not.toBeNull();
   });
 
