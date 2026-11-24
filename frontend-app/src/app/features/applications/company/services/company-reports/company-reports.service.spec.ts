@@ -13,13 +13,13 @@ const ORDER: OrderResponse = {
 };
 
 describe('CompanyReportsSource', () => {
-  const setup = (orders = of<OrderResponse[]>([ORDER])) => {
+  const setup = (orders = () => of<OrderResponse[]>([ORDER])) => {
     TestBed.configureTestingModule({
       providers: [
         CompanyReportsSource,
         {
           provide: COMPANY_PORTAL_REPOSITORY,
-          useValue: { orders: vi.fn(() => orders), sales: vi.fn(), stores: vi.fn() },
+          useValue: { orders: vi.fn(orders), sales: vi.fn(), stores: vi.fn() },
         },
       ],
     });
@@ -34,6 +34,8 @@ describe('CompanyReportsSource', () => {
     await source.load();
 
     expect(source.loading()).toBe(false);
+    expect(source.error()).toBeNull();
+    expect(source.lastUpdatedAt()).toBeInstanceOf(Date);
     expect(source.snapshot()).toMatchObject({
       totalSales: 300,
       ordersCount: 1,
@@ -52,12 +54,41 @@ describe('CompanyReportsSource', () => {
     expect(result.loadedAt).toBeInstanceOf(Date);
   });
 
-  it('debe dejar el reporte vacío si falla la carga', async () => {
-    const source = setup(throwError(() => new Error('sin red')));
+  // regression: F12
+  it('debe exponer el error sin convertir un fallo en reporte vacío', async () => {
+    const source = setup(() => throwError(() => new Error('sin red')));
 
     await source.load();
 
+    expect(source.error()).toBe('sin red');
+    expect(source.lastUpdatedAt()).toBeNull();
     expect(source.snapshot()).toMatchObject({ totalSales: 0, ordersCount: 0 });
     expect(source.loading()).toBe(false);
+  });
+
+  // regression: F12
+  it('debe conservar el último dato válido si falla la recarga', async () => {
+    let calls = 0;
+    const source = setup(() =>
+      calls++ === 0 ? of<OrderResponse[]>([ORDER]) : throwError(() => new Error('sin red')),
+    );
+
+    await source.load();
+    const snapshot = source.snapshot();
+    const updatedAt = source.lastUpdatedAt();
+
+    await source.load();
+
+    expect(source.snapshot()).toEqual(snapshot);
+    expect(source.lastUpdatedAt()).toBe(updatedAt);
+    expect(source.error()).toBe('sin red');
+  });
+
+  it('debe usar un mensaje de dominio cuando el error no trae detalle', async () => {
+    const source = setup(() => throwError(() => ({})));
+
+    await source.load();
+
+    expect(source.error()).toBe('No se pudieron cargar los reportes de la empresa.');
   });
 });
