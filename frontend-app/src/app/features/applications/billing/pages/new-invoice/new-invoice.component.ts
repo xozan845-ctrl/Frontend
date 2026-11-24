@@ -1,12 +1,8 @@
 import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { formatCurrency } from '@core/config/currency.config';
 import { injectSeoPage } from '@core/services/seo/seo.service';
-import {
-  BILLING_CLIENTS,
-  BILLING_INVOICES,
-  BILLING_PRODUCTS,
-} from '../../constants/billing.fixtures';
+import { BILLING_CLIENTS, BILLING_PRODUCTS } from '../../constants/billing.fixtures';
+import { BillingDemoBannerComponent } from '../../components/billing-demo-banner/billing-demo-banner.component';
 import { CatalogPickerCardComponent } from '../../components/catalog-picker-card/catalog-picker-card.component';
 import { ClientSearchCardComponent } from '../../components/client-search-card/client-search-card.component';
 import { InvoiceDraftPanelComponent } from '../../components/invoice-draft-panel/invoice-draft-panel.component';
@@ -17,11 +13,11 @@ import { BILLING_STORE_NAME, BILLING_TAX_RATE } from '../../constants/billing.co
 import {
   BillingClient,
   BillingProduct,
+  Invoice,
   InvoiceInfo,
   InvoiceLine,
   calculateInvoiceTotals,
 } from '../../models/billing.model';
-import type { BillingNotice } from './new-invoice.types';
 
 const todayISO = (): string => {
   const now = new Date();
@@ -36,17 +32,17 @@ const normalize = (value: string): string =>
     .trim();
 
 /**
- * Página "Nueva factura" (ADR-23): contenedor visual del POS de facturación.
- * Replica el layout del punto de venta del vendedor (cliente, información,
- * catálogo y panel de la factura actual) con datos de presentación. La
- * integración con stores/puertos llega en la fase de lógica; aquí solo se
- * orquesta estado local de UI.
+ * Página "Nueva factura" (ADR-23, `R-DO-3`): POS interactivo de la demo de
+ * facturación. Se puede armar una factura con el catálogo de muestra, pero no
+ * hay emisión, guardado ni alta de clientes: el módulo está etiquetado como
+ * `demo` y solo opera con fuente real una vez integrado. Sin stores ni puertos.
  */
 @Component({
   selector: 'app-billing-new-invoice',
   standalone: true,
   imports: [
     RouterLink,
+    BillingDemoBannerComponent,
     CatalogPickerCardComponent,
     ClientSearchCardComponent,
     InvoiceDraftPanelComponent,
@@ -58,13 +54,13 @@ const normalize = (value: string): string =>
 export default class NewInvoiceComponent {
   private readonly seoService = injectSeoPage(
     'Nueva factura — Facturación',
-    'Arma la factura del cliente, elige productos del catálogo y revisa los totales antes de emitirla.',
+    'Explora el POS de facturación y arma una factura de demostración sin emitirla ni guardarla.',
   );
   private readonly recentInvoicesSection =
     viewChild<ElementRef<HTMLElement>>('recentInvoicesSection');
 
   readonly products = BILLING_PRODUCTS;
-  readonly recentInvoices = BILLING_INVOICES.slice(0, 3);
+  readonly recentInvoices: readonly Invoice[] = [];
 
   readonly clientQuery = signal('');
   readonly selectedClient = signal<BillingClient | null>(null);
@@ -73,7 +69,6 @@ export default class NewInvoiceComponent {
   readonly lines = signal<InvoiceLine[]>([]);
   readonly notes = signal('');
   readonly discountPercent = signal(0);
-  readonly notice = signal<BillingNotice | null>(null);
   readonly info = signal<InvoiceInfo>({
     storeName: BILLING_STORE_NAME,
     date: todayISO(),
@@ -114,18 +109,10 @@ export default class NewInvoiceComponent {
 
   selectClient(client: BillingClient): void {
     this.selectedClient.set(client);
-    this.notice.set(null);
   }
 
   clearClient(): void {
     this.selectedClient.set(null);
-  }
-
-  requestNewClient(): void {
-    this.notice.set({
-      tone: 'info',
-      text: 'Vista de diseño: el alta rápida de clientes se habilitará con la integración.',
-    });
   }
 
   updateInfo(partial: Partial<InvoiceInfo>): void {
@@ -164,7 +151,6 @@ export default class NewInvoiceComponent {
         },
       ];
     });
-    this.notice.set(null);
   }
 
   updateQuantity(change: InvoiceLineQuantityChange): void {
@@ -187,33 +173,6 @@ export default class NewInvoiceComponent {
     this.notes.set(value);
   }
 
-  emitInvoice(): void {
-    const client = this.selectedClient();
-    if (!client) {
-      this.notice.set({ tone: 'warning', text: 'Selecciona un cliente para emitir la factura.' });
-      return;
-    }
-    if (this.lines().length === 0) {
-      this.notice.set({
-        tone: 'warning',
-        text: 'Agrega al menos un producto para emitir la factura.',
-      });
-      return;
-    }
-
-    this.notice.set({
-      tone: 'success',
-      text: `Vista de diseño: la factura de ${client.name} por ${formatCurrency(this.totals().total)} se conectará al backend en la fase de lógica.`,
-    });
-  }
-
-  saveDraft(): void {
-    this.notice.set({
-      tone: 'info',
-      text: 'Vista de diseño: el borrador se persistirá cuando se conecte el estado del módulo.',
-    });
-  }
-
   scrollToRecentInvoices(): void {
     const target = this.recentInvoicesSection()?.nativeElement;
     if (!target) return;
@@ -223,18 +182,5 @@ export default class NewInvoiceComponent {
       behavior: prefersReducedMotion ? 'auto' : 'smooth',
       block: 'start',
     });
-  }
-
-  protected noticeClasses(tone: BillingNotice['tone']): string {
-    const base =
-      'alert flex items-start justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-bold';
-    switch (tone) {
-      case 'success':
-        return `${base} alert-success`;
-      case 'warning':
-        return `${base} alert-warning`;
-      default:
-        return `${base} alert-primary`;
-    }
   }
 }

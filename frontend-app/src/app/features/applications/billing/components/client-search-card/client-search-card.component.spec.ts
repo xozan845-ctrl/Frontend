@@ -3,7 +3,7 @@ import { BILLING_CLIENTS } from '../../constants/billing.fixtures';
 import { ClientSearchCardComponent } from './client-search-card.component';
 
 describe('ClientSearchCardComponent', () => {
-  const setup = async (selectedId: string | null = null) => {
+  const setup = async (selectedId: string | null = null, demoMode = false) => {
     await TestBed.configureTestingModule({
       imports: [ClientSearchCardComponent],
     }).compileComponents();
@@ -14,6 +14,7 @@ describe('ClientSearchCardComponent', () => {
       'selected',
       selectedId ? (BILLING_CLIENTS.find((c) => c.id === selectedId) ?? null) : null,
     );
+    fixture.componentRef.setInput('demoMode', demoMode);
     fixture.detectChanges();
     return fixture;
   };
@@ -65,5 +66,19 @@ describe('ClientSearchCardComponent', () => {
     );
     (host.querySelector('[data-testid="billing-new-client"]') as HTMLButtonElement).click();
     expect(created).toBe(1);
+  });
+
+  it('debe deshabilitar el alta rápida en modo demo', async () => {
+    const fixture = await setup(null, true);
+    fixture.componentRef.setInput('results', []);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    let created = 0;
+    fixture.componentInstance.createRequested.subscribe(() => (created += 1));
+
+    const button = host.querySelector('[data-testid="billing-new-client"]') as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    button.click();
+    expect(created).toBe(0);
   });
 });

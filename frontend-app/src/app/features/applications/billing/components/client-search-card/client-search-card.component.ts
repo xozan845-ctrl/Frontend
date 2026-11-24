@@ -20,6 +20,7 @@ export class ClientSearchCardComponent {
   readonly query = input.required<string>();
   readonly loading = input(false);
   readonly error = input<string | null>(null);
+  readonly demoMode = input(false);
   readonly queryChange = output<string>();
   readonly clientSelected = output<BillingClient>();
   readonly clearSelection = output<void>();

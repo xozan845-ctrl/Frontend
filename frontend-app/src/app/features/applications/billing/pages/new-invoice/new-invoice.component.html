@@ -20,7 +20,7 @@
         Nueva factura
       </h1>
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Arma la factura del cliente y emítela desde tu tienda.
+        Arma una factura de demostración con el catálogo de muestra.
       </p>
     </div>
     <button
@@ -34,35 +34,17 @@
     </button>
   </header>
 
-  @if (notice(); as current) {
-    <div
-      [class]="noticeClasses(current.tone)"
-      role="status"
-      aria-live="polite"
-      data-testid="billing-notice"
-    >
-      <span>{{ current.text }}</span>
-      <button
-        type="button"
-        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-current/70 transition-colors hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-current focus-visible:outline-hidden dark:hover:bg-white/10"
-        aria-label="Cerrar aviso"
-        data-testid="billing-dismiss-notice"
-        (click)="notice.set(null)"
-      >
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-  }
+  <app-billing-demo-banner />
 
   <div class="grid gap-6 lg:grid-cols-2">
     <app-client-search-card
       [selected]="selectedClient()"
       [results]="filteredClients()"
       [query]="clientQuery()"
+      [demoMode]="true"
       (queryChange)="setClientQuery($event)"
       (clientSelected)="selectClient($event)"
       (clearSelection)="clearClient()"
-      (createRequested)="requestNewClient()"
     />
     <app-invoice-info-card [info]="info()" (infoChange)="updateInfo($event)" />
   </div>
@@ -89,22 +71,26 @@
         [taxAmount]="totals().taxAmount"
         [total]="totals().total"
         [notes]="notes()"
+        [demoMode]="true"
         (quantityChange)="updateQuantity($event)"
         (removeLine)="removeLine($event)"
         (discountChange)="setDiscount($event)"
         (notesChange)="setNotes($event)"
-        (emitInvoice)="emitInvoice()"
-        (saveDraft)="saveDraft()"
       />
     </aside>
   </div>
 
-  <div #recentInvoicesSection id="facturas-recientes" class="scroll-mt-6">
+  <div
+    #recentInvoicesSection
+    id="facturas-recientes"
+    class="scroll-mt-6"
+    data-testid="billing-recent-invoices"
+  >
     <app-invoice-list-table
       title="Facturas recientes"
       [invoices]="recentInvoices"
-      [emptyTitle]="'Aún no hay facturas'"
-      [emptySubtitle]="'Las facturas que emitas aparecerán aquí.'"
+      [emptyTitle]="'Aún no hay facturas reales'"
+      [emptySubtitle]="'Las facturas aparecerán aquí cuando el módulo se conecte a una fuente real.'"
     />
   </div>
 </div>

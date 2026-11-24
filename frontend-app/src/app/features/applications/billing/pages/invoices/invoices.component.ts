@@ -1,32 +1,39 @@
 import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { injectSeoPage } from '@core/services/seo/seo.service';
-import { BILLING_INVOICES } from '../../constants/billing.fixtures';
+import { BillingDemoBannerComponent } from '../../components/billing-demo-banner/billing-demo-banner.component';
 import { InvoiceFiltersChipsComponent } from '../../components/invoice-filters-chips/invoice-filters-chips.component';
 import { InvoiceListTableComponent } from '../../components/invoice-list-table/invoice-list-table.component';
 import { INVOICE_STATUSES } from '../../constants/billing.constants';
-import { InvoiceStatus } from '../../models/billing.model';
+import { Invoice, InvoiceStatus } from '../../models/billing.model';
 
 /**
- * Página "Facturas" (ADR-23): listado con filtro por estado en chips y acceso
- * al detalle. En esta fase los datos son de presentación; el filtro y los
- * conteos se derivan en la página con `computed` (`R-ST-3`).
+ * Página "Facturas" (ADR-23, `R-DO-3`): filtro por estado y listado. La
+ * facturación es `demo`, así que no se pintan facturas ni conteos ficticios:
+ * la fuente real aún no existe y la etiqueta lo hace explícito. Los derivados
+ * se calculan en la página con `computed` (`R-ST-3`) para cuando llegue esa
+ * fuente, hoy vacía.
  */
 @Component({
   selector: 'app-billing-invoices',
   standalone: true,
-  imports: [RouterLink, InvoiceFiltersChipsComponent, InvoiceListTableComponent],
+  imports: [
+    RouterLink,
+    BillingDemoBannerComponent,
+    InvoiceFiltersChipsComponent,
+    InvoiceListTableComponent,
+  ],
   templateUrl: './invoices.component.html',
 })
 export default class InvoicesComponent {
   private readonly seoService = injectSeoPage(
     'Facturas — Facturación',
-    'Consulta todas las facturas de tu tienda, filtra por estado y abre el comprobante de cada una.',
+    'Explora el listado de facturas; mientras el módulo sea demo no hay operaciones reales que mostrar.',
   );
 
   readonly statuses = INVOICE_STATUSES;
   readonly statusFilter = signal<InvoiceStatus | null>(null);
-  readonly invoices = [...BILLING_INVOICES].sort((a, b) => b.issuedAt.localeCompare(a.issuedAt));
+  readonly invoices: readonly Invoice[] = [];
 
   readonly counts = computed<Record<InvoiceStatus, number>>(() => {
     const counts: Record<InvoiceStatus, number> = {
@@ -47,13 +54,13 @@ export default class InvoicesComponent {
   });
 
   readonly emptyTitle = computed(() =>
-    this.statusFilter() ? 'Sin facturas con este estado' : 'Aún no hay facturas',
+    this.statusFilter() ? 'Sin facturas con este estado' : 'Aún no hay facturas reales',
   );
 
   readonly emptySubtitle = computed(() =>
     this.statusFilter()
-      ? 'Prueba con otro filtro o crea una factura nueva.'
-      : 'Las facturas que emitas aparecerán aquí.',
+      ? 'Prueba con otro filtro cuando haya facturas reales.'
+      : 'Las facturas aparecerán aquí cuando el módulo se conecte a una fuente real.',
   );
 
   setFilter(status: InvoiceStatus | null): void {
