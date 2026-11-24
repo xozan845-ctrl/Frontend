@@ -10,6 +10,8 @@
     <button
       type="button"
       class="btn btn-secondary btn-sm"
+      [disabled]="demoMode()"
+      [title]="demoMode() ? 'Disponible al integrar el módulo' : null"
       data-testid="billing-new-client"
       (click)="createRequested.emit()"
     >
@@ -84,7 +86,10 @@
       </div>
     } @else if (results().length === 0) {
       <p class="text-sm text-slate-500 dark:text-slate-400" data-testid="billing-clients-empty">
-        No encontramos clientes con ese término. Puedes crear uno nuevo.
+        No encontramos clientes con ese término.
+        @if (!demoMode()) {
+          Puedes crear uno nuevo.
+        }
       </p>
     } @else {
       <ul

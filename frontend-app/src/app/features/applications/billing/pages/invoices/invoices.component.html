@@ -15,7 +15,7 @@
         Facturas
       </h1>
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Filtra por estado y abre cualquier factura para ver su comprobante.
+        Filtra por estado; mientras el módulo sea demo no hay facturas reales que mostrar.
       </p>
     </div>
     <a
@@ -27,6 +27,8 @@
       Nueva factura
     </a>
   </header>
+
+  <app-billing-demo-banner />
 
   <app-invoice-filters-chips
     [statuses]="statuses"

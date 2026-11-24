@@ -133,6 +133,7 @@
       type="button"
       class="btn btn-primary btn-lg w-full"
       [disabled]="submitDisabled()"
+      [title]="demoMode() ? 'Disponible al integrar el módulo' : null"
       data-testid="billing-emit-invoice"
       (click)="emitInvoice.emit()"
     >
@@ -143,7 +144,8 @@
       <button
         type="button"
         class="btn btn-secondary"
-        [disabled]="isEmpty()"
+        [disabled]="saveDisabled()"
+        [title]="demoMode() ? 'Disponible al integrar el módulo' : null"
         data-testid="billing-save-draft"
         (click)="saveDraft.emit()"
       >

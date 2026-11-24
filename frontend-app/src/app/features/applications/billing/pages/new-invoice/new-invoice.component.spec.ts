@@ -31,6 +31,7 @@ describe('NewInvoiceComponent', () => {
     expect(host.querySelector('[data-testid="billing-info-card"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="billing-catalog-card"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="billing-draft-empty"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="billing-demo-banner"]')).not.toBeNull();
   });
 
   it('debe agregar productos y recalcular los totales', async () => {
@@ -58,7 +59,7 @@ describe('NewInvoiceComponent', () => {
     );
   });
 
-  it('debe pedir cliente antes de emitir y luego mostrar el aviso de diseño', async () => {
+  it('debe deshabilitar las acciones de emisión y alta en la vista demo', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
@@ -68,22 +69,26 @@ describe('NewInvoiceComponent', () => {
       ) as HTMLButtonElement
     ).click();
     fixture.detectChanges();
-    (host.querySelector('[data-testid="billing-emit-invoice"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
 
-    expect(host.querySelector('[data-testid="billing-notice"]')?.textContent).toContain(
-      'Selecciona un cliente',
-    );
+    expect(
+      (host.querySelector('[data-testid="billing-emit-invoice"]') as HTMLButtonElement).disabled,
+    ).toBe(true);
+    expect(
+      (host.querySelector('[data-testid="billing-save-draft"]') as HTMLButtonElement).disabled,
+    ).toBe(true);
+    expect(
+      (host.querySelector('[data-testid="billing-new-client"]') as HTMLButtonElement).disabled,
+    ).toBe(true);
+    expect(host.querySelector('[data-testid="billing-notice"]')).toBeNull();
+  });
 
-    (
-      host.querySelector('[data-testid="billing-client-option-cli-1"]') as HTMLButtonElement
-    ).click();
-    fixture.detectChanges();
-    (host.querySelector('[data-testid="billing-emit-invoice"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+  it('debe mostrar facturas recientes vacías hasta existir una fuente real', async () => {
+    const fixture = await setup();
+    const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelector('[data-testid="billing-notice"]')?.textContent).toContain(
-      'María López',
+    expect(host.querySelectorAll('[data-testid="billing-invoice-row"]').length).toBe(0);
+    expect(host.querySelector('[data-testid="billing-recent-invoices"]')?.textContent).toContain(
+      'Aún no hay facturas reales',
     );
   });
 
