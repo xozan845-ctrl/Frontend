@@ -25,6 +25,7 @@ export class InvoiceDraftPanelComponent {
   readonly total = input.required<number>();
   readonly notes = input.required<string>();
   readonly emitting = input(false);
+  readonly demoMode = input(false);
   readonly quantityChange = output<InvoiceLineQuantityChange>();
   readonly removeLine = output<string>();
   readonly discountChange = output<number>();
@@ -33,7 +34,10 @@ export class InvoiceDraftPanelComponent {
   readonly saveDraft = output<void>();
 
   protected readonly isEmpty = computed(() => this.lines().length === 0);
-  protected readonly submitDisabled = computed(() => this.isEmpty() || this.emitting());
+  protected readonly submitDisabled = computed(
+    () => this.isEmpty() || this.emitting() || this.demoMode(),
+  );
+  protected readonly saveDisabled = computed(() => this.isEmpty() || this.demoMode());
   protected readonly countLabel = computed(() => {
     const count = this.lines().length;
     return `${count} ${count === 1 ? 'producto' : 'productos'}`;

@@ -22,40 +22,25 @@ describe('InvoiceDetailComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('debe pintar el comprobante con cliente, líneas y totales', async () => {
+  it('debe mostrar estado vacío en lugar de un comprobante de demostración', async () => {
     const fixture = await setup();
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelector('[data-testid="billing-invoice-document"]')).not.toBeNull();
-    expect(host.textContent).toContain('FAC-2026-0001');
-    expect(host.textContent).toContain('María López');
-    expect(host.querySelectorAll('[data-testid="invoice-line-row"]').length).toBe(2);
-    expect(host.querySelector('[data-testid="billing-totals-total"]')?.textContent).toContain(
-      'C$1,736.50',
-    );
+    expect(host.querySelector('[data-testid="billing-demo-banner"]')).not.toBeNull();
+    expect(host.textContent).toContain('Factura no encontrada');
+    expect(host.textContent).toContain('No encontramos esa factura');
+    expect(host.querySelector('[data-testid="billing-invoice-document"]')).toBeNull();
+    expect(host.textContent).not.toContain('FAC-2026-0001');
     expect(seo.setPage).toHaveBeenCalledWith(
-      'Factura FAC-2026-0001 — Facturación',
+      'Detalle de factura — Facturación',
       expect.any(String),
     );
   });
 
-  it('debe mostrar el estado vacío cuando la factura no existe', async () => {
+  it('debe ocultar la impresión cuando no hay factura real', async () => {
     const fixture = await setup('fac-inexistente');
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.textContent).toContain('Factura no encontrada');
-    expect(host.textContent).toContain('No encontramos esa factura');
-    expect(host.querySelector('[data-testid="billing-invoice-document"]')).toBeNull();
-  });
-
-  it('debe invocar la impresión del navegador', async () => {
-    const fixture = await setup();
-    const host = fixture.nativeElement as HTMLElement;
-    const print = vi.spyOn(window, 'print').mockImplementation(() => undefined);
-
-    (host.querySelector('[data-testid="billing-print-invoice"]') as HTMLButtonElement).click();
-
-    expect(print).toHaveBeenCalledTimes(1);
-    print.mockRestore();
+    expect(host.querySelector('[data-testid="billing-print-invoice"]')).toBeNull();
   });
 });

@@ -2201,3 +2201,8 @@ contexto y consecuencias.
   “En construcción”) son `en desarrollo`. Cada descriptor deriva su capacidad
   de activación de su id (`module:<id>`); el comodín local habilita todas en
   desarrollo y E2E.
+  - La facturación (`store.billing`, `demo`) conserva el POS interactivo como
+    muestra, pero retira la emisión, el guardado de borradores, el alta rápida
+    de clientes y los comprobantes y conteos ficticios: los listados quedan
+    vacíos y un aviso `Demo` explica que no hay acciones reales. Ningún dato de
+    muestra se presenta ya como actividad del negocio.
