@@ -12,7 +12,8 @@ const lines: InvoiceLine[] = [
   },
 ];
 
-const setInputs = (fixture: ComponentFixture<InvoiceDraftPanelComponent>) => {
+const setInputs = (fixture: ComponentFixture<InvoiceDraftPanelComponent>, demoMode = false) => {
+  fixture.componentRef.setInput('demoMode', demoMode);
   fixture.componentRef.setInput('lines', lines);
   fixture.componentRef.setInput('subtotal', 960);
   fixture.componentRef.setInput('discountPercent', 0);
@@ -24,12 +25,12 @@ const setInputs = (fixture: ComponentFixture<InvoiceDraftPanelComponent>) => {
 };
 
 describe('InvoiceDraftPanelComponent', () => {
-  const setup = async () => {
+  const setup = async (demoMode = false) => {
     await TestBed.configureTestingModule({
       imports: [InvoiceDraftPanelComponent],
     }).compileComponents();
     const fixture = TestBed.createComponent(InvoiceDraftPanelComponent);
-    setInputs(fixture);
+    setInputs(fixture, demoMode);
     return fixture;
   };
 
@@ -40,6 +41,7 @@ describe('InvoiceDraftPanelComponent', () => {
       imports: [InvoiceDraftPanelComponent],
     }).compileComponents();
     const fixture = TestBed.createComponent(InvoiceDraftPanelComponent);
+    fixture.componentRef.setInput('demoMode', false);
     fixture.componentRef.setInput('lines', []);
     fixture.componentRef.setInput('subtotal', 0);
     fixture.componentRef.setInput('discountPercent', 0);
@@ -89,5 +91,23 @@ describe('InvoiceDraftPanelComponent', () => {
     (host.querySelector('[data-testid="billing-emit-invoice"]') as HTMLButtonElement).click();
 
     expect(emitted).toBe(1);
+  });
+
+  it('debe deshabilitar emitir y guardar en modo demo', async () => {
+    const fixture = await setup(true);
+    const host = fixture.nativeElement as HTMLElement;
+    let emitted = 0;
+    let saved = 0;
+    fixture.componentInstance.emitInvoice.subscribe(() => (emitted += 1));
+    fixture.componentInstance.saveDraft.subscribe(() => (saved += 1));
+
+    const emit = host.querySelector('[data-testid="billing-emit-invoice"]') as HTMLButtonElement;
+    const save = host.querySelector('[data-testid="billing-save-draft"]') as HTMLButtonElement;
+    expect(emit.disabled).toBe(true);
+    expect(save.disabled).toBe(true);
+    emit.click();
+    save.click();
+    expect(emitted).toBe(0);
+    expect(saved).toBe(0);
   });
 });
