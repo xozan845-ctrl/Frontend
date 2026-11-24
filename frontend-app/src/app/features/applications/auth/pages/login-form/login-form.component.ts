@@ -15,10 +15,7 @@ export class LoginFormComponent {
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly seoService = injectSeoPage(
-    'Iniciar sesión',
-    'Accede a tu cuenta.',
-  );
+  private readonly seoService = injectSeoPage('Iniciar sesión', 'Accede a tu cuenta.');
 
   /** Origen pedido por el guard (p. ej. `/app/tienda/inicio`). */
   private readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '';

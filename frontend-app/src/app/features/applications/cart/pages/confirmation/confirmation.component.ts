@@ -13,10 +13,7 @@ import { injectSeoPage } from '@core/services/seo/seo.service';
   templateUrl: './confirmation.component.html',
 })
 export class ConfirmationComponent {
-  private readonly seoService = injectSeoPage(
-    'Pedido confirmado',
-    'Tu pedido fue confirmado.',
-  );
+  private readonly seoService = injectSeoPage('Pedido confirmado', 'Tu pedido fue confirmado.');
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);
 

@@ -48,10 +48,7 @@ describe('ConfirmationComponent', () => {
     expect(text).toContain('ORD-123456');
     expect(text).toContain('Creada');
     expect(text).toContain('C$2,760.00');
-    expect(seo.setPage).toHaveBeenCalledWith(
-      'Pedido confirmado',
-      'Tu pedido fue confirmado.',
-    );
+    expect(seo.setPage).toHaveBeenCalledWith('Pedido confirmado', 'Tu pedido fue confirmado.');
   });
 
   it('debe mostrar el estado vacío cuando no hay orden reciente', async () => {
