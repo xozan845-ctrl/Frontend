@@ -22,16 +22,24 @@ describe('LogisticaDashboardStore', () => {
 
     store.load();
     expect(store.loading()).toBe(true);
-    expect(store.kpis()).toHaveLength(0);
 
     vi.advanceTimersByTime(500);
 
     expect(store.loading()).toBe(false);
-    expect(store.kpis()).toHaveLength(4);
     expect(store.orders()).toHaveLength(5);
     expect(store.clients()).toHaveLength(5);
     expect(store.routes()).toHaveLength(4);
     expect(store.vehicles()).toHaveLength(3);
+  });
+
+  it('debe publicar el tablero sin KPIs ficticios', () => {
+    const store = setup();
+
+    store.load();
+    vi.advanceTimersByTime(500);
+
+    expect('kpis' in store).toBe(false);
+    expect(store.orders()).toHaveLength(5);
   });
 
   it('debe filtrar pedidos y clientes por la zona elegida (R-ST-3)', () => {

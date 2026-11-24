@@ -1,7 +1,6 @@
 import {
   ClientOfDay,
   Courier,
-  DashboardKpi,
   DeliverySegment,
   MapRoute,
   MapVehicle,
@@ -10,48 +9,10 @@ import {
 
 /**
  * Datos del tablero de logística mientras el backend no exponga los endpoints
- * de rutas, repartidores y entregas. Los valores replican el boceto aprobado
- * (ADR-25); un cambio de contrato se registra como ADR antes de tocarlos.
+ * de rutas, repartidores y entregas. El tablero está etiquetado como `demo`:
+ * estos valores son del boceto (ADR-25) y no se publican como métricas reales.
+ * No hay KPIs de muestra: se mostrarán cuando exista una fuente real.
  */
-export const LOGISTICA_KPIS: readonly DashboardKpi[] = [
-  {
-    id: 'visits',
-    label: 'Clientes por visitar',
-    value: '28',
-    hint: 'de 42 programados',
-    icon: 'fa-solid fa-user-group',
-    tone: 'blue',
-    testId: 'kpi-visitas',
-  },
-  {
-    id: 'routes',
-    label: 'Rutas activas',
-    value: '5',
-    hint: 'de 6 programadas',
-    icon: 'fa-solid fa-route',
-    tone: 'green',
-    testId: 'kpi-rutas',
-  },
-  {
-    id: 'transit',
-    label: 'Pedidos en tránsito',
-    value: '18',
-    hint: 'en ruta actualmente',
-    icon: 'fa-solid fa-box',
-    tone: 'amber',
-    testId: 'kpi-transito',
-  },
-  {
-    id: 'delivered',
-    label: 'Entregas completadas',
-    value: '24',
-    hint: 'de 42 programados (57%)',
-    icon: 'fa-solid fa-circle-check',
-    tone: 'emerald',
-    testId: 'kpi-entregas',
-  },
-];
-
 export const LOGISTICA_DELIVERY: readonly DeliverySegment[] = [
   { status: 'entregado', label: 'Entregados', count: 24, percent: 57, tone: 'green' },
   { status: 'en_ruta', label: 'En ruta', count: 18, percent: 43, tone: 'blue' },

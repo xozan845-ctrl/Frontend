@@ -1,7 +1,6 @@
 import type {
   ClientOfDay,
   Courier,
-  DashboardKpi,
   DeliverySegment,
   MapRoute,
   MapVehicle,
@@ -12,7 +11,6 @@ export interface LogisticaDashboardState {
   loading: boolean;
   zoneFilter: string;
   dateLabel: string;
-  kpis: readonly DashboardKpi[];
   delivery: readonly DeliverySegment[];
   deliveryTotal: number;
   couriers: readonly Courier[];
