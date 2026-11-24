@@ -2195,6 +2195,9 @@ contexto y consecuencias.
     paquetes con capacidades distintas pueden reutilizar la misma UI.
 - **Consecuencias**: se puede distinguir “ver” de “operar”, retirar acciones
   demo y KPIs ficticios sin borrar módulos, y verificar menú y ruta con la misma
-  resolución. Queda como deuda migrar los descriptores y consumidores actuales
-  al nuevo contrato en cambios posteriores; hasta entonces el comodín local
-  evita bloquear el desarrollo.
+  resolución. Los 55 descriptores se migraron al nuevo contrato: los módulos
+  publicados con fuente real son `validado`, la facturación de demostración es
+  `demo`, y las secciones sin integración (incluidas las que servían pantalla
+  “En construcción”) son `en desarrollo`. Cada descriptor deriva su capacidad
+  de activación de su id (`module:<id>`); el comodín local habilita todas en
+  desarrollo y E2E.

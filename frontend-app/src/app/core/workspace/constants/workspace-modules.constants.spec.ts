@@ -132,6 +132,32 @@ describe('workspace-modules.constants', () => {
     expect(testIds.every((testId) => testId.length > 0)).toBe(true);
   });
 
+  it('debe usar solo los estados definidos en ADR-85', () => {
+    const statuses = new Set(WORKSPACE_MODULES.map((module) => module.status));
+
+    expect([...statuses].sort()).toEqual(['demo', 'en desarrollo', 'validado']);
+  });
+
+  it('debe marcar como demo la facturación y como en desarrollo las secciones sin integración', () => {
+    expect(workspaceModuleById('store.billing')?.status).toBe('demo');
+    expect(workspaceModuleById('company.payroll')?.status).toBe('en desarrollo');
+    expect(workspaceModuleById('logistics.map')?.status).toBe('en desarrollo');
+    expect(workspaceModuleById('logistics.settings')?.status).toBe('en desarrollo');
+    expect(workspaceModuleById('company.sales')?.status).toBe('validado');
+  });
+
+  it('debe derivar la capacidad de activación de cada módulo reutilizable', () => {
+    expect(WORKSPACE_MODULES.every((module) => module.requiredCapabilities?.length === 1)).toBe(
+      true,
+    );
+    expect(workspaceModuleById('store.billing')?.requiredCapabilities).toEqual([
+      'module:store.billing',
+    ]);
+    expect(workspaceModuleById('company.sales')?.requiredCapabilities).toEqual([
+      'module:company.sales',
+    ]);
+  });
+
   // Importa el árbol de rutas lazy completo: con cobertura supera el límite
   // por defecto de 5 s, así que se le da margen sin relajar la aserción.
   it('todos los links del registro resuelven a una ruta canónica /app', async () => {
