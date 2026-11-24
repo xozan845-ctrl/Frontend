@@ -76,6 +76,9 @@ que son verificables por máquina.
 > El dominio `media-background` (`kind: 'domain'`) expone adapter, puerto,
 > servicio HTTP y store para los fondos `background_*` de plataforma, empresa y
 > tienda; su componente presentacional vive en `shared/ui/media-background`.
+> El dominio `reports` declara `services/` para el puerto puro de lectura
+> (`*.port.ts`, sin señales) separado del token Angular de `repositories/`
+> (R-AR-3, R-NC-1).
 > Los features pueden declarar entradas de rutas lazy adicionales en su raíz
 > cuando necesiten aislar providers de una pantalla del bundle inicial; esos
 > archivos deben añadirse explícitamente a `FEATURE_ALLOWED_ROOT_FILES`.

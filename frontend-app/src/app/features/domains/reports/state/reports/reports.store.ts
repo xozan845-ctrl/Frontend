@@ -1,6 +1,6 @@
 import { computed, inject } from '@angular/core';
 import { signalStore, withComputed, withMethods } from '@ngrx/signals';
-import { REPORTS_DATA_SOURCE } from '../../repositories/reports-source.repository';
+import { REPORTS_DATA_SOURCE } from '../../repositories/reports-source/reports-source.repository';
 
 /** Store de reportes sobre la fuente del workspace activo (ADR-71). */
 export const ReportsStore = signalStore(
