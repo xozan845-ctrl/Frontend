@@ -1,11 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UpperCasePipe, CommonModule } from '@angular/common';
 import { AuthStore, isCompanyOwnerRole } from '../../features/domains/session/public-api';
 import { CartStore, CartUiStore } from '../../features/applications/cart/public-api';
 import { ProductStore } from '../../features/applications/shop/public-api';
 import { WishlistStore } from '../../features/applications/wishlist/public-api';
-import { StoreConfigService } from '../../core/services/store-config/store-config.service';
+import { COMPANY_INFO, CompanyInfo } from '../../core/constants/company.constants';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +19,9 @@ export class Header {
   readonly cartUiStore = inject(CartUiStore);
   readonly wishlistStore = inject(WishlistStore);
   readonly productStore = inject(ProductStore);
-  private readonly storeConfig = inject(StoreConfigService);
+
+  /** Identidad recibida del contexto activo por contrato de presentación. */
+  readonly companyInfo = input<CompanyInfo>(COMPANY_INFO);
 
   /** Tienda activa (de la URL); los enlaces del storefront la incluyen. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
@@ -39,9 +41,7 @@ export class Header {
   readonly wishlistLink = computed(() =>
     this.storeId() ? ['/tienda', this.storeId(), 'wishlist'] : ['/'],
   );
-  get companyInfo() {
-    return this.storeConfig.companyInfo();
-  }
+  readonly brandName = computed(() => this.companyInfo().name?.split(' ')[0] || 'Tienda');
   isMobileMenuOpen = signal(false);
   isDarkMode = signal(this.initialDarkMode());
 

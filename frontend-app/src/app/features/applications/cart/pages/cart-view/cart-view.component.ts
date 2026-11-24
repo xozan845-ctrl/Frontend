@@ -9,6 +9,7 @@ import { SkeletonLoaderComponent } from '@shared/ui/skeleton/skeleton-loader.com
 import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
 import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { injectSeoPage } from '@core/services/seo/seo.service';
+import { StoreConfigService } from '@core/services/store-config/store-config.service';
 import { TrustBadgesComponent } from '@shared/ui/trust-badges/trust-badges.component';
 import type { TrustBadge } from '@shared/ui/trust-badges/trust-badges.types';
 
@@ -28,12 +29,8 @@ import type { TrustBadge } from '@shared/ui/trust-badges/trust-badges.types';
 })
 export class CartViewComponent {
   readonly cartStore = inject(CartStore);
-  readonly trustBadges: readonly TrustBadge[] = [
-    { icon: 'fa-solid fa-shield-halved', title: 'Pago Seguro', subtitle: 'Datos encriptados' },
-    { icon: 'fa-solid fa-truck-fast', title: 'Envío gratis', subtitle: 'En tu compra' },
-    { icon: 'fa-solid fa-rotate-left', title: '30 Días Retorno', subtitle: 'Devolución sin costo' },
-    { icon: 'fa-solid fa-headset', title: 'Soporte 24/7', subtitle: 'Chat y teléfono' },
-  ];
+  private readonly storeConfig = inject(StoreConfigService);
+  readonly trustBadges = computed<readonly TrustBadge[]>(() => this.storeConfig.benefits());
   readonly authStore = inject(AuthStore);
   private readonly productStore = inject(ProductStore);
   private readonly router = inject(Router);

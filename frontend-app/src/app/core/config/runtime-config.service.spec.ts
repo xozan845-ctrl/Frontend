@@ -35,6 +35,21 @@ describe('RuntimeConfigService', () => {
     expect(environment.apiUrl).toBe('https://api.example.com/api/v1');
   });
 
+  it('expone la configuración pública por tienda sin mezclarla con el entorno', async () => {
+    const service = TestBed.inject(RuntimeConfigService);
+
+    const pending = service.load();
+    httpMock.expectOne('config.json').flush({
+      storefront: { name: 'Operador' },
+      storefronts: { 'tienda-b': { name: 'Tienda B', benefits: [] } },
+    });
+    await pending;
+
+    expect(service.storefrontFor('tienda-b')?.name).toBe('Tienda B');
+    expect(service.storefrontFor('tienda-a')?.name).toBe('Operador');
+    expect(environment.apiUrl).toBe(originalApiUrl);
+  });
+
   it('conserva environment si config.json falla', async () => {
     const service = TestBed.inject(RuntimeConfigService);
 

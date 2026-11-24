@@ -17,7 +17,7 @@ export class LoginFormComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly seoService = injectSeoPage(
     'Iniciar sesión',
-    'Accede a tu cuenta de Quantum Store.',
+    'Accede a tu cuenta.',
   );
 
   /** Origen pedido por el guard (p. ej. `/app/tienda/inicio`). */

@@ -1,14 +1,10 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { CURRENCY, formatCurrency } from '../../config/currency.config';
-import { COMPANY_INFO } from '../../constants/company.constants';
+import { formatCurrency } from '../../config/currency.config';
 import type { ProductSeoExtras } from '../../models/seo.model';
+import { StoreConfigService } from '../store-config/store-config.service';
 
-const SITE_NAME = COMPANY_INFO.name;
-const DEFAULT_TITLE = `${SITE_NAME} — Hardware Premium`;
-const DEFAULT_DESCRIPTION =
-  'Selección editorial de tecnología de alto rendimiento. Hardware sin concesiones para profesionales exigentes.';
 const DEFAULT_OG_IMAGE = '/og-image.png';
 
 /** Etiquetas sociales que gestiona el servicio y hay que limpiar al salir. */
@@ -36,12 +32,25 @@ export class SeoService {
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
   private readonly doc = inject(DOCUMENT);
+  private readonly storeConfig = inject(StoreConfigService);
 
   private readonly structuredDataId = 'seo-product-jsonld';
 
+  private get siteName(): string {
+    return this.storeConfig.companyInfo().name || 'Tienda';
+  }
+
+  private get defaultTitle(): string {
+    return `${this.siteName} — Catálogo`;
+  }
+
+  private get defaultDescription(): string {
+    return this.storeConfig.companyInfo().description || 'Catálogo de productos de la tienda.';
+  }
+
   /** Aplica el patrón "Página | Marca" (lo específico primero, mejor para SEO). */
   updateTitle(pageTitle?: string): void {
-    this.title.setTitle(pageTitle ? `${pageTitle} | ${SITE_NAME}` : DEFAULT_TITLE);
+    this.title.setTitle(pageTitle ? `${pageTitle} | ${this.siteName}` : this.defaultTitle);
   }
 
   /**
@@ -49,7 +58,7 @@ export class SeoService {
    * string vacío también debe caer al valor por defecto.
    */
   updateMeta(description?: string): void {
-    this.meta.updateTag({ name: 'description', content: description || DEFAULT_DESCRIPTION });
+    this.meta.updateTag({ name: 'description', content: description || this.defaultDescription });
   }
 
   /**
@@ -67,15 +76,17 @@ export class SeoService {
     const image = extras.imageUrl ? this.absoluteUrl(extras.imageUrl, canonical) : undefined;
 
     this.updateTitle(name);
-    this.updateMeta(`${description.slice(0, 150)} — Desde ${formatCurrency(price)}`);
+    this.updateMeta(
+      `${description.slice(0, 150)} — Desde ${formatCurrency(price, this.storeConfig.currency())}`,
+    );
     this.setCanonical(canonical);
     this.clearSocialTags();
 
-    this.meta.updateTag({ property: 'og:title', content: `${name} | ${SITE_NAME}` });
+    this.meta.updateTag({ property: 'og:title', content: `${name} | ${this.siteName}` });
     this.meta.updateTag({ property: 'og:description', content: socialDescription });
     this.meta.updateTag({ property: 'og:type', content: 'product' });
     this.meta.updateTag({ property: 'og:url', content: canonical });
-    this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
+    this.meta.updateTag({ property: 'og:site_name', content: this.siteName });
 
     if (image) {
       this.meta.updateTag({ property: 'og:image', content: image });
@@ -86,7 +97,7 @@ export class SeoService {
       name: 'twitter:card',
       content: image ? 'summary_large_image' : 'summary',
     });
-    this.meta.updateTag({ name: 'twitter:title', content: `${name} | ${SITE_NAME}` });
+    this.meta.updateTag({ name: 'twitter:title', content: `${name} | ${this.siteName}` });
     this.meta.updateTag({ name: 'twitter:description', content: socialDescription });
     if (image) this.meta.updateTag({ name: 'twitter:image', content: image });
 
@@ -108,7 +119,7 @@ export class SeoService {
     imagePath: string = DEFAULT_OG_IMAGE,
   ): void {
     const canonical = this.absoluteUrl(path ?? this.currentPath());
-    const socialDescription = description || DEFAULT_DESCRIPTION;
+    const socialDescription = description || this.defaultDescription;
     const image = this.absoluteUrl(imagePath);
 
     this.updateTitle(title);
@@ -117,15 +128,15 @@ export class SeoService {
     this.clearSocialTags();
     this.removeStructuredData();
 
-    this.meta.updateTag({ property: 'og:title', content: `${title} | ${SITE_NAME}` });
+    this.meta.updateTag({ property: 'og:title', content: `${title} | ${this.siteName}` });
     this.meta.updateTag({ property: 'og:description', content: socialDescription });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ property: 'og:url', content: canonical });
-    this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
+    this.meta.updateTag({ property: 'og:site_name', content: this.siteName });
     this.meta.updateTag({ property: 'og:image', content: image });
-    this.meta.updateTag({ property: 'og:image:alt', content: `${title} | ${SITE_NAME}` });
+    this.meta.updateTag({ property: 'og:image:alt', content: `${title} | ${this.siteName}` });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:title', content: `${title} | ${SITE_NAME}` });
+    this.meta.updateTag({ name: 'twitter:title', content: `${title} | ${this.siteName}` });
     this.meta.updateTag({ name: 'twitter:description', content: socialDescription });
     this.meta.updateTag({ name: 'twitter:image', content: image });
   }
@@ -166,15 +177,15 @@ export class SeoService {
   /** Estado social equivalente al de `index.html` mientras no hay página activa. */
   private setDefaultSocialTags(): void {
     const image = this.absoluteUrl(DEFAULT_OG_IMAGE);
-    this.meta.updateTag({ property: 'og:title', content: DEFAULT_TITLE });
-    this.meta.updateTag({ property: 'og:description', content: DEFAULT_DESCRIPTION });
+    this.meta.updateTag({ property: 'og:title', content: this.defaultTitle });
+    this.meta.updateTag({ property: 'og:description', content: this.defaultDescription });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
-    this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
+    this.meta.updateTag({ property: 'og:site_name', content: this.siteName });
     this.meta.updateTag({ property: 'og:image', content: image });
-    this.meta.updateTag({ property: 'og:image:alt', content: DEFAULT_TITLE });
+    this.meta.updateTag({ property: 'og:image:alt', content: this.defaultTitle });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:title', content: DEFAULT_TITLE });
-    this.meta.updateTag({ name: 'twitter:description', content: DEFAULT_DESCRIPTION });
+    this.meta.updateTag({ name: 'twitter:title', content: this.defaultTitle });
+    this.meta.updateTag({ name: 'twitter:description', content: this.defaultDescription });
     this.meta.updateTag({ name: 'twitter:image', content: image });
   }
 
@@ -200,12 +211,12 @@ export class SeoService {
       name: product.name,
       description: product.description,
       ...(product.image ? { image: [product.image] } : {}),
-      brand: { '@type': 'Brand', name: SITE_NAME },
+      brand: { '@type': 'Brand', name: this.siteName },
       offers: {
         '@type': 'Offer',
         url: product.url,
         price: product.price,
-        priceCurrency: CURRENCY.code,
+        priceCurrency: this.storeConfig.currency().code,
         availability: product.inStock
           ? 'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',

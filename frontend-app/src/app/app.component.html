@@ -1,6 +1,6 @@
 <div class="app-layout">
   @if (!isBackoffice()) {
-    <app-header />
+    <app-header [companyInfo]="storefrontConfig()" />
   }
 
   <main class="main-content">
@@ -11,7 +11,7 @@
   </main>
 
   @if (!isBackoffice()) {
-    <app-footer />
+    <app-footer [companyInfo]="storefrontConfig()" />
   }
 </div>
 
@@ -23,7 +23,7 @@
     <span aria-hidden="true"></span>
   }
   @defer (on idle) {
-    <app-floating-support />
+    <app-floating-support [companyInfo]="storefrontConfig()" />
   } @placeholder {
     <span aria-hidden="true"></span>
   }

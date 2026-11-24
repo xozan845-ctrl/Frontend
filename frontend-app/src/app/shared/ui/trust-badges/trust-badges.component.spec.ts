@@ -14,30 +14,39 @@ describe('TrustBadgesComponent', () => {
 
   beforeEach(() => TestBed.resetTestingModule());
 
-  it('debe mostrar las insignias por defecto con subtítulo', async () => {
+  it('no debe mostrar promesas cuando no recibe beneficios aprobados', async () => {
     const fixture = await setup();
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    const host = fixture.nativeElement as HTMLElement;
 
-    expect(text).toContain('Pago Seguro');
-    expect(text).toContain('30 Días Retorno');
-    expect(text).toContain('Envío Global');
-    expect(text).toContain('Soporte 24/7');
-    expect(text).toContain('Datos encriptados');
+    expect(host.querySelector('[data-testid="trust-badges"]')).toBeNull();
+    expect(host.textContent).not.toContain('Retorno');
+    expect(host.textContent).not.toContain('Envío Global');
+    expect(host.textContent).not.toContain('Soporte 24/7');
   });
 
-  it('debe aceptar insignias y variante compacta sin subtítulos', async () => {
+  it('debe mostrar solo los beneficios recibidos por input', async () => {
+    const fixture = await setup([
+      { icon: 'fa-solid fa-lock', title: 'Compra protegida', subtitle: 'Datos cifrados' },
+      { icon: 'fa-solid fa-truck', title: 'Entrega local' },
+    ]);
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelectorAll('[data-testid="trust-badge"]')).toHaveLength(2);
+    expect(host.textContent).toContain('Compra protegida');
+    expect(host.textContent).toContain('Datos cifrados');
+    expect(host.textContent).toContain('Entrega local');
+    expect(host.textContent).not.toContain('30 Días Retorno');
+  });
+
+  it('debe ocultar subtítulos en la variante compacta', async () => {
     const fixture = await setup(
-      [
-        { icon: 'fa-solid fa-lock', title: 'Compra protegida', subtitle: 'Ignorado' },
-        { icon: 'fa-solid fa-truck', title: 'Envío 24-48h', subtitle: 'Ignorado' },
-      ],
+      [{ icon: 'fa-solid fa-lock', title: 'Compra protegida', subtitle: 'Ignorado' }],
       true,
     );
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.textContent).toContain('Compra protegida');
-    expect(host.textContent).toContain('Envío 24-48h');
     expect(host.textContent).not.toContain('Ignorado');
-    expect(host.querySelector('div')?.className).toContain('grid-cols-2');
+    expect(host.querySelector('[data-testid="trust-badges"]')?.className).toContain('grid-cols-2');
   });
 });

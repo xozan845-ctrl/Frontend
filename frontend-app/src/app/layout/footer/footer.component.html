@@ -13,41 +13,53 @@
           >
             <i class="fa-solid fa-bolt text-white dark:text-slate-900"></i>
           </div>
-          {{ companyInfo.name.split(' ')[0] }}
+          {{ brandName() }}
         </a>
-        <p class="text-slate-600 dark:text-slate-400 font-medium max-w-xs leading-relaxed text-sm">
-          Hardware de alto rendimiento. Selección editorial de tecnología sin concesiones para
-          profesionales exigentes.
-        </p>
-        <div class="flex gap-4 pt-4">
-          <a
-            [href]="companyInfo.socials.twitter || '#'"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
-            aria-label="Twitter"
+        @if (description()) {
+          <p
+            data-testid="footer-description"
+            class="text-slate-600 dark:text-slate-400 font-medium max-w-xs leading-relaxed text-sm"
           >
-            <i class="fa-brands fa-x-twitter text-sm"></i>
-          </a>
-          <a
-            [href]="companyInfo.socials.instagram || '#'"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
-            aria-label="Instagram"
-          >
-            <i class="fa-brands fa-instagram text-sm"></i>
-          </a>
-          <a
-            [href]="companyInfo.socials.github || '#'"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
-            aria-label="GitHub"
-          >
-            <i class="fa-brands fa-github text-sm"></i>
-          </a>
-        </div>
+            {{ description() }}
+          </p>
+        }
+        @if (hasSocials()) {
+          <div class="flex gap-4 pt-4" data-testid="footer-socials">
+            @if (socials().twitter) {
+              <a
+                [href]="socials().twitter"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+                aria-label="Twitter"
+              >
+                <i class="fa-brands fa-x-twitter text-sm"></i>
+              </a>
+            }
+            @if (socials().instagram) {
+              <a
+                [href]="socials().instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+                aria-label="Instagram"
+              >
+                <i class="fa-brands fa-instagram text-sm"></i>
+              </a>
+            }
+            @if (socials().github) {
+              <a
+                [href]="socials().github"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="glass-subtle w-10 h-10 rounded-full text-slate-600 dark:text-slate-400 flex items-center justify-center hover:bg-accent-600 hover:text-white hover:border-accent-600 dark:hover:bg-accent-500 dark:hover:text-white transition-all hover:shadow-md hover:scale-110 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500"
+                aria-label="GitHub"
+              >
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            }
+          </div>
+        }
       </div>
 
       <!-- Navigation Columns -->
@@ -85,56 +97,95 @@
         </ul>
       </div>
 
-      <div class="md:col-span-2">
-        <h4
-          class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-surface-700 pb-3"
-        >
-          Contacto
-        </h4>
-        <ul class="space-y-4">
-          <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
-            {{ companyInfo.email }}
-          </li>
-          <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
-            {{ companyInfo.displayPhone }}
-          </li>
-          <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
-            {{ companyInfo.location }}
-          </li>
-        </ul>
-      </div>
+      @if (hasContact()) {
+        <div class="md:col-span-2" data-testid="footer-contact">
+          <h4
+            class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-surface-700 pb-3"
+          >
+            Contacto
+          </h4>
+          <ul class="space-y-4">
+            @if (email()) {
+              <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {{ email() }}
+              </li>
+            }
+            @if (phone()) {
+              <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {{ phone() }}
+              </li>
+            }
+            @if (location()) {
+              <li class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {{ location() }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (policies().length) {
+        <div class="md:col-span-2" data-testid="footer-policies">
+          <h4
+            class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-surface-700 pb-3"
+          >
+            Información
+          </h4>
+          <ul class="space-y-4">
+            @for (policy of policies(); track policy.url) {
+              <li>
+                <a
+                  [href]="policy.url"
+                  class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+                >
+                  {{ policy.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
     </div>
 
-    <!-- Newsletter -->
-    <div class="border-t border-slate-200 dark:border-surface-700 py-16">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-        <div>
-          <h4
-            class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white mb-2"
-          >
-            Newsletter Exclusiva
-          </h4>
-          <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">
-            Ofertas limitadas y lanzamientos antes que nadie.
-          </p>
+    <!-- Newsletter: solo se muestra si el operador confirma su contenido. -->
+    @if (newsletter(); as newsletter) {
+      <div
+        class="border-t border-slate-200 dark:border-surface-700 py-16"
+        data-testid="footer-newsletter"
+      >
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            @if (newsletter.title) {
+              <h4
+                class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white mb-2"
+              >
+                {{ newsletter.title }}
+              </h4>
+            }
+            @if (newsletter.description) {
+              <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">
+                {{ newsletter.description }}
+              </p>
+            }
+          </div>
+          <form class="flex w-full md:w-auto" (submit)="onNewsletterSubmit($event)">
+            <input
+              type="email"
+              placeholder="tu@correo.com"
+              class="input flex-1 md:w-72 rounded-l-xl py-3.5 px-4 text-sm font-medium"
+              aria-label="Email para newsletter"
+              required
+            />
+            <button
+              type="submit"
+              class="btn btn-primary px-7 py-3.5 rounded-r-xl text-xs font-bold uppercase tracking-widest"
+            >
+              Suscribirse
+            </button>
+          </form>
         </div>
-        <form class="flex w-full md:w-auto" (submit)="onNewsletterSubmit($event)">
-          <input
-            type="email"
-            placeholder="tu@correo.com"
-            class="input flex-1 md:w-72 rounded-l-xl py-3.5 px-4 text-sm font-medium"
-            aria-label="Email para newsletter"
-            required
-          />
-          <button
-            type="submit"
-            class="btn btn-primary px-7 py-3.5 rounded-r-xl text-xs font-bold uppercase tracking-widest"
-          >
-            Suscribirse
-          </button>
-        </form>
       </div>
-    </div>
+    }
 
     <!-- Bottom Bar -->
     <div
@@ -144,7 +195,7 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400"
         >
-          &copy; {{ currentYear }} {{ companyInfo.name }} — Todos los derechos reservados.
+          &copy; {{ currentYear }} {{ brandName() }} — Todos los derechos reservados.
         </p>
         <button
           (click)="scrollToTop()"

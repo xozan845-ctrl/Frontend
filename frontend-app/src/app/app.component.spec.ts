@@ -4,8 +4,10 @@ import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { App } from './app.component';
+import { RuntimeConfigService } from './core/config/runtime-config.service';
+import { StoreConfigService } from './core/services/store-config/store-config.service';
 import { AUTH_REPOSITORY } from './features/domains/session/public-api';
-import { PRODUCT_REPOSITORY } from './features/domains/storefront/public-api';
+import { PRODUCT_REPOSITORY, ProductStore } from './features/domains/storefront/public-api';
 import { CartStore, CartUiStore } from './features/applications/cart/public-api';
 
 @Component({ standalone: true, template: '' })
@@ -75,5 +77,52 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('app-header')).toBeNull();
     expect(compiled.querySelector('app-footer')).toBeNull();
+  });
+
+  it('no hereda identidad ni promesas al pasar de una tienda a otra', async () => {
+    const configs: Record<string, Record<string, unknown>> = {
+      'tienda-a': {
+        name: 'Tienda A',
+        email: 'hola@a.test',
+        phone: '111222333',
+        socials: { instagram: 'https://instagram.com/a' },
+        benefits: [{ icon: 'fa-truck', title: 'Envío A' }],
+      },
+      'tienda-b': { name: 'Tienda B' },
+    };
+    TestBed.overrideProvider(RuntimeConfigService, {
+      useValue: { storefrontFor: (storeId: string) => configs[storeId] },
+    });
+
+    const fixture = TestBed.createComponent(App);
+    const productStore = TestBed.inject(ProductStore);
+    const storeConfig = TestBed.inject(StoreConfigService);
+
+    productStore.loadStore('tienda-a');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(storeConfig.companyInfo().email).toBe('hola@a.test');
+    expect(storeConfig.benefits()[0]?.title).toBe('Envío A');
+
+    productStore.loadStore('tienda-b');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const config = storeConfig.companyInfo();
+    expect(config.name).toBe('Tienda B');
+    expect(config.email).toBeUndefined();
+    expect(config.phone).toBeUndefined();
+    expect(config.socials).toEqual({});
+    expect(storeConfig.benefits()).toEqual([]);
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).not.toContain('hola@a.test');
+    expect(compiled.textContent).not.toContain('111222333');
+    expect(compiled.textContent).not.toContain('Envío A');
+    expect(compiled.querySelector('[data-testid="footer-socials"]')).toBeNull();
+    expect(compiled.querySelector('[data-testid="trust-badges"]')).toBeNull();
   });
 });

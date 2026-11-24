@@ -15,7 +15,7 @@ import { injectSeoPage } from '@core/services/seo/seo.service';
 export class ConfirmationComponent {
   private readonly seoService = injectSeoPage(
     'Pedido confirmado',
-    'Tu pedido en Quantum Store fue confirmado.',
+    'Tu pedido fue confirmado.',
   );
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);

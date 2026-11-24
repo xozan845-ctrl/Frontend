@@ -25,6 +25,7 @@ import { ProductCarouselComponent } from '../../components/product-carousel/prod
 import { CartFlyService } from '@shared/ui/cart-fly/cart-fly.service';
 import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
 import { injectSeoCleanup } from '@core/services/seo/seo.service';
+import { StoreConfigService } from '@core/services/store-config/store-config.service';
 import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 import { TrustBadgesComponent } from '@shared/ui/trust-badges/trust-badges.component';
 import type { TrustBadge } from '@shared/ui/trust-badges/trust-badges.types';
@@ -51,12 +52,9 @@ import type { TrustBadge } from '@shared/ui/trust-badges/trust-badges.types';
 })
 export class ProductDetailComponent {
   readonly productStore = inject(ProductStore);
-  readonly trustBadges: readonly TrustBadge[] = [
-    { icon: 'fa-solid fa-shield-halved', title: 'Pago Seguro', subtitle: 'Datos encriptados' },
-    { icon: 'fa-solid fa-truck-fast', title: 'Envío 24-48h', subtitle: 'Cobertura nacional' },
-    { icon: 'fa-solid fa-rotate-left', title: '30 Días Retorno', subtitle: 'Devolución sin costo' },
-    { icon: 'fa-solid fa-headset', title: 'Soporte 24/7', subtitle: 'Chat y teléfono' },
-  ];
+  private readonly storeConfig = inject(StoreConfigService);
+  readonly trustBadges = computed<readonly TrustBadge[]>(() => this.storeConfig.benefits());
+  readonly features = computed<readonly TrustBadge[]>(() => this.storeConfig.benefits());
   private readonly cartStore = inject(CartStore);
   private readonly reviewsStore = inject(ReviewsStore);
   private readonly wishlistStore = inject(WishlistStore);
@@ -102,21 +100,6 @@ export class ProductDetailComponent {
     authorName: ['', [Validators.required, Validators.minLength(2)]],
     comment: ['', [Validators.required, Validators.minLength(10)]],
   });
-
-  features = [
-    {
-      icon: 'fa-solid fa-truck-fast',
-      title: 'Envío Global',
-      subtitle: 'Prioridad en órdenes grandes',
-    },
-    {
-      icon: 'fa-solid fa-shield-halved',
-      title: 'Garantía 24m',
-      subtitle: 'Cobertura total hardware',
-    },
-    { icon: 'fa-solid fa-rotate-left', title: 'Devoluciones', subtitle: '30 días sin fricción' },
-    { icon: 'fa-solid fa-credit-card', title: 'Pago Seguro', subtitle: 'Encriptación end-to-end' },
-  ];
 
   /** Selecciona el producto dentro del storefront ya cargado por el resolver. */
   private readonly selectFromRoute = effect(() => {

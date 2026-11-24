@@ -16,7 +16,7 @@ export default class PlansComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly seoService = injectSeoPage(
     'Planes y suscripciones',
-    'Elige tu membresía de Quantum Store.',
+    'Elige tu membresía.',
   );
   readonly billingType = signal<'personal' | 'empresa'>('personal');
   readonly plans: PlanTier[] = PLANS;

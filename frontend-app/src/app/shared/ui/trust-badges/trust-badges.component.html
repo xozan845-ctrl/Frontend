@@ -1,12 +1,14 @@
-<div
-  [class]="
+@if (badges().length) {
+  <div
+    data-testid="trust-badges"
+    [class]="
     compact()
       ? 'grid grid-cols-2 gap-3 border-t border-slate-100 pt-6 dark:border-surface-700'
       : 'grid grid-cols-2 gap-4 border-t border-slate-100 pt-8 lg:grid-cols-4 dark:border-surface-700'
   "
 >
   @for (badge of badges(); track badge.title) {
-    <div class="flex flex-col items-center gap-2 text-center">
+    <div class="flex flex-col items-center gap-2 text-center" data-testid="trust-badge">
       <i
         [class]="badge.icon"
         class="mb-1 text-slate-300 dark:text-surface-600"
@@ -22,6 +24,7 @@
           {{ badge.subtitle }}
         </span>
       }
-    </div>
-  }
-</div>
+      </div>
+    }
+  </div>
+}

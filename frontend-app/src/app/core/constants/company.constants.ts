@@ -1,17 +1,32 @@
+import { CURRENCY } from '../config/currency.config';
 import type { CompanyInfo } from '../models/company.model';
 
-export type { CompanyInfo } from '../models/company.model';
+export type {
+  CompanyInfo,
+  StorefrontBenefit,
+  StorefrontNewsletter,
+  StorefrontPolicy,
+  StorefrontSupport,
+} from '../models/company.model';
 
+/**
+ * Identidad neutra: no fija marca, teléfono, correo, redes ni promesas.
+ * Es el estado inicial de cualquier contexto y el resultado de limpiar uno.
+ */
 export const COMPANY_INFO: CompanyInfo = {
-  name: 'Quantum Store',
-  phone: '15551234567',
-  displayPhone: '+1 (555) 123-4567',
-  email: 'soporte@quantum.com',
-  location: 'Silicon Valley, CA',
-  whatsappMessage: 'Hola Quantum Store, me gustaría recibir asesoría sobre un producto.',
-  socials: {
-    twitter: 'https://twitter.com',
-    instagram: 'https://instagram.com',
-    github: 'https://github.com',
-  },
+  currency: { ...CURRENCY },
+  socials: {},
+  policies: [],
+  benefits: [],
 };
+
+/** Copia fresca para que dos contextos nunca compartan objetos anidados. */
+export function createNeutralCompanyInfo(): CompanyInfo {
+  return {
+    ...COMPANY_INFO,
+    currency: COMPANY_INFO.currency ? { ...COMPANY_INFO.currency } : undefined,
+    socials: {},
+    policies: [],
+    benefits: [],
+  };
+}

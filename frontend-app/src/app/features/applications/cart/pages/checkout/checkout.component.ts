@@ -10,6 +10,7 @@ import { NotificationService } from '@core/services/notification/notification.se
 import { TrustBadgesComponent } from '@shared/ui/trust-badges/trust-badges.component';
 import { EmptyStateComponent } from '@shared/ui/empty-state/empty-state.component';
 import { injectSeoPage } from '@core/services/seo/seo.service';
+import { StoreConfigService } from '@core/services/store-config/store-config.service';
 import { CreateOrderPayload } from '../../models/order.model';
 import { AppCurrencyPipe } from '@shared/pipes/app-currency.pipe';
 
@@ -26,13 +27,15 @@ export class CheckoutComponent {
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private notificationService = inject(NotificationService);
-  private readonly seoService = injectSeoPage('Checkout', 'Finaliza tu compra en Quantum Store.');
+  private readonly seoService = injectSeoPage('Checkout', 'Finaliza tu compra.');
   private readonly productStore = inject(ProductStore);
   private readonly orderStore = inject(OrderStore);
+  private readonly storeConfig = inject(StoreConfigService);
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
   readonly shopRoute = computed(() => `/tienda/${this.storeId()}/shop`);
+  readonly trustBadges = computed(() => this.storeConfig.benefits());
 
   isSubmitting = signal(false);
 

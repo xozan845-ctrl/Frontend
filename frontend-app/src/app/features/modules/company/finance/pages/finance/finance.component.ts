@@ -103,7 +103,7 @@ export default class FinanceComponent {
   readonly sections = CASH_SECTIONS;
   readonly section = signal<CashSection>('movements');
   readonly greeting = buildGreeting(this.auth.user()?.name);
-  readonly companyName = computed(() => this.storeConfig.companyInfo().name);
+  readonly companyName = computed(() => this.storeConfig.companyInfo().name ?? 'Tienda');
 
   readonly exportOpen = signal(false);
   readonly movementOpen = signal(false);

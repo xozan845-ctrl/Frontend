@@ -22,7 +22,7 @@ const INDEX = `<!doctype html>
 test('genera metadatos de invitación y conserva el shell de Angular', () => {
   const html = buildInvitationHtml(INDEX, 'https://app.test/');
 
-  assert.match(html, /<title>Invitación de vendedor \| Quantum Store<\/title>/);
+  assert.match(html, /<title>Invitación de vendedor \| Tienda<\/title>/);
   assert.match(html, /<app-root><\/app-root>/);
   assert.match(html, /<meta name="description" content="Descripción del sitio\." \/>/);
   assert.match(html, /<meta name="robots" content="noindex, nofollow" \/>/);

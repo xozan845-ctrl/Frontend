@@ -50,7 +50,7 @@ describe('ConfirmationComponent', () => {
     expect(text).toContain('C$2,760.00');
     expect(seo.setPage).toHaveBeenCalledWith(
       'Pedido confirmado',
-      'Tu pedido en Quantum Store fue confirmado.',
+      'Tu pedido fue confirmado.',
     );
   });
 

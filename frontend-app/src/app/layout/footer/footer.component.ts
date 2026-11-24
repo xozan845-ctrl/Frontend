@@ -1,8 +1,8 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductStore } from '../../features/applications/shop/public-api';
 import { NotificationService } from '../../core/services/notification/notification.service';
-import { StoreConfigService } from '../../core/services/store-config/store-config.service';
+import { COMPANY_INFO, CompanyInfo } from '../../core/constants/company.constants';
 
 @Component({
   selector: 'app-footer',
@@ -12,8 +12,20 @@ import { StoreConfigService } from '../../core/services/store-config/store-confi
 })
 export class Footer {
   private readonly notificationService = inject(NotificationService);
-  private readonly storeConfig = inject(StoreConfigService);
   private readonly productStore = inject(ProductStore);
+
+  /** Contenido del contexto activo, recibido por contrato de presentación. */
+  readonly companyInfo = input<CompanyInfo>(COMPANY_INFO);
+  readonly brandName = computed(() => this.companyInfo().name || 'Tienda');
+  readonly description = computed(() => this.companyInfo().description);
+  readonly socials = computed(() => this.companyInfo().socials ?? {});
+  readonly policies = computed(() => this.companyInfo().policies ?? []);
+  readonly newsletter = computed(() => this.companyInfo().newsletter);
+  readonly email = computed(() => this.companyInfo().email);
+  readonly phone = computed(() => this.companyInfo().displayPhone ?? this.companyInfo().phone);
+  readonly location = computed(() => this.companyInfo().location);
+  readonly hasSocials = computed(() => Object.values(this.socials()).some(Boolean));
+  readonly hasContact = computed(() => Boolean(this.email() || this.phone() || this.location()));
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
   readonly storeId = computed(() => this.productStore.storeId() ?? '');
@@ -22,9 +34,6 @@ export class Footer {
     this.storeId() ? ['/tienda', this.storeId(), 'shop'] : ['/'],
   );
 
-  get companyInfo() {
-    return this.storeConfig.companyInfo();
-  }
   readonly currentYear = new Date().getFullYear();
 
   /** R-SE-9: sin handlers inline (la CSP bloquea `onclick`). */

@@ -33,7 +33,7 @@ export class WishlistComponent {
   private readonly productStore = inject(ProductStore);
   private readonly seoService = injectSeoPage(
     'Lista de deseos',
-    'Tus productos favoritos en Quantum Store.',
+    'Tus productos favoritos.',
   );
 
   /** Tienda activa (de la URL) para enlaces store-scoped. */
