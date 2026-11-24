@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { moduleGuard } from './module.guard';
 import { AuthStore } from '@domains/session/public-api';
 import type { User } from '@domains/session/public-api';
+import type { RuntimePackageConfig } from '@core/config/runtime-config.model';
+import { RuntimeConfigService } from '@core/config/runtime-config.service';
 
 const user = signal<User | null>(null);
 const refreshToken = signal<string | null>(null);
@@ -33,12 +35,15 @@ const seller: User = {
 
 describe('moduleGuard', () => {
   const router = { createUrlTree: vi.fn((commands, extras) => ({ commands, extras })) };
+  const packageConfig = signal<RuntimePackageConfig>({ id: 'local', capabilities: ['*'] });
 
-  const setup = () => {
+  const setup = (paquete: RuntimePackageConfig = { id: 'local', capabilities: ['*'] }) => {
+    packageConfig.set(paquete);
     TestBed.configureTestingModule({
       providers: [
         { provide: AuthStore, useValue: authStore },
         { provide: Router, useValue: router },
+        { provide: RuntimeConfigService, useValue: { packageConfig } },
       ],
     });
   };
@@ -109,5 +114,26 @@ describe('moduleGuard', () => {
     setup();
 
     await expect(run('no.existe')).resolves.toEqual({ commands: ['/app/empresa/inicio'] });
+  });
+
+  it('debe bloquear el acceso directo a un módulo en desarrollo', async () => {
+    user.set(owner);
+    setup();
+
+    await expect(run('company.payroll')).resolves.toEqual({ commands: ['/app/empresa/inicio'] });
+  });
+
+  it('debe bloquear el acceso directo cuando el paquete no incluye la capacidad', async () => {
+    user.set(owner);
+    setup({ id: 'basico', capabilities: ['module:company.clients'] });
+
+    await expect(run('company.sales')).resolves.toEqual({ commands: ['/app/empresa/inicio'] });
+  });
+
+  it('debe permitir el mismo módulo cuando otro paquete incluye la capacidad', async () => {
+    user.set(owner);
+    setup({ id: 'completo', capabilities: ['module:company.sales'] });
+
+    await expect(run('company.sales')).resolves.toBe(true);
   });
 });

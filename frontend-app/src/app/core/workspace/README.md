@@ -11,14 +11,15 @@ No contiene lógica de negocio ni componentes de UI.
 
 ## Cómo funciona
 
-1. Cada módulo declara `workspace`, `permission` y `section`.
-2. El shell inyecta `AuthStore` y construye los grupos con
-   `workspaceModuleGroups(workspace, canView)`.
-3. `canView` comprueba `canEnterWorkspace(...)` + `hasPermission(...)`.
-4. El sidebar solo pinta los grupos recibidos; no conoce roles ni rutas
-   hardcodeadas.
-5. `moduleGuard(id)` en `features/applications/auth` resuelve el acceso a la ruta con el
-   mismo registro (importado de forma lazy).
+1. Cada módulo declara `workspace`, `permission`, `section` y `status`.
+2. El shell inyecta `AuthStore` y `ModuleAvailabilityService`, y construye los
+   grupos con `availability.groupsFor(workspace, canView)`.
+3. `canView` comprueba `canEnterWorkspace(...)` + `hasPermission(...)`;
+   `groupsFor` añade la disponibilidad del paquete con el mismo `resolve`.
+4. El sidebar solo pinta los grupos recibidos y etiqueta `demo` / `en desarrollo`;
+   no conoce roles, empresas ni rutas hardcodeadas.
+5. `moduleGuard(id)` en `features/applications/auth` reutiliza `resolve` para
+   que menú y acceso directo coincidan (importado de forma lazy).
 
 ## Disponibilidad (ADR-85)
 
@@ -33,13 +34,15 @@ autorización del backend (`R-SE-1`).
 
 ## Añadir un módulo
 
-- Añadir la entrada a `WORKSPACE_MODULES` con `id`, metadatos, `workspace`,
-  `permission` y `status`.
+- Añadir la entrada a `MODULE_DEFINITIONS` con `id`, metadatos, `workspace`,
+  `permission` y `status`. `WORKSPACE_MODULES` deriva `module:<id>` como
+  capacidad de activación; solo se sobrescribe si el módulo necesita otra.
 - Añadir el permiso a `Permission` y a los roles que correspondan en
   `features/domains/session/models/authorization.model.ts`.
 - Proteger la ruta con `moduleGuard('id')`.
-- Los módulos `soon` se muestran igual, pero responden con la página de
-  “En construcción” hasta su implementación.
+- `en desarrollo` no aparece en el menú y el guard bloquea el acceso directo;
+  `demo` aparece etiquetado pero sus acciones deben quedar deshabilitadas
+  hasta que exista fuente real.
 
 La autorización real sigue en el backend/RLS: ocultar un módulo en la UI es
 UX, no una frontera de seguridad.

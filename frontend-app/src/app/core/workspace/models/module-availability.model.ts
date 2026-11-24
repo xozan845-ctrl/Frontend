@@ -33,6 +33,11 @@ export interface ModuleAvailability {
 
 const CAPABILITY_WILDCARD = '*';
 
+/** Capacidad derivada del id; evita duplicar el identificador en cada descriptor. */
+export function moduleCapability(moduleId: string): string {
+  return `module:${moduleId}`;
+}
+
 /**
  * Resuelve disponibilidad desde el paquete, sin consultar sesión ni features.
  * La visibilidad resultante es UX: no concede permisos (`R-SE-1`, ADR-85).

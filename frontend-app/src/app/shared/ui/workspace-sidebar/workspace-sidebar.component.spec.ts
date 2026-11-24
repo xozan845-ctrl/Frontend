@@ -22,7 +22,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         workspace: 'store',
         section: 'operacion',
         permission: 'store:read',
-        status: 'ready',
+        status: 'validado',
       },
       {
         id: 'store.orders',
@@ -33,7 +33,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         workspace: 'store',
         section: 'operacion',
         permission: 'store:manage-orders',
-        status: 'ready',
+        status: 'validado',
       },
     ],
   },
@@ -50,7 +50,7 @@ const GROUPS: WorkspaceModuleGroup[] = [
         workspace: 'store',
         section: 'footer',
         permission: 'store:read',
-        status: 'ready',
+        status: 'validado',
       },
       {
         id: 'store.inventory',
@@ -61,7 +61,18 @@ const GROUPS: WorkspaceModuleGroup[] = [
         workspace: 'store',
         section: 'footer',
         permission: 'store:manage-products',
-        status: 'soon',
+        status: 'en desarrollo',
+      },
+      {
+        id: 'store.billing',
+        label: 'Facturación',
+        icon: 'fa-solid fa-file-invoice-dollar',
+        link: '/app/tienda/facturacion/nueva',
+        testId: 'vendor-nav-facturacion',
+        workspace: 'store',
+        section: 'footer',
+        permission: 'store:manage-billing',
+        status: 'demo',
       },
     ],
   },
@@ -89,11 +100,9 @@ describe('WorkspaceSidebarComponent', () => {
     const fixture = await setup();
     const links = fixture.debugElement.queryAll(By.css('a[data-testid^="vendor-nav-"]'));
 
-    expect(links.map((link) => link.nativeElement.textContent.trim())).toEqual([
-      'Inicio',
-      'Pedidos',
-      'Ayuda',
-    ]);
+    expect(links.map((link) => link.nativeElement.textContent.replace(/\s+/g, ' ').trim())).toEqual(
+      ['Inicio', 'Pedidos', 'Ayuda', 'Facturación Demo'],
+    );
     expect(fixture.nativeElement.textContent).toContain('Tienda');
   });
 
@@ -140,12 +149,21 @@ describe('WorkspaceSidebarComponent', () => {
     expect(fixture.nativeElement.querySelector('aside')?.classList.contains('w-64')).toBe(true);
   });
 
-  it('debe mostrar los módulos soon como no interactivos', async () => {
+  it('debe mostrar los módulos en desarrollo como no interactivos', async () => {
     const fixture = await setup();
-    const soon = fixture.nativeElement.querySelector('[data-testid="vendor-nav-inventario"]');
+    const pending = fixture.nativeElement.querySelector('[data-testid="vendor-nav-inventario"]');
 
-    expect(soon.tagName).toBe('SPAN');
-    expect(soon.getAttribute('aria-disabled')).toBe('true');
-    expect(soon.textContent).toContain('Pronto');
+    expect(pending.tagName).toBe('SPAN');
+    expect(pending.getAttribute('aria-disabled')).toBe('true');
+    expect(pending.textContent).toContain('En desarrollo');
+  });
+
+  it('debe etiquetar los módulos demo sin deshabilitar su navegación', async () => {
+    const fixture = await setup();
+    const demo = fixture.nativeElement.querySelector('[data-testid="vendor-nav-facturacion"]');
+
+    expect(demo.tagName).toBe('A');
+    expect(demo.textContent).toContain('Demo');
+    expect(demo.getAttribute('href')).toBe('/app/tienda/facturacion/nueva');
   });
 });

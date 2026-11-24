@@ -71,9 +71,11 @@ Todos los contextos comparten `WorkspaceShellComponent` y el registro
 `WORKSPACE_MODULES`; el sidebar y los guards filtran por workspace + permiso.
 La disponibilidad de cada módulo se resuelve en `core/workspace` a partir de
 `RuntimeConfig.package.capabilities` y de su estado (`demo`, `en desarrollo`,
-`integrado`, `validado`, ADR-85). Menú y rutas comparten esa resolución para
-que un módulo visible no sea necesariamente operativo; la visibilidad no
-sustituye la autorización del backend (`R-SE-1`). La entrada `/app` restaura la
+`integrado`, `validado`, ADR-85). Los shells construyen la navegación con
+`ModuleAvailabilityService.groupsFor` y `moduleGuard` reutiliza `resolve`, de
+modo que menú y acceso directo concuerdan; un módulo visible no es necesariamente
+operativo y la visibilidad no sustituye la autorización del backend (`R-SE-1`).
+La entrada `/app` restaura la
 sesión con el refresh token antes de resolver el contexto, igual que el resto
 de guards.
 Los módulos comerciales compartidos (clientes, bancos, cuentas por pagar,
