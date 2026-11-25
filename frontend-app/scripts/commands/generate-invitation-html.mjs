@@ -19,10 +19,10 @@ const PUBLIC_ORIGIN = (
   process.env.FRONTEND_URL ?? 'https://kb-coleccion-internacional-ni.web.app'
 ).replace(/\/+$/, '');
 
-const INVITATION_TITLE = 'Invitación de vendedor | Quantum Store';
+const INVITATION_TITLE = 'Invitación de vendedor | Tienda';
 const OG_TITLE = 'Tu tienda te espera';
 const OG_DESCRIPTION = 'Acepta la invitación y empieza a vender con tu propia tienda.';
-const SITE_NAME = 'Quantum Store';
+const SITE_NAME = 'Tienda';
 
 /**
  * Sustituye el título y los metadatos sociales del shell compilado. Exportada

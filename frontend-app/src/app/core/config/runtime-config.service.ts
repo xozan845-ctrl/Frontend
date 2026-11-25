@@ -1,7 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, firstValueFrom, of, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import type { CompanyInfo } from '../models/company.model';
 import { RuntimeConfig } from './runtime-config.model';
 
 /** Ruta relativa al `base href`; el asset vive en `public/config.json`. */
@@ -26,6 +27,16 @@ const CONFIG_TIMEOUT_MS = 5000;
 })
 export class RuntimeConfigService {
   private readonly http = inject(HttpClient);
+  private readonly _loaded = signal<RuntimeConfig>({});
+
+  /** Config pública leída de `config.json`, sin mezclar con tiendas previas. */
+  readonly loaded = this._loaded.asReadonly();
+
+  /** Devuelve la config de una tienda o, si no tiene, la del operador por defecto. */
+  storefrontFor(storeId?: string | null): Partial<CompanyInfo> | undefined {
+    const config = this._loaded();
+    return (storeId && config.storefronts?.[storeId]) || config.storefront;
+  }
 
   /** Descarga `config.json` y fusiona sus valores no vacíos sobre `environment`. */
   async load(): Promise<void> {
@@ -55,6 +66,8 @@ export class RuntimeConfigService {
     // E2E y desarrollo con `dataSource: 'mock'` no deben apuntar al backend
     // real por un `config.json` de despliegue (R-E-12).
     if (environment.apiConfig?.dataSource === 'mock') return;
+
+    this._loaded.set(config);
 
     if (config.apiUrl) {
       environment.apiUrl = config.apiUrl;

@@ -310,27 +310,29 @@
           </button>
         </div>
 
-        <app-trust-badges class="mb-10 block" [badges]="trustBadges" [compact]="true" />
+        <app-trust-badges class="mb-10 block" [badges]="trustBadges()" [compact]="true" />
 
-        <!-- Features -->
-        <div
-          class="grid grid-cols-2 gap-y-10 gap-x-12 pt-10 border-t border-slate-200 dark:border-surface-700"
-        >
-          @for (feature of features; track feature.icon) {
-            <div class="flex flex-col gap-3 group">
-              <div
-                class="glass-subtle w-12 h-12 rounded-xl flex items-center justify-center text-accent-600 dark:text-accent-400 transition-colors group-hover:bg-accent-600 group-hover:text-white shadow-sm"
-              >
-                <i [class]="feature.icon + ' text-lg'"></i>
+        @if (features().length) {
+          <!-- Beneficios aprobados por el contexto activo. -->
+          <div
+            class="grid grid-cols-2 gap-y-10 gap-x-12 pt-10 border-t border-slate-200 dark:border-surface-700"
+          >
+            @for (feature of features(); track feature.icon) {
+              <div class="flex flex-col gap-3 group">
+                <div
+                  class="glass-subtle w-12 h-12 rounded-xl flex items-center justify-center text-accent-600 dark:text-accent-400 transition-colors group-hover:bg-accent-600 group-hover:text-white shadow-sm"
+                >
+                  <i [class]="feature.icon + ' text-lg'"></i>
+                </div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-slate-900 dark:text-white"
+                  >{{ feature.title }}</span
+                >
+                <span class="text-xs text-slate-500 font-medium">{{ feature.subtitle }}</span>
               </div>
-              <span
-                class="text-[10px] font-bold uppercase tracking-widest text-slate-900 dark:text-white"
-                >{{ feature.title }}</span
-              >
-              <span class="text-xs text-slate-500 font-medium">{{ feature.subtitle }}</span>
-            </div>
-          }
-        </div>
+            }
+          </div>
+        }
       </div>
     </div>
 

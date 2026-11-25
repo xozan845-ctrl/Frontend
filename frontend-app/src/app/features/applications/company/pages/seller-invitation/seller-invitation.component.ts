@@ -36,7 +36,7 @@ export default class SellerInvitationComponent {
     this.route.snapshot.queryParamMap.get('token')?.trim() ||
     '';
 
-  readonly brandName = COMPANY_INFO.name;
+  readonly brandName = COMPANY_INFO.name || 'Tienda';
   readonly currentYear = new Date().getFullYear();
   readonly showPassword = signal(false);
 

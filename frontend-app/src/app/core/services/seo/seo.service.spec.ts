@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
+import { StoreConfigService } from '../store-config/store-config.service';
 import { SeoService, injectSeoCleanup, injectSeoPage } from './seo.service';
 
 describe('SeoService', () => {
@@ -13,6 +14,7 @@ describe('SeoService', () => {
   let title: Title;
   let meta: Meta;
   let doc: Document;
+  let storeConfig: StoreConfigService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [SeoService, Title, Meta] });
@@ -20,17 +22,34 @@ describe('SeoService', () => {
     title = TestBed.inject(Title);
     meta = TestBed.inject(Meta);
     doc = TestBed.inject(DOCUMENT);
+    storeConfig = TestBed.inject(StoreConfigService);
+    storeConfig.clear();
   });
 
   afterEach(() => {
     service.reset();
+    storeConfig.clear();
     history.replaceState(null, '', '/');
   });
 
   it('debe componer el título con el sufijo de la tienda', () => {
     service.updateTitle('Catálogo');
 
-    expect(title.getTitle()).toBe('Catálogo | Quantum Store');
+    expect(title.getTitle()).toBe('Catálogo | Tienda');
+  });
+
+  it('debe usar la identidad y moneda del contexto activo', () => {
+    storeConfig.setContext('tienda-b', {
+      name: 'Tienda B',
+      description: 'Descripción B',
+      currency: { code: 'USD', locale: 'en-US' },
+    });
+    service.setProductPage('Teclado', 'Un teclado', 10);
+
+    expect(title.getTitle()).toBe('Teclado | Tienda B');
+
+    const script = doc.getElementById('seo-product-jsonld') as HTMLScriptElement;
+    expect(JSON.parse(script.textContent ?? '{}').offers.priceCurrency).toBe('USD');
   });
 
   it('debe actualizar la meta descripción', () => {
@@ -43,14 +62,14 @@ describe('SeoService', () => {
     service.updateTitle('Cualquiera');
     service.reset();
 
-    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
+    expect(title.getTitle()).toBe('Tienda — Catálogo');
   });
 
   it('debe definir los metadatos de la página de producto', () => {
     service.setProductPage('Teclado', 'Un teclado mecánico', 99.5);
 
-    expect(title.getTitle()).toBe('Teclado | Quantum Store');
-    expect(meta.getTag('property="og:title"')?.content).toBe('Teclado | Quantum Store');
+    expect(title.getTitle()).toBe('Teclado | Tienda');
+    expect(meta.getTag('property="og:title"')?.content).toBe('Teclado | Tienda');
     expect(meta.getTag('property="og:type"')?.content).toBe('product');
     expect(meta.getTag('property="og:url"')?.content).toBeTruthy();
   });
@@ -66,14 +85,16 @@ describe('SeoService', () => {
     service.updateTitle();
     service.updateMeta();
 
-    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
-    expect(meta.getTag('name="description"')?.content).toContain('Selección editorial');
+    expect(title.getTitle()).toBe('Tienda — Catálogo');
+    expect(meta.getTag('name="description"')?.content).toContain(
+      'Catálogo de productos de la tienda.',
+    );
   });
 
   it('debe configurar una página genérica con título, descripción e imagen social', () => {
     service.setPage('Planes', 'Elige tu membresía');
 
-    expect(title.getTitle()).toBe('Planes | Quantum Store');
+    expect(title.getTitle()).toBe('Planes | Tienda');
     expect(meta.getTag('name="description"')?.content).toBe('Elige tu membresía');
     expect(meta.getTag('property="og:type"')?.content).toBe('website');
     expect(meta.getTag('property="og:image"')?.content).toMatch(/^https?:\/\/.+\/og-image\.png$/);
@@ -148,7 +169,7 @@ describe('SeoService', () => {
 
     service.reset();
 
-    expect(meta.getTag('property="og:title"')?.content).toBe('Quantum Store — Hardware Premium');
+    expect(meta.getTag('property="og:title"')?.content).toBe('Tienda — Catálogo');
     expect(meta.getTag('property="og:image"')?.content).toMatch(/\/og-image\.png$/);
     expect(meta.getTag('name="twitter:card"')?.content).toBe('summary_large_image');
     expect(doc.head.querySelector('link[rel="canonical"]')).toBeNull();
@@ -160,12 +181,12 @@ describe('SeoService', () => {
 
     runInInjectionContext(injector, () => injectSeoPage('Planes', 'Elige tu membresía'));
 
-    expect(title.getTitle()).toBe('Planes | Quantum Store');
+    expect(title.getTitle()).toBe('Planes | Tienda');
     expect(meta.getTag('name="description"')?.content).toBe('Elige tu membresía');
 
     injector.destroy();
 
-    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
+    expect(title.getTitle()).toBe('Tienda — Catálogo');
   });
 
   it('debe limpiar el SEO dinámico al destruir el contexto (R-AR-15)', () => {
@@ -179,6 +200,6 @@ describe('SeoService', () => {
 
     injector.destroy();
 
-    expect(title.getTitle()).toBe('Quantum Store — Hardware Premium');
+    expect(title.getTitle()).toBe('Tienda — Catálogo');
   });
 });

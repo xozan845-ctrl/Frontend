@@ -19,7 +19,7 @@ export default class ComingSoonComponent {
   readonly description = input('Estamos preparando esta sección.');
   readonly icon = input('fa-solid fa-screwdriver-wrench');
   /** Módulo al que pertenece la sección; se usa en el título del documento. */
-  readonly context = input('Quantum Store');
+  readonly context = input('Tienda');
 
   private readonly seoService = injectSeoCleanup();
 

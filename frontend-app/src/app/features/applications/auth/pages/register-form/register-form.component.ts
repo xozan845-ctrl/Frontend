@@ -47,7 +47,7 @@ export class RegisterFormComponent {
       ? 'Crea tu cuenta de facturador para emitir facturas desde tu tienda.'
       : this.isSellerIntent
         ? 'Crea tu cuenta de vendedor para abrir tu tienda.'
-        : 'Regístrate en Quantum Store.',
+        : 'Regístrate en la tienda.',
   );
 
   readonly registerForm = this.fb.group({

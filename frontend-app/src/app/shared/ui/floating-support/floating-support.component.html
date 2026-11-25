@@ -1,98 +1,109 @@
-<!-- Floating Support Button & Modal -->
-<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end">
-  <!-- Popover Box -->
-  @if (isOpen()) {
-    <div
-      class="card mb-4 w-80 overflow-hidden rounded-3xl shadow-2xl"
-      style="animation: supportPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) both"
-    >
-      <!-- Card Header -->
-      <div class="bg-gradient-to-r from-accent-600 to-accent-700 p-5 text-white">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <span class="relative flex h-2.5 w-2.5">
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"
-              ></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
-            </span>
-            <span class="text-[10px] font-black uppercase tracking-widest text-white/90"
-              >Soporte Quantum</span
+<!-- Floating Support Button & Modal: solo si hay canales confirmados. -->
+@if (hasChannels()) {
+  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+    <!-- Popover Box -->
+    @if (isOpen()) {
+      <div
+        class="card mb-4 w-80 overflow-hidden rounded-3xl shadow-2xl"
+        style="animation: supportPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) both"
+      >
+        <!-- Card Header -->
+        <div class="bg-gradient-to-r from-accent-600 to-accent-700 p-5 text-white">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-2.5 w-2.5">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"
+                ></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+              </span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-white/90">{{
+                supportLabel()
+              }}</span>
+            </div>
+            <button
+              (click)="toggle()"
+              class="text-white/80 hover:text-white transition-colors"
+              aria-label="Cerrar soporte"
             >
+              <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
           </div>
-          <button
-            (click)="toggle()"
-            class="text-white/80 hover:text-white transition-colors"
-            aria-label="Cerrar soporte"
-          >
-            <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
+          <h4 class="text-base font-black uppercase tracking-tight">¿En qué podemos ayudarte?</h4>
+          @if (responseTime()) {
+            <p class="text-xs text-white/80 mt-1 font-medium">{{ responseTime() }}</p>
+          }
         </div>
-        <h4 class="text-base font-black uppercase tracking-tight">¿En qué podemos ayudarte?</h4>
-        <p class="text-xs text-white/80 mt-1 font-medium">Asistencia inmediata para tus compras.</p>
-      </div>
 
-      <!-- Options -->
-      <div class="p-4 space-y-2.5">
-        <!-- WhatsApp -->
-        <button
-          (click)="openWhatsApp()"
-          class="alert alert-success w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
-        >
+        <!-- Options -->
+        <div class="p-4 space-y-2.5">
+          <!-- WhatsApp: solo si el operador confirmó el canal. -->
+          @if (whatsappPhone()) {
+            <button
+              (click)="openWhatsApp()"
+              class="alert alert-success w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
+              >
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-black uppercase tracking-wider">Chat por WhatsApp</p>
+                @if (responseTime()) {
+                  <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    {{ responseTime() }}
+                  </p>
+                }
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-emerald-400"></i>
+            </button>
+          }
+
+          <!-- Email: solo si el operador confirmó el canal. -->
+          @if (emailLink(); as emailLink) {
+            <a
+              [href]="emailLink"
+              class="glass-subtle w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
+              >
+                <i class="fa-solid fa-envelope text-sm"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-black uppercase tracking-wider">Correo Electrónico</p>
+                <p class="text-[10px] text-slate-400 font-medium">{{ email() }}</p>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </a>
+          }
+        </div>
+
+        @if (note()) {
           <div
-            class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
+            class="glass-subtle px-5 py-3 border-t border-slate-100 dark:border-surface-700 text-center"
           >
-            <i class="fa-brands fa-whatsapp text-lg"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-black uppercase tracking-wider">Chat por WhatsApp</p>
-            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-              Respuesta promedio: 2 min
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+              {{ note() }}
             </p>
           </div>
-          <i class="fa-solid fa-chevron-right text-xs text-emerald-400"></i>
-        </button>
-
-        <!-- Email -->
-        <a
-          [href]="'mailto:' + companyInfo.email + '?subject=Consulta%20' + companyInfo.name"
-          class="glass-subtle w-full flex items-center gap-3 p-3.5 rounded-2xl transition-all text-left group hover:brightness-105"
-        >
-          <div
-            class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform"
-          >
-            <i class="fa-solid fa-envelope text-sm"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-black uppercase tracking-wider">Correo Electrónico</p>
-            <p class="text-[10px] text-slate-400 font-medium">{{ companyInfo.email }}</p>
-          </div>
-          <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
-        </a>
+        }
       </div>
+    }
 
-      <!-- Footer note -->
-      <div
-        class="glass-subtle px-5 py-3 border-t border-slate-100 dark:border-surface-700 text-center"
-      >
-        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
-          Garantía y devoluciones 30 días garantizados
-        </p>
-      </div>
-    </div>
-  }
-
-  <!-- Toggle Button -->
-  <button
-    (click)="toggle()"
-    class="btn btn-primary w-14 h-14 rounded-full!"
-    [attr.aria-label]="isOpen() ? 'Cerrar menú de ayuda' : 'Abrir soporte y contacto directo'"
-  >
-    <i
-      class="fa-solid text-xl transition-transform duration-300"
-      [class.fa-headset]="!isOpen()"
-      [class.fa-xmark]="isOpen()"
-      [class.rotate-90]="isOpen()"
-    ></i>
-  </button>
-</div>
+    <!-- Toggle Button -->
+    <button
+      (click)="toggle()"
+      class="btn btn-primary w-14 h-14 rounded-full!"
+      [attr.aria-label]="isOpen() ? 'Cerrar menú de ayuda' : 'Abrir soporte y contacto directo'"
+    >
+      <i
+        class="fa-solid text-xl transition-transform duration-300"
+        [class.fa-headset]="!isOpen()"
+        [class.fa-xmark]="isOpen()"
+        [class.rotate-90]="isOpen()"
+      ></i>
+    </button>
+  </div>
+}

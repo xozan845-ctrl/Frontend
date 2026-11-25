@@ -14,10 +14,7 @@ import { PlanCardComponent } from '../../components/plan-card/plan-card.componen
 })
 export default class PlansComponent {
   private readonly notificationService = inject(NotificationService);
-  private readonly seoService = injectSeoPage(
-    'Planes y suscripciones',
-    'Elige tu membresía de Quantum Store.',
-  );
+  private readonly seoService = injectSeoPage('Planes y suscripciones', 'Elige tu membresía.');
   readonly billingType = signal<'personal' | 'empresa'>('personal');
   readonly plans: PlanTier[] = PLANS;
   readonly planFeatures: PlanFeature[] = PLAN_FEATURES;

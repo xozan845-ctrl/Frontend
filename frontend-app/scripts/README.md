@@ -280,3 +280,27 @@ exige documentación **del área** (rules de arquitectura/frontend/ui/security/t
 
 Estas utilidades no forman parte del motor de reglas; sus pruebas se ejecutan en
 `npm run test:engine` (por el patrón `scripts/commands/*.test.mjs`).
+
+### Generador de invitación estática
+
+`commands/generate-invitation-html.mjs` toma el `index.html` compilado y escribe
+`dist/frontend-app/browser/invitacion.html` como `postbuild` de `npm run build`.
+`firebase.json` lo sirve en `/i/**` y `/registro/vendedor` (ADR-53).
+
+- Usa el título `Invitación de vendedor | Tienda` y `og:site_name` = `Tienda`:
+  no fija una marca comercial en los metadatos del crawler.
+- Conserva el shell de Angular (`<app-root>`), el `noindex, nofollow` y los
+  metadatos Open Graph/Twitter propios de la invitación; sustituye los tags
+  sociales del `index.html` compilado.
+- La invitación es **estática y genérica**: no resuelve un `storeId`, no consulta
+  el API y no carga `config.json` en runtime. La identidad por tienda pertenece
+  al storefront (ADR-86).
+- `FRONTEND_URL` configura el origen público de la imagen social
+  (`<origin>/og-invitacion.png`). Si no se define, se usa el fallback real del
+  script: `https://kb-coleccion-internacional-ni.web.app`.
+- `commands/generate-invitation-html.test.mjs` verifica los metadatos, el
+  `noindex`, la conservación del shell y el rechazo de un HTML sin
+  `<app-root>`. Se ejecuta con `npm run test:engine`.
+
+Este generador se incluye en la categoría `governance` del gate `docs-sync` por
+ser un script `.mjs`; esta sección es la documentación exigida por `R-DO-8`.

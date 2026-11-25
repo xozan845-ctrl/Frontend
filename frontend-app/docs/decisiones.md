@@ -2166,3 +2166,44 @@ contexto y consecuencias.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.
+
+## ADR-86: Identidad pública por contexto y configuración
+
+- **Fecha**: 2026-11-24
+- **Estado**: Aceptado
+- **Contexto**: el storefront tenía identidad, contacto, enlaces y promesas
+  incrustados en componentes compartidos y metadatos. Esos valores podían
+  filtrarse al cambiar de tienda porque los partiales se mezclaban con el
+  contexto anterior y la ficha pública del API no incluye contacto, moneda,
+  redes ni beneficios. La URL ya resuelve la tienda (ADR-13), pero no puede
+  transportar la identidad publicada por el operador.
+- **Decisión**:
+  - `config.json` aporta la identidad y el contenido público mediante
+    `storefront` (operador) y `storefronts[storeId]` (por tienda).
+  - `RuntimeConfigService.storefrontFor()` usa la ficha de la tienda si existe;
+    si no, usa la del operador. No hay merge de campos entre ambas: un objeto
+    vacío por tienda bloquea la herencia.
+  - `StoreConfigService.setContext()`, `updateConfig()` y `clear()` reemplazan
+    el contexto; `App` lo sincroniza con `ProductStore.storeId()` y solo acepta
+    nombre/descripción de la ficha cargada cuando `store.id === storeId`.
+  - El estado neutro elimina marca, contacto, redes y promesas, conservando el
+    fallback monetario `NIO` / `es-NI`. `SeoService` y el pipe de moneda leen el
+    contexto activo.
+  - Los componentes compartidos reciben los datos por `input` (`R-SH-4`); el
+    soporte flotante solo aparece con `support.email` o
+    `support.whatsappPhone` explícitos.
+  - Las invitaciones estáticas siguen siendo genéricas y no resuelven
+    `storeId` ni cargan `config.json` (ADR-53).
+- **Alternativas consideradas**:
+  1. Seguir infiriendo canales desde un teléfono o correo genérico: se descartó
+     porque publicaba datos no confirmados.
+  2. Fusionar la configuración del operador con la de cada tienda: se descartó
+     porque un partial podía arrastrar redes, teléfono o promesas de A a B.
+  3. Solicitar identidad al API por tienda: se descartó porque el DTO público no
+     contiene esos campos y acoplaría el storefront a un backend concreto.
+- **Consecuencias**: se conserva el aislamiento A→B, los campos no confirmados
+  se ocultan y la configuración sigue siendo centralizada en `core/`. El
+  operador debe publicar explícitamente cada tienda que quiera valores propios;
+  las demás usan `storefront` por diseño actual. Desarrollo y E2E/mock no
+  cargan estos overrides, y en producción un fallo de `config.json` cae a la
+  configuración de `src/environments/` tras un timeout de 5000 ms.
