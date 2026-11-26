@@ -1,10 +1,16 @@
 # Productos / Servicios — estado de resolución del QA
 
-Fecha: 2026-10-30
+Fecha: 2026-10-30 · Actualizado: 2026-11-26 (F36)
 
 Este documento complementa `productos-servicios-qa.md`. El informe original
 describe el estado encontrado durante el QA; este registra qué se corrigió y qué
-queda pendiente de re-prueba contra el entorno real.
+queda pendiente de re-prueba contra el entorno real. El cierre frontend y la
+aceptación de operación backend se declaran por separado: la matriz vigente de
+módulos y su evidencia ejecutada está en
+[`../mvp/aceptacion-frontend.md`](../mvp/aceptacion-frontend.md), mientras que
+este documento mantiene **pendiente** la re-prueba formal contra Core Engine. No
+se interpreta el despliegue de Firebase ni los E2E con `api-mock` como
+aceptación del backend.
 
 ## Cambios entregados
 
