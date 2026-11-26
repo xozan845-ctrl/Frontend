@@ -21,20 +21,20 @@ se usan como evidencia actual.
 
 ## 2. Controles de ingeniería ejecutados (2026-11-26)
 
-| Verificación                        | Comando                                             | Resultado                                                                                                          |
-| ----------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Motor de reglas (`R-DO-9`)          | `node scripts/cli.mjs rules`                        | ✅ 46 tests / 24 suites / 0 fallos; 53/259 IDs con check real; sin hallazgos de frontera                             |
-| Unit + componentes (`G-1`)          | `npm test -- --watch=false`                         | ✅ **360 archivos / 1.940 tests**                                                                                  |
-| Cobertura (`G-2`, `R-COV-1`)        | mismo comando                                       | ✅ 94,49 / 88,04 / 94,33 / 96,09 % (umbral 94/88/93/95)                                                            |
-| Typecheck (`G-3`)                   | `npm run typecheck`                                 | ✅ app y specs                                                                                                      |
-| Lint (`G-5`)                        | `npm run lint`                                      | ✅ 0 errores / 0 warnings                                                                                           |
-| Formato (`G-4`)                     | `npx prettier --check docs/mvp/*.md`                | ✅ archivos nuevos formateados; el check global marca 1424 archivos con diferencias preexistentes en la rama base    |
+| Verificación                          | Comando                                                    | Resultado                                                                                                                                  |
+| ------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Motor de reglas (`R-DO-9`)            | `node scripts/cli.mjs rules`                               | ✅ 46 tests / 24 suites / 0 fallos; 53/259 IDs con check real; sin hallazgos de frontera                                                   |
+| Unit + componentes (`G-1`)            | `npm test -- --watch=false`                                | ✅ **360 archivos / 1.940 tests**                                                                                                          |
+| Cobertura (`G-2`, `R-COV-1`)          | mismo comando                                              | ✅ 94,49 / 88,04 / 94,33 / 96,09 % (umbral 94/88/93/95)                                                                                    |
+| Typecheck (`G-3`)                     | `npm run typecheck`                                        | ✅ app y specs                                                                                                                             |
+| Lint (`G-5`)                          | `npm run lint`                                             | ✅ 0 errores / 0 warnings                                                                                                                  |
+| Formato (`G-4`)                       | `npx prettier --check docs/mvp/*.md`                       | ✅ 0 archivos con `--end-of-line auto`; 2 tablas realineadas y 1422 restantes son solo CRLF local (sin `.gitattributes`)                   |
 | Build y presupuesto (`G-3`, `R-PF-1`) | `npm run build` + `node scripts/commands/check-budget.mjs` | ✅ initial **545,98 kB** dentro del aviso de 555 kB y del error de 560 kB; 3 warnings no bloqueantes (2 `NG8113`, 1 CommonJS de `leaflet`) |
-| Seguridad (`R-QA-6`)                | `npm audit --audit-level=high`                      | ✅ 0 vulnerabilidades                                                                                               |
-| E2E (`G-6`, `R-E-25`)               | `npm run e2e`                                       | ⚠️ **61/67**: 6 snapshots visuales `R-UX-7` fallan por baselines `*-chromium-win32.png` no versionados               |
-| Flujos funcionales E2E              | `npx playwright test --grep-invert "R-UX-7"`        | ✅ **61/61** sin los snapshots de plataforma                                                                         |
-| Smoke de hosting (`R-CD-9`)         | `node scripts/commands/hosting-smoke.mjs`           | ✅ ejecutado con exit 0 (sin salida)                                                                                 |
-| Config de hosting                   | `firebase.json` / `.firebaserc`                     | ✅ Firebase Hosting es el destino actual; Dockploy queda como referencia futura                                      |
+| Seguridad (`R-QA-6`)                  | `npm audit --audit-level=high`                             | ✅ 0 vulnerabilidades                                                                                                                      |
+| E2E (`G-6`, `R-E-25`)                 | `npm run e2e`                                              | ⚠️ **61/67**: 6 snapshots visuales `R-UX-7` fallan por baselines `*-chromium-win32.png` no versionados                                     |
+| Flujos funcionales E2E                | `npx playwright test --grep-invert "R-UX-7"`               | ✅ **61/61** sin los snapshots de plataforma                                                                                               |
+| Smoke de hosting (`R-CD-9`)           | `node scripts/commands/hosting-smoke.mjs`                  | ✅ ejecutado con exit 0 (sin salida)                                                                                                       |
+| Config de hosting                     | `firebase.json` / `.firebaserc`                            | ✅ Firebase Hosting es el destino actual; Dockploy queda como referencia futura                                                            |
 
 El inventario de 45 unidades estructurales y los 40 puertos con sus pruebas de
 sustitución están en
