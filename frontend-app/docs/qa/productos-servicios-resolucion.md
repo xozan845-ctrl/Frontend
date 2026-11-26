@@ -25,12 +25,13 @@ Frontend desplegado en Firebase Hosting el 2026-10-30 a las 17:05 UTC.
 
 ## Estado por hallazgo
 
-| Hallazgo                                 | Estado en código                                                                                                                                                                                       | Verificación pendiente                                                  |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| R-PS-01: costo y metadatos no persistían | Resuelto: producto envía y recibe costo, marca, código de barras, unidad, stock mínimo/máximo, garantía, materia prima, ubicación y estado operativo. Se eliminó `localStorage` como fuente de verdad. | Crear/editar, cerrar sesión, limpiar storage y validar el GET real.     |
-| R-PS-02: servicios solo locales          | Resuelto: `GET/POST/PATCH/DELETE /catalog/servicios`, listado paginado, edición y baja lógica.                                                                                                         | Crear/editar/dar de baja y repetir en sesión nueva.                     |
-| R-PS-03: estado operativo local          | Resuelto: se usa `estado_operativo` (`activo`/`inactivo`) separado de `estado` (`disponible`/`agotado`).                                                                                               | Confirmar que el catálogo público y Ventas reflejan la misma semántica. |
-| R-PS-04: acciones sin operación          | Resuelto: configuración de inventario, importación CSV, escaneo, combos, promociones y movimientos tienen contrato y UI. La cámara del modal de producto sigue marcada como próxima fase.              | Probar cada flujo contra el backend desplegado.                         |
+| Hallazgo                                 | Estado en código                                                                                                                                                                                       | Verificación pendiente                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| R-PS-01: costo y metadatos no persistían | Resuelto: producto envía y recibe costo, marca, código de barras, unidad, stock mínimo/máximo, garantía, materia prima, ubicación y estado operativo. Se eliminó `localStorage` como fuente de verdad. | Crear/editar, cerrar sesión, limpiar storage y validar el GET real.                         |
+| R-PS-02: servicios solo locales          | Resuelto: `GET/POST/PATCH/DELETE /catalog/servicios`, listado paginado, edición y baja lógica.                                                                                                         | Crear/editar/dar de baja y repetir en sesión nueva.                                         |
+| R-PS-03: estado operativo local          | Resuelto: se usa `estado_operativo` (`activo`/`inactivo`) separado de `estado` (`disponible`/`agotado`).                                                                                               | Confirmar que el catálogo público y Ventas reflejan la misma semántica.                     |
+| R-PS-04: acciones sin operación          | Resuelto: configuración de inventario, importación CSV, escaneo, combos, promociones y movimientos tienen contrato y UI. La cámara del modal de producto sigue marcada como próxima fase.              | Probar cada flujo contra el backend desplegado.                                             |
+| R-PS-05: marca/proveedor sin alta libre  | Resuelto en código: el modal de producto usa un `<input>` con `datalist` y acepta texto nuevo (`company-product-modal.component.html`).                                                                | Confirmar en el despliegue re-probado que una marca nueva se guarda y se muestra al editar. |
 
 ## Funciones implementadas
 
@@ -48,6 +49,23 @@ Frontend desplegado en Firebase Hosting el 2026-10-30 a las 17:05 UTC.
   escaneo por código desde el catálogo sí funciona.
 - Los E2E del repositorio usan `api-mock`; no sustituyen una prueba de
   integración real con Core Engine.
+
+## Antecedentes posteriores al informe original
+
+| Antecedente                                                                | Cierre en este documento                                                                                                                | Estado       |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| Firebase servía el bundle anterior (sin `/catalog/servicios` ni metadatos) | Subsanado por el despliegue del 2026-10-30 17:05 UTC; la corrección en código se verifica en la re-prueba, no por el despliegue en sí.  | ⏳ re-prueba |
+| `R-PS-01`/`R-PS-02` bloqueantes en sesión nueva                            | Código corregido (ADR-74); siguen abiertos en integración real hasta validar `GET`/`POST` y persistencia cross-session con Core Engine. | ⏳ re-prueba |
+| `R-PS-04` actions “NO IMPLEMENTADAS” en el despliegue                      | Implementadas en código y cubiertas por `E2E-CAT`; pendiente ejecutar los mismos flujos contra el backend desplegado.                   | ⏳ re-prueba |
+| `R-PS-05` Marca/Proveedor sin alta libre                                   | Implementado en el modal con `input` + `datalist`; pendiente de comprobación en el entorno re-probado.                                  | ⏳ re-prueba |
+| Fallo transitorio de login en el primer intento                            | El reintento con credenciales confirmadas terminó la ronda completa; se conserva solo como trazabilidad, no como resultado final.       | ✅ cerrado   |
+| Arnés bloqueado al abrir un segundo modal                                  | Limitación de sincronización del script; los subflujos se repitieron aislados y pasaron. No es un fallo funcional del producto.         | ✅ cerrado   |
+| Producto de QA conservado para reproducción                                | Se mantiene hasta la re-prueba; se elimina como último paso del checklist una vez registradas las respuestas HTTP reales.               | ⏳ re-prueba |
+| “Sin regresiones observadas” de la segunda ronda                           | Válido solo para esa ronda sobre el bundle anterior; no se usa como aceptación del bundle actual ni del backend.                        | ✅ acotado   |
+
+Ninguno de estos cierres declara aceptación de Core Engine: la operación backend
+sigue pendiente hasta ejecutar el checklist completo y registrar las respuestas
+HTTP reales.
 
 ## Checklist de re-prueba
 

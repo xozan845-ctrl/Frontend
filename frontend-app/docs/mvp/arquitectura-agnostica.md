@@ -5,6 +5,8 @@
 > controles de frontera. La tabla única de estado funcional está en
 > [`aceptacion-frontend.md`](./aceptacion-frontend.md).
 
+**Versión revisada:** `1.27.0` · SHA base `a3fdf0b` · tag publicado `v1.26.0`.
+
 ## 1. Criterio para declarar 100 %
 
 Se declara **100 % de agnosticismo** solo si, simultáneamente:
@@ -13,8 +15,8 @@ Se declara **100 % de agnosticismo** solo si, simultáneamente:
    capas declaradas;
 2. los 55 módulos de `WORKSPACE_MODULES` están inventariados, incluidos los 9
    `soon` y cualquier `ready` que solo renderice un placeholder;
-3. cada puerto tiene contrato, implementación/configuración en composición,
-   consumidor y una prueba que lo sustituye;
+3. cada puerto tiene contrato, adaptador/implementación y configuración en
+   composición, consumidor y una prueba que lo sustituye;
 4. los controles de capas, puertos, contratos y ciclos pasan sin hallazgos; y
 5. no queda ninguna violación abierta de estado o de aceptación.
 
@@ -52,7 +54,7 @@ La columna **Configuración** es el lugar de composición que elige la
 implementación. La columna **Sustitución** identifica una spec que inyecta un
 doble; es la prueba de que el consumidor no depende de la clase concreta.
 
-| Puerto (`InjectionToken`)               | Contrato                                                                        | Implementación                                                          | Configuración                                                                                        | Consumidores                                                                                      | Sustitución verificable                                                                                             |
+| Puerto (`InjectionToken`)               | Contrato                                                                        | Implementación / adaptador                                              | Configuración                                                                                        | Consumidores                                                                                      | Sustitución verificable                                                                                             |
 | --------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `ADMIN_ORDER_REPOSITORY`                | `applications/admin/repositories/admin-order.repository.ts`                     | `AdminOrderService`                                                     | `applications/admin/admin.routes.ts`                                                                 | `state/orders/admin-orders.store.ts`                                                              | `state/orders/admin-orders.store.spec.ts`                                                                           |
 | `AI_JOB_REPOSITORY`                     | `applications/ai-scraper/repositories/ai-job.repository.ts`                     | `AiJobService` (`useExisting`)                                          | `applications/ai-scraper/ai-scraper.routes.ts`                                                       | `state/ai-jobs`, `state/ai-session`                                                               | `state/ai-jobs/ai-jobs.store.spec.ts`; `state/ai-session/ai-session.store.spec.ts`                                  |

@@ -35,6 +35,28 @@
 flujos funcionales excluyendo `R-UX-7` quedó en **61/61**; ver la deuda
 correspondiente en la sección 5.
 
+## 2.1 Trazabilidad de requisitos, hallazgos y evidencia
+
+Los identificadores `AG-*` y `F-*` no existen como lista oficial en este
+repositorio (búsqueda verificada en `docs/**/*.md` el 2026-11-26). Mientras
+Producto no publique ese catálogo, la trazabilidad se hace con los IDs reales
+del repo (`R-PS-*`, `R-E-*`) y se registra la deuda; no se inventan requisitos ni
+se declaran resultados no ejecutados.
+
+| Elemento             | Origen real                                                                                                                                                 | Prueba / evidencia ejecutada                                                               | Resultado                                   |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| `AG-*`               | Sin catálogo oficial en el repo. Dueño: **Producto**. Criterio: publicar la lista y vincular cada ID a una fila de la matriz.                               | —                                                                                          | ⏳ pendiente de publicación                 |
+| `F-*`                | Sin numeración canónica; los hallazgos viven como `R-PS-01`…`R-PS-05` en `docs/qa/`. Dueño: **Producto + QA**. Criterio: emitir la correspondencia oficial. | tabla de hallazgos de `productos-servicios-resolucion.md`                                  | ⏳ pendiente de correspondencia             |
+| `R-PS-01`, `R-PS-02` | Costo/metadatos y servicios no persistían en el despliegue anterior (ADR-74).                                                                               | `E2E-CAT`; `U-company-catalog`; `U-company-service`                                        | ✅ frontend / ⏳ re-prueba backend          |
+| `R-PS-03`            | `estado_operativo` separado de `estado`.                                                                                                                    | `U-company-catalog` (`company-catalog.adapter.spec.ts`)                                    | ✅ frontend / ⏳ confirmación semántica     |
+| `R-PS-04`            | Configuración, escaneo, combos, promociones, movimientos e importación CSV.                                                                                 | `E2E-CAT`                                                                                  | ✅ flujos con `api-mock` / ⏳ backend real  |
+| `R-PS-05`            | Marca/Proveedor sin alta libre.                                                                                                                             | `U-company-catalog` (`company-product-modal.component.spec.ts`)                            | ✅ frontend / ⏳ comprobación en despliegue |
+| SHA de código        | `be17d3e` (F36 y #464 no cambian código de aplicación).                                                                                                     | `npm test -- --watch=false`; `npm run build`; `npx playwright test --grep-invert "R-UX-7"` | ✅ ejecutado sobre ese árbol                |
+| SHA documental       | Base `a3fdf0b` (rama `docs/f36-estado-documental`); esta rama añade la trazabilidad sobre esa base.                                                         | `node scripts/cli.mjs rules`; `prettier --check --end-of-line auto .`                      | ✅ ejecutado                                |
+
+La aceptación de backend no se declara en esta tabla: las pruebas marcadas
+`⏳` requieren el checklist de 11 pasos con respuestas HTTP reales.
+
 ## 3. Matriz única vigente
 
 Fuente de `Estado código` y `Ruta`: `src/app/core/workspace/constants/workspace-modules.constants.ts`
