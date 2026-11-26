@@ -15,6 +15,30 @@
   real en **24 suites**. Firebase Hosting es el destino actual y su
   configuración pública está versionada en `firebase.json` y `.firebaserc`.
 
+## Corrección F35 — promoción de artefacto (2026-11-26)
+
+Implementación local en `fix/ci-f35-artifact-promotion`: CI sella un paquete
+solo tras todos los gates; live y release lo verifican y reutilizan sin build.
+El recibo distingue deploy omitido, fallido y entrega con smoke. Las pruebas
+simulan gates fallidos, procedencia incorrecta, manipulación de archivos y un
+destino doble para promoción/rollback. La evidencia remota de Actions y el
+smoke live de este cambio quedan pendientes de publicar y ejecutar la rama;
+esta sección no acredita un despliegue real. Véase ADR-85.
+
+| Verificación local                                         | Resultado                                                                                                       |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `npm test -- --watch=false`                                | 360 archivos / 1.940 tests; cobertura 94.49 / 88.04 / 94.33 / 96.09, sobre los umbrales configurados            |
+| `node --test` (globs de `test:engine`)                     | 138 tests; incluye gates fallidos/cancelados/omitidos, procedencia, hashes, destino doble y rollback A → B → A  |
+| `npm run rules:check`                                      | 46 tests / 24 suites; 53/259 IDs verificados                                                                    |
+| `npm run typecheck` / `npm run lint`                       | Ambos con salida 0                                                                                              |
+| `npm run build` + `node scripts/commands/check-budget.mjs` | Inicial 545.98 kB, presupuesto aprobado                                                                         |
+| Actionlint 1.7.7 nativo                                    | Los tres workflows aprobados (sin Shellcheck local)                                                             |
+| `npx prettier --check . --end-of-line auto`                | Aprobado; el checkout Windows tiene CRLF. CI conserva `npm run format:check` estricto sobre archivos Git con LF |
+
+Se verificó también el empaquetado del build real (170 archivos) y su
+inventario SHA-256. E2E y Lighthouse no se ejecutaron localmente en esta
+corrección; su resultado real debe verificarse en Actions antes de promover.
+
 ## Evidencia ejecutada (2026-10-29)
 
 ### Workspace unificado (2026-11-06)

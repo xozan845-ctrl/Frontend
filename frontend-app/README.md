@@ -89,23 +89,23 @@ permitir el origen del frontend (`CORS_ORIGINS`). Si exige autenticación, la
 
 ## 📜 Scripts
 
-| Comando                                 | Descripción                                           |
-| :-------------------------------------- | :---------------------------------------------------- |
-| `npm start`                             | Servidor de desarrollo en `http://localhost:4200`     |
-| `npm run build`                         | Build de producción en `dist/frontend-app/browser/`   |
-| `npm run watch`                         | Build de desarrollo con watch                         |
-| `npm test`                              | Pruebas unitarias/componentes con Vitest (`ng test`)  |
-| `npm run e2e`                           | Pruebas E2E con Playwright                            |
-| `npm run lint`                          | Lint con ESLint                                       |
-| `npm run format` / `format:check`       | Formatea / verifica formato con Prettier              |
-| `npm run rules:check`                   | Valida las reglas de gobernanza del repo              |
-| `npm run rules:baseline`                | Regenera la deuda aceptada del motor de reglas        |
-| `npm run test:engine`                   | Tests del motor de gobernanza                         |
-| `npm run og-image`                      | Regenera la imagen Open Graph por defecto             |
-| `npm run deploy` / `deploy:preview`     | Despliega en Firebase Hosting (live / staging)        |
-| `npm run release:check -- --tag vX.Y.Z` | Valida tag, versiones y procedencia antes de publicar |
-| `npm run release:readiness`             | Avisa si hay cambios de artefacto sin release/tag     |
-| `npm run patch` / `minor` / `major`     | Prepara el bump de versión (sin commit ni tag)        |
+| Comando                                                  | Descripción                                           |
+| :------------------------------------------------------- | :---------------------------------------------------- |
+| `npm start`                                              | Servidor de desarrollo en `http://localhost:4200`     |
+| `npm run build`                                          | Build de producción en `dist/frontend-app/browser/`   |
+| `npm run watch`                                          | Build de desarrollo con watch                         |
+| `npm test`                                               | Pruebas unitarias/componentes con Vitest (`ng test`)  |
+| `npm run e2e`                                            | Pruebas E2E con Playwright                            |
+| `npm run lint`                                           | Lint con ESLint                                       |
+| `npm run format` / `format:check`                        | Formatea / verifica formato con Prettier              |
+| `npm run rules:check`                                    | Valida las reglas de gobernanza del repo              |
+| `npm run rules:baseline`                                 | Regenera la deuda aceptada del motor de reglas        |
+| `npm run test:engine`                                    | Tests del motor de gobernanza                         |
+| `npm run og-image`                                       | Regenera la imagen Open Graph por defecto             |
+| `npm run deploy -- -f ci_run_id=<id>` / `deploy:preview` | Promueve un artefacto de CI a live / crea un preview  |
+| `npm run release:check -- --tag vX.Y.Z`                  | Valida tag, versiones y procedencia antes de publicar |
+| `npm run release:readiness`                              | Avisa si hay cambios de artefacto sin release/tag     |
+| `npm run patch` / `minor` / `major`                      | Prepara el bump de versión (sin commit ni tag)        |
 
 ---
 
@@ -183,5 +183,8 @@ npm run build
 Los archivos optimizados se generan en `dist/frontend-app/browser/`. El despliegue
 en Dockploy se rige por [`docs/rules/cd/`](./docs/rules/cd/README.md).
 
-Para **staging** (plan gratuito de Firebase Hosting) usa `npm run deploy` o
-`npm run deploy:preview`; ver [`docs/firebase-hosting-setup.md`](./docs/firebase-hosting-setup.md).
+El sitio **live** promueve automáticamente el artefacto validado al terminar CI
+en `main`. Para promover o revertir manualmente un run verde:
+`npm run deploy -- -f ci_run_id=<id>`. El comando encola el workflow; la entrega
+se confirma en su recibo y smoke. Para **staging**, usa `npm run deploy:preview`;
+ver [`docs/firebase-hosting-setup.md`](./docs/firebase-hosting-setup.md).

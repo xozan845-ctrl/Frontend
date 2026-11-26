@@ -140,5 +140,7 @@ Matriz completa en [`06-estandares-cobertura.md`](../test/06-estandares-cobertur
 - [ ] **R-CD-3** — `npm run release:check -- --tag vX.Y.Z` en verde.
 - [ ] **R-CD-3** — `release.yml` en verde: tag/procedencia/versiones y `ci.yml` del mismo SHA.
 - [ ] **R-CD-1/2** — Artefacto de release construido con `npm ci` + `npm run build`; sin secretos.
+- [ ] **R-CD-3/4/7** — Live y release consumen el paquete del mismo SHA/run/intento con todos los gates verdes; ZIP e inventario SHA-256 verificados, sin reconstrucción en CD.
+- [ ] **R-CD-5/9/10** — Recibo con versiones API configuradas y smoke de identidad; `omitted` no equivale a entrega exitosa; rollback por run validado o historial de Hosting.
 
 > Estado actual de los gates: ver [`AUDIT.md`](./AUDIT.md) (snapshot).

@@ -1,17 +1,20 @@
 name: Deploy Firebase Hosting
 
-# Despliegue automático a producción en cada push a main (o manual).
-# Ejecuta los gates críticos en el propio workflow para no depender de la
-# disponibilidad de runners de otro workflow. El build incluye
-# `APP_VERSION=<package.version>+<run_number>` y las novedades de Git en
-# `version.json`; el aviso PWA las consume sin caché.
+# Promueve exclusivamente el paquete de CI; nunca reconstruye el frontend.
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      ci_run_id:
+        description: "Run de CI verde en main que contiene el artefacto (también rollback)"
+        required: true
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: firebase-hosting-production
@@ -24,79 +27,54 @@ defaults:
 jobs:
   deploy:
     name: Deploy production
+    if: >-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-
+    timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout trusted promotion tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: main
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Setup Node
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22"
-          cache: npm
-          cache-dependency-path: frontend-app/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Lint CSS
-        run: npm run lint:css
-
-      - name: Governance rules
-        run: npm run rules:check
-
-      - name: Unit tests
-        run: npm test -- --watch=false --coverage=false
-
-      - name: Compute build version
-        run: |
-          BASE=$(node -p "require('./package.json').version")
-          echo "APP_VERSION=${BASE}+${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
-
-      - name: Build production
-        run: npm run build
-
-      - name: Check Firebase credentials
-        id: firebase
+      - name: Verify CI provenance, download and verify artifact digest
+        id: candidate
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id || inputs.ci_run_id }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: node scripts/commands/promote-artifact.mjs
+      - name: Restore hosting configuration from the validated SHA
+        env:
+          SOURCE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: |
+          git merge-base --is-ancestor "$SOURCE_SHA" origin/main
+          git show "$SOURCE_SHA:frontend-app/firebase.json" > firebase.json
+          git show "$SOURCE_SHA:frontend-app/.firebaserc" > .firebaserc
+      - name: Publish verified package and smoke its identity
+        env:
+          SOURCE_SHA: ${{ steps.candidate.outputs.sha }}
+          CI_RUN_ID: ${{ steps.candidate.outputs.ci_run_id }}
+          CI_RUN_ATTEMPT: ${{ steps.candidate.outputs.ci_run_attempt }}
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: |
-          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
-            echo "::warning::FIREBASE_SERVICE_ACCOUNT no configurado; deploy omitido."
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            {
-              echo "### Firebase Hosting"
-              echo "Deploy omitido: falta el secret \`FIREBASE_SERVICE_ACCOUNT\`."
-              echo "Configúralo con: \`gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json\`."
-            } >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
-          echo "enabled=true" >> "$GITHUB_OUTPUT"
-
-      - name: Deploy Hosting
-        if: steps.firebase.outputs.enabled == 'true'
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
-        run: >-
-          npx --yes firebase-tools@15.33.0 deploy
-          --only hosting
-          --project kb-coleccion-internacional-ni
-          --non-interactive
-
-      - name: Smoke Hosting
-        if: steps.firebase.outputs.enabled == 'true'
-        env:
           FRONTEND_URL: https://kb-coleccion-internacional-ni.web.app
-        run: node scripts/commands/hosting-smoke.mjs
+          AUTOMATIC_PROMOTION: ${{ github.event_name == 'workflow_run' }}
+        run: node scripts/commands/publish-firebase.mjs
+      - name: Preserve deployment receipt (including omitted/failed delivery)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: firebase-deployment-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            frontend-app/promotion.json
+            frontend-app/deployment.json
+          if-no-files-found: ignore
+          retention-days: 90

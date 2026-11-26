@@ -15,6 +15,10 @@ aquí**: son reglas de testing y siguen en
 > PR** (incluidos los apilados). `main` protegida con los checks obligatorios
 > (`R-CI-7`) y Dependabot activo para npm, actions y docker.
 
+El job final `promotion` exige todos los gates, incluido Lighthouse, y conserva
+el candidato por SHA/run/intento solo después de su éxito (F35, ADR-85).
+Release verifica el paquete y su versión; el despliegue lo consume sin build.
+
 ## Archivos
 
 | Archivo         | Contenido                                                                                                 | IDs          |

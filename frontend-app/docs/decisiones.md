@@ -2166,3 +2166,35 @@ contexto y consecuencias.
 - **Consecuencias**: los archivos principales bajan de tamaño y las piezas
   extraídas son presentacionales o funciones puras con inputs/outputs. No
   cambian rutas ni comportamiento.
+
+## ADR-85: Promoción del artefacto validado por CI (F35)
+
+- **Fecha**: 2026-11-26
+- **Estado**: Aceptado
+- **Contexto**: el deploy live podía adelantarse a CI y release reconstruía
+  un paquete distinto, sin garantizar cobertura, audit, E2E ni presupuesto.
+- **Decisión**:
+  - CI construye una sola vez el candidato de producción, comprueba el
+    presupuesto y registra SHA, repositorio, run/intento, versión visible,
+    versiones de contratos API configurados e inventario SHA-256 completo.
+  - `promotion` depende explícitamente de todos los gates obligatorios,
+    incluido E2E y Lighthouse. Un resultado omitido, cancelado o fallido impide
+    conservar el artefacto validado. Lighthouse consume el candidato;
+    E2E conserva el entorno hermético del mismo SHA.
+  - `deploy-firebase.yml` usa `workflow_run` de CI completa y exitosa en
+    `main`. Tanto el deploy manual como release consultan procedencia, jobs,
+    digest de Actions e inventario del mismo artefacto, sin recompilar.
+  - `release.yml` alinea el tag con la versión del paquete validado y conserva
+    su hash. La promoción live automática no exige crear un tag en cada merge.
+  - CI, manifiesto y selección no conocen Firebase; el workflow y el adaptador
+    `publish-firebase.mjs` encapsulan ese destino. La prueba usa un doble.
+  - Se conserva un recibo con SHA, digest, versiones API y smoke; solo
+    `deployed` con smoke e identidad correctos equivale a entrega exitosa.
+    Credenciales ausentes producen `omitted` y job fallido; un automático
+    superado por `main` se omite. El rollback manual selecciona un run verde
+    anterior, o usa el historial de Hosting.
+- **Consecuencias**: se elimina la carrera entre integración y publicación.
+  El paquete validado se retiene 90 días, sujeto a las políticas de Actions;
+  uno expirado bloquea CD. Las reejecuciones usan todos los jobs para generar
+  un paquete del mismo intento. `npm run deploy -- -f ci_run_id=<id>` encola
+  una promoción verificada; previews siguen siendo locales.
