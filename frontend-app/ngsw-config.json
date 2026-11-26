@@ -3,8 +3,9 @@
   "index": "/index.html",
   "assetGroups": [
     {
-      "name": "app",
+      "name": "app-shell",
       "installMode": "prefetch",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",
@@ -12,9 +13,19 @@
           "/manifest.webmanifest",
           "/icon.svg",
           "/pwa-install-capture.js",
+          "/config.json",
+          "/version.json",
           "/*.css",
-          "/*.js"
+          "/main-*.js"
         ]
+      }
+    },
+    {
+      "name": "lazy-chunks",
+      "installMode": "lazy",
+      "updateMode": "lazy",
+      "resources": {
+        "files": ["/chunk-*.js"]
       }
     }
   ]
