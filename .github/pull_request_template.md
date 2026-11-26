@@ -17,7 +17,7 @@
 
 ## Checklist (marcar solo lo aplicable)
 
-- [ ] **R-GC-5** — `npx prettier --check .`, `npm run typecheck`, `npm run build`, `npm test` y `npm run lint` en verde.
+- [ ] **R-GC-5** — `npx prettier --check .`, `npm run typecheck`, `npm run build`, `npm test` y `npm run lint` en verde (el repo fuerza LF vía `.gitattributes`; no parchees con `--end-of-line auto`).
 - [ ] **R-PR-2** — El PR es una sola unidad temática (si dice “y además”, se parte).
 - [ ] **R-PR-4** — Este cuerpo incluye la evidencia ejecutada (tabla de abajo).
 - [ ] **R-PR-7** — Merge con `--rebase`; sin squash ni merge commit.
