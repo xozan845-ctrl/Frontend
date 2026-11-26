@@ -151,8 +151,8 @@ cd frontend-app
 # 1) Autenticación (una vez)
 firebase login
 
-# 2) Build + deploy al canal live: https://kb-coleccion-internacional-ni.web.app
-npm run deploy
+# 2) Encolar promoción/rollback de un run de CI verde en main al sitio live:
+npm run deploy -- -f ci_run_id=<id>
 
 # 3) (Recomendado para staging) Preview channel temporal, sin tocar el live:
 #    https://kb-coleccion-internacional-ni--staging-<hash>.web.app
@@ -167,33 +167,45 @@ firebase hosting:channels:list
 
 ### 4.1 Despliegue automático (GitHub Actions)
 
-`.github/workflows/deploy-firebase.yml` despliega a producción en cada push a
-`main` (o manualmente desde **Actions → Deploy Firebase Hosting → Run
-workflow**). El propio workflow ejecuta typecheck, lint, reglas, tests y build
-antes de publicar, para no depender de la disponibilidad de otro workflow.
+`deploy-firebase.yml` espera el evento `workflow_run` de **CI completa y verde**
+de un push a `main`. No instala dependencias de la app ni reconstruye. Consulta
+por API el run, todos sus gates y el artefacto del mismo SHA/intento; verifica
+el SHA-256 del ZIP y todos los archivos del manifiesto. `release.yml` conserva
+ese mismo paquete, alineado con la versión del tag (ADR-85).
 
-Requisito único: configurar el secret `FIREBASE_SERVICE_ACCOUNT` con el JSON de
-una cuenta de servicio del proyecto `kb-coleccion-internacional-ni` que tenga
-el rol **Firebase Hosting Admin**:
+Requisito: secret `FIREBASE_SERVICE_ACCOUNT` de una cuenta con el rol
+**Firebase Hosting Admin** para el proyecto configurado en `.firebaserc`:
 
 ```bash
 gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json
 ```
 
-Mientras el secret no exista, el workflow publica un aviso y omite el
-deploy/smoke sin marcar el job como fallido.
+CI construye con `APP_VERSION=<package.version>+ci.<run_id>.<run_attempt>` y
+registra contratos API configurados (no la versión real del backend). Lighthouse
+analiza el mismo candidato de producción; E2E valida el mismo SHA en su entorno
+hermético. El job final bloquea cualquier gate fallido, omitido o cancelado.
 
-El workflow:
+El adaptador Firebase restaura la configuración de Hosting del SHA validado,
+publica sus bytes y exige smoke con hashes remotos de index, config y versión.
+El artifact de recibo conserva `promotion.json` y `deployment.json`: SHA,
+run/intento, digest, versiones API y estado `deployed`, `omitted` o `failed`.
+Solo `deployed` y smoke `passed` confirma la entrega. Sin credenciales registra
+`omitted` y falla; un automático superado por `main` se omite.
 
-1. hace checkout del SHA que validó CI;
-2. construye con `APP_VERSION=<package.version>+<run_number>` para que cada
-   deploy tenga una versión distinta;
-3. despliega `dist/frontend-app/browser` con Firebase CLI;
-4. ejecuta el smoke de Hosting.
+Para una promoción o rollback manual:
 
-`version.json` se genera en el build con la versión y las novedades de Git; no
-hay que editar el aviso PWA ni ese archivo a mano. La versión semver se sube con
-`npm run patch|minor|major` cuando se prepara una release.
+```bash
+npm run deploy -- -f ci_run_id=123456789
+# Equivalente:
+gh workflow run deploy-firebase.yml --ref main -f ci_run_id=123456789
+```
+
+Este comando solo encola el workflow; comprobar su resultado y recibo en
+Actions. Exige un run de CI de push a `main`, ancestro de la rama y con paquete
+validado retenido (90 días, sujeto al límite del repositorio). Un artefacto
+expirado bloquea la promoción. Para reintentar CI, usar **Re-run all jobs** y
+conservar un build ligado al mismo intento. `version.json` se genera una sola
+vez en CI; no se modifica durante release, deploy ni rollback.
 
 ## 5. Límites del plan gratuito (Spark)
 
@@ -243,7 +255,7 @@ deploy existente, pero no publica credenciales ni despliega por sí mismo.
 Firebase Hosting guarda **todo el historial de releases**:
 
 1. **Console → Hosting → Release history** → elige la versión previa → **Rollback**.
-2. O por CLI: `firebase hosting:rollback`.
+2. O promover el run de CI validado anterior: `npm run deploy -- -f ci_run_id=<id>`.
 3. Confirmar el smoke (§6).
 
 ## 8. Errores frecuentes

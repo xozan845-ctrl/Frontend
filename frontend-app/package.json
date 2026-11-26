@@ -8,7 +8,7 @@
     "prebuild": "node scripts/commands/generate-version.mjs",
     "build": "ng build",
     "postbuild": "node scripts/commands/generate-invitation-html.mjs",
-    "deploy": "npm run build && firebase deploy --only hosting",
+    "deploy": "gh workflow run deploy-firebase.yml --ref main",
     "deploy:preview": "npm run build && firebase hosting:channel:deploy staging --expires 30d",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

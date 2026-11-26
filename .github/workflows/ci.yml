@@ -174,6 +174,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -181,10 +182,24 @@ jobs:
           cache: npm
           cache-dependency-path: frontend-app/package-lock.json
       - run: npm ci --prefer-offline
+      - name: Compute immutable build version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          echo "APP_VERSION=${BASE}+ci.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
       - run: |
           set -o pipefail
           npm run build 2>&1 | tee build.log
       - run: node scripts/commands/check-budget.mjs
+      - name: Package candidate with SHA-256 manifest
+        run: node scripts/commands/artifact.mjs pack
+      - name: Upload candidate
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: frontend-app/.ci-artifact
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 7
 
   e2e:
     name: E2E (Playwright)
@@ -302,7 +317,13 @@ jobs:
           cache: npm
           cache-dependency-path: frontend-app/package-lock.json
       - run: npm ci --prefer-offline
-      - run: npm run build
+      - name: Download the production candidate
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: frontend-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: frontend-app/.ci-artifact
+      - run: node scripts/commands/artifact.mjs verify
+      - run: mkdir -p dist/frontend-app && cp -R .ci-artifact/browser dist/frontend-app/browser
       - run: npm run lighthouse
       - name: Upload Lighthouse report
         if: ${{ !cancelled() }}
@@ -311,3 +332,55 @@ jobs:
           name: lighthouse-report
           path: frontend-app/.lighthouseci
           if-no-files-found: ignore
+
+  promotion:
+    name: Validated artifact
+    if: always()
+    needs:
+      [
+        security-gate,
+        format,
+        lint,
+        typecheck,
+        rules,
+        test,
+        build,
+        e2e,
+        actionlint,
+        shellcheck,
+        hadolint,
+        gitleaks,
+        lighthouse,
+      ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Require every gate to succeed (including skipped/cancelled gates)
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: >-
+          node --input-type=module -e
+          "import { assertGates } from './scripts/config/promotion.mjs'; assertGates(JSON.parse(process.env.CI_NEEDS));"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: frontend-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: frontend-app/.ci-artifact
+      - name: Seal the validated artifact
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: node scripts/commands/artifact.mjs seal
+      - name: Publish validated artifact for promotion and rollback
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-validated-${{ github.run_id }}-${{ github.run_attempt }}
+          path: frontend-app/.ci-artifact
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 90

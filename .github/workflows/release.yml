@@ -3,7 +3,7 @@ name: Release
 # Validación de releases por tag (R-CD-3 / R-GB-3). No es un pipeline de PR:
 # se dispara al publicar un tag `v*.*.*` y comprueba que el tag es anotado,
 # semver, está en `main`, las versiones coinciden y el SHA tiene `ci.yml` verde.
-# Después construye el artefacto de producción y lo deja como artifact.
+# Conserva exactamente el paquete validado por CI, sin recompilarlo.
 on:
   push:
     tags:
@@ -37,6 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: main
           fetch-depth: 0
           persist-credentials: false
 
@@ -45,7 +46,7 @@ jobs:
         env:
           INPUT_TAG: ${{ github.event.inputs.source_tag }}
         run: |
-          REF="${{ github.ref_name }}"
+          REF="$GITHUB_REF_NAME"
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             REF="${INPUT_TAG}"
           fi
@@ -53,10 +54,6 @@ jobs:
             echo "ERROR: '$REF' no es un tag semver válido v<major>.<minor>.<patch>[-pre] (R-CD-3)."
             exit 1
           fi
-          # En un push de tag, checkout puede dejar un tag lightweight local:
-          # se reemplaza por el objeto anotado que vive en origin.
-          git tag -d "$REF" >/dev/null 2>&1 || true
-          git fetch --quiet --force origin "refs/tags/${REF}:refs/tags/${REF}"
           SHA=$(git rev-list -n1 "$REF")
           echo "tag=$REF" >> "$GITHUB_OUTPUT"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
@@ -64,7 +61,6 @@ jobs:
 
       - name: Verify the release commit is on main
         run: |
-          git fetch --quiet origin main
           SHA="${{ steps.tag.outputs.sha }}"
           if ! git merge-base --is-ancestor "$SHA" origin/main; then
             echo "ERROR: $SHA no está en main; no se valida una release fuera de main (R-CD-3)."
@@ -79,59 +75,45 @@ jobs:
             --main-ref origin/main \
             --check-remote
 
-      - name: Verify a successful ci.yml run on this SHA
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          SHA="${{ steps.tag.outputs.sha }}"
-          count=$(gh run list --workflow=ci.yml --commit "$SHA" \
-            --status success --limit 1 --json databaseId --jq 'length')
-          if [[ "$count" == "0" ]]; then
-            echo "ERROR: no hay un run de ci.yml en 'success' para $SHA (R-CD-3)."
-            echo "Runs disponibles para el SHA:"
-            gh run list --commit "$SHA" --limit 10 || true
-            exit 1
-          fi
-          echo "OK: ci.yml verde en $SHA"
-
-  build:
-    name: Release build
+  artifact:
+    name: Release validated artifact
     needs: gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.gate.outputs.tag }}
+          ref: main
           persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22"
-          cache: npm
-          cache-dependency-path: frontend-app/package-lock.json
-
-      - run: npm ci --prefer-offline
-
-      - name: Build production artifact
+      - name: Promote the CI artifact for the exact release SHA and version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_SHA: ${{ needs.gate.outputs.sha }}
+          RELEASE_VERSION: ${{ needs.gate.outputs.tag }}
         run: |
-          set -o pipefail
-          npm run build 2>&1 | tee build.log
-
-      - run: node scripts/commands/check-budget.mjs
+          export RELEASE_VERSION="${RELEASE_VERSION#v}"
+          node scripts/commands/promote-artifact.mjs
 
       - name: Upload release artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: frontend-release-${{ needs.gate.outputs.tag }}
-          path: frontend-app/dist/frontend-app/browser
+          path: |
+            frontend-app/.ci-artifact
+            frontend-app/promotion.json
           if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 90
 
       - name: Release summary
         run: |
           {
             echo "### Release ${{ needs.gate.outputs.tag }}"
             echo "- commit: \`${{ needs.gate.outputs.sha }}\`"
-            echo "- bundle: \`$(grep -o 'main-[A-Za-z0-9_-]*\.js' dist/frontend-app/browser/index.html | head -1)\`"
+            cat promotion.json
             echo "- artifact: \`frontend-release-${{ needs.gate.outputs.tag }}\`"
           } >> "$GITHUB_STEP_SUMMARY"

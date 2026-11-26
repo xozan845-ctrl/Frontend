@@ -9,6 +9,10 @@ despliega y cómo se revierte.
 > Dockploy no forma parte de la operación actual. El guion operativo vive en
 > [`../../firebase-hosting-setup.md`](../../firebase-hosting-setup.md).
 
+La promoción live consume el artefacto validado por CI del mismo SHA, con
+hashes verificados y recibo de smoke; el rollback puede seleccionar un run
+anterior. No se reconstruye en CD (F35, ADR-85).
+
 ## Archivos
 
 | Archivo            | Contenido                                                                              | IDs           |

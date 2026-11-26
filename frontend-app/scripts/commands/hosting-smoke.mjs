@@ -5,6 +5,9 @@
  *   FRONTEND_URL=https://frontend.example.com npm run hosting:smoke
  *   node scripts/commands/hosting-smoke.mjs --url https://frontend.example.com --spa-path /shop
  */
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { digest } from './artifact.mjs';
 
 function parseArgs(argv) {
   const options = {};
@@ -32,7 +35,11 @@ function resolveBaseUrl(value) {
 
 async function request(baseUrl, path, fetchImpl) {
   const url = new URL(path, `${baseUrl}/`).toString();
-  const response = await fetchImpl(url, { redirect: 'follow' });
+  const response = await fetchImpl(url, {
+    redirect: 'follow',
+    cache: 'no-store',
+    signal: AbortSignal.timeout(30_000),
+  });
   const body = await response.text();
   if (!response.ok) {
     throw new Error(`${path} respondió HTTP ${response.status}.`);
@@ -40,7 +47,12 @@ async function request(baseUrl, path, fetchImpl) {
   return { url, body };
 }
 
-export async function runSmokeChecks({ baseUrl, spaPath = '/shop', fetchImpl = fetch } = {}) {
+export async function runSmokeChecks({
+  baseUrl,
+  spaPath = '/shop',
+  fetchImpl = fetch,
+  expectedFiles = {},
+} = {}) {
   const normalizedBaseUrl = resolveBaseUrl(baseUrl);
   const normalizedSpaPath = normalizePath(spaPath, '/shop');
   const checks = [
@@ -65,10 +77,17 @@ export async function runSmokeChecks({ baseUrl, spaPath = '/shop', fetchImpl = f
     results.push({ ...check, status: 200 });
   }
 
+  for (const [path, expected] of Object.entries(expectedFiles)) {
+    const response = await request(normalizedBaseUrl, path, fetchImpl);
+    if (digest(response.body) !== expected)
+      throw new Error(`Smoke de identidad: SHA-256 incorrecto en ${path}.`);
+    results.push({ path, label: `identidad SHA-256 ${path}`, status: 200 });
+  }
+
   return { baseUrl: normalizedBaseUrl, results };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const options = parseArgs(process.argv.slice(2));
   runSmokeChecks({
     baseUrl: options.url ?? process.env.FRONTEND_URL,

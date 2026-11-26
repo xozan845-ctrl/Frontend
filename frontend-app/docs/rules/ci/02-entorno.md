@@ -13,6 +13,12 @@ Aplica a: runner, dependencias y la evidencia que deja cada ejecución.
 
 ## Notas
 
+- **Identidad y retención del paquete (F35, ADR-85)**: el candidato se retiene
+  7 días y el paquete validado 90 días, sujetos a la política del repositorio.
+  El manifiesto conserva SHA, run/intento, versión y contratos API configurados;
+  la promoción verifica el digest de Actions y los hashes de todos los archivos.
+  Los workflows que consumen otro run requieren `actions: read`. Una retención
+  expirada bloquea la promoción; CD no recompila como alternativa.
 - La configuración pública del frontend (`environment.ts`) **no** es un secreto
   (`R-SE-2`); si un build necesita distintas URLs por entorno, se usan
   `fileReplacements` de `angular.json`, no variables secretas.

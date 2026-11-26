@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { runSmokeChecks } from './hosting-smoke.mjs';
+import { digest } from './artifact.mjs';
 
 function fakeFetch(responses) {
   return async (url) => {
@@ -50,5 +51,32 @@ test('Firebase Hosting smoke exige una URL http(s)', async () => {
   await assert.rejects(
     runSmokeChecks({ baseUrl: 'ftp://frontend.example.com', fetchImpl: fakeFetch({}) }),
     /http:\/\/ o https:\/\//,
+  );
+});
+
+test('regression: F35 smoke exige los bytes del artefacto y detecta una versión anterior', async () => {
+  const responses = {
+    '/': { status: 200, body: '<app-root></app-root>' },
+    '/shop': { status: 200, body: '<app-root></app-root>' },
+    '/config.json': { status: 200, body: '{}' },
+    '/version.json': { status: 200, body: '{"version":"1.2.3"}' },
+  };
+  const expectedFiles = { '/version.json': digest(responses['/version.json'].body) };
+  const result = await runSmokeChecks({
+    baseUrl: 'https://frontend.example.com',
+    expectedFiles,
+    fetchImpl: fakeFetch(responses),
+  });
+  assert.equal(result.results.at(-1).label, 'identidad SHA-256 /version.json');
+  await assert.rejects(
+    runSmokeChecks({
+      baseUrl: 'https://frontend.example.com',
+      expectedFiles,
+      fetchImpl: fakeFetch({
+        ...responses,
+        '/version.json': { status: 200, body: '{"version":"old"}' },
+      }),
+    }),
+    /SHA-256 incorrecto/,
   );
 });

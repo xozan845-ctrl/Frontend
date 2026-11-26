@@ -246,8 +246,34 @@ npm run release:check -- --tag vX.Y.Z
 ```
 
 `.github/workflows/release.yml` lo ejecuta en cada `push` de tag `v*.*.*`, exige
-un run de `ci.yml` en verde para el mismo SHA y construye el artefacto de
-producción. No es un pipeline de PR (`R-CI-4`).
+un run de `ci.yml` en verde para el mismo SHA y conserva el paquete validado,
+sin recompilar. No es un pipeline de PR (`R-CI-4`).
+
+### Promoción del artefacto (F35, ADR-85)
+
+- `config/promotion.mjs` declara los gates obligatorios y valida su éxito,
+  incluido el job final `Validated artifact` al seleccionar un run remoto.
+- `commands/artifact.mjs pack|verify|seal` inventaría todos los archivos del
+  build y comprueba hashes SHA-256, SHA de Git, repositorio, run, intento y
+  versión. `seal` exige todos los resultados de CI en `success`.
+- `commands/promote-artifact.mjs` consulta la API de Actions, exige CI de un
+  push del propio repositorio a `main`, descarga el artifact inmutable de ese
+  run/intento, comprueba el digest del ZIP y el inventario, y escribe
+  `promotion.json`. CI y release no conocen el proveedor de hosting.
+- `commands/publish-firebase.mjs` encapsula Firebase CLI, credenciales y smoke.
+  Registra SHA, hashes, versiones de contratos API configurados y el resultado
+  en `deployment.json`; distingue `deployed`, `omitted` y `failed`. Sin
+  credenciales registra `omitted` y falla el job. Un SHA automático superado
+  por `main` se omite; un rollback manual permite un ancestro validado.
+- `artifact-promotion.test.mjs` prueba fallos de cada gate, procedencia y
+  manipulación de archivos. La publicación y el rollback usan un destino
+  doble, sin credenciales ni acceso a un segundo proveedor.
+
+El candidato se retiene 7 días y el artefacto validado 90 días (sujeto al límite
+del repositorio). Si expiró, la promoción falla; no se reconstruye en CD.
+Al reintentar CI, usar **Re-run all jobs**: el artefacto está ligado al intento
+que construyó y validó sus bytes. E2E conserva su entorno hermético `e2e` del
+mismo SHA; Lighthouse verifica el candidato de producción sin reconstruirlo.
 
 `scripts/commands/release-readiness.mjs` es informativo y corre en `ci.yml` solo en push a
 `main`: compara el último tag con los commits que tocaron el artefacto de la app
