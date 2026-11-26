@@ -20,5 +20,11 @@ vive lo que el pipeline exige **como política global**.
 ## Notas
 
 - `R-QA-6` no es un gate `G-*` ([`06-estandares-cobertura.md`](./06-estandares-cobertura.md)):
-  es política de seguridad. Hoy no hay CI, así que se verifica en local antes de
-  cada release; al crear `.github/workflows/ci.yml` se convierte en job.
+  es política de seguridad. El job `security-gate` de
+  [`.github/workflows/ci.yml`](../../../../.github/workflows/ci.yml) la ejecuta en
+  todo PR y en push a `main`; la verificación local antes de cada release sigue
+  siendo obligatoria (`R-GC-5`).
+- La evidencia del PR es la salida real del comando con su ID de regla, no la
+  afirmación de que "los checks pasan" (`R-PR-4`). Para `G-1`/`G-2` se registra
+  el número de archivos y tests junto a los umbrales vigentes; para `G-6`, el
+  número de flujos Playwright y el resultado de axe (`R-E-25`).
