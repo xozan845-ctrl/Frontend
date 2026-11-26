@@ -24,8 +24,8 @@ rules/
 │
 ├── test/               ✅ activa — unit, componentes, E2E, contrato, robustez, cobertura, QA (R-U/…/R-QA, G-*)
 ├── git/                ✅ activa (sin auditar) — trunk-based: ramas, stage, commits, push y PR (R-GB/R-GA/R-GC/R-GP/R-PR)
-├── ci/                 ✅ activa (contrato, sin workflow) — integración continua (R-CI/R-EN)
-├── cd/                 ✅ activa (contrato, sin pipeline) — despliegue en Firebase Hosting (R-CD)
+├── ci/                 ✅ activa (implementada) — integración continua (R-CI/R-EN)
+├── cd/                 ✅ activa (implementada) — despliegue en Firebase Hosting (R-CD)
 ├── ai/                 ✅ activa (nueva) — reglas para contribuciones de IA (R-IA)
 ├── documentation/      ✅ activa (nueva) — documentación como código (R-DO)
 │
@@ -53,7 +53,7 @@ rules/
 | `test/`          | ✅ **activa**                | [`test/README.md`](./test/README.md)                   | Reglas de testing: unit puro, componentes, E2E, contrato, robustez, cobertura y QA gates (IDs `R-U/R-CP/R-E/R-C/…/G-*`)                                                                                                      |
 | `git/`           | ✅ **activa** (sin auditar)  | [`git/README.md`](./git/README.md)                     | Flujo **trunk-based**: `main` protegida, ramas cortas, tags semver, `git add`, `git commit -m`, `git push` y `gh pr` (IDs `R-GB/R-GA/R-GC/R-GP/R-PR`)                                                                        |
 | `ci/`            | ✅ **activa** (implementada) | [`ci/README.md`](./ci/README.md)                       | CI: gatillos push/PR, concurrencia, entorno y evidencia. Implementada en `.github/workflows/ci.yml` (6 jobs) (IDs `R-CI/R-EN`)                                                                                               |
-| `cd/`            | ✅ **activa** (contrato)     | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Firebase Hosting**: build estático, sitio live, smoke y rollback (IDs `R-CD`)                                                                                                                   |
+| `cd/`            | ✅ **activa** (implementada) | [`cd/README.md`](./cd/README.md)                       | Despliegue del frontend en **Firebase Hosting**: build estático, sitio live, smoke y rollback (IDs `R-CD`)                                                                                                                   |
 | `ai/`            | ✅ **activa** (nueva)        | [`ai/README.md`](./ai/README.md)                       | Reglas obligatorias para IAs: contexto, atomicidad, uso de tools y apego al workflow (IDs `R-IA`)                                                                                                                            |
 | `documentation/` | ✅ **activa** (nueva)        | [`documentation/README.md`](./documentation/README.md) | Documentación como código: READMEs (incluido uno por directorio importante), ADRs, variables de entorno y comentarios (IDs `R-DO`)                                                                                           |
 | `_meta/`         | ⚠️ **no normativo**          | [`_meta/README.md`](./_meta/README.md)                 | Derivados: checklist, snapshots de auditoría, histórico                                                                                                                                                                      |
@@ -80,14 +80,14 @@ El área `test/` es el ejemplo canónico al que apuntan las demás.
 
 ## Estado actual (resumen)
 
-El repo tiene **117 archivos / 730 tests**, cobertura global
-94.28 / 88.14 / 93.76 / 95.38, CI en **6 jobs**
-(`.github/workflows/ci.yml`), ESLint + Prettier, suite **E2E de 13 flujos**
-(Playwright) y pipeline de despliegue (Docker + nginx + CSP). La
-**estructura enterprise** (`core/ · shared/ · layout/ · features/`) está
-**aceptada (ADR-12) y en migración**; el estado vigente (y las deudas abiertas,
-hoy ninguna) vive en [`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`); aquí solo
-se describe el punto fijo.
+Aquí solo se describe el punto fijo: la estructura enterprise
+(`core/ · shared/ · layout/ · features/`) está aceptada (ADR-12) y operativa con
+la taxonomía de ADR-80/81. Los contadores, la versión revisada, los resultados
+ejecutados y las deudas abiertas viven en una única tabla vigente:
+[`_meta/AUDIT.md`](./_meta/AUDIT.md) (`R-COV-3`). El inventario de límites está en
+[`../mvp/arquitectura-agnostica.md`](../mvp/arquitectura-agnostica.md) y la
+aceptación funcional en
+[`../mvp/aceptacion-frontend.md`](../mvp/aceptacion-frontend.md).
 
 ## Decisión de flujo
 
