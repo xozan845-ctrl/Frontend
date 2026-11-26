@@ -92,9 +92,13 @@ npx eslint .                   # G-5: lint
 npm audit --audit-level=high   # R-QA-6: security gate
 ```
 
-## Pendientes
+## Estado vigente
 
-El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`):
-**sin deudas abiertas** (12ª auditoría). Los pendientes históricos —cobertura
-crítica (`R-QA-1`), specs de los componentes con lógica (`R-CP-1`) y fixtures de
-contrato versionados (`R-C-8`)— quedaron cerrados.
+El estado vigente vive en [`../_meta/AUDIT.md`](../_meta/AUDIT.md) (`R-COV-3`) y
+la matriz única de aceptación en
+[`../../mvp/aceptacion-frontend.md`](../../mvp/aceptacion-frontend.md). Hoy es
+**parcial**: 15 módulos sin aceptación funcional, la re-prueba de
+productos/servicios contra Core Engine y 6 baselines visuales `chromium-win32`.
+Los pendientes históricos —cobertura crítica (`R-QA-1`), specs de componentes
+con lógica (`R-CP-1`) y fixtures de contrato (`R-C-8`)— sí quedaron cerrados;
+eso no implica ausencia de deuda abierta.
