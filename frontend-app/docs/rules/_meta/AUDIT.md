@@ -62,8 +62,11 @@ La tabla única y vigente de los 55 módulos navegables está en
 2. **Módulos `soon`:** `company.payroll`, `company.quotes`, `company.taxes`,
    `company.analytics`, `company.notifications`, `company.help`,
    `store.inventory`, `store.settings` y `store.help`.
-3. **Aceptación de backend:** los E2E consumen `api-mock`; no hay evidencia de
-   integración real con Core Engine, migraciones ni RLS.
+3. **Aceptación de backend y trazabilidad:** los E2E consumen `api-mock`; no hay
+   evidencia de integración real con Core Engine, migraciones ni RLS. Tampoco
+   hay catálogo oficial de requisitos `AG-*` ni correspondencia `F-*` en el repo
+   (dueño: Producto y QA); la trazabilidad vigente usa `R-PS-01`…`R-PS-05` y SHA
+   en `docs/mvp/aceptacion-frontend.md`.
 4. **Snapshots visuales:** faltan 6 baselines `chromium-win32`; los flujos
    funcionales pasan, pero `npm run e2e` completo no está en verde en Windows.
 5. **Presupuesto:** el actual queda a 545,98 kB del techo de aviso de 555 kB;
