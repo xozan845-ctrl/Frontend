@@ -1,0 +1,4 @@
+# G-4 / R-GC-5: mantener el árbol de trabajo en LF en todas las plataformas.
+# Los blobs ya se almacenan en LF; esto evita que Prettier (endOfLine: lf)
+# marque como "sin formato" los checkouts de Windows con core.autocrlf=true.
+* text=auto eol=lf

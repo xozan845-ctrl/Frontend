@@ -10,6 +10,13 @@
 | R-GC-6 | Cuando el asunto no alcanza, usar el cuerpo del commit: bug (síntoma + causa), refactor (motivo), cambio rompente (cómo migrar). Formato: `git commit -m "asunto" -m "cuerpo"`.                                                                                                                                 |
 | R-GC-7 | No reescribir commits ya publicados: `--amend`/rebase solo sobre commits locales que **nunca** subieron a `origin`; sobre `origin`, las correcciones van como commit nuevo.                                                                                                                                     |
 
+> **Entorno y EOL (`G-4`):** el repo versiona `.gitattributes` con
+> `* text=auto eol=lf`, así que el árbol de trabajo se checkoutea en LF también
+> en Windows (aun con `core.autocrlf=true`). Si tras clonar `prettier --check .`
+> marca todo el repo, el checkout es anterior a esa política: renueva el árbol
+> con un clone limpio o recreando los archivos desde `HEAD`. No uses
+> `--end-of-line auto` ni un `--write` masivo para ocultar el síntoma.
+
 ## Verificación
 
 ```bash

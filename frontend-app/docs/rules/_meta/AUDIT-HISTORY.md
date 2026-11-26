@@ -615,3 +615,17 @@
 - **Resultado:** 360 archivos / 1.940 tests; 24 suites (53/259 IDs); typecheck,
   lint, lint:css, build y 60/60 e2e en verde.
 - **Estado global:** 🟢 **CUMPLE**.
+
+---
+
+## Actualización de formato y EOL (2026-11-26)
+
+- **Cambio:** `.gitattributes` con `* text=auto eol=lf` para alinear el árbol de
+  trabajo con los blobs en LF y con CI; `R-GC-5` y la plantilla de PR documentan
+  la política de EOL. En F36 se realinearon dos tablas Markdown con contenido
+  correcto pero columnas desajustadas.
+- **Resultado:** `prettier --check .` y la verificación de `.github/**` en verde
+  en Windows; `node scripts/cli.mjs rules` 46/24/0; `git status` limpio tras
+  renovar el checkout con la nueva política.
+- **Estado global:** 🟢 **CUMPLE** en `G-4`; el estado funcional sigue siendo
+  parcial, con la tabla vigente en `docs/mvp/aceptacion-frontend.md`.
