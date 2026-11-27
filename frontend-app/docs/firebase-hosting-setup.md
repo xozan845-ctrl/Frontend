@@ -24,7 +24,7 @@ gratuito.
 
 ## 1. Requisitos
 
-- Node.js 20+ y npm 10+ (la app ya los requiere).
+- Node.js 22.22.3 y npm 10.9.8 (fijados en `.nvmrc` y `packageManager`; Angular 22.2.4 no admite Node 20).
 - `firebase-tools` (CLI) disponible:
   ```bash
   npm install -g firebase-tools   # o: npx firebase-tools@15 <comando>
