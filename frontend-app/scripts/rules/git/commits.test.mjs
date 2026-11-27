@@ -25,6 +25,9 @@ export default defineSuite({
         'fix(auth): refrescar el token ante un 401',
         'refactor(architecture): agrupar state por unidad (R-AR-14)',
         'docs(rules): documentar las suites de git (R-DO-1)',
+        'docs(mvp): registrar version revisada y adaptadores en la arquitectura (R-AR-3, R-DO-1)',
+        'docs(mvp): vincular hallazgos R-PS y SHA en la aceptacion (R-DO-1, R-COV-3)',
+        'docs(qa): cerrar R-PS-05 y trazar antecedentes posteriores (R-QA-6)',
         'ci(rules): ejecutar el motor de gobernanza',
         'build(deps): actualizar Angular CLI (R-SE-5)',
       ]) {
