@@ -44,7 +44,12 @@ que son verificables por máquina.
 | `governance-coverage`    | `R-DO-9`                                       | Suites honestas (rules vs cites) y suelo de cobertura verificada.                                                                                                                                                                                  |
 
 > **Ámbitos de commit:** la lista canónica vive en `config/project.mjs`
-> (`ALLOWED_COMMIT_SCOPES`). `pwa` se añadió para cambios de service worker y
+> (`ALLOWED_COMMIT_SCOPES`). El ámbito `lighthouse` corresponde a
+> `lighthouserc.json` y a la medición del job Lighthouse de CI (R-PF-8).
+> Se registra explícitamente conforme a R-GC-1; los ámbitos desconocidos siguen
+> rechazándose. La corrección se incorpora con commits nuevos (R-GC-7, R-GP-3).
+>
+> En esta lista, `pwa` se añadió para cambios de service worker y
 > configuración de despliegue del frontend (R-GC-1, R-AR-11); `orders` para los
 > primitivos compartidos de pedidos (ADR-57); `purchases` para el dominio de
 > compras, órdenes y proveedores (ADR-66); `workspace` para la composición

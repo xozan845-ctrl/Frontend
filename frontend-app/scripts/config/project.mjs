@@ -657,6 +657,7 @@ export const ALLOWED_COMMIT_SCOPES = [
   'e2e',
   'git',
   'lifecycle',
+  'lighthouse',
   'packaging',
   'release',
   'rendimiento',
