@@ -34,12 +34,15 @@ Git. No se modificó `angular.json`.
 | `npm run test:engine`                                                    | 59 tests                                                                                                 |
 | `npm run e2e`                                                            | 61/67; los 6 fallos son snapshots `chromium-win32` ausentes (deuda conocida), no regresiones funcionales |
 | `npx prettier --check --end-of-line auto .`                              | Aprobado; CI valida el árbol LF                                                                          |
+| `npm run coverage:diff`                                                  | Sin líneas ejecutables cambiadas; el gate ya se ejecuta en Windows                                       |
 | Versión `package.json` / `public/version.json` / `dist/.../version.json` | `1.27.0` en las tres fuentes; `engines` y `packageManager` coherentes con el lockfile                    |
 | Tag Docker `node:22.22.3-alpine`                                         | Existe en el registro oficial                                                                            |
 
-No se ejecutaron Lighthouse, Actionlint, Shellcheck ni Hadolint en local; su
-resultado real queda en Actions. La deuda de los 6 baselines visuales
-`chromium-win32` sigue abierta y es independiente de F40.
+También se corrigió el guard de entrada de `coverage:diff` y `hosting:smoke`
+(`pathToFileURL`): con el patrón anterior, Windows salía en silencio sin
+ejecutar el gate. No se ejecutaron Lighthouse, Actionlint, Shellcheck ni
+Hadolint en local; su resultado real queda en Actions. La deuda de los 6
+baselines visuales `chromium-win32` sigue abierta y es independiente de F40.
 
 ## Evidencia ejecutada (2026-10-29)
 

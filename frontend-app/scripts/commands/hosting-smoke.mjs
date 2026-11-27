@@ -5,6 +5,7 @@
  *   FRONTEND_URL=https://frontend.example.com npm run hosting:smoke
  *   node scripts/commands/hosting-smoke.mjs --url https://frontend.example.com --spa-path /shop
  */
+import { pathToFileURL } from 'node:url';
 
 function parseArgs(argv) {
   const options = {};
@@ -68,7 +69,7 @@ export async function runSmokeChecks({ baseUrl, spaPath = '/shop', fetchImpl = f
   return { baseUrl: normalizedBaseUrl, results };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const options = parseArgs(process.argv.slice(2));
   runSmokeChecks({
     baseUrl: options.url ?? process.env.FRONTEND_URL,
