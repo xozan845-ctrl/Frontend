@@ -25,6 +25,7 @@ export default defineSuite({
         'fix(auth): refrescar el token ante un 401',
         'refactor(architecture): agrupar state por unidad (R-AR-14)',
         'docs(rules): documentar las suites de git (R-DO-1)',
+        'perf(lighthouse): medir catálogo, detalle y checkout en móvil (R-PF-8)',
         'ci(rules): ejecutar el motor de gobernanza',
         'build(deps): actualizar Angular CLI (R-SE-5)',
       ]) {
