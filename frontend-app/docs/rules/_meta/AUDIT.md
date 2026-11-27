@@ -15,6 +15,38 @@
   real en **24 suites**. Firebase Hosting es el destino actual y su
   configuración pública está versionada en `firebase.json` y `.firebaserc`.
 
+## Corrección F40 — entorno reproducible y versión única (2026-11-27)
+
+F40 fija **Node 22.22.3** y **npm 10.9.8** en `.nvmrc`, `engines`,
+`packageManager`, CI y Docker; los tres entornos importan `appVersion` de
+`package.json` (se elimina el `1.26.0` hardcodeado) y el README documenta la
+instalación limpia, el navegador de Playwright y la auditoría de un checkout
+Git. No se modificó `angular.json`.
+
+| Verificación local                                                       | Resultado                                                                                                |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `npm ci` con Node v22.22.3 / npm 10.9.8 sobre worktree limpio            | 437 paquetes, 0 vulnerabilidades; lockfile respetado                                                     |
+| `npm run typecheck`                                                      | Salida 0                                                                                                 |
+| `npm run lint` / `npm run lint:css`                                      | Salida 0                                                                                                 |
+| `npm test -- --watch=false`                                              | 360 archivos / 1.940 tests; cobertura 94,52 / 88,12 / 94,40 / 96,11                                      |
+| `npm run build` + `node scripts/commands/check-budget.mjs`               | Inicial 545,93 kB; presupuesto dentro del techo (`R-PF-1`)                                               |
+| `npm run rules:check`                                                    | 46 tests / 24 suites; 53/259 IDs verificados                                                             |
+| `npm run test:engine`                                                    | 59 tests                                                                                                 |
+| `npm run e2e`                                                            | 61/67; los 6 fallos son snapshots `chromium-win32` ausentes (deuda conocida), no regresiones funcionales |
+| `npx prettier --check --end-of-line auto .`                              | Aprobado; CI valida el árbol LF                                                                          |
+| `npm run coverage:diff`                                                  | Sin líneas ejecutables cambiadas; el gate ya se ejecuta en Windows                                       |
+| Versión `package.json` / `public/version.json` / `dist/.../version.json` | `1.27.0` en las tres fuentes; `engines` y `packageManager` coherentes con el lockfile                    |
+| Tag Docker `node:22.22.3-alpine`                                         | Existe en el registro oficial                                                                            |
+| `npm run release:check -- --tag v1.27.0 --check-remote`                  | Falla con «el tag no existe», como corresponde: `v1.27.0` se crea tras el merge de F40 (`R-CD-3`)        |
+
+También se corrigió el guard de entrada de `coverage:diff` y `hosting:smoke`
+(`pathToFileURL`): con el patrón anterior, Windows salía en silencio sin
+ejecutar el gate. El README dejó de citar `artifact.mjs`/`.ci-artifact`, que
+pertenecen a F35 y no están en la base de esta rama. No se ejecutaron
+Lighthouse, Actionlint, Shellcheck ni Hadolint en local; su resultado real
+queda en Actions. La deuda de los 6 baselines visuales `chromium-win32` sigue
+abierta y es independiente de F40.
+
 ## Evidencia ejecutada (2026-10-29)
 
 ### Workspace unificado (2026-11-06)

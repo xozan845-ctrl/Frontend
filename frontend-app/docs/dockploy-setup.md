@@ -11,7 +11,7 @@
 > **lista de tareas** para dejar el despliegue acorde a esa normativa.
 >
 > **Estado futuro:** el repo conserva `Dockerfile` (multi-stage,
-> `node:22-alpine` → `nginx:1.31-alpine`) y `nginx.conf` para ese destino
+> `node:22.22.3-alpine` → `nginx:1.31-alpine`) y `nginx.conf` para ese destino
 > alterno. No existe actualmente un proyecto, environment, dominio, webhook ni
 > workflow de Dockploy que deba configurarse.
 
@@ -30,7 +30,7 @@
 - Acceso a la UI de Dockploy del VPS y a su administrador.
 - Token/credencial de GitHub que Dockploy usará para clonar **este repo**
   (`xozan845-ctrl/Frontend`).
-- Node/npm local para construir el artefacto (`Node 22`, `npm ci`).
+- Node/npm local para construir el artefacto (`Node 22.22.3`, `npm 10.9.8`, `npm ci`).
 
 ## 2. Proyecto Dockploy propio
 
@@ -55,7 +55,7 @@ Pasos:
 
 ## 3. Artefactos versionados (raíz del repo)
 
-- **`Dockerfile`** (raíz, multi-stage): `node:22-alpine` → `npm ci && npm run build`
+- **`Dockerfile`** (raíz, multi-stage): `node:22.22.3-alpine` → `npm ci && npm run build`
   → `nginx:1.31-alpine` sirviendo `dist/frontend-app/browser`.
 - **`nginx.conf`** (raíz) con **fallback de rutas SPA**, cabeceras de seguridad
   (CSP incluida) y reglas de cache:

@@ -33,6 +33,10 @@
   },
   "private": true,
   "packageManager": "npm@10.9.8",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0",
+    "npm": ">=10.9.8"
+  },
   "dependencies": {
     "@angular/common": "^22.2.4",
     "@angular/compiler": "^22.2.4",

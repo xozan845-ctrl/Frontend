@@ -1,3 +1,4 @@
+import { version as appVersion } from '../../package.json';
 import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.config';
 
 // Entorno para pruebas E2E (R-E-12, hermetismo): el API Core Engine se responde
@@ -7,7 +8,7 @@ import { ApiConfiguration, DEFAULT_API_CONFIG } from '../app/core/config/api.con
 // pedidos) siguen en modo `mock`.
 export const environment = {
   production: false,
-  appVersion: '1.26.0',
+  appVersion,
   frontendUrl: 'http://localhost:4200',
   apiUrl: '/api/v1',
   aiScraperUrl: '/ai-api',

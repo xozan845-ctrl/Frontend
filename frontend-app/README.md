@@ -51,8 +51,23 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 
 ## 📋 Requisitos Previos
 
-- **Node.js**: 20 o superior (LTS compatible con Angular 22)
-- **npm**: 10 o superior
+- **Node.js 22.22.3** (LTS «Jod»), fijado en [`.nvmrc`](../.nvmrc) y usado por CI
+  y Docker. Angular 22.2.4 exige `^22.22.3 || ^24.15.0 || >=26.0.0`; **Node 20
+  no cumple**.
+- **npm 10.9.8**, incluido con Node 22.22.3 y fijado en `packageManager`.
+  `package-lock.json` es la fuente de verdad; en CI solo se usa `npm ci`.
+
+Con nvm:
+
+```bash
+nvm install 22.22.3
+nvm use 22.22.3
+node --version   # v22.22.3
+npm --version    # 10.9.8
+```
+
+Sin nvm, instala el binario de Node 22.22.3 desde
+<https://nodejs.org/dist/v22.22.3/>.
 
 ---
 
@@ -61,11 +76,32 @@ gestión de estado reactiva con **NgRx Signals** y diseño con **Tailwind CSS**.
 ```bash
 git clone https://github.com/xozan845-ctrl/Frontend.git
 cd Frontend/frontend-app
-npm install
+npm ci               # instalación reproducible desde el lockfile
 npm start            # http://localhost:4200
 ```
 
+`npm ci` borra `node_modules` y respeta exactamente `package-lock.json`. Usa
+`npm install` solo cuando añadas o actualices una dependencia, y commitea el
+lockfile resultante.
+
 La aplicación se recarga al modificar los archivos fuente.
+
+### Navegador de pruebas
+
+Los E2E usan Chromium de Playwright. Instálalo una vez por máquina:
+
+```bash
+npx playwright install chromium
+```
+
+En Linux o CI, añade las dependencias del sistema:
+
+```bash
+npx playwright install --with-deps chromium
+```
+
+`npm run e2e` arranca la app con `environment.e2e.ts` y responde el API con
+fixtures locales (`e2e/api-mock.ts`); no requiere backend real.
 
 ### Configuración del API
 
@@ -185,3 +221,67 @@ en Dockploy se rige por [`docs/rules/cd/`](./docs/rules/cd/README.md).
 
 Para **staging** (plan gratuito de Firebase Hosting) usa `npm run deploy` o
 `npm run deploy:preview`; ver [`docs/firebase-hosting-setup.md`](./docs/firebase-hosting-setup.md).
+
+---
+
+## 🏷️ Versión y trazabilidad
+
+- `package.json.version` es la **única fuente** de la versión base. Los entornos
+  (`src/environments/*.ts`) importan ese valor; no se edita a mano.
+- `prebuild`/`prestart` generan `public/version.json` (ignorado por Git) con la
+  versión y las novedades desde el último tag. En CI, `APP_VERSION` añade la
+  metadata `+ci.<run>.<attempt>`; la versión base sigue siendo la del package.
+- Un tag anotado `vX.Y.Z` debe coincidir con `package.json` y el lockfile y
+  apuntar a un commit de `origin/main`; `release:check` verifica las tres
+  condiciones:
+
+```bash
+npm run release:check -- --tag v1.27.0 --check-remote
+```
+
+Así coinciden la versión presentada (`version.json`), el package, el tag y el
+SHA del commit. La política completa está en
+[`docs/rules/cd/`](./docs/rules/cd/README.md) (`R-CD-3`). El manifiesto firmado
+del artefacto (`.ci-artifact/manifest.json` y `artifact.mjs verify`) pertenece a
+la cadena de promoción de F35; esté disponible en la base que se publique antes
+de reclamar esa verificación.
+
+---
+
+## 🔎 Auditoría de un checkout completo
+
+El ZIP de entrega **no incluye `.git`**: no permite reconstruir ramas, tags,
+autores ni diferencias. Para auditar el historial, usa un clon:
+
+```bash
+git clone https://github.com/xozan845-ctrl/Frontend.git
+cd Frontend
+git fetch --tags --prune
+git branch -a
+git tag --list 'v*' --sort=-v:refname
+git log --oneline --decorate -20
+git show v1.27.0 --stat
+git diff v1.26.0..v1.27.0 -- frontend-app
+git rev-parse HEAD
+```
+
+Después, en `frontend-app/`, verifica la versión y la cobertura del diff:
+
+```bash
+node -p "require('./package.json').version"
+npm ci
+npm test -- --watch=false
+npm run coverage:diff
+```
+
+`coverage:diff` exige el informe generado por los tests y aplica el umbral de
+`R-COV-5` a las líneas cambiadas.
+
+---
+
+## 🧩 Alcance de la portabilidad
+
+La UI está acoplada a Angular y **no** se presenta como portable a otro
+framework. Lo que sí se verifica de forma independiente es el núcleo TypeScript
+(stores, servicios, adaptadores y modelos) con pruebas **sin `TestBed`, sin DOM
+y sin servicios remotos** (`R-CX-3`).
