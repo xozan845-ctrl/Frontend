@@ -231,19 +231,20 @@ Para **staging** (plan gratuito de Firebase Hosting) usa `npm run deploy` o
 - `prebuild`/`prestart` generan `public/version.json` (ignorado por Git) con la
   versión y las novedades desde el último tag. En CI, `APP_VERSION` añade la
   metadata `+ci.<run>.<attempt>`; la versión base sigue siendo la del package.
-- El paquete de CI (`.ci-artifact/manifest.json`) registra `version`,
-  `appVersion` y el `sha` del commit; `artifact.mjs verify` comprueba los hashes
-  de todos los archivos.
 - Un tag anotado `vX.Y.Z` debe coincidir con `package.json` y el lockfile y
-  apuntar a un commit de `origin/main`:
+  apuntar a un commit de `origin/main`; `release:check` verifica las tres
+  condiciones:
 
 ```bash
 npm run release:check -- --tag v1.27.0 --check-remote
 ```
 
-Así coinciden la versión presentada (`version.json`), el artefacto
-(`manifest.json`), el package, el tag y el SHA. La política completa está en
-[`docs/rules/cd/`](./docs/rules/cd/README.md) (`R-CD-3`).
+Así coinciden la versión presentada (`version.json`), el package, el tag y el
+SHA del commit. La política completa está en
+[`docs/rules/cd/`](./docs/rules/cd/README.md) (`R-CD-3`). El manifiesto firmado
+del artefacto (`.ci-artifact/manifest.json` y `artifact.mjs verify`) pertenece a
+la cadena de promoción de F35; esté disponible en la base que se publique antes
+de reclamar esa verificación.
 
 ---
 

@@ -37,12 +37,15 @@ Git. No se modificó `angular.json`.
 | `npm run coverage:diff`                                                  | Sin líneas ejecutables cambiadas; el gate ya se ejecuta en Windows                                       |
 | Versión `package.json` / `public/version.json` / `dist/.../version.json` | `1.27.0` en las tres fuentes; `engines` y `packageManager` coherentes con el lockfile                    |
 | Tag Docker `node:22.22.3-alpine`                                         | Existe en el registro oficial                                                                            |
+| `npm run release:check -- --tag v1.27.0 --check-remote`                  | Falla con «el tag no existe», como corresponde: `v1.27.0` se crea tras el merge de F40 (`R-CD-3`)        |
 
 También se corrigió el guard de entrada de `coverage:diff` y `hosting:smoke`
 (`pathToFileURL`): con el patrón anterior, Windows salía en silencio sin
-ejecutar el gate. No se ejecutaron Lighthouse, Actionlint, Shellcheck ni
-Hadolint en local; su resultado real queda en Actions. La deuda de los 6
-baselines visuales `chromium-win32` sigue abierta y es independiente de F40.
+ejecutar el gate. El README dejó de citar `artifact.mjs`/`.ci-artifact`, que
+pertenecen a F35 y no están en la base de esta rama. No se ejecutaron
+Lighthouse, Actionlint, Shellcheck ni Hadolint en local; su resultado real
+queda en Actions. La deuda de los 6 baselines visuales `chromium-win32` sigue
+abierta y es independiente de F40.
 
 ## Evidencia ejecutada (2026-10-29)
 
