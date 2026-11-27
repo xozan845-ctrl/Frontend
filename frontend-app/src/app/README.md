@@ -98,8 +98,11 @@ estilos de componentes.
   `VERSION_READY` consulta `version.json` y muestra `v{version} · Refrescar`.
 - `public/version.json` se genera en `prebuild`/`prestart` y está ignorado por
   Git. Incluye la versión de `package.json` (o `APP_VERSION` en CI, p. ej.
-  `1.26.0+123`) y los cambios `feat/fix/perf/refactor` desde el último tag;
+  `1.27.0+123`) y los cambios `feat/fix/perf/refactor` desde el último tag;
   **el modal no se edita a mano**.
+- `environment.appVersion` también se importa de `package.json` (con
+  `resolveJsonModule`); es solo el respaldo compilado si `version.json` no está
+  disponible. La versión base se cambia únicamente con `npm run patch|minor|major`.
 - Para publicar una versión nueva: `npm run patch` (o `minor`/`major`) y
   desplegar. El prebuild actualiza versión y novedades automáticamente. En CI,
   el workflow `deploy-firebase.yml` despliega en cada push a `main` después de
